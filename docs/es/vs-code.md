@@ -8,9 +8,9 @@
 
 <img src="https://mintcdn.com/claude-code/-YhHHmtSxwr7W8gy/images/vs-code-extension-interface.jpg?fit=max&auto=format&n=-YhHHmtSxwr7W8gy&q=85&s=300652d5678c63905e6b0ea9e50835f8" alt="Editor de VS Code con el panel de extensión Claude Code abierto en el lado derecho, mostrando una conversación con Claude" width="2500" height="1155" data-path="images/vs-code-extension-interface.jpg" />
 
-La extensión de VS Code proporciona una interfaz gráfica nativa para Claude Code, integrada directamente en tu IDE. Esta es la forma recomendada de usar Claude Code en VS Code.
+La extensión de VS Code proporciona una interfaz gráfica nativa para Claude Code, integrada directamente en su IDE. Esta es la forma recomendada de usar Claude Code en VS Code.
 
-Con la extensión, puedes revisar y editar los planes de Claude antes de aceptarlos, aceptar automáticamente ediciones a medida que se realizan, mencionar archivos con rangos de líneas específicas de tu selección, acceder al historial de conversaciones y abrir múltiples conversaciones en pestañas o ventanas separadas.
+Con la extensión, puede revisar y editar los planes de Claude antes de aceptarlos, aceptar automáticamente ediciones a medida que se realizan, mencionar archivos con rangos de líneas específicas de su selección, acceder al historial de conversaciones y abrir múltiples conversaciones en pestañas o ventanas separadas.
 
 ## Requisitos previos
 
@@ -31,6 +31,8 @@ Haz clic en el enlace de tu IDE para instalar directamente:
 * [Instalar para Cursor](cursor:extension/anthropic.claude-code)
 
 O en VS Code, presiona `Cmd+Shift+X` (Mac) o `Ctrl+Shift+X` (Windows/Linux) para abrir la vista Extensiones, busca "Claude Code" y haz clic en **Instalar**.
+
+La extensión también se instala en otros forks de VS Code como Windsurf o Kiro. Busca "Claude Code" en la vista Extensiones del editor, o instala desde el [registro Open VSX](https://open-vsx.org/extension/Anthropic/claude-code). Si tu editor no puede instalar la extensión, ejecuta `claude` en su terminal integrada en su lugar. La [CLI](/es/quickstart) funciona en cualquier terminal.
 
 <Note>Si la extensión no aparece después de la instalación, reinicia VS Code o ejecuta "Developer: Reload Window" desde la Paleta de comandos.</Note>
 

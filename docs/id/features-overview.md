@@ -249,7 +249,7 @@ Setiap fitur dimuat pada titik berbeda dalam sesi Anda. Tab di bawah menjelaskan
 
     **Biaya konteks:** Rendah sampai digunakan. Skills hanya pengguna memiliki biaya nol sampai dipanggil.
 
-    **Di subagents:** Skills bekerja berbeda di subagents. Alih-alih pemuatan on-demand, skills yang dilewatkan ke subagent sepenuhnya dimuat sebelumnya ke konteksnya saat peluncuran. Subagents tidak mewarisi skills dari sesi utama; Anda harus menentukannya secara eksplisit.
+    **Di subagents:** Skills bekerja berbeda di subagents. Alih-alih pemuatan on-demand, skills yang tercantum di field `skills:` subagent sepenuhnya dimuat sebelumnya ke konteksnya saat peluncuran. Subagents masih dapat menemukan dan memanggil skills proyek, pengguna, dan plugin yang tidak tercantum melalui alat Skill.
 
     <Tip>Gunakan `disable-model-invocation: true` untuk skills dengan efek samping. Ini menghemat konteks dan memastikan hanya Anda yang memicunya.</Tip>
   </Tab>

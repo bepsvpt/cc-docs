@@ -132,6 +132,16 @@ Claude Code 读取 `CLAUDE.md`，而不是 `AGENTS.md`。如果你的存储库�
 对 `src/billing/` 下的更改使用 Plan Mode。
 ```
 
+一个符号链接也可以工作，如果你不需要添加 Claude 特定的内容：
+
+```bash theme={null}
+ln -s AGENTS.md CLAUDE.md
+```
+
+在 Windows 上，创建符号链接需要管理员权限或开发者模式，所以改用 `@AGENTS.md` 导入。
+
+在已经有 `AGENTS.md` 的存储库中运行 [`/init`](/zh-CN/commands) 会读取它并将相关部分合并到生成的 `CLAUDE.md` 中。它也读取其他工具配置，如 `.cursorrules` 和 `.windsurfrules`。
+
 ### CLAUDE.md 文件如何加载
 
 Claude Code 通过从当前工作目录向上遍历目录树来读取 CLAUDE.md 文件，检查沿途的每个目录是否有 `CLAUDE.md` 和 `CLAUDE.local.md` 文件。这意味着如果你在 `foo/bar/` 中运行 Claude Code，它会从 `foo/bar/CLAUDE.md`、`foo/CLAUDE.md` 和沿途的任何 `CLAUDE.local.md` 文件加载指令。
@@ -377,6 +387,8 @@ CLAUDE.md 内容作为用户消息在系统提示之后传递，而不是系统�
 * 检查相关 CLAUDE.md 是否在为你的会话加载的位置（参见 [选择 CLAUDE.md 文件的位置](#choose-where-to-put-claude-md-files)）。
 * 使指令更具体。"使用 2 空格缩进"比"格式化代码很好"效果更好。
 * 查找跨 CLAUDE.md 文件的冲突指令。如果两个文件为相同行为提供不同的指导，Claude 可能会任意选择一个。
+
+如果指令是必须在特定点运行的内容，例如在每次提交之前或每次文件编辑之后，请将其写成 [hook](/zh-CN/hooks-guide) 代替。Hooks 在固定的生命周期事件处作为 shell 命令执行，并且无论 Claude 决定做什么都适用。
 
 对于你想要在系统提示级别的指令，使用 [`--append-system-prompt`](/zh-CN/cli-reference#system-prompt-flags)。这必须在每次调用时传递，因此它更适合脚本和自动化而不是交互式使用。
 

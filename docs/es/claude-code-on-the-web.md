@@ -113,10 +113,10 @@ La CLI `gh` no está preinstalada. Si necesita un comando `gh` que las herramien
 
 Cada sesión en la nube tiene una URL de transcripción en claude.ai, y la sesión puede leer su propio ID desde la variable de entorno `CLAUDE_CODE_REMOTE_SESSION_ID`. Use esto para poner un enlace rastreable en cuerpos de PR, mensajes de confirmación, publicaciones de Slack o informes generados para que un revisor pueda abrir la ejecución que los produjo.
 
-Pida a Claude que construya el enlace desde la variable de entorno. El siguiente comando imprime la URL:
+El valor de la variable usa un prefijo `cse_`, mientras que la ruta de la URL de transcripción toma el mismo ID con un prefijo `session_`. Sustituya el prefijo al construir el enlace. El siguiente comando imprime la URL:
 
 ```bash theme={null}
-echo "https://claude.ai/code/${CLAUDE_CODE_REMOTE_SESSION_ID}"
+echo "https://claude.ai/code/${CLAUDE_CODE_REMOTE_SESSION_ID/#cse_/session_}"
 ```
 
 ### Ejecute pruebas, inicie servicios y agregue paquetes
@@ -156,7 +156,7 @@ Los entornos controlan [acceso a la red](#network-access), variables de entorno 
 | Acción                                       | Cómo                                                                                                                                                                                                                     |
 | :------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Agregar un entorno                           | Seleccione el entorno actual para abrir el selector, luego seleccione **Agregar entorno**. El diálogo incluye nombre, nivel de acceso a la red, variables de entorno y script de configuración.                          |
-| Editar un entorno                            | Seleccione el icono de configuración a la derecha del nombre del entorno.                                                                                                                                                |
+| Editar un entorno                            | Seleccione el icono de nube que muestra el nombre del entorno actual para abrir el selector, pase el cursor sobre un entorno y haga clic en el icono de configuración que aparece a la derecha.                          |
 | Archivar un entorno                          | Abra el entorno para editar y seleccione **Archivar**. Los entornos archivados se ocultan del selector pero las sesiones existentes continúan ejecutándose.                                                              |
 | Establecer el predeterminado para `--remote` | Ejecute `/remote-env` en su terminal. Si tiene un único entorno, este comando muestra su configuración actual. `/remote-env` solo selecciona el predeterminado; agregue, edite y archive entornos desde la interfaz web. |
 
@@ -184,6 +184,8 @@ apt update && apt install -y gh
 ```
 
 Si el script sale con un código distinto de cero, la sesión no se inicia. Agregue `|| true` a comandos no críticos para evitar bloquear la sesión en una instalación intermitente fallida.
+
+Mantenga el tiempo de ejecución total del script por debajo de aproximadamente cinco minutos para que el [caché del entorno](#environment-caching) pueda compilarse. Ejecute instalaciones independientes en paralelo con `&` y `wait`. Si una única descarga no cabe en el límite de cinco minutos, muévala a un [hook SessionStart](#setup-scripts-vs-sessionstart-hooks) que la inicie en segundo plano.
 
 <Note>
   Los scripts de configuración que instalan paquetes necesitan acceso a la red para llegar a los registros. El acceso a la red predeterminado **Confiable** permite conexiones a [dominios comunes en la lista de permitidos](#default-allowed-domains) incluyendo npm, PyPI, RubyGems y crates.io. Los scripts fallarán al instalar paquetes si su entorno usa acceso a la red **Ninguno**.
@@ -264,6 +266,12 @@ Reemplazar la imagen base con su propia imagen Docker aún no es compatible. Use
 ## Acceso a la red
 
 El acceso a la red controla las conexiones salientes desde el entorno en la nube. Cada entorno especifica un nivel de acceso, y puede extenderlo con dominios permitidos personalizados. El predeterminado es **Confiable**, que permite registros de paquetes y otros [dominios en la lista de permitidos](#default-allowed-domains).
+
+Para cambiar el acceso a la red de un entorno, [abra el entorno para editar](#configure-your-environment) y use el selector **Acceso a la red** en el diálogo. No hay una página de Entornos separada. El icono de nube aparece dondequiera que inicie una sesión en la nube o configure una [rutina](/es/routines#environments-and-network-access).
+
+<Note>
+  El tráfico del conector MCP se enruta a través de los servidores de Anthropic, por lo que los conectores que habilita en una sesión o rutina funcionan sin agregar sus hosts a **Dominios permitidos**. Los conectores se configuran por sesión o por rutina; elimine cualquiera que no necesite para limitar qué herramientas puede alcanzar Claude. Esto se basa en el mismo canal vinculado a Anthropic mencionado en [Seguridad y aislamiento](#security-and-isolation).
+</Note>
 
 ### Niveles de acceso
 
@@ -754,6 +762,32 @@ Cada sesión en la nube se separa de su máquina y de otras sesiones a través d
 * **Protección de credenciales**: las credenciales sensibles como credenciales de git o claves de firma nunca están dentro del sandbox con Claude Code. La autenticación se maneja a través de un proxy seguro usando credenciales de alcance.
 * **Análisis seguro**: el código se analiza y modifica dentro de VMs aisladas antes de crear PRs
 
+## Solución de problemas
+
+Para errores de API en tiempo de ejecución que aparecen en la conversación como `API Error: 500`, `529 Overloaded`, `429` o `Prompt is too long`, consulte la [referencia de errores](/es/errors). Esos errores y sus soluciones se comparten con la CLI y la aplicación de escritorio. Las secciones a continuación cubren problemas específicos de sesiones en la nube.
+
+### Falló la creación de sesión
+
+Si una nueva sesión no se inicia con `Session creation failed` o se detiene en el aprovisionamiento, Claude Code no pudo asignar un entorno en la nube.
+
+* Verifique [status.claude.com](https://status.claude.com) para incidentes de sesión en la nube
+* Reintente después de un minuto, ya que la capacidad se aprovisiona bajo demanda
+* Confirme que su repositorio es accesible. Los repositorios privados requieren que la aplicación GitHub esté instalada con acceso a ese repositorio, o un token `gh` sincronizado a través de `/web-setup`. Consulte [Opciones de autenticación de GitHub](#github-authentication-options).
+
+### Sesión de Control Remoto expirada o acceso denegado
+
+`--teleport` se conecta a través de la misma infraestructura de sesión de Control Remoto que usan las sesiones en la nube, por lo que los errores de autenticación y vencimiento de sesión aparecen con la redacción de Control Remoto. Puede ver `Remote Control session has expired` o `Access denied`. El token de conexión es de corta duración y está limitado a su cuenta.
+
+* Ejecute `/login` localmente para actualizar sus credenciales, luego reconecte
+* Confirme que está conectado a la misma cuenta que posee la sesión
+* Si ve `Remote Control may not be available for this organization`, su administrador no ha habilitado sesiones remotas para su plan
+
+### Entorno expirado
+
+Las sesiones en la nube se detienen después de un período de inactividad y el entorno subyacente se reclama. Desde una terminal local, esto aparece como `Could not resume session ... its environment has expired. Creating a fresh session instead.` En la web, la sesión está marcada como expirada en la lista de sesiones.
+
+Reabra la sesión desde [claude.ai/code](https://claude.ai/code) para aprovisionar un entorno nuevo con su historial de conversación restaurado.
+
 ## Limitaciones
 
 Antes de confiar en sesiones en la nube para un flujo de trabajo, tenga en cuenta estas restricciones:
@@ -761,6 +795,7 @@ Antes de confiar en sesiones en la nube para un flujo de trabajo, tenga en cuent
 * **Límites de velocidad**: Claude Code en la web comparte límites de velocidad con todo otro uso de Claude y Claude Code dentro de su cuenta. Ejecutar múltiples tareas en paralelo consume más límites de velocidad proporcionalmente. No hay cargo de computación separado para la VM en la nube.
 * **Autenticación de repositorio**: solo puede mover sesiones de web a local cuando está autenticado en la misma cuenta
 * **Restricciones de plataforma**: la clonación de repositorio y la creación de solicitudes de extracción requieren GitHub. Las instancias de [GitHub Enterprise Server](/es/github-enterprise-server) autohospedadas son compatibles con planes de Team y Enterprise. GitLab, Bitbucket y otros repositorios que no sean GitHub se pueden enviar a sesiones en la nube como un [paquete local](#send-local-repositories-without-github), pero la sesión no puede insertar resultados de vuelta al remoto
+* **Lista de permitidos de IP de la organización**: las sesiones en la nube llaman a la API de Anthropic desde infraestructura administrada por Anthropic, no desde su red. Si su organización tiene [lista de permitidos de IP](https://support.claude.com/en/articles/13200993-restrict-access-to-claude-with-ip-allowlisting) habilitada, cada sesión en la nube falla con un error de autenticación. Lo mismo se aplica a [Revisión de código](/es/code-review) y [Rutinas](/es/routines). Contacte al [soporte de Anthropic](https://support.claude.com/) para eximir los servicios alojados por Anthropic de la lista de permitidos de IP de su organización.
 
 ## Recursos relacionados
 

@@ -113,10 +113,10 @@ CLI `gh` tidak diinstal sebelumnya. Jika Anda memerlukan perintah `gh` yang tida
 
 Setiap sesi cloud memiliki URL transkrip di claude.ai, dan sesi dapat membaca ID-nya sendiri dari variabel lingkungan `CLAUDE_CODE_REMOTE_SESSION_ID`. Gunakan ini untuk menempatkan tautan yang dapat dilacak di badan PR, pesan komit, posting Slack, atau laporan yang dihasilkan sehingga pengulas dapat membuka jalannya yang menghasilkannya.
 
-Minta Claude untuk membuat tautan dari variabel lingkungan. Perintah berikut mencetak URL:
+Nilai variabel menggunakan awalan `cse_`, sementara jalur URL transkrip mengambil ID yang sama dengan awalan `session_`. Substitusikan awalan saat membangun tautan. Perintah berikut mencetak URL:
 
 ```bash theme={null}
-echo "https://claude.ai/code/${CLAUDE_CODE_REMOTE_SESSION_ID}"
+echo "https://claude.ai/code/${CLAUDE_CODE_REMOTE_SESSION_ID/#cse_/session_}"
 ```
 
 ### Jalankan tes, mulai layanan, dan tambahkan paket
@@ -156,7 +156,7 @@ Lingkungan mengontrol [akses jaringan](#network-access), variabel lingkungan, da
 | Tindakan                      | Cara                                                                                                                                                                                                                               |
 | :---------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Tambahkan lingkungan          | Pilih lingkungan saat ini untuk membuka pemilih, kemudian pilih **Tambahkan lingkungan**. Dialog mencakup nama, tingkat akses jaringan, variabel lingkungan, dan skrip setup.                                                      |
-| Edit lingkungan               | Pilih ikon pengaturan di sebelah kanan nama lingkungan.                                                                                                                                                                            |
+| Edit lingkungan               | Pilih ikon cloud yang menunjukkan nama lingkungan saat ini untuk membuka pemilih, arahkan ke lingkungan, dan klik ikon pengaturan yang muncul di sebelah kanan.                                                                    |
 | Arsipkan lingkungan           | Buka lingkungan untuk pengeditan dan pilih **Arsipkan**. Lingkungan yang diarsipkan disembunyikan dari pemilih tetapi sesi yang ada terus berjalan.                                                                                |
 | Atur default untuk `--remote` | Jalankan `/remote-env` di terminal Anda. Jika Anda memiliki satu lingkungan, perintah ini menunjukkan konfigurasi saat ini Anda. `/remote-env` hanya memilih default; tambahkan, edit, dan arsipkan lingkungan dari antarmuka web. |
 
@@ -184,6 +184,8 @@ apt update && apt install -y gh
 ```
 
 Jika skrip keluar dengan non-zero, sesi gagal dimulai. Tambahkan `|| true` ke perintah non-kritis untuk menghindari pemblokiran sesi pada kegagalan instalasi yang tidak stabil.
+
+Jaga total runtime skrip di bawah kira-kira lima menit sehingga [cache lingkungan](#environment-caching) dapat dibangun. Jalankan instalasi independen secara paralel dengan `&` dan `wait`. Jika satu unduhan tidak akan cocok dalam batas lima menit, pindahkan ke hook [SessionStart](#setup-scripts-vs-sessionstart-hooks) yang meluncurkannya di latar belakang.
 
 <Note>
   Skrip setup yang menginstal paket memerlukan akses jaringan untuk menjangkau registri. Akses jaringan **Trusted** default memungkinkan koneksi ke [domain paket umum](#default-allowed-domains) termasuk npm, PyPI, RubyGems, dan crates.io. Skrip akan gagal menginstal paket jika lingkungan Anda menggunakan akses jaringan **None**.
@@ -264,6 +266,12 @@ Mengganti gambar dasar dengan gambar Docker Anda sendiri belum didukung. Gunakan
 ## Akses jaringan
 
 Akses jaringan mengontrol koneksi keluar dari lingkungan cloud. Setiap lingkungan menentukan satu tingkat akses, dan Anda dapat memperluas dengan domain yang diizinkan khusus. Default adalah **Trusted**, yang memungkinkan registri paket dan [domain yang diizinkan](#default-allowed-domains) lainnya.
+
+Untuk mengubah akses jaringan lingkungan, [buka untuk pengeditan](#configure-your-environment) dan gunakan pemilih **Akses jaringan** di dialog. Tidak ada halaman Environments terpisah. Ikon cloud muncul di mana pun Anda memulai sesi cloud atau mengonfigurasi [routine](/id/routines#environments-and-network-access).
+
+<Note>
+  Lalu lintas konektor MCP dirutekan melalui server Anthropic, jadi konektor yang Anda aktifkan pada sesi atau routine berfungsi tanpa menambahkan host mereka ke **Domain yang diizinkan**. Konektor dikonfigurasi per sesi atau per routine; hapus yang tidak Anda butuhkan untuk membatasi alat mana yang dapat dijangkau Claude. Ini bergantung pada saluran terikat Anthropic yang sama yang dicatat di bawah [Keamanan dan isolasi](#security-and-isolation).
+</Note>
 
 ### Tingkat akses
 
@@ -754,6 +762,32 @@ Setiap sesi cloud dipisahkan dari mesin Anda dan dari sesi lain melalui beberapa
 * **Perlindungan kredensial**: kredensial sensitif seperti kredensial git atau kunci penandatanganan tidak pernah ada di dalam sandbox dengan Claude Code. Autentikasi ditangani melalui proxy aman menggunakan kredensial bersistem.
 * **Analisis aman**: kode dianalisis dan dimodifikasi dalam VM terisolasi sebelum membuat PR
 
+## Troubleshooting
+
+Untuk kesalahan API runtime yang muncul dalam percakapan seperti `API Error: 500`, `529 Overloaded`, `429`, atau `Prompt is too long`, lihat [referensi Error](/id/errors). Kesalahan tersebut dan perbaikannya dibagikan dengan CLI dan Desktop app. Bagian di bawah mencakup masalah khusus untuk sesi cloud.
+
+### Pembuatan sesi gagal
+
+Jika sesi baru gagal dimulai dengan `Session creation failed` atau macet di provisioning, Claude Code tidak dapat mengalokasikan lingkungan cloud.
+
+* Periksa [status.claude.com](https://status.claude.com) untuk insiden sesi cloud
+* Coba lagi setelah satu menit, karena kapasitas disediakan sesuai permintaan
+* Konfirmasi repositori Anda dapat dijangkau. Repositori pribadi memerlukan GitHub App yang diinstal dengan akses ke repositori itu, atau token `gh` yang disinkronkan melalui `/web-setup`. Lihat [Opsi autentikasi GitHub](#github-authentication-options).
+
+### Sesi Remote Control kedaluwarsa atau akses ditolak
+
+`--teleport` terhubung melalui infrastruktur sesi Remote Control yang sama yang digunakan sesi cloud, jadi kesalahan autentikasi dan kedaluwarsa sesi muncul dengan wording Remote Control. Anda mungkin melihat `Remote Control session has expired` atau `Access denied`. Token koneksi berumur pendek dan dibatasi pada akun Anda.
+
+* Jalankan `/login` secara lokal untuk menyegarkan kredensial Anda, kemudian sambungkan kembali
+* Konfirmasi Anda masuk ke akun yang sama yang memiliki sesi
+* Jika Anda melihat `Remote Control may not be available for this organization`, admin Anda belum mengaktifkan sesi jarak jauh untuk rencana Anda
+
+### Lingkungan kedaluwarsa
+
+Sesi cloud berhenti setelah periode inaktivitas dan lingkungan yang mendasarinya diambil kembali. Dari terminal lokal, ini muncul sebagai `Could not resume session ... its environment has expired. Creating a fresh session instead.` Di web, sesi ditandai kedaluwarsa dalam daftar sesi.
+
+Buka kembali sesi dari [claude.ai/code](https://claude.ai/code) untuk menyediakan lingkungan segar dengan riwayat percakapan Anda dipulihkan.
+
 ## Batasan
 
 Sebelum mengandalkan sesi cloud untuk alur kerja, pertimbangkan batasan ini:
@@ -761,6 +795,7 @@ Sebelum mengandalkan sesi cloud untuk alur kerja, pertimbangkan batasan ini:
 * **Batas laju**: Claude Code di web berbagi batas laju dengan semua penggunaan Claude dan Claude Code lainnya dalam akun Anda. Menjalankan beberapa tugas secara paralel mengonsumsi lebih banyak batas laju secara proporsional. Tidak ada biaya komputasi terpisah untuk VM cloud.
 * **Autentikasi repositori**: Anda hanya dapat memindahkan sesi dari web ke lokal saat Anda diautentikasi ke akun yang sama
 * **Pembatasan platform**: kloning repositori dan pembuatan pull request memerlukan GitHub. Instans [GitHub Enterprise Server](/id/github-enterprise-server) yang di-host sendiri didukung untuk rencana Team dan Enterprise. Repositori GitLab, Bitbucket, dan non-GitHub lainnya dapat dikirim ke sesi cloud sebagai [bundle lokal](#send-local-repositories-without-github), tetapi sesi tidak dapat mendorong hasil kembali ke remote
+* **Daftar putih IP organisasi**: sesi cloud memanggil API Anthropic dari infrastruktur yang dikelola Anthropic, bukan jaringan Anda. Jika organisasi Anda memiliki [IP allowlisting](https://support.claude.com/en/articles/13200993-restrict-access-to-claude-with-ip-allowlisting) yang diaktifkan, setiap sesi cloud gagal dengan kesalahan autentikasi. Hal yang sama berlaku untuk [Code Review](/id/code-review) dan [Routines](/id/routines). Hubungi [dukungan Anthropic](https://support.claude.com/) untuk mengecualikan layanan yang di-host Anthropic dari daftar putih IP organisasi Anda.
 
 ## Sumber daya terkait
 

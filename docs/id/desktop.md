@@ -564,6 +564,22 @@ Contoh berikut pre-configure satu koneksi yang terbuka di `~/projects` pada host
 
 Setiap entri memerlukan `id`, `name`, dan `sshHost`. Bidang `sshPort`, `sshIdentityFile`, dan `startDirectory` bersifat opsional. Pengguna juga dapat menambahkan `sshConfigs` ke `~/.claude/settings.json` mereka sendiri, yang merupakan tempat koneksi yang ditambahkan melalui dialog disimpan.
 
+#### Restrict which SSH hosts users can connect to
+
+Administrator dapat membatasi sesi SSH Desktop ke set host yang disetujui dengan menambahkan `sshHostAllowlist` ke file [managed settings](/id/settings#settings-precedence). Ketika diatur, pengguna hanya dapat terhubung ke host yang nama hostname terselesaikannya cocok dengan salah satu pola. Atur ke array kosong untuk menonaktifkan sesi SSH sepenuhnya.
+
+Contoh berikut memungkinkan koneksi ke host apa pun di bawah `devboxes.example.com` dan ke satu host bastion bernama:
+
+```json theme={null}
+{
+  "sshHostAllowlist": ["*.devboxes.example.com", "bastion.example.com"]
+}
+```
+
+Pola tidak peka huruf besar-kecil. `*` cocok dengan host apa pun, dan `*.example.com` cocok dengan `example.com` dan subdomain apa pun. Apa pun yang lain adalah kecocokan yang tepat. Pemeriksaan berjalan terhadap hostname setelah resolusi `~/.ssh/config` melalui `ssh -G`, sehingga alias `Host` dan entri `ProxyCommand`/`ProxyJump` diizinkan selama `HostName` yang terselesaikan cocok.
+
+`sshHostAllowlist` dibaca dari managed settings saja; nilai dalam pengaturan pengguna atau proyek diabaikan. Hanya aplikasi Claude Desktop yang menghormati pengaturan ini; CLI Claude Code dan ekstensi IDE tidak membacanya, dan itu tidak membatasi perintah `ssh` yang dijalankan melalui alat Bash. Ini mengatur host mana yang terhubung oleh aplikasi Desktop, bukan egress jaringan, jadi pasangkan dengan kontrol jaringan organisasi Anda atau kontrol zero-trust jika Anda memerlukan batas yang keras.
+
 ## Konfigurasi Enterprise
 
 Organisasi pada rencana Team atau Enterprise dapat mengelola perilaku aplikasi desktop melalui kontrol konsol admin, file pengaturan yang dikelola, dan kebijakan manajemen perangkat.
@@ -581,12 +597,13 @@ Pengaturan ini dikonfigurasi melalui [konsol pengaturan admin](https://claude.ai
 
 Pengaturan yang dikelola menimpa pengaturan proyek dan pengguna dan berlaku ketika Desktop menjalankan sesi CLI. Anda dapat mengatur kunci ini di file [managed settings](/id/settings#settings-precedence) organisasi Anda atau mendorongnya dari jarak jauh melalui konsol admin.
 
-| Key                                        | Description                                                                                                                                                                                               |
-| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `permissions.disableBypassPermissionsMode` | atur ke `"disable"` untuk mencegah pengguna dari mengaktifkan Bypass permissions mode.                                                                                                                    |
-| `disableAutoMode`                          | atur ke `"disable"` untuk mencegah pengguna dari mengaktifkan [Auto](/id/permission-modes#eliminate-prompts-with-auto-mode) mode. Menghapus Auto dari pemilih mode. Juga diterima di bawah `permissions`. |
-| `autoMode`                                 | sesuaikan apa yang dipercaya dan diblokir oleh pengklasifikasi auto mode di seluruh organisasi Anda. Lihat [Configure auto mode](/id/auto-mode-config).                                                   |
-| `sshConfigs`                               | pre-configure [SSH connections](#pre-configure-ssh-connections-for-your-team) yang muncul di dropdown lingkungan. Pengguna tidak dapat mengedit atau menghapus koneksi yang dikelola.                     |
+| Key                                        | Description                                                                                                                                                                                                                             |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `permissions.disableBypassPermissionsMode` | atur ke `"disable"` untuk mencegah pengguna dari mengaktifkan Bypass permissions mode.                                                                                                                                                  |
+| `disableAutoMode`                          | atur ke `"disable"` untuk mencegah pengguna dari mengaktifkan [Auto](/id/permission-modes#eliminate-prompts-with-auto-mode) mode. Menghapus Auto dari pemilih mode. Juga diterima di bawah `permissions`.                               |
+| `autoMode`                                 | sesuaikan apa yang dipercaya dan diblokir oleh pengklasifikasi auto mode di seluruh organisasi Anda. Lihat [Configure auto mode](/id/auto-mode-config).                                                                                 |
+| `sshConfigs`                               | pre-configure [SSH connections](#pre-configure-ssh-connections-for-your-team) yang muncul di dropdown lingkungan. Pengguna tidak dapat mengedit atau menghapus koneksi yang dikelola.                                                   |
+| `sshHostAllowlist`                         | batasi [SSH sessions](#restrict-which-ssh-hosts-users-can-connect-to) ke host yang nama hostname yang diselesaikannya cocok dengan salah satu pola ini. Array kosong menonaktifkan sesi SSH. Dibaca dari pengaturan yang dikelola saja. |
 
 File pengaturan yang dikelola yang disebarkan ke disk pada setiap mesin berlaku untuk sesi Desktop. Pengaturan yang dikelola yang didorong dari jarak jauh melalui konsol admin saat ini hanya mencapai sesi CLI dan IDE, jadi untuk penyebaran Desktop baik distribusikan file melalui MDM atau gunakan [kontrol konsol admin](#admin-console-controls) di atas.
 

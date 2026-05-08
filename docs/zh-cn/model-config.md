@@ -17,6 +17,10 @@
   * Foundry：部署名称
   * Vertex：版本名称
 
+<Note>
+  `ANTHROPIC_BASE_URL` 改变请求发送的位置，而不是哪个模型回答它们。要通过 LLM 网关路由 Claude，请参阅 [LLM 网关配置](/zh-CN/llm-gateway)。
+</Note>
+
 ### 模型别名
 
 模型别名提供了一种便捷的方式来选择模型设置，无需记住确切的版本号：

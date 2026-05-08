@@ -6,13 +6,13 @@
 
 > Sesuaikan Claude Code untuk penggunaan di luar rekayasa perangkat lunak
 
-Output styles memungkinkan Anda menggunakan Claude Code sebagai jenis agen apa pun sambil mempertahankan
-kemampuan intinya, seperti menjalankan skrip lokal, membaca/menulis file, dan
-melacak TODOs.
+Output styles mengubah cara Claude merespons, bukan apa yang Claude ketahui. Mereka memodifikasi system prompt untuk menetapkan peran, nada, dan format output sambil mempertahankan kemampuan inti seperti menjalankan skrip, membaca dan menulis file, serta melacak TODOs. Gunakan satu ketika Anda terus-menerus meminta kembali untuk suara atau format yang sama setiap giliran, atau ketika Anda ingin Claude bertindak sebagai sesuatu selain seorang insinyur perangkat lunak.
+
+Untuk instruksi tentang proyek, konvensi, atau codebase Anda, gunakan [CLAUDE.md](/id/memory) sebagai gantinya.
 
 ## Built-in output styles
 
-**Default** output style Claude Code adalah system prompt yang ada, dirancang
+Output style **Default** Claude Code adalah system prompt yang ada, dirancang
 untuk membantu Anda menyelesaikan tugas-tugas rekayasa perangkat lunak secara efisien.
 
 Ada dua built-in output styles tambahan yang berfokus pada pengajaran Anda tentang
@@ -86,18 +86,24 @@ tasks. [Your custom instructions here...]
 [Define how the assistant should behave in this style...]
 ```
 
-Anda dapat menyimpan file-file ini di tingkat pengguna (`~/.claude/output-styles`) atau
-tingkat proyek (`.claude/output-styles`).
+Anda dapat menyimpan file-file ini di tiga tingkat:
+
+* User: `~/.claude/output-styles`
+* Project: `.claude/output-styles`
+* Managed policy: `.claude/output-styles` di dalam [direktori pengaturan terkelola](/id/settings#settings-files)
+
+[Plugins](/id/plugins-reference) juga dapat mengirimkan output styles dalam direktori `output-styles/`.
 
 ### Frontmatter
 
 File output style mendukung frontmatter untuk menentukan metadata:
 
-| Frontmatter                | Tujuan                                                                                              | Default                 |
-| :------------------------- | :-------------------------------------------------------------------------------------------------- | :---------------------- |
-| `name`                     | Nama output style, jika bukan nama file                                                             | Mewarisi dari nama file |
-| `description`              | Deskripsi output style, ditampilkan dalam picker `/config`                                          | Tidak ada               |
-| `keep-coding-instructions` | Apakah akan mempertahankan bagian-bagian dari system prompt Claude Code yang terkait dengan coding. | false                   |
+| Frontmatter                | Tujuan                                                                                                                                                                                                                                                                      | Default                 |
+| :------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------- |
+| `name`                     | Nama output style, jika bukan nama file                                                                                                                                                                                                                                     | Mewarisi dari nama file |
+| `description`              | Deskripsi output style, ditampilkan dalam picker `/config`                                                                                                                                                                                                                  | Tidak ada               |
+| `keep-coding-instructions` | Apakah akan mempertahankan bagian-bagian dari system prompt Claude Code yang terkait dengan coding.                                                                                                                                                                         | false                   |
+| `force-for-plugin`         | Plugin output styles hanya: terapkan style ini secara otomatis kapan pun plugin diaktifkan, tanpa memerlukan pengguna untuk memilihnya. Mengesampingkan pengaturan `outputStyle` pengguna. Jika beberapa plugin yang diaktifkan menetapkan ini, yang pertama dimuat menang. | false                   |
 
 ## Perbandingan dengan fitur terkait
 

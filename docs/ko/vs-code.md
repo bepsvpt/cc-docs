@@ -32,6 +32,8 @@ IDE에 대한 링크를 클릭하여 직접 설치합니다:
 
 또는 VS Code에서 `Cmd+Shift+X`(Mac) 또는 `Ctrl+Shift+X`(Windows/Linux)를 눌러 확장 프로그램 보기를 열고, "Claude Code"를 검색한 후 **설치**를 클릭합니다.
 
+확장 프로그램은 Windsurf 또는 Kiro와 같은 다른 VS Code 포크에도 설치됩니다. 편집기의 확장 프로그램 보기에서 "Claude Code"를 검색하거나 [Open VSX 레지스트리](https://open-vsx.org/extension/Anthropic/claude-code)에서 설치합니다. 편집기에서 확장 프로그램을 설치할 수 없는 경우 통합 터미널에서 `claude`를 실행합니다. [CLI](/ko/quickstart)는 모든 터미널에서 작동합니다.
+
 <Note>설치 후 확장 프로그램이 나타나지 않으면 VS Code를 다시 시작하거나 명령 팔레트에서 "Developer: Reload Window"를 실행합니다.</Note>
 
 ## 시작하기

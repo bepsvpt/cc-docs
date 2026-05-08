@@ -132,11 +132,21 @@ Claude Code lê `CLAUDE.md`, não `AGENTS.md`. Se seu repositório já usa `AGEN
 Use plan mode para alterações em `src/billing/`.
 ```
 
+Um symlink também funciona se você não precisar adicionar conteúdo específico do Claude Code:
+
+```bash theme={null}
+ln -s AGENTS.md CLAUDE.md
+```
+
+No Windows, criar um symlink requer privilégios de Administrador ou Modo de Desenvolvedor, então use a importação `@AGENTS.md` em vez disso.
+
+Executar [`/init`](/pt/commands) em um repositório que já tem um `AGENTS.md` o lê e incorpora as partes relevantes no `CLAUDE.md` gerado. Ele também lê outras configurações de ferramentas como `.cursorrules` e `.windsurfrules`.
+
 ### Como arquivos CLAUDE.md são carregados
 
 Claude Code lê arquivos CLAUDE.md caminhando para cima na árvore de diretórios a partir do seu diretório de trabalho atual, verificando cada diretório ao longo do caminho para arquivos `CLAUDE.md` e `CLAUDE.local.md`. Isso significa que se você executar Claude Code em `foo/bar/`, ele carrega instruções de `foo/bar/CLAUDE.md`, `foo/CLAUDE.md` e qualquer arquivo `CLAUDE.local.md` ao lado deles.
 
-Todos os arquivos descobertos são concatenados em contexto em vez de se sobreporem. Dentro de cada diretório, `CLAUDE.local.md` é anexado após `CLAUDE.md`, então quando as instruções entram em conflito, suas notas pessoais são a última coisa que Claude lê naquele nível.
+Todos os arquivos descobertos são concatenados em contexto em vez de se sobreporem. Dentro da árvore de diretórios, o conteúdo é ordenado da raiz do sistema de arquivos até seu diretório de trabalho. Para o exemplo `foo/bar/`, `foo/CLAUDE.md` aparece em contexto antes de `foo/bar/CLAUDE.md`, então as instruções mais próximas de onde você lançou Claude são lidas por último. Dentro de cada diretório, `CLAUDE.local.md` é anexado após `CLAUDE.md`, então suas notas pessoais são a última coisa que Claude lê naquele nível.
 
 Claude também descobre arquivos `CLAUDE.md` e `CLAUDE.local.md` em subdiretórios sob seu diretório de trabalho atual. Em vez de carregá-los no lançamento, eles são incluídos quando Claude lê arquivos nesses subdiretórios.
 
@@ -377,6 +387,8 @@ Para depurar:
 * Verifique se o CLAUDE.md relevante está em um local que é carregado para sua sessão (veja [Escolha onde colocar arquivos CLAUDE.md](#choose-where-to-put-claude-md-files)).
 * Torne as instruções mais específicas. "Use indentação de 2 espaços" funciona melhor do que "formate o código adequadamente."
 * Procure por instruções conflitantes entre arquivos CLAUDE.md. Se dois arquivos dão orientação diferente para o mesmo comportamento, Claude pode escolher um arbitrariamente.
+
+Se a instrução é algo que deve ser executado em um ponto específico, como antes de cada commit ou após cada edição de arquivo, escreva-a como um [hook](/pt/hooks-guide) em vez disso. Hooks são executados como comandos shell em eventos de ciclo de vida fixos e se aplicam independentemente do que Claude decidir fazer.
 
 Para instruções que você quer no nível do prompt do sistema, use [`--append-system-prompt`](/pt/cli-reference#system-prompt-flags). Isso deve ser passado a cada invocação, então é mais adequado para scripts e automação do que para uso interativo.
 

@@ -17,6 +17,10 @@ Pour le paramètre `model` dans Claude Code, vous pouvez configurer l'un des él
   * Foundry : un nom de déploiement
   * Vertex : un nom de version
 
+<Note>
+  `ANTHROPIC_BASE_URL` change l'endroit où les demandes sont envoyées, et non le modèle qui y répond. Pour acheminer Claude via une passerelle LLM, consultez la [configuration de la passerelle LLM](/fr/llm-gateway).
+</Note>
+
 ### Alias de modèle
 
 Les alias de modèle offrent un moyen pratique de sélectionner les paramètres du modèle sans avoir à mémoriser les numéros de version exacts :

@@ -317,8 +317,16 @@ claude --plugin-dir ./my-plugin
 
 URL에서 호스팅되는 `.zip` 아카이브로 이미 패키징된 플러그인을 테스트하려면(예: CI 빌드 아티팩트) 대신 `--plugin-url`을 사용하세요. Claude Code는 시작 시 아카이브를 가져오고 해당 세션에만 로드합니다. 가져오기가 실패하거나 아카이브가 유효하지 않으면 Claude Code는 플러그인 로드 오류를 보고하고 이를 제외하고 시작합니다. 모든 플러그인 소스에 대해 동일한 [신뢰 고려 사항](/ko/discover-plugins#security)이 적용됩니다: 이 플래그를 제어하거나 신뢰하는 아카이브에만 지정하세요.
 
+여러 플러그인을 로드하려면 각 URL에 대해 플래그를 반복합니다:
+
 ```bash theme={null}
-claude --plugin-url https://example.com/my-plugin.zip
+claude --plugin-url https://example.com/my-plugin.zip --plugin-url https://example.com/other.zip
+```
+
+또는 공백으로 구분된 URL을 하나의 따옴표로 묶인 인수로 전달합니다:
+
+```bash theme={null}
+claude --plugin-url "https://example.com/my-plugin.zip https://example.com/other.zip"
 ```
 
 ### 플러그인 문제 디버깅

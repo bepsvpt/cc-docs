@@ -27,10 +27,12 @@ Antes de instalar, certifique-se de que você tem:
 
 Clique no link do seu IDE para instalar diretamente:
 
-* [Install for VS Code](vscode:extension/anthropic.claude-code)
-* [Install for Cursor](cursor:extension/anthropic.claude-code)
+* [Instalar para VS Code](vscode:extension/anthropic.claude-code)
+* [Instalar para Cursor](cursor:extension/anthropic.claude-code)
 
-Ou no VS Code, pressione `Cmd+Shift+X` (Mac) ou `Ctrl+Shift+X` (Windows/Linux) para abrir a visualização de Extensões, procure por "Claude Code" e clique em **Install**.
+Ou no VS Code, pressione `Cmd+Shift+X` (Mac) ou `Ctrl+Shift+X` (Windows/Linux) para abrir a visualização de Extensões, procure por "Claude Code" e clique em **Instalar**.
+
+A extensão também é instalada em outros forks do VS Code como Windsurf ou Kiro. Procure por "Claude Code" na visualização de Extensões do editor, ou instale a partir do [registro Open VSX](https://open-vsx.org/extension/Anthropic/claude-code). Se o seu editor não conseguir instalar a extensão, execute `claude` no seu terminal integrado. A [CLI](/pt/quickstart) funciona em qualquer terminal.
 
 <Note>Se a extensão não aparecer após a instalação, reinicie o VS Code ou execute "Developer: Reload Window" na Paleta de Comandos.</Note>
 

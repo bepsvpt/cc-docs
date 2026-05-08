@@ -76,117 +76,7 @@ export const ContactSalesCard = ({surface}) => {
     </div>;
 };
 
-export const Experiment = ({flag, treatment, children}) => {
-  const VID_KEY = 'exp_vid';
-  const CONSENT_COUNTRIES = new Set(['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'RE', 'GP', 'MQ', 'GF', 'YT', 'BL', 'MF', 'PM', 'WF', 'PF', 'NC', 'AW', 'CW', 'SX', 'FO', 'GL', 'AX', 'GB', 'UK', 'AI', 'BM', 'IO', 'VG', 'KY', 'FK', 'GI', 'MS', 'PN', 'SH', 'TC', 'GG', 'JE', 'IM', 'CA', 'BR', 'IN']);
-  const fnv1a = s => {
-    let h = 0x811c9dc5;
-    for (let i = 0; i < s.length; i++) {
-      h ^= s.charCodeAt(i);
-      h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
-    }
-    return h >>> 0;
-  };
-  const bucket = (seed, vid) => fnv1a(fnv1a(seed + vid) + '') % 10000 < 5000 ? 'control' : 'treatment';
-  const [decision] = useState(() => {
-    const params = new URLSearchParams(location.search);
-    const preBucketed = document.documentElement.dataset['gb_' + flag.replace(/-/g, '_')];
-    const force = params.get('gb-force');
-    if (force) {
-      for (const p of force.split(',')) {
-        const [k, v] = p.split(':');
-        if (k === flag) return {
-          variant: v || 'treatment',
-          track: false
-        };
-      }
-    }
-    if (navigator.globalPrivacyControl) {
-      return {
-        variant: 'control',
-        track: false
-      };
-    }
-    const prefsMatch = document.cookie.match(/(?:^|; )anthropic-consent-preferences=([^;]+)/);
-    if (prefsMatch) {
-      try {
-        if (JSON.parse(decodeURIComponent(prefsMatch[1])).analytics !== true) {
-          return {
-            variant: 'control',
-            track: false
-          };
-        }
-      } catch {
-        return {
-          variant: 'control',
-          track: false
-        };
-      }
-    } else {
-      const country = params.get('country')?.toUpperCase() || (document.cookie.match(/(?:^|; )cf_geo=([A-Z]{2})/) || [])[1];
-      if (!country || CONSENT_COUNTRIES.has(country)) {
-        return {
-          variant: 'control',
-          track: false
-        };
-      }
-    }
-    let vid;
-    try {
-      const ajsMatch = document.cookie.match(/(?:^|; )ajs_anonymous_id=([^;]+)/);
-      if (ajsMatch) {
-        vid = decodeURIComponent(ajsMatch[1]).replace(/^"|"$/g, '');
-      } else {
-        vid = localStorage.getItem(VID_KEY);
-        if (!vid) {
-          vid = crypto.randomUUID();
-        }
-        document.cookie = `ajs_anonymous_id=${vid}; domain=.claude.com; path=/; Secure; SameSite=Lax; max-age=31536000`;
-      }
-      try {
-        localStorage.setItem(VID_KEY, vid);
-      } catch {}
-    } catch {
-      return {
-        variant: 'control',
-        track: false
-      };
-    }
-    const variant = preBucketed === '1' ? 'treatment' : preBucketed === '0' ? 'control' : bucket(flag, vid);
-    return {
-      variant,
-      track: true,
-      vid
-    };
-  });
-  useEffect(() => {
-    if (!decision.track) return;
-    fetch('https://api.anthropic.com/api/event_logging/v2/batch', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-service-name': 'claude_code_docs'
-      },
-      body: JSON.stringify({
-        events: [{
-          event_type: 'GrowthbookExperimentEvent',
-          event_data: {
-            device_id: decision.vid,
-            anonymous_id: decision.vid,
-            timestamp: new Date().toISOString(),
-            experiment_id: flag,
-            variation_id: decision.variant === 'treatment' ? 1 : 0,
-            environment: 'production'
-          }
-        }]
-      }),
-      keepalive: true
-    }).catch(() => {});
-  }, []);
-  return decision.variant === 'treatment' ? treatment : children;
-};
-
-<Experiment flag="docs-contact-sales-cta" treatment={<ContactSalesCard surface="vertex" />} />
+<ContactSalesCard surface="vertex" />
 
 ## Prasyarat
 
@@ -266,8 +156,23 @@ Untuk informasi lebih lanjut, lihat [dokumentasi autentikasi Google Cloud](https
 Claude Code v2.1.121 atau lebih baru mendukung [Workload Identity Federation berbasis sertifikat X.509](https://cloud.google.com/iam/docs/workload-identity-federation-with-x509-certificates) melalui rantai Application Default Credentials yang sama. Atur `GOOGLE_APPLICATION_CREDENTIALS` ke jalur file konfigurasi kredensial Anda.
 
 <Note>
-  Saat melakukan autentikasi, Claude Code akan secara otomatis menggunakan ID proyek dari variabel lingkungan `ANTHROPIC_VERTEX_PROJECT_ID`. Untuk menimpanya, atur salah satu variabel lingkungan ini: `GCLOUD_PROJECT`, `GOOGLE_CLOUD_PROJECT`, atau `GOOGLE_APPLICATION_CREDENTIALS`.
+  Claude Code menggunakan `ANTHROPIC_VERTEX_PROJECT_ID` sebagai ID proyek untuk permintaan Vertex AI. Variabel lingkungan `GCLOUD_PROJECT` dan `GOOGLE_CLOUD_PROJECT` serta file kredensial yang dirujuk oleh `GOOGLE_APPLICATION_CREDENTIALS` memiliki prioritas lebih tinggi daripada itu. Jika tidak ada yang diatur, ID proyek diselesaikan dari konfigurasi `gcloud` Anda atau akun layanan yang terlampir.
 </Note>
+
+#### Konfigurasi kredensial lanjutan
+
+Claude Code mendukung penyegaran kredensial otomatis untuk GCP melalui pengaturan `gcpAuthRefresh`. Ketika Claude Code mendeteksi bahwa kredensial GCP Anda telah kedaluwarsa atau tidak dapat dimuat, Claude Code menjalankan perintah yang dikonfigurasi untuk mendapatkan kredensial baru sebelum mencoba ulang permintaan.
+
+```json theme={null}
+{
+  "gcpAuthRefresh": "gcloud auth application-default login",
+  "env": {
+    "ANTHROPIC_VERTEX_PROJECT_ID": "your-project-id"
+  }
+}
+```
+
+Output perintah ditampilkan kepada pengguna, tetapi input interaktif tidak didukung. Ini berfungsi dengan baik untuk alur autentikasi berbasis browser di mana CLI menampilkan URL dan Anda menyelesaikan autentikasi di browser. Perintah penyegaran habis waktu setelah tiga menit jika autentikasi tidak selesai. Jika Anda mengatur `gcpAuthRefresh` dalam pengaturan proyek seperti `.claude/settings.json`, perintah hanya berjalan setelah Anda menerima prompt kepercayaan ruang kerja.
 
 ### 4. Konfigurasi Claude Code
 
@@ -362,6 +267,12 @@ Claude Opus 4.7, Opus 4.6, dan Sonnet 4.6 mendukung [jendela konteks token 1M](h
 [Wizard pengaturan](#sign-in-with-vertex-ai) menawarkan opsi konteks 1M ketika mempinkan model. Untuk mengaktifkannya untuk model yang dipinkan secara manual, tambahkan `[1m]` ke ID model. Lihat [Pin models for third-party deployments](/id/model-config#pin-models-for-third-party-deployments) untuk detail.
 
 ## Pemecahan masalah
+
+Jika Anda mengalami kesalahan "Could not load the default credentials":
+
+* Jalankan `gcloud auth application-default login` untuk menyiapkan Application Default Credentials
+* Atur `GOOGLE_APPLICATION_CREDENTIALS` ke jalur file kunci akun layanan
+* Lihat [Configure GCP credentials](#3-configure-gcp-credentials) untuk semua opsi
 
 Jika Anda mengalami masalah kuota:
 

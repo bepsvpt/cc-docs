@@ -327,6 +327,10 @@ claude mcp remove github
 /mcp
 ```
 
+Le panneau `/mcp` affiche le nombre d'outils à côté de chaque serveur connecté et signale les serveurs qui annoncent la capacité des outils mais n'exposent aucun outil.
+
+Le nom du serveur `workspace` est réservé à un usage interne. Si votre configuration définit un serveur avec ce nom, Claude Code le saute au chargement et affiche un avertissement vous demandant de le renommer.
+
 ### Mises à jour dynamiques des outils
 
 Claude Code supporte les notifications MCP `list_changed`, permettant aux serveurs MCP de mettre à jour dynamiquement leurs outils, prompts et ressources disponibles sans vous obliger à vous déconnecter et reconnecter. Lorsqu'un serveur MCP envoie une notification `list_changed`, Claude Code actualise automatiquement les capacités disponibles de ce serveur.
@@ -423,7 +427,7 @@ Consultez la [référence des composants du plugin](/fr/plugins-reference#mcp-se
 
 ## Portées d'installation MCP
 
-Les serveurs MCP peuvent être configurés à trois portées différentes. La portée que vous choisissez contrôle les projets dans lesquels le serveur se charge et si la configuration est partagée avec votre équipe.
+Les serveurs MCP peuvent être configurés à trois portées différentes. La portée que vous choisissez contrôle les projets dans lesquels le serveur se charge et si la configuration est partagée avec votre équipe. Les administrateurs peuvent également déployer des serveurs au niveau de l'entreprise via la [configuration gérée](#managed-mcp-configuration).
 
 | Portée                     | Se charge dans           | Partagé avec l'équipe           | Stocké dans                       |
 | -------------------------- | ------------------------ | ------------------------------- | --------------------------------- |
@@ -944,6 +948,8 @@ Si vous vous êtes connecté à Claude Code avec un compte [Claude.ai](https://c
   </Step>
 </Steps>
 
+Un serveur que vous avez ajouté dans Claude Code prend [précédence](#scope-hierarchy-and-precedence) sur un connecteur claude.ai qui pointe vers la même URL. Quand cela se produit, `/mcp` répertorie le connecteur comme masqué et montre comment supprimer le doublon si vous préférez utiliser le connecteur.
+
 Pour désactiver les serveurs MCP de Claude.ai dans Claude Code, définissez la variable d'environnement `ENABLE_CLAUDEAI_MCP_SERVERS` sur `false` :
 
 ```bash theme={null}
@@ -1183,6 +1189,8 @@ L'entrée `.mcp.json` suivante exempte un serveur HTTP tout en laissant les autr
 
 Le champ `alwaysLoad` est disponible sur tous les types de serveurs et nécessite Claude Code v2.1.121 ou ultérieur. Un serveur MCP peut également marquer les outils individuels comme toujours chargés en incluant `"anthropic/alwaysLoad": true` dans l'objet `_meta` de l'outil, ce qui a le même effet pour cet outil uniquement.
 
+La définition de `alwaysLoad: true` bloque également le démarrage jusqu'à ce que le serveur se connecte, limité au délai d'expiration de connexion standard de 5 secondes. Cela s'applique même lorsque [`MCP_CONNECTION_NONBLOCKING=1`](/fr/env-vars) est défini, car les outils doivent être présents lors de la construction de la première invite. Les autres serveurs se connectent toujours en arrière-plan lorsque le mode non-bloquant est activé.
+
 ## Utiliser les prompts MCP comme commandes
 
 Les serveurs MCP peuvent exposer des prompts qui deviennent disponibles en tant que commandes dans Claude Code.
@@ -1350,6 +1358,8 @@ Les modèles d'URL supportent les caractères génériques en utilisant `*` pour
 * `https://mcp.company.com/*` - Autoriser tous les chemins sur un domaine spécifique
 * `https://*.example.com/*` - Autoriser n'importe quel sous-domaine de example.com
 * `http://localhost:*/*` - Autoriser n'importe quel port sur localhost
+
+La correspondance du nom d'hôte est insensible à la casse et ignore un point FQDN final, en correspondant à la sémantique DNS. Un modèle comme `*://Mcp.Example.com/*` correspond à `https://mcp.example.com/api`, et `https://mcp.example.com.` est traité de la même manière que `https://mcp.example.com`. Les schémas et les chemins restent sensibles à la casse.
 
 **Comportement du serveur distant** :
 

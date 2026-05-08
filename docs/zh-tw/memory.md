@@ -132,6 +132,16 @@ Claude Code 讀取 `CLAUDE.md`，而不是 `AGENTS.md`。如果您的儲存庫�
 對 `src/billing/` 下的變更使用 plan mode。
 ```
 
+符號連結也可以運作，如果您不需要新增 Claude 特定的內容：
+
+```bash theme={null}
+ln -s AGENTS.md CLAUDE.md
+```
+
+在 Windows 上，建立符號連結需要系統管理員權限或開發人員模式，因此請改用 `@AGENTS.md` 匯入。
+
+在已經有 `AGENTS.md` 的儲存庫中執行 [`/init`](/zh-TW/commands) 會讀取它並將相關部分合併到產生的 `CLAUDE.md` 中。它也會讀取其他工具配置，如 `.cursorrules` 和 `.windsurfrules`。
+
 ### CLAUDE.md 檔案如何載入
 
 Claude Code 透過從您目前的工作目錄向上走目錄樹來讀取 CLAUDE.md 檔案，檢查沿途的每個目錄中是否有 `CLAUDE.md` 和 `CLAUDE.local.md` 檔案。這意味著如果您在 `foo/bar/` 中執行 Claude Code，它會從 `foo/bar/CLAUDE.md`、`foo/CLAUDE.md` 和沿途的任何 `CLAUDE.local.md` 檔案載入指令。
@@ -377,6 +387,8 @@ CLAUDE.md 內容作為系統提示後的使用者訊息傳遞，而不是系統�
 * 檢查相關的 CLAUDE.md 是否位於為您的工作階段載入的位置（請參閱 [選擇 CLAUDE.md 檔案的位置](#choose-where-to-put-claude-md-files)）。
 * 使指令更具體。「使用 2 空格縮排」比「正確格式化程式碼」效果更好。
 * 查找跨 CLAUDE.md 檔案的衝突指令。如果兩個檔案為相同行為提供不同的指導，Claude 可能會任意選擇一個。
+
+如果指令是必須在特定時間點執行的內容，例如在每次提交前或每次檔案編輯後，請改為將其寫成 [hook](/zh-TW/hooks-guide)。Hooks 在固定的生命週期事件中作為 shell 命令執行，並且無論 Claude 決定做什麼都適用。
 
 對於您想要在系統提示級別的指令，請使用 [`--append-system-prompt`](/zh-TW/cli-reference#system-prompt-flags)。這必須在每次呼叫時傳遞，因此它更適合指令碼和自動化，而不是互動式使用。
 

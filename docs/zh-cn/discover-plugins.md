@@ -4,7 +4,7 @@
 
 # 通过市场发现和安装预构建插件
 
-> 从市场发现和安装插件，以使用新命令、代理和功能扩展 Claude Code。
+> 从市场发现和安装插件，以使用新 skills、agents 和功能扩展 Claude Code。
 
 插件通过 skills、agents、hooks 和 MCP servers 扩展 Claude Code。插件市场是帮助您发现和安装这些扩展的目录，无需自己构建。
 
@@ -35,6 +35,8 @@
 ```shell theme={null}
 /plugin install github@claude-plugins-official
 ```
+
+如果 Claude Code 报告在任何市场中找不到该插件，您的市场要么缺失，要么已过期。运行 `/plugin marketplace update claude-plugins-official` 以刷新它，或如果您之前未添加过，运行 `/plugin marketplace add anthropics/claude-plugins-official`。然后重试安装。
 
 <Note>
   官方市场由 Anthropic 维护。要向官方市场提交插件，请使用应用内提交表单之一：
@@ -95,10 +97,10 @@
 
 ### 开发工作流
 
-为常见开发任务添加命令和代理的插件：
+为常见开发任务添加 skills 和 agents 的插件：
 
 * **commit-commands**：Git 提交工作流，包括提交、推送和 PR 创建
-* **pr-review-toolkit**：用于审查拉取请求的专门代理
+* **pr-review-toolkit**：用于审查拉取请求的专门 agents
 * **agent-sdk-dev**：使用 Claude Agent SDK 构建的工具
 * **plugin-dev**：用于创建您自己的插件的工具包
 
@@ -142,7 +144,7 @@ Anthropic 还维护一个[演示插件市场](https://github.com/anthropics/clau
     * **项目范围**：为此存储库上的所有协作者安装
     * **本地范围**：仅在此存储库中为自己安装
 
-    例如，选择 **commit-commands**（添加 git 工作流命令的插件）并将其安装到您的用户范围。
+    例如，选择 **commit-commands**（添加 git 工作流 skills 的插件）并将其安装到您的用户范围。
 
     您也可以从命令行直接安装：
 
@@ -154,7 +156,7 @@ Anthropic 还维护一个[演示插件市场](https://github.com/anthropics/clau
   </Step>
 
   <Step title="使用您的新插件">
-    安装后，运行 `/reload-plugins` 以激活插件。插件命令由插件名称命名空间，因此 **commit-commands** 提供诸如 `/commit-commands:commit` 之类的命令。
+    安装后，运行 `/reload-plugins` 以激活插件。插件 skills 由插件名称命名空间，因此 **commit-commands** 提供诸如 `/commit-commands:commit` 之类的 skills。
 
     通过对文件进行更改并运行来尝试：
 
@@ -164,7 +166,7 @@ Anthropic 还维护一个[演示插件市场](https://github.com/anthropics/clau
 
     这会暂存您的更改、生成提交消息并创建提交。
 
-    每个插件的工作方式不同。检查**发现**选项卡中的插件描述或其主页以了解它提供的命令和功能。
+    每个插件的工作方式不同。检查**发现**选项卡中的插件描述或其主页以了解它提供的 skills 和功能。
   </Step>
 </Steps>
 
@@ -195,7 +197,7 @@ Anthropic 还维护一个[演示插件市场](https://github.com/anthropics/clau
 
 ### 从其他 Git 主机添加
 
-通过提供完整 URL 添加任何 git 存储库。这适用于任何 Git 主机，包括 GitLab、Bitbucket 和自托管服务器：
+通过提供完整 URL 添加任何 git 存储库。这适用于任何 Git 主机，包括 GitLab、Bitbucket 和自托管服务器。包括 `.git` 后缀，以便 Claude Code 克隆存储库，而不是将 URL 视为托管 `marketplace.json` 文件的直接链接。
 
 使用 HTTPS：
 
@@ -257,15 +259,21 @@ Anthropic 还维护一个[演示插件市场](https://github.com/anthropics/clau
 
 您也可能看到具有**托管**范围的插件——这些由管理员通过[托管设置](/zh-CN/settings#settings-files)安装，无法修改。
 
-运行 `/plugin` 并转到**已安装**选项卡以查看按范围分组的插件。
-
 <Warning>
   在安装插件之前，请确保您信任该插件。Anthropic 不控制插件中包含的 MCP servers、文件或其他软件，也无法验证它们是否按预期工作。检查每个插件的主页以获取更多信息。
 </Warning>
 
 ## 管理已安装的插件
 
-运行 `/plugin` 并转到**已安装**选项卡以查看、启用、禁用或卸载您的插件。键入以按插件名称或描述筛选列表。
+运行 `/plugin` 并转到**已安装**选项卡以查看、启用、禁用或卸载您的插件。该列表按范围分组并排序，以便您首先看到问题：具有加载错误或未解决依赖项的插件出现在顶部，然后是您的收藏夹，禁用的插件折叠在底部的折叠标题后面。
+
+从列表中您可以：
+
+* 按 `f` 以收藏或取消收藏选定的插件
+* 输入以按插件名称或描述筛选
+* 按 Enter 打开插件的详细视图并启用、禁用或卸载它
+
+当您安装声明依赖项的插件时，安装输出会列出哪些依赖项与其一起自动安装。
 
 您也可以使用直接命令管理插件。
 
@@ -302,7 +310,7 @@ claude plugin uninstall formatter@your-org --scope project
 /reload-plugins
 ```
 
-Claude Code 重新加载所有活跃插件，并显示重新加载的命令、skills、agents、hooks、插件 MCP servers 和插件 LSP servers 的计数。
+Claude Code 重新加载所有活跃插件，并显示插件、skills、agents、hooks、插件 MCP servers 和插件 LSP servers 的计数。
 
 ## 管理市场
 
@@ -400,8 +408,8 @@ export FORCE_AUTOUPDATE_PLUGINS=1
 
 1. **检查您的版本**：运行 `claude --version` 以查看安装的内容。
 2. **更新 Claude Code**：
-   * **Homebrew**：`brew upgrade claude-code`
-   * **npm**：`npm update -g @anthropic-ai/claude-code`
+   * **Homebrew**：`brew upgrade claude-code`（或如果您安装了该 cask，则为 `brew upgrade claude-code@latest`）
+   * **npm**：`npm install -g @anthropic-ai/claude-code@latest`
    * **本地安装程序**：从[设置](/zh-CN/setup)重新运行安装命令
 3. **重启 Claude Code**：更新后，重启您的终端并再次运行 `claude`。
 

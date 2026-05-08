@@ -249,7 +249,7 @@ Chaque fonctionnalité se charge à différents points de votre session. Les ong
 
     **Coût du contexte :** Faible jusqu'à utilisation. Les skills utilisateur uniquement ont un coût zéro jusqu'à invocation.
 
-    **Dans les subagents :** Les skills fonctionnent différemment dans les subagents. Au lieu du chargement à la demande, les skills passées à un subagent sont entièrement préchargées dans son contexte au lancement. Les subagents n'héritent pas des skills de la session principale ; vous devez les spécifier explicitement.
+    **Dans les subagents :** Les skills fonctionnent différemment dans les subagents. Au lieu du chargement à la demande, les skills listées dans le champ `skills` du subagent sont entièrement préchargées dans son contexte au lancement. Les subagents peuvent toujours découvrir et invoquer les skills de projet, utilisateur et plugin non listées via l'outil Skill.
 
     <Tip>Utilisez `disable-model-invocation: true` pour les skills avec des effets secondaires. Cela économise du contexte et garantit que seul vous les déclenchez.</Tip>
   </Tab>

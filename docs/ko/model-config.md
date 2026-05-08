@@ -17,20 +17,24 @@ Claude Code의 `model` 설정에서 다음 중 하나를 구성할 수 있습니
   * Foundry: 배포 이름
   * Vertex: 버전 이름
 
+<Note>
+  `ANTHROPIC_BASE_URL`은 요청이 전송되는 위치를 변경하며, 어느 모델이 응답하는지는 변경하지 않습니다. Claude를 LLM 게이트웨이를 통해 라우팅하려면 [LLM 게이트웨이 구성](/ko/llm-gateway)을 참조하세요.
+</Note>
+
 ### 모델 별칭
 
 모델 별칭은 정확한 버전 번호를 기억할 필요 없이 모델 설정을 선택하는 편리한 방법을 제공합니다:
 
-| 모델 별칭            | 동작                                                                                                                                         |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| **`default`**    | 모델 재정의를 제거하고 계정 유형에 따른 권장 모델로 되돌리는 특수 값입니다. 자체로는 모델 별칭이 아닙니다                                                                               |
-| **`best`**       | 현재 사용 가능한 가장 강력한 모델을 사용하며, 현재 `opus`와 동일합니다                                                                                                |
-| **`sonnet`**     | 일일 코딩 작업을 위해 최신 Sonnet 모델 사용                                                                                                               |
-| **`opus`**       | 복잡한 추론 작업을 위해 최신 Opus 모델 사용                                                                                                                |
-| **`haiku`**      | 간단한 작업을 위해 빠르고 효율적인 Haiku 모델 사용                                                                                                            |
-| **`sonnet[1m]`** | 긴 세션을 위해 [100만 토큰 컨텍스트 윈도우](https://platform.claude.com/docs/ko/build-with-claude/context-windows#1m-token-context-window)를 사용하는 Sonnet 사용 |
-| **`opus[1m]`**   | 긴 세션을 위해 [100만 토큰 컨텍스트 윈도우](https://platform.claude.com/docs/ko/build-with-claude/context-windows#1m-token-context-window)를 사용하는 Opus 사용   |
-| **`opusplan`**   | Plan Mode 중에 `opus`를 사용한 후 실행을 위해 `sonnet`으로 전환하는 특수 모드                                                                                    |
+| 모델 별칭            | 동작                                                                                                                                             |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`default`**    | 모델 재정의를 제거하고 계정 유형에 따른 권장 모델로 되돌리는 특수 값입니다. 자체로는 모델 별칭이 아닙니다                                                                                   |
+| **`best`**       | 현재 사용 가능한 가장 강력한 모델을 사용하며, 현재 `opus`와 동일합니다                                                                                                    |
+| **`sonnet`**     | 일일 코딩 작업을 위해 최신 Sonnet 모델을 사용합니다                                                                                                               |
+| **`opus`**       | 복잡한 추론 작업을 위해 최신 Opus 모델을 사용합니다                                                                                                                |
+| **`haiku`**      | 간단한 작업을 위해 빠르고 효율적인 Haiku 모델을 사용합니다                                                                                                            |
+| **`sonnet[1m]`** | 긴 세션을 위해 [100만 토큰 컨텍스트 윈도우](https://platform.claude.com/docs/ko/build-with-claude/context-windows#1m-token-context-window)를 사용하는 Sonnet을 사용합니다 |
+| **`opus[1m]`**   | 긴 세션을 위해 [100만 토큰 컨텍스트 윈도우](https://platform.claude.com/docs/ko/build-with-claude/context-windows#1m-token-context-window)를 사용하는 Opus를 사용합니다   |
+| **`opusplan`**   | Plan Mode 중에 `opus`를 사용한 후 실행을 위해 `sonnet`으로 전환하는 특수 모드입니다                                                                                     |
 
 Anthropic API에서 `opus`는 Opus 4.7로, `sonnet`은 Sonnet 4.6으로 확인됩니다. Bedrock, Vertex 및 Foundry에서 `opus`는 Opus 4.6으로, `sonnet`은 Sonnet 4.5로 확인됩니다. 더 새로운 모델은 전체 모델 이름을 명시적으로 선택하거나 `ANTHROPIC_DEFAULT_OPUS_MODEL` 또는 `ANTHROPIC_DEFAULT_SONNET_MODEL`을 설정하여 해당 제공자에서 사용할 수 있습니다.
 
@@ -45,8 +49,8 @@ Anthropic API에서 `opus`는 Opus 4.7로, `sonnet`은 Sonnet 4.6으로 확인�
 다음과 같은 여러 방법으로 모델을 구성할 수 있으며, 우선순위 순서대로 나열되어 있습니다:
 
 1. **세션 중** - `/model <alias|name>`을 사용하여 즉시 전환하거나, 인수 없이 `/model`을 실행하여 선택기를 엽니다. 선택기는 대화에 이전 출력이 있을 때 확인을 요청합니다. 다음 응답이 캐시된 컨텍스트 없이 전체 기록을 다시 읽기 때문입니다.
-2. **시작 시** - `claude --model <alias|name>`으로 실행
-3. **환경 변수** - `ANTHROPIC_MODEL=<alias|name>` 설정
+2. **시작 시** - `claude --model <alias|name>`으로 실행합니다.
+3. **환경 변수** - `ANTHROPIC_MODEL=<alias|name>`을 설정합니다.
 4. **설정** - `model` 필드를 사용하여 설정 파일에서 영구적으로 구성합니다.
 
 `/model` 선택은 사용자 설정에 저장되며 재시작 후에도 유지됩니다. v2.1.117부터 프로젝트의 `.claude/settings.json`이 다른 모델을 고정하는 경우, Claude Code는 선택 항목을 `.claude/settings.local.json`에도 작성하므로 재시작 후 해당 프로젝트에서 계속 적용됩니다. 관리되는 설정이 우선순위를 가지며 다음 실행 시 다시 적용됩니다.

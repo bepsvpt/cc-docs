@@ -32,6 +32,8 @@ VS Code 擴充功能為 Claude Code 提供了原生圖形介面，直接整合�
 
 或在 VS Code 中，按 `Cmd+Shift+X`（Mac）或 `Ctrl+Shift+X`（Windows/Linux）開啟擴充功能檢視，搜尋「Claude Code」，然後點擊**安裝**。
 
+擴充功能也會安裝在其他 VS Code 分支中，例如 Windsurf 或 Kiro。在編輯器的擴充功能檢視中搜尋「Claude Code」，或從 [Open VSX registry](https://open-vsx.org/extension/Anthropic/claude-code) 安裝。如果您的編輯器無法安裝擴充功能，請在其整合終端中執行 `claude`。[CLI](/zh-TW/quickstart) 可在任何終端中運作。
+
 <Note>如果安裝後擴充功能未出現，請重新啟動 VS Code 或從命令面板執行「Developer: Reload Window」。</Note>
 
 ## 開始使用

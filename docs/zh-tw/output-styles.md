@@ -6,7 +6,9 @@
 
 > 將 Claude Code 適配用於軟體工程以外的用途
 
-輸出樣式允許您將 Claude Code 用作任何類型的代理，同時保留其核心功能，例如執行本地指令碼、讀取/寫入檔案和追蹤待辦事項。
+輸出樣式改變 Claude 的回應方式，而不是 Claude 知道什麼。它們修改系統提示以設定角色、語氣和輸出格式，同時保留核心功能，例如執行指令碼、讀取和寫入檔案，以及追蹤待辦事項。當您每次都重新提示相同的語音或格式，或者當您希望 Claude 充當軟體工程師以外的角色時，請使用一個。
+
+有關您的專案、慣例或程式碼庫的說明，請改用 [CLAUDE.md](/zh-TW/memory)。
 
 ## 內建輸出樣式
 
@@ -63,17 +65,24 @@ tasks. [Your custom instructions here...]
 [Define how the assistant should behave in this style...]
 ```
 
-您可以在使用者層級 (`~/.claude/output-styles`) 或專案層級 (`.claude/output-styles`) 儲存這些檔案。
+您可以在三個層級儲存這些檔案：
+
+* 使用者：`~/.claude/output-styles`
+* 專案：`.claude/output-styles`
+* 受管原則：[受管設定目錄](/zh-TW/settings#settings-files)內的 `.claude/output-styles`
+
+[Plugins](/zh-TW/plugins-reference) 也可以在 `output-styles/` 目錄中提供輸出樣式。
 
 ### Frontmatter
 
 輸出樣式檔案支援 frontmatter 以指定中繼資料：
 
-| Frontmatter                | 用途                              | 預設      |
-| :------------------------- | :------------------------------ | :------ |
-| `name`                     | 輸出樣式的名稱，如果不是檔案名稱                | 繼承自檔案名稱 |
-| `description`              | 輸出樣式的描述，在 `/config` 選擇器中顯示      | 無       |
-| `keep-coding-instructions` | 是否保留 Claude Code 系統提示中與編碼相關的部分。 | false   |
+| Frontmatter                | 用途                                                                                                   | 預設      |
+| :------------------------- | :--------------------------------------------------------------------------------------------------- | :------ |
+| `name`                     | 輸出樣式的名稱，如果不是檔案名稱                                                                                     | 繼承自檔案名稱 |
+| `description`              | 輸出樣式的描述，在 `/config` 選擇器中顯示                                                                           | 無       |
+| `keep-coding-instructions` | 是否保留 Claude Code 系統提示中與編碼相關的部分。                                                                      | false   |
+| `force-for-plugin`         | 僅限 Plugin 輸出樣式：在啟用 plugin 時自動應用此樣式，無需要求使用者選擇它。覆蓋使用者的 `outputStyle` 設定。如果多個啟用的 plugin 設定此項，則第一個載入的獲勝。 | false   |
 
 ## 與相關功能的比較
 

@@ -564,6 +564,22 @@ SSH 연결을 추가하려면 세션을 시작하기 전에 환경 드롭다운�
 
 각 항목에는 `id`, `name`, `sshHost`가 필요합니다. `sshPort`, `sshIdentityFile`, `startDirectory` 필드는 선택 사항입니다. 사용자는 자신의 `~/.claude/settings.json`에 `sshConfigs`를 추가할 수도 있습니다. 이는 대화 상자를 통해 추가된 연결이 저장되는 위치입니다.
 
+#### SSH 호스트 연결을 제한하여 사용자가 연결할 수 있는 호스트를 제한합니다
+
+관리자는 [관리되는 설정](/ko/settings#settings-precedence) 파일에 `sshHostAllowlist`를 추가하여 Desktop의 SSH 세션을 승인된 호스트 집합으로 제한할 수 있습니다. 설정되면 사용자는 확인된 호스트명이 패턴 중 하나와 일치하는 호스트에만 연결할 수 있습니다. SSH 세션을 완전히 비활성화하려면 빈 배열로 설정합니다.
+
+다음 예제는 `devboxes.example.com` 아래의 모든 호스트 및 단일 명명된 bastion 호스트에 대한 연결을 허용합니다:
+
+```json theme={null}
+{
+  "sshHostAllowlist": ["*.devboxes.example.com", "bastion.example.com"]
+}
+```
+
+패턴은 대소문자를 구분하지 않습니다. `*`는 모든 호스트와 일치하고, `*.example.com`은 `example.com` 및 모든 하위 도메인과 일치합니다. 다른 모든 것은 정확한 일치입니다. 검사는 `ssh -G`를 통한 `~/.ssh/config` 확인 후 호스트명에 대해 실행되므로 `Host` 별칭 및 `ProxyCommand`/`ProxyJump` 항목은 확인된 `HostName`이 일치하는 한 허용됩니다.
+
+`sshHostAllowlist`는 관리되는 설정에서만 읽혀집니다. 사용자 또는 프로젝트 설정의 값은 무시됩니다. Claude Desktop 앱만 이 설정을 인식합니다. Claude Code CLI 및 IDE 확장은 이를 읽지 않으며, Bash 도구를 통해 실행되는 `ssh` 명령을 제한하지 않습니다. 이는 Desktop 앱이 연결하는 호스트를 제어하며, 네트워크 송신을 제어하지 않으므로 하드 경계가 필요한 경우 조직의 네트워크 또는 제로 트러스트 제어와 함께 사용합니다.
+
 ## 엔터프라이즈 구성
 
 Team 또는 Enterprise 계획의 조직은 관리 콘솔 컨트롤, 관리 설정 파일, 장치 관리 정책을 통해 데스크톱 앱 동작을 관리할 수 있습니다.
@@ -587,6 +603,7 @@ Team 또는 Enterprise 계획의 조직은 관리 콘솔 컨트롤, 관리 설�
 | `disableAutoMode`                          | 사용자가 [Auto](/ko/permission-modes#eliminate-prompts-with-auto-mode) 모드를 활성화하지 못하도록 하려면 `"disable"`로 설정합니다. 모드 선택기에서 Auto를 제거합니다. `permissions` 아래에서도 허용됩니다. |
 | `autoMode`                                 | 조직 전체에서 auto mode 분류기가 신뢰하고 차단하는 것을 사용자 정의합니다. [auto mode 구성](/ko/auto-mode-config)을 참조하세요.                                                                |
 | `sshConfigs`                               | 환경 드롭다운에 나타나는 [SSH 연결](#pre-configure-ssh-connections-for-your-team)을 사전 구성합니다. 사용자는 관리 연결을 편집하거나 삭제할 수 없습니다.                                              |
+| `sshHostAllowlist`                         | [SSH 세션](#restrict-which-ssh-hosts-users-can-connect-to)을 확인된 호스트명이 이러한 패턴 중 하나와 일치하는 호스트로 제한합니다. 빈 배열은 SSH 세션을 비활성화합니다. 관리 설정에서만 읽습니다.                    |
 
 각 머신의 디스크에 배포된 관리 설정 파일은 Desktop 세션에 적용됩니다. 관리 콘솔을 통해 원격으로 푸시된 관리 설정은 현재 CLI 및 IDE 세션에만 도달하므로, Desktop 배포의 경우 MDM을 통해 파일을 배포하거나 위의 [관리 콘솔 컨트롤](#admin-console-controls)을 사용합니다.
 

@@ -262,12 +262,12 @@ Frontmatter 定义了 subagent 的元数据和配置。正文成为指导 subage
 | :---------------- | :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `name`            | Yes      | 使用小写字母和连字符的唯一标识符                                                                                                                                                                                                   |
 | `description`     | Yes      | Claude 何时应该委托给此 subagent                                                                                                                                                                                           |
-| `tools`           | No       | [Tools](#available-tools) subagent 可以使用。如果省略，继承所有工具                                                                                                                                                                |
+| `tools`           | No       | [Tools](#available-tools) subagent 可以使用。如果省略，继承所有工具。要将 Skills 预加载到上下文中，请使用 `skills` 字段而不是在此处列出 `Skill`                                                                                                             |
 | `disallowedTools` | No       | 要拒绝的工具，从继承或指定的列表中删除                                                                                                                                                                                                |
 | `model`           | No       | [Model](#choose-a-model) 使用：`sonnet`、`opus`、`haiku`、完整模型 ID（例如，`claude-opus-4-7`）或 `inherit`。默认为 `inherit`                                                                                                         |
 | `permissionMode`  | No       | [Permission mode](#permission-modes)：`default`、`acceptEdits`、`auto`、`dontAsk`、`bypassPermissions` 或 `plan`。对于 [plugin subagents](#choose-the-subagent-scope) 被忽略                                                   |
 | `maxTurns`        | No       | subagent 停止前的最大代理轮数                                                                                                                                                                                                |
-| `skills`          | No       | [Skills](/zh-CN/skills) 在启动时加载到 subagent 的上下文中。注入完整的技能内容，而不仅仅是可用于调用。Subagents 不继承来自父对话的技能                                                                                                                          |
+| `skills`          | No       | [Skills](/zh-CN/skills) 在启动时加载到 subagent 的上下文中。注入完整的技能内容，而不仅仅是描述。Subagents 仍然可以通过 Skill 工具调用未列出的项目、用户和 plugin 技能                                                                                                   |
 | `mcpServers`      | No       | [MCP servers](/zh-CN/mcp) 对此 subagent 可用。每个条目要么是引用已配置服务器的服务器名称（例如，`"slack"`），要么是内联定义，其中服务器名称为键，完整的 [MCP server config](/zh-CN/mcp#installing-mcp-servers) 为值。对于 [plugin subagents](#choose-the-subagent-scope) 被忽略 |
 | `hooks`           | No       | [Lifecycle hooks](#define-hooks-for-subagents) 限定于此 subagent。对于 [plugin subagents](#choose-the-subagent-scope) 被忽略                                                                                                 |
 | `memory`          | No       | [Persistent memory scope](#enable-persistent-memory)：`user`、`project` 或 `local`。启用跨会话学习                                                                                                                            |
@@ -418,7 +418,7 @@ skills:
 Implement API endpoints. Follow the conventions and patterns from the preloaded skills.
 ```
 
-每个技能的完整内容被注入到 subagent 的上下文中，而不仅仅是可用于调用。Subagents 不继承来自父对话的技能；您必须明确列出它们。
+每个列出的技能的完整内容被注入到 subagent 的上下文中。此字段控制哪些技能被预加载，而不是 subagent 可以访问哪些技能：没有它，subagent 仍然可以在执行期间通过 Skill 工具发现和调用项目、用户和 plugin 技能。要防止 subagent 完全调用技能，请从 [`tools`](#available-tools) 列表中省略 `Skill` 或将其添加到 `disallowedTools`。
 
 您无法预加载设置了 [`disable-model-invocation: true`](/zh-CN/skills#control-who-invokes-a-skill) 的技能，因为预加载来自 Claude 可以调用的相同技能集。如果列出的技能缺失或被禁用，Claude Code 会跳过它并向调试日志记录警告。
 

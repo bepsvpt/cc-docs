@@ -317,8 +317,16 @@ Saat Anda membuat perubahan pada plugin Anda, jalankan `/reload-plugins` untuk m
 
 Untuk menguji plugin yang sudah dikemas sebagai arsip `.zip` dan dihosting di URL, seperti artefak build CI, gunakan `--plugin-url` sebagai gantinya. Claude Code mengambil arsip saat startup dan memuatnya hanya untuk sesi itu. Jika pengambilan gagal atau arsip tidak valid, Claude Code melaporkan kesalahan pemuatan plugin dan dimulai tanpanya. Pertimbangan [kepercayaan](/id/discover-plugins#security) yang sama berlaku seperti untuk sumber plugin apa pun: hanya arahkan flag ini ke arsip yang Anda kontrol atau percayai.
 
+Untuk memuat beberapa plugins, ulangi flag untuk setiap URL:
+
 ```bash theme={null}
-claude --plugin-url https://example.com/my-plugin.zip
+claude --plugin-url https://example.com/my-plugin.zip --plugin-url https://example.com/other.zip
+```
+
+Atau teruskan URL yang dipisahkan spasi sebagai satu argumen yang dikutip:
+
+```bash theme={null}
+claude --plugin-url "https://example.com/my-plugin.zip https://example.com/other.zip"
 ```
 
 ### Debug masalah plugin

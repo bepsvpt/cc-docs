@@ -325,6 +325,10 @@ claude mcp remove github
 /mcp
 ```
 
+`/mcp` 面板在每个连接的服务器旁边显示工具计数，并标记声称工具功能但未公开任何工具的服务器。
+
+服务器名称 `workspace` 保留供内部使用。如果您的配置定义了具有该名称的服务器，Claude Code 会在加载时跳过它，并显示一条警告，要求您重命名它。
+
 ### 动态工具更新
 
 Claude Code 支持 MCP `list_changed` 通知，允许 MCP 服务器动态更新其可用工具、提示和资源，而无需您断开连接并重新连接。当 MCP 服务器发送 `list_changed` 通知时，Claude Code 会自动刷新来自该服务器的可用功能。
@@ -337,7 +341,7 @@ Claude Code 支持 MCP `list_changed` 通知，允许 MCP 服务器动态更新�
 
 ### 使用频道推送消息
 
-MCP 服务器也可以直接将消息推送到您的会话中，以便 Claude 可以对外部事件（如 CI 结果、监控警报或聊天消息）做出反应。要启用此功能，您的服务器声明 `claude/channel` 功能，并在启动时使用 `--channels` 标志选择加入。请参阅[频道](/zh-CN/channels)以使用官方支持的频道，或[频道参考](/zh-CN/channels-reference)以构建您自己的频道。
+MCP 服务器也可以直接将消息推送到您的会话中，以便 Claude 可以对外部事件（如 CI 结果、监控警报或聊天消息）做出反应。要启用此功能，您的服务器声明 `claude/channel` 功能，并在启动时使用 `--channels` 标志选择加入。请参阅 [Channels](/zh-CN/channels) 以使用官方支持的频道，或 [Channels reference](/zh-CN/channels-reference) 以构建您自己的频道。
 
 <Tip>
   提示：
@@ -354,7 +358,7 @@ MCP 服务器也可以直接将消息推送到您的会话中，以便 Claude �
 
 ### 插件提供的 MCP 服务器
 
-[插件](/zh-CN/plugins)可以捆绑 MCP 服务器，在启用插件时自动提供工具和集成。插件 MCP 服务器的工作方式与用户配置的服务器相同。
+[Plugins](/zh-CN/plugins) 可以捆绑 MCP 服务器，在启用插件时自动提供工具和集成。插件 MCP 服务器的工作方式与用户配置的服务器相同。
 
 **插件 MCP 服务器的工作原理**：
 
@@ -421,7 +425,7 @@ MCP 服务器也可以直接将消息推送到您的会话中，以便 Claude �
 
 ## MCP 安装范围
 
-MCP 服务器可以在三个不同的范围级别进行配置。您选择的范围控制服务器在哪些项目中加载以及配置是否与您的团队共享。
+MCP 服务器可以在三个不同的范围级别进行配置。您选择的范围控制服务器在哪些项目中加载以及配置是否与您的团队共享。管理员还可以通过[托管配置](#managed-mcp-configuration)在企业级别部署服务器。
 
 | 范围                   | 加载位置   | 与团队共享    | 存储位置                |
 | -------------------- | ------ | -------- | ------------------- |
@@ -445,7 +449,7 @@ claude mcp add --transport http stripe https://mcp.stripe.com
 claude mcp add --transport http stripe --scope local https://mcp.stripe.com
 ```
 
-从 `/path/to/your/project` 运行时，该命令将服务器写入 `~/.claude.json` 中您当前项目的条目。下面的示例显示结果：
+该命令将服务器写入 `~/.claude.json` 中您当前项目的条目。下面的示例显示从 `/path/to/your/project` 运行时的结果：
 
 ```json theme={null}
 {
@@ -942,6 +946,8 @@ Claude Code 在执行助手时设置这些环境变量：
   </Step>
 </Steps>
 
+您在 Claude Code 中添加的服务器优先于指向相同 URL 的 claude.ai 连接器。发生这种情况时，`/mcp` 会将连接器列为隐藏，并显示如何删除重复项（如果您更希望使用连接器）。
+
 要在 Claude Code 中禁用 claude.ai MCP 服务器，请将 `ENABLE_CLAUDEAI_MCP_SERVERS` 环境变量设置为 `false`：
 
 ```bash theme={null}
@@ -1181,6 +1187,8 @@ ENABLE_TOOL_SEARCH=false claude
 
 `alwaysLoad` 字段在所有服务器类型上可用，需要 Claude Code v2.1.121 或更高版本。MCP 服务器也可以通过在工具的 `_meta` 对象中包含 `"anthropic/alwaysLoad": true` 来标记单个工具为始终加载，这对该工具仅具有相同的效果。
 
+设置 `alwaysLoad: true` 也会阻止启动直到服务器连接，上限为标准 5 秒连接超时。即使设置了 [`MCP_CONNECTION_NONBLOCKING=1`](/zh-CN/env-vars)，这也适用，因为工具必须在构建第一个提示时存在。当启用非阻塞时，其他服务器仍在后台连接。
+
 ## 将 MCP 提示用作命令
 
 MCP 服务器可以公开在 Claude Code 中作为命令可用的提示。
@@ -1348,6 +1356,8 @@ URL 模式使用 `*` 支持通配符以匹配任何字符序列。这对于允�
 * `https://mcp.company.com/*` - 允许特定域上的所有路径
 * `https://*.example.com/*` - 允许 example.com 的任何子域
 * `http://localhost:*/*` - 允许 localhost 上的任何端口
+
+主机名匹配不区分大小写，忽略尾部 FQDN 点，匹配 DNS 语义。像 `*://Mcp.Example.com/*` 这样的模式匹配 `https://mcp.example.com/api`，`https://mcp.example.com.` 被视为与 `https://mcp.example.com` 相同。路径保持区分大小写。
 
 **远程服务器行为**：
 

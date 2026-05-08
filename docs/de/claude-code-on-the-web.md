@@ -113,10 +113,10 @@ Die `gh` CLI ist nicht vorinstalliert. Wenn Sie einen `gh`-Befehl benötigen, de
 
 Jede Cloud-Sitzung hat eine Transkript-URL auf claude.ai, und die Sitzung kann ihre eigene ID aus der Umgebungsvariablen `CLAUDE_CODE_REMOTE_SESSION_ID` lesen. Verwenden Sie dies, um einen nachverfolgbaren Link in PR-Bodies, Commit-Nachrichten, Slack-Posts oder generierten Berichten zu platzieren, damit ein Reviewer den Lauf öffnen kann, der sie produziert hat.
 
-Bitten Sie Claude, den Link aus der Umgebungsvariablen zu konstruieren. Der folgende Befehl gibt die URL aus:
+Der Wert der Variablen verwendet ein `cse_`-Präfix, während der Transkript-URL-Pfad die gleiche ID mit einem `session_`-Präfix verwendet. Ersetzen Sie das Präfix beim Erstellen des Links. Der folgende Befehl gibt die URL aus:
 
 ```bash theme={null}
-echo "https://claude.ai/code/${CLAUDE_CODE_REMOTE_SESSION_ID}"
+echo "https://claude.ai/code/${CLAUDE_CODE_REMOTE_SESSION_ID/#cse_/session_}"
 ```
 
 ### Tests ausführen, Services starten und Pakete hinzufügen
@@ -156,7 +156,7 @@ Umgebungen steuern [Netzwerkzugriff](#network-access), Umgebungsvariablen und da
 | Aktion                            | Wie                                                                                                                                                                                                                                                                   |
 | :-------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Umgebung hinzufügen               | Wählen Sie die aktuelle Umgebung, um die Auswahl zu öffnen, dann wählen Sie **Umgebung hinzufügen**. Der Dialog enthält Name, Netzwerkzugriffsstufe, Umgebungsvariablen und Setup-Skript.                                                                             |
-| Umgebung bearbeiten               | Wählen Sie das Einstellungssymbol rechts neben dem Umgebungsnamen.                                                                                                                                                                                                    |
+| Umgebung bearbeiten               | Wählen Sie das Cloud-Symbol mit dem Namen der aktuellen Umgebung, um die Auswahl zu öffnen, bewegen Sie den Mauszeiger über eine Umgebung und klicken Sie auf das Einstellungssymbol, das auf der rechten Seite erscheint.                                            |
 | Umgebung archivieren              | Öffnen Sie die Umgebung zum Bearbeiten und wählen Sie **Archivieren**. Archivierte Umgebungen sind in der Auswahl ausgeblendet, aber vorhandene Sitzungen werden weiterhin ausgeführt.                                                                                |
 | Standard für `--remote` festlegen | Führen Sie `/remote-env` in Ihrem Terminal aus. Wenn Sie eine einzelne Umgebung haben, zeigt dieser Befehl Ihre aktuelle Konfiguration. `/remote-env` wählt nur den Standard; fügen Sie Umgebungen über die Web-Oberfläche hinzu, bearbeiten und archivieren Sie sie. |
 
@@ -184,6 +184,8 @@ apt update && apt install -y gh
 ```
 
 Wenn das Skript mit einem Nicht-Null-Wert beendet wird, schlägt die Sitzung fehl zu starten. Fügen Sie `|| true` an nicht kritische Befehle an, um zu vermeiden, dass die Sitzung bei einem fehlerhaften Install blockiert wird.
+
+Halten Sie die Gesamtlaufzeit des Skripts unter ungefähr fünf Minuten, damit der [Umgebungs-Cache](#environment-caching) erstellt werden kann. Führen Sie unabhängige Installationen parallel mit `&` und `wait` aus. Wenn ein einzelner Download nicht in das Fünf-Minuten-Limit passt, verschieben Sie ihn zu einem [SessionStart-Hook](#setup-scripts-vs-sessionstart-hooks), der ihn im Hintergrund startet.
 
 <Note>
   Setup-Skripte, die Pakete installieren, benötigen Netzwerkzugriff, um Registries zu erreichen. Der Standard-**Trusted**-Netzwerkzugriff ermöglicht Verbindungen zu [gängigen Paketregistries](#default-allowed-domains), einschließlich npm, PyPI, RubyGems und crates.io. Skripte schlagen fehl, Pakete zu installieren, wenn Ihre Umgebung **None**-Netzwerkzugriff verwendet.
@@ -264,6 +266,12 @@ Das Ersetzen des Basis-Images durch Ihr eigenes Docker-Image wird noch nicht unt
 ## Netzwerkzugriff
 
 Der Netzwerkzugriff steuert ausgehende Verbindungen aus der Cloud-Umgebung. Jede Umgebung gibt eine Zugriffsstufe an, und Sie können sie mit benutzerdefinierten zulässigen Domains erweitern. Der Standard ist **Trusted**, das Paketregistries und andere [Allowlist-Domains](#default-allowed-domains) ermöglicht.
+
+Um die Netzwerkzugriff einer Umgebung zu ändern, [öffnen Sie sie zum Bearbeiten](#configure-your-environment) und verwenden Sie den **Netzwerkzugriff**-Selektor im Dialog. Es gibt keine separate Seite für Umgebungen. Das Cloud-Symbol wird überall angezeigt, wo Sie eine Cloud-Sitzung starten oder eine [Routine](/de/routines#environments-and-network-access) konfigurieren.
+
+<Note>
+  MCP-Connector-Datenverkehr wird über Anthropics Server geleitet, daher funktionieren die Connectors, die Sie auf einer Sitzung oder Routine aktivieren, ohne ihre Hosts zu **Zulässigen Domains** hinzuzufügen. Connectors werden pro Sitzung oder pro Routine konfiguriert; entfernen Sie alle, die Sie nicht benötigen, um zu begrenzen, welche Tools Claude erreichen kann. Dies basiert auf dem gleichen Anthropic-gebundenen Kanal, der unter [Sicherheit und Isolation](#security-and-isolation) erwähnt wird.
+</Note>
 
 ### Zugriffsstufen
 
@@ -754,6 +762,32 @@ Jede Cloud-Sitzung ist von Ihrem Computer und von anderen Sitzungen durch mehrer
 * **Schutz von Anmeldedaten**: Sensible Anmeldedaten wie Git-Anmeldedaten oder Signaturschlüssel befinden sich niemals in der Sandbox mit Claude Code. Die Authentifizierung wird über einen sicheren Proxy mit Scoped-Credentials verwaltet.
 * **Sichere Analyse**: Code wird in isolierten VMs analysiert und geändert, bevor PRs erstellt werden
 
+## Fehlerbehebung
+
+Für Runtime-API-Fehler, die im Gespräch angezeigt werden, wie `API Error: 500`, `529 Overloaded`, `429` oder `Prompt is too long`, siehe die [Fehlerreferenz](/de/errors). Diese Fehler und ihre Lösungen werden mit der CLI und der Desktop-App geteilt. Die folgenden Abschnitte behandeln Probleme, die spezifisch für Cloud-Sitzungen sind.
+
+### Sitzungserstellung fehlgeschlagen
+
+Wenn eine neue Sitzung mit `Session creation failed` fehlschlägt oder bei der Bereitstellung steckenbleibt, konnte Claude Code eine Cloud-Umgebung nicht zuordnen.
+
+* Überprüfen Sie [status.claude.com](https://status.claude.com) auf Cloud-Sitzungs-Incidents
+* Versuchen Sie es nach einer Minute erneut, da die Kapazität bei Bedarf bereitgestellt wird
+* Bestätigen Sie, dass Ihr Repository erreichbar ist. Private Repositories erfordern entweder die GitHub App, die auf diesem Repository installiert ist, oder ein `gh`-Token, das über `/web-setup` synchronisiert wird. Siehe [GitHub-Authentifizierungsoptionen](#github-authentication-options).
+
+### Remote Control-Sitzung abgelaufen oder Zugriff verweigert
+
+`--teleport` verbindet sich über die gleiche Remote Control-Sitzungsinfrastruktur, die Cloud-Sitzungen verwenden, daher werden Authentifizierungs- und Sitzungs-Ablauf-Fehler mit Remote Control-Wording angezeigt. Sie können `Remote Control session has expired` oder `Access denied` sehen. Das Verbindungs-Token ist kurzlebig und auf Ihr Konto begrenzt.
+
+* Führen Sie `/login` lokal aus, um Ihre Anmeldedaten zu aktualisieren, und verbinden Sie sich dann erneut
+* Bestätigen Sie, dass Sie sich bei demselben Konto angemeldet haben, das die Sitzung besitzt
+* Wenn Sie `Remote Control may not be available for this organization` sehen, hat Ihr Admin Remote-Sitzungen für Ihren Plan nicht aktiviert
+
+### Umgebung abgelaufen
+
+Cloud-Sitzungen werden nach einer Inaktivitätszeit beendet und die zugrunde liegende Umgebung wird freigegeben. Von einem lokalen Terminal aus wird dies als `Could not resume session ... its environment has expired. Creating a fresh session instead.` angezeigt. Im Web wird die Sitzung in der Sitzungsliste als abgelaufen markiert.
+
+Öffnen Sie die Sitzung erneut von [claude.ai/code](https://claude.ai/code), um eine frische Umgebung mit Ihrer wiederhergestellten Gesprächshistorie bereitzustellen.
+
 ## Einschränkungen
 
 Bevor Sie Cloud-Sitzungen für einen Workflow verwenden, berücksichtigen Sie diese Einschränkungen:
@@ -761,6 +795,7 @@ Bevor Sie Cloud-Sitzungen für einen Workflow verwenden, berücksichtigen Sie di
 * **Ratenlimits**: Claude Code im Web teilt Ratenlimits mit allen anderen Claude- und Claude Code-Nutzungen in Ihrem Konto. Das Ausführen mehrerer Aufgaben parallel verbraucht proportional mehr Ratenlimits. Es gibt keine separate Compute-Gebühr für die Cloud-VM.
 * **Repository-Authentifizierung**: Sie können Sitzungen nur vom Web zum lokalen Computer verschieben, wenn Sie sich bei demselben Konto authentifizieren
 * **Plattformbeschränkungen**: Repository-Klonen und Pull Request-Erstellung erfordern GitHub. Selbstgehostete [GitHub Enterprise Server](/de/github-enterprise-server)-Instanzen werden für Team- und Enterprise-Pläne unterstützt. GitLab, Bitbucket und andere Nicht-GitHub-Repositories können als lokales [Bündel](#send-local-repositories-without-github) zu Cloud-Sitzungen gesendet werden, aber die Sitzung kann nicht zurück zum Remote pushen
+* **Organisations-IP-Allowlist**: Cloud-Sitzungen rufen die Anthropic API von Anthropic-verwalteter Infrastruktur auf, nicht von Ihrem Netzwerk. Wenn Ihre Organisation [IP-Allowlisting](https://support.claude.com/en/articles/13200993-restrict-access-to-claude-with-ip-allowlisting) aktiviert hat, schlägt jede Cloud-Sitzung mit einem Authentifizierungsfehler fehl. Das gleiche gilt für [Code Review](/de/code-review) und [Routines](/de/routines). Kontaktieren Sie [Anthropic Support](https://support.claude.com/), um Anthropic-gehostete Services von der IP-Allowlist Ihrer Organisation auszunehmen.
 
 ## Verwandte Ressourcen
 

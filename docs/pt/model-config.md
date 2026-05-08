@@ -17,6 +17,10 @@ Para a configuração `model` no Claude Code, você pode configurar:
   * Foundry: um nome de implantação
   * Vertex: um nome de versão
 
+<Note>
+  `ANTHROPIC_BASE_URL` altera para onde as solicitações são enviadas, não qual modelo as responde. Para rotear Claude através de um gateway LLM, consulte [configuração de gateway LLM](/pt/llm-gateway).
+</Note>
+
 ### Aliases de modelo
 
 Os aliases de modelo fornecem uma maneira conveniente de selecionar configurações de modelo sem precisar lembrar dos números exatos da versão:

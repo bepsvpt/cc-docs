@@ -76,117 +76,7 @@ export const ContactSalesCard = ({surface}) => {
     </div>;
 };
 
-export const Experiment = ({flag, treatment, children}) => {
-  const VID_KEY = 'exp_vid';
-  const CONSENT_COUNTRIES = new Set(['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'RE', 'GP', 'MQ', 'GF', 'YT', 'BL', 'MF', 'PM', 'WF', 'PF', 'NC', 'AW', 'CW', 'SX', 'FO', 'GL', 'AX', 'GB', 'UK', 'AI', 'BM', 'IO', 'VG', 'KY', 'FK', 'GI', 'MS', 'PN', 'SH', 'TC', 'GG', 'JE', 'IM', 'CA', 'BR', 'IN']);
-  const fnv1a = s => {
-    let h = 0x811c9dc5;
-    for (let i = 0; i < s.length; i++) {
-      h ^= s.charCodeAt(i);
-      h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
-    }
-    return h >>> 0;
-  };
-  const bucket = (seed, vid) => fnv1a(fnv1a(seed + vid) + '') % 10000 < 5000 ? 'control' : 'treatment';
-  const [decision] = useState(() => {
-    const params = new URLSearchParams(location.search);
-    const preBucketed = document.documentElement.dataset['gb_' + flag.replace(/-/g, '_')];
-    const force = params.get('gb-force');
-    if (force) {
-      for (const p of force.split(',')) {
-        const [k, v] = p.split(':');
-        if (k === flag) return {
-          variant: v || 'treatment',
-          track: false
-        };
-      }
-    }
-    if (navigator.globalPrivacyControl) {
-      return {
-        variant: 'control',
-        track: false
-      };
-    }
-    const prefsMatch = document.cookie.match(/(?:^|; )anthropic-consent-preferences=([^;]+)/);
-    if (prefsMatch) {
-      try {
-        if (JSON.parse(decodeURIComponent(prefsMatch[1])).analytics !== true) {
-          return {
-            variant: 'control',
-            track: false
-          };
-        }
-      } catch {
-        return {
-          variant: 'control',
-          track: false
-        };
-      }
-    } else {
-      const country = params.get('country')?.toUpperCase() || (document.cookie.match(/(?:^|; )cf_geo=([A-Z]{2})/) || [])[1];
-      if (!country || CONSENT_COUNTRIES.has(country)) {
-        return {
-          variant: 'control',
-          track: false
-        };
-      }
-    }
-    let vid;
-    try {
-      const ajsMatch = document.cookie.match(/(?:^|; )ajs_anonymous_id=([^;]+)/);
-      if (ajsMatch) {
-        vid = decodeURIComponent(ajsMatch[1]).replace(/^"|"$/g, '');
-      } else {
-        vid = localStorage.getItem(VID_KEY);
-        if (!vid) {
-          vid = crypto.randomUUID();
-        }
-        document.cookie = `ajs_anonymous_id=${vid}; domain=.claude.com; path=/; Secure; SameSite=Lax; max-age=31536000`;
-      }
-      try {
-        localStorage.setItem(VID_KEY, vid);
-      } catch {}
-    } catch {
-      return {
-        variant: 'control',
-        track: false
-      };
-    }
-    const variant = preBucketed === '1' ? 'treatment' : preBucketed === '0' ? 'control' : bucket(flag, vid);
-    return {
-      variant,
-      track: true,
-      vid
-    };
-  });
-  useEffect(() => {
-    if (!decision.track) return;
-    fetch('https://api.anthropic.com/api/event_logging/v2/batch', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-service-name': 'claude_code_docs'
-      },
-      body: JSON.stringify({
-        events: [{
-          event_type: 'GrowthbookExperimentEvent',
-          event_data: {
-            device_id: decision.vid,
-            anonymous_id: decision.vid,
-            timestamp: new Date().toISOString(),
-            experiment_id: flag,
-            variation_id: decision.variant === 'treatment' ? 1 : 0,
-            environment: 'production'
-          }
-        }]
-      }),
-      keepalive: true
-    }).catch(() => {});
-  }, []);
-  return decision.variant === 'treatment' ? treatment : children;
-};
-
-<Experiment flag="docs-contact-sales-cta" treatment={<ContactSalesCard surface="vertex" />} />
+<ContactSalesCard surface="vertex" />
 
 ## 先決條件
 
@@ -253,7 +143,7 @@ gcloud services enable aiplatform.googleapis.com
 在 Vertex AI 中要求存取 Claude 模型：
 
 1. 導覽至 [Vertex AI Model Garden](https://console.cloud.google.com/vertex-ai/model-garden)
-2. 搜尋「Claude」模型
+2. 搜尋'Claude'模型
 3. 要求存取所需的 Claude 模型（例如 Claude Sonnet 4.6）
 4. 等待核准（可能需要 24-48 小時）
 
@@ -266,8 +156,23 @@ Claude Code 使用標準的 Google Cloud 驗證。
 Claude Code v2.1.121 或更新版本透過相同的 Application Default Credentials 鏈支援 [X.509 憑證型 Workload Identity Federation](https://cloud.google.com/iam/docs/workload-identity-federation-with-x509-certificates)。將 `GOOGLE_APPLICATION_CREDENTIALS` 設定為您的認證設定檔案路徑。
 
 <Note>
-  進行驗證時，Claude Code 將自動使用 `ANTHROPIC_VERTEX_PROJECT_ID` 環境變數中的專案 ID。若要覆寫此設定，請設定下列其中一個環境變數：`GCLOUD_PROJECT`、`GOOGLE_CLOUD_PROJECT` 或 `GOOGLE_APPLICATION_CREDENTIALS`。
+  Claude Code 使用 `ANTHROPIC_VERTEX_PROJECT_ID` 作為 Vertex AI 要求的專案 ID。`GCLOUD_PROJECT` 和 `GOOGLE_CLOUD_PROJECT` 環境變數以及 `GOOGLE_APPLICATION_CREDENTIALS` 參考的認證檔案優先於它。如果這些都未設定，專案 ID 會從您的 `gcloud` 設定或附加的服務帳戶解析。
 </Note>
+
+#### 進階認證設定
+
+Claude Code 透過 `gcpAuthRefresh` 設定支援 GCP 的自動認證重新整理。當 Claude Code 偵測到您的 GCP 認證已過期或無法載入時，它會執行設定的命令以在重試要求之前取得新認證。
+
+```json theme={null}
+{
+  "gcpAuthRefresh": "gcloud auth application-default login",
+  "env": {
+    "ANTHROPIC_VERTEX_PROJECT_ID": "your-project-id"
+  }
+}
+```
+
+命令的輸出會顯示給使用者，但不支援互動式輸入。這適用於瀏覽器型驗證流程，其中 CLI 顯示 URL，您在瀏覽器中完成驗證。如果驗證未在三分鐘內完成，重新整理命令會逾時。如果您在專案設定（例如 `.claude/settings.json`）中設定 `gcpAuthRefresh`，命令只會在您接受工作區信任提示後執行。
 
 ### 4. 設定 Claude Code
 
@@ -362,6 +267,12 @@ Claude Opus 4.7、Opus 4.6 和 Sonnet 4.6 在 Vertex AI 上支援 [1M token cont
 [設定精靈](#sign-in-with-vertex-ai)在固定模型時提供 1M context 選項。若要為手動固定的模型啟用它，請在模型 ID 後附加 `[1m]`。如需詳細資訊，請參閱[為第三方部署固定模型](/zh-TW/model-config#pin-models-for-third-party-deployments)。
 
 ## 故障排除
+
+如果您遇到「無法載入預設認證」錯誤：
+
+* 執行 `gcloud auth application-default login` 以設定應用程式預設認證
+* 將 `GOOGLE_APPLICATION_CREDENTIALS` 設定為服務帳戶金鑰檔案路徑
+* 請參閱 [設定 GCP 認證](#3-configure-gcp-credentials) 以了解所有選項
 
 如果您遇到配額問題：
 

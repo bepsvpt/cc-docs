@@ -132,6 +132,16 @@ Claude Code legge `CLAUDE.md`, non `AGENTS.md`. Se il tuo repository utilizza gi
 Usa plan mode per le modifiche in `src/billing/`.
 ```
 
+Un symlink funziona anche se non hai bisogno di aggiungere contenuto specifico di Claude Code:
+
+```bash theme={null}
+ln -s AGENTS.md CLAUDE.md
+```
+
+Su Windows, la creazione di un symlink richiede privilegi di amministratore o modalità sviluppatore, quindi usa l'importazione `@AGENTS.md` invece.
+
+L'esecuzione di [`/init`](/it/commands) in un repository che ha già un `AGENTS.md` lo legge e incorpora le parti rilevanti nel `CLAUDE.md` generato. Legge anche altre configurazioni di strumenti come `.cursorrules` e `.windsurfrules`.
+
 ### Come vengono caricati i file CLAUDE.md
 
 Claude Code legge i file CLAUDE.md camminando verso l'alto nell'albero delle directory dalla tua directory di lavoro corrente, controllando ogni directory lungo il percorso per i file `CLAUDE.md` e `CLAUDE.local.md`. Ciò significa che se esegui Claude Code in `foo/bar/`, carica le istruzioni da `foo/bar/CLAUDE.md`, `foo/CLAUDE.md` e qualsiasi file `CLAUDE.local.md` accanto a loro.
@@ -377,6 +387,8 @@ Per eseguire il debug:
 * Verifica che il CLAUDE.md rilevante si trovi in una posizione che viene caricata per la tua sessione (vedi [Scegli dove mettere i file CLAUDE.md](#choose-where-to-put-claude-md-files)).
 * Rendi le istruzioni più specifiche. "Usa indentazione a 2 spazi" funziona meglio di "formatta il codice bene".
 * Cerca istruzioni conflittuali tra i file CLAUDE.md. Se due file danno una guida diversa per lo stesso comportamento, Claude potrebbe sceglierne una arbitrariamente.
+
+Se l'istruzione è qualcosa che deve essere eseguito in un punto specifico, come prima di ogni commit o dopo ogni modifica di file, scrivila come un [hook](/it/hooks-guide). Gli hook vengono eseguiti come comandi shell in eventi del ciclo di vita fissi e si applicano indipendentemente da ciò che Claude decide di fare.
 
 Per le istruzioni che vuoi a livello di prompt di sistema, usa [`--append-system-prompt`](/it/cli-reference#system-prompt-flags). Questo deve essere passato ad ogni invocazione, quindi è più adatto a script e automazione che all'uso interattivo.
 

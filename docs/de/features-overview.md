@@ -249,7 +249,7 @@ Jede Funktion wird an verschiedenen Punkten in Ihrer Sitzung geladen. Die Regist
 
     **Kontextkosten:** Niedrig bis verwendet. Nur-Benutzer-Skills haben Null-Kosten bis aufgerufen.
 
-    **In Subagents:** Skills funktionieren in Subagents anders. Anstelle von On-Demand-Laden werden Skills, die an einen Subagent übergeben werden, vollständig in seinen Kontext beim Start vorgeladen. Subagents erben Skills nicht von der Hauptsitzung; Sie müssen sie explizit angeben.
+    **In Subagents:** Skills funktionieren in Subagents anders. Anstelle von On-Demand-Laden werden Skills, die im `skills:`-Feld des Subagenten aufgelistet sind, vollständig in seinen Kontext beim Start vorgeladen. Subagents können immer noch unlisted Project-, Benutzer- und Plugin-Skills durch das Skill-Tool entdecken und aufrufen.
 
     <Tip>Verwenden Sie `disable-model-invocation: true` für Skills mit Nebenwirkungen. Dies spart Kontext und stellt sicher, dass nur Sie sie auslösen.</Tip>
   </Tab>

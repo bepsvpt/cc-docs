@@ -327,6 +327,10 @@ claude mcp remove github
 /mcp
 ```
 
+Il pannello `/mcp` mostra il conteggio degli strumenti accanto a ogni server connesso e contrassegna i server che pubblicizzano la capacità degli strumenti ma non espongono alcuno strumento.
+
+Il nome del server `workspace` è riservato per uso interno. Se la tua configurazione definisce un server con quel nome, Claude Code lo salta al momento del caricamento e mostra un avviso chiedendoti di rinominarlo.
+
 ### Aggiornamenti dinamici degli strumenti
 
 Claude Code supporta le notifiche `list_changed` di MCP, consentendo ai server MCP di aggiornare dinamicamente i loro strumenti, prompt e risorse disponibili senza richiedere di disconnettersi e riconnettersi. Quando un server MCP invia una notifica `list_changed`, Claude Code aggiorna automaticamente le capacità disponibili da quel server.
@@ -423,7 +427,7 @@ Vedi il [riferimento dei componenti del plugin](/it/plugins-reference#mcp-server
 
 ## Ambiti di installazione MCP
 
-I server MCP possono essere configurati a tre ambiti diversi. L'ambito che scegli controlla in quali progetti il server viene caricato e se la configurazione è condivisa con il tuo team.
+I server MCP possono essere configurati a tre ambiti diversi. L'ambito che scegli controlla in quali progetti il server viene caricato e se la configurazione è condivisa con il tuo team. Gli amministratori possono anche distribuire server a livello aziendale tramite [configurazione gestita](#managed-mcp-configuration).
 
 | Ambito                     | Carica in                 | Condiviso con il team                | Archiviato in                         |
 | -------------------------- | ------------------------- | ------------------------------------ | ------------------------------------- |
@@ -469,7 +473,7 @@ Il comando scrive il server nella voce per il tuo progetto corrente all'interno 
 I server con ambito del progetto abilitano la collaborazione del team archiviando le configurazioni in un file `.mcp.json` nella directory radice del tuo progetto. Questo file è progettato per essere archiviato nel controllo della versione, assicurando che tutti i membri del team abbiano accesso agli stessi strumenti e servizi MCP. Quando aggiungi un server con ambito del progetto, Claude Code crea o aggiorna automaticamente questo file con la struttura di configurazione appropriata.
 
 ```bash theme={null}
-# Aggiungi un server con ambio del progetto
+# Aggiungi un server con ambito del progetto
 claude mcp add --transport http paypal --scope project https://mcp.paypal.com/mcp
 ```
 
@@ -944,6 +948,8 @@ Se hai effettuato l'accesso a Claude Code con un account [Claude.ai](https://cla
   </Step>
 </Steps>
 
+Un server che hai aggiunto in Claude Code ha [precedenza](#scope-hierarchy-and-precedence) rispetto a un connettore claude.ai che punta allo stesso URL. Quando ciò accade, `/mcp` elenca il connettore come nascosto e mostra come rimuovere il duplicato se preferisci utilizzare il connettore.
+
 Per disabilitare i server MCP di claude.ai in Claude Code, imposta la variabile di ambiente `ENABLE_CLAUDEAI_MCP_SERVERS` su `false`:
 
 ```bash theme={null}
@@ -1183,6 +1189,8 @@ La seguente voce `.mcp.json` esentare un server HTTP mentre lascia gli altri ser
 
 Il campo `alwaysLoad` è disponibile su tutti i tipi di server e richiede Claude Code v2.1.121 o successivo. Un server MCP può anche contrassegnare singoli strumenti come sempre caricati includendo `"anthropic/alwaysLoad": true` nell'oggetto `_meta` dello strumento, che ha lo stesso effetto solo per quello strumento.
 
+L'impostazione di `alwaysLoad: true` blocca anche l'avvio fino a quando il server non si connette, limitato al timeout di connessione standard di 5 secondi. Questo si applica anche quando [`MCP_CONNECTION_NONBLOCKING=1`](/it/env-vars) è impostato, poiché gli strumenti devono essere presenti quando viene costruito il primo prompt. Gli altri server si connettono ancora in background quando il nonblocking è abilitato.
+
 ## Utilizza i prompt MCP come comandi
 
 I server MCP possono esporre prompt che diventano disponibili come comandi in Claude Code.
@@ -1350,6 +1358,8 @@ I pattern URL supportano i caratteri jolly utilizzando `*` per corrispondere a q
 * `https://mcp.company.com/*` - Consenti tutti i percorsi su un dominio specifico
 * `https://*.example.com/*` - Consenti qualsiasi sottodominio di example.com
 * `http://localhost:*/*` - Consenti qualsiasi porta su localhost
+
+La corrispondenza del nome host è insensibile alle maiuscole/minuscole e ignora un punto FQDN finale, corrispondendo alla semantica DNS. Un pattern come `*://Mcp.Example.com/*` corrisponde a `https://mcp.example.com/api`, e `https://mcp.example.com.` è trattato come `https://mcp.example.com`. Gli schemi e i percorsi rimangono sensibili alle maiuscole/minuscole.
 
 **Comportamento del server remoto**:
 

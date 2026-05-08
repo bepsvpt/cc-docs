@@ -564,6 +564,22 @@ L'esempio seguente pre-configura una singola connessione che si apre in `~/proje
 
 Ogni voce richiede `id`, `name` e `sshHost`. I campi `sshPort`, `sshIdentityFile` e `startDirectory` sono facoltativi. Gli utenti possono anche aggiungere `sshConfigs` al loro `~/.claude/settings.json`, che è dove vengono archiviate le connessioni aggiunte tramite la finestra di dialogo.
 
+#### Restrict which SSH hosts users can connect to
+
+Gli amministratori possono limitare le sessioni SSH di Desktop a un insieme approvato di host aggiungendo `sshHostAllowlist` a un file di [impostazioni gestite](/it/settings#settings-precedence). Quando impostato, gli utenti possono connettersi solo a host il cui nome host risolto corrisponde a uno dei modelli. Impostalo su un array vuoto per disabilitare completamente le sessioni SSH.
+
+L'esempio seguente consente connessioni a qualsiasi host sotto `devboxes.example.com` e a un singolo host bastion denominato:
+
+```json theme={null}
+{
+  "sshHostAllowlist": ["*.devboxes.example.com", "bastion.example.com"]
+}
+```
+
+I modelli sono case-insensitive. `*` corrisponde a qualsiasi host, e `*.example.com` corrisponde a `example.com` e a qualsiasi sottodominio. Tutto il resto è una corrispondenza esatta. Il controllo viene eseguito sul nome host dopo la risoluzione di `~/.ssh/config` tramite `ssh -G`, quindi gli alias `Host` e le voci `ProxyCommand`/`ProxyJump` sono consentiti purché il `HostName` risolto corrisponda.
+
+`sshHostAllowlist` viene letto solo dalle impostazioni gestite; i valori nelle impostazioni utente o progetto vengono ignorati. Solo l'app Claude Desktop onora questa impostazione; la CLI Claude Code e le estensioni IDE non la leggono, e non limita i comandi `ssh` eseguiti tramite lo strumento Bash. Governa a quali host l'app Desktop si connette, non l'uscita di rete, quindi abbinalo ai controlli di rete della tua organizzazione o zero-trust se hai bisogno di un confine rigido.
+
 ## Configurazione aziendale
 
 Le organizzazioni su piani Team o Enterprise possono gestire il comportamento dell'app desktop tramite controlli della console di amministrazione, file di impostazioni gestiti e criteri di gestione dei dispositivi.
@@ -581,12 +597,13 @@ Queste impostazioni sono configurate tramite la [console delle impostazioni di a
 
 Le impostazioni gestite sovrascrivono le impostazioni del progetto e dell'utente e si applicano quando Desktop genera sessioni CLI. Puoi impostare queste chiavi nel file [impostazioni gestite](/it/settings#settings-precedence) della tua organizzazione o inviarle in remoto tramite la console di amministrazione.
 
-| Chiave                                     | Descrizione                                                                                                                                                                                                          |
-| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `permissions.disableBypassPermissionsMode` | imposta su `"disable"` per impedire agli utenti di abilitare la modalità bypass permissions.                                                                                                                         |
-| `disableAutoMode`                          | imposta su `"disable"` per impedire agli utenti di abilitare la modalità [Auto](/it/permission-modes#eliminate-prompts-with-auto-mode). Rimuove Auto dal selettore di modalità. Accettato anche sotto `permissions`. |
-| `autoMode`                                 | personalizza cosa il classificatore della modalità auto si fida e blocca in tutta la tua organizzazione. Vedi [Configura la modalità auto](/it/auto-mode-config).                                                    |
-| `sshConfigs`                               | pre-configura le [connessioni SSH](#pre-configure-ssh-connections-for-your-team) che appaiono nel menu a discesa dell'ambiente. Gli utenti non possono modificare o eliminare le connessioni gestite.                |
+| Chiave                                     | Descrizione                                                                                                                                                                                                                        |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `permissions.disableBypassPermissionsMode` | imposta su `"disable"` per impedire agli utenti di abilitare la modalità bypass permissions.                                                                                                                                       |
+| `disableAutoMode`                          | imposta su `"disable"` per impedire agli utenti di abilitare la modalità [Auto](/it/permission-modes#eliminate-prompts-with-auto-mode). Rimuove Auto dal selettore di modalità. Accettato anche sotto `permissions`.               |
+| `autoMode`                                 | personalizza cosa il classificatore della modalità auto si fida e blocca in tutta la tua organizzazione. Vedi [Configura la modalità auto](/it/auto-mode-config).                                                                  |
+| `sshConfigs`                               | pre-configura le [connessioni SSH](#pre-configure-ssh-connections-for-your-team) che appaiono nel menu a discesa dell'ambiente. Gli utenti non possono modificare o eliminare le connessioni gestite.                              |
+| `sshHostAllowlist`                         | limita le [sessioni SSH](#restrict-which-ssh-hosts-users-can-connect-to) agli host il cui nome host risolto corrisponde a uno di questi modelli. Un array vuoto disabilita le sessioni SSH. Letto solo dalle impostazioni gestite. |
 
 Un file di impostazioni gestite distribuito su disco su ogni macchina si applica alle sessioni Desktop. Le impostazioni gestite inviate in remoto tramite la console di amministrazione attualmente raggiungono solo le sessioni CLI e IDE, quindi per le distribuzioni Desktop distribuisci il file tramite MDM o utilizza i [controlli della console di amministrazione](#admin-console-controls) sopra.
 

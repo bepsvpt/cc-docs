@@ -564,6 +564,22 @@ El siguiente ejemplo pre-configura una única conexión que se abre en `~/projec
 
 Cada entrada requiere `id`, `name` y `sshHost`. Los campos `sshPort`, `sshIdentityFile` y `startDirectory` son opcionales. Los usuarios también pueden agregar `sshConfigs` a su propio `~/.claude/settings.json`, que es donde se almacenan las conexiones agregadas a través del diálogo.
 
+#### Restringir a qué hosts SSH pueden conectarse los usuarios
+
+Los administradores pueden limitar las sesiones SSH de Desktop a un conjunto aprobado de hosts agregando `sshHostAllowlist` a un archivo de [configuración administrada](/es/settings#settings-precedence). Cuando se establece, los usuarios solo pueden conectarse a hosts cuyo nombre de host resuelto coincida con uno de los patrones. Establézcalo en una matriz vacía para deshabilitar completamente las sesiones SSH.
+
+El siguiente ejemplo permite conexiones a cualquier host bajo `devboxes.example.com` y a un único host bastión nombrado:
+
+```json theme={null}
+{
+  "sshHostAllowlist": ["*.devboxes.example.com", "bastion.example.com"]
+}
+```
+
+Los patrones no distinguen entre mayúsculas y minúsculas. `*` coincide con cualquier host, y `*.example.com` coincide con `example.com` y cualquier subdominio. Cualquier otra cosa es una coincidencia exacta. La verificación se ejecuta contra el nombre de host después de la resolución de `~/.ssh/config` a través de `ssh -G`, por lo que se permiten entradas de alias `Host` y `ProxyCommand`/`ProxyJump` siempre que el `HostName` resuelto coincida.
+
+`sshHostAllowlist` se lee solo desde la configuración administrada; los valores en la configuración de usuario o proyecto se ignoran. Solo la aplicación Claude Desktop honra esta configuración; la CLI de Claude Code y las extensiones IDE no la leen, y no restringe los comandos `ssh` ejecutados a través de la herramienta Bash. Rige a qué hosts se conecta la aplicación Desktop, no la salida de red, por lo que emparéjelo con los controles de red de su organización o de confianza cero si necesita un límite duro.
+
 ## Configuración empresarial
 
 Las organizaciones en planes Team o Enterprise pueden gestionar el comportamiento de la aplicación de escritorio a través de controles de consola de administración, archivos de configuración administrados y políticas de gestión de dispositivos.
@@ -581,12 +597,13 @@ Estas configuraciones se configuran a través de la [consola de configuración d
 
 La configuración administrada anula la configuración del proyecto y usuario y se aplica cuando Desktop genera sesiones de CLI. Puede establecer estas claves en el archivo de [configuración administrada](/es/settings#settings-precedence) de su organización o enviarlas de forma remota a través de la consola de administración.
 
-| Clave                                      | Descripción                                                                                                                                                                                                     |
-| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `permissions.disableBypassPermissionsMode` | establezca en `"disable"` para evitar que los usuarios habiliten el modo bypass permissions.                                                                                                                    |
-| `disableAutoMode`                          | establezca en `"disable"` para evitar que los usuarios habiliten el modo [Auto](/es/permission-modes#eliminate-prompts-with-auto-mode). Elimina Auto del selector de modo. También aceptado bajo `permissions`. |
-| `autoMode`                                 | personalice lo que el clasificador de modo auto confía y bloquea en toda su organización. Consulte [Configurar el modo auto](/es/auto-mode-config).                                                             |
-| `sshConfigs`                               | pre-configure [conexiones SSH](#pre-configure-ssh-connections-for-your-team) que aparecen en el menú desplegable de entorno. Los usuarios no pueden editar ni eliminar conexiones administradas.                |
+| Clave                                      | Descripción                                                                                                                                                                                                                                    |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `permissions.disableBypassPermissionsMode` | establezca en `"disable"` para evitar que los usuarios habiliten el modo bypass permissions.                                                                                                                                                   |
+| `disableAutoMode`                          | establezca en `"disable"` para evitar que los usuarios habiliten el modo [Auto](/es/permission-modes#eliminate-prompts-with-auto-mode). Elimina Auto del selector de modo. También aceptado bajo `permissions`.                                |
+| `autoMode`                                 | personalice lo que el clasificador de modo auto confía y bloquea en toda su organización. Consulte [Configurar el modo auto](/es/auto-mode-config).                                                                                            |
+| `sshConfigs`                               | pre-configure [conexiones SSH](#pre-configure-ssh-connections-for-your-team) que aparecen en el menú desplegable de entorno. Los usuarios no pueden editar ni eliminar conexiones administradas.                                               |
+| `sshHostAllowlist`                         | restrinja [sesiones SSH](#restrict-which-ssh-hosts-users-can-connect-to) a hosts cuyo nombre de host resuelto coincida con uno de estos patrones. Una matriz vacía deshabilita las sesiones SSH. Se lee solo desde configuración administrada. |
 
 Un archivo de configuración administrada implementado en disco en cada máquina se aplica a sesiones de Desktop. La configuración administrada enviada de forma remota a través de la consola de administración actualmente solo llega a sesiones de CLI e IDE, por lo que para implementaciones de Desktop distribuya el archivo a través de MDM o use los [controles de consola de administración](#admin-console-controls) anteriores.
 

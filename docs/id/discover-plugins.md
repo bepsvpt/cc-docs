@@ -4,7 +4,7 @@
 
 # Temukan dan instal plugin yang sudah dibuat melalui marketplace
 
-> Temukan dan instal plugin dari marketplace untuk memperluas Claude Code dengan perintah, agen, dan kemampuan baru.
+> Temukan dan instal plugin dari marketplace untuk memperluas Claude Code dengan skills, agen, dan kemampuan baru.
 
 Plugin memperluas Claude Code dengan skills, agen, hooks, dan MCP servers. Plugin marketplace adalah katalog yang membantu Anda menemukan dan menginstal ekstensi ini tanpa membuatnya sendiri.
 
@@ -35,6 +35,8 @@ Untuk menginstal plugin dari official marketplace, gunakan `/plugin install <nam
 ```shell theme={null}
 /plugin install github@claude-plugins-official
 ```
+
+Jika Claude Code melaporkan bahwa plugin tidak ditemukan di marketplace mana pun, marketplace Anda mungkin hilang atau ketinggalan zaman. Jalankan `/plugin marketplace update claude-plugins-official` untuk menyegarkannya, atau `/plugin marketplace add anthropics/claude-plugins-official` jika Anda belum menambahkannya sebelumnya. Kemudian coba instal lagi.
 
 <Note>
   Official marketplace dikelola oleh Anthropic. Untuk mengirimkan plugin ke official marketplace, gunakan salah satu formulir pengajuan dalam aplikasi:
@@ -95,7 +97,7 @@ Plugin ini menggabungkan [MCP servers](/id/mcp) yang sudah dikonfigurasi sebelum
 
 ### Development workflows
 
-Plugin yang menambahkan perintah dan agen untuk tugas pengembangan umum:
+Plugin yang menambahkan skills dan agen untuk tugas pengembangan umum:
 
 * **commit-commands**: Git commit workflows termasuk commit, push, dan pembuatan PR
 * **pr-review-toolkit**: Agen khusus untuk meninjau pull request
@@ -142,7 +144,7 @@ Anthropic juga memelihara [demo plugins marketplace](https://github.com/anthropi
     * **Project scope**: instal untuk semua kolaborator di repositori ini
     * **Local scope**: instal untuk diri sendiri di repositori ini saja
 
-    Misalnya, pilih **commit-commands** (plugin yang menambahkan perintah alur kerja git) dan instal ke cakupan pengguna Anda.
+    Misalnya, pilih **commit-commands** (plugin yang menambahkan skills alur kerja git) dan instal ke cakupan pengguna Anda.
 
     Anda juga dapat menginstal langsung dari baris perintah:
 
@@ -154,7 +156,7 @@ Anthropic juga memelihara [demo plugins marketplace](https://github.com/anthropi
   </Step>
 
   <Step title="Gunakan plugin baru Anda">
-    Setelah menginstal, jalankan `/reload-plugins` untuk mengaktifkan plugin. Perintah plugin diberi namespace oleh nama plugin, jadi **commit-commands** menyediakan perintah seperti `/commit-commands:commit`.
+    Setelah menginstal, jalankan `/reload-plugins` untuk mengaktifkan plugin. Skills plugin diberi namespace oleh nama plugin, jadi **commit-commands** menyediakan skills seperti `/commit-commands:commit`.
 
     Coba dengan membuat perubahan pada file dan menjalankan:
 
@@ -164,7 +166,7 @@ Anthropic juga memelihara [demo plugins marketplace](https://github.com/anthropi
 
     Ini menampilkan perubahan Anda, menghasilkan pesan commit, dan membuat commit.
 
-    Setiap plugin bekerja berbeda. Periksa deskripsi plugin di tab **Discover** atau homepage-nya untuk mempelajari perintah dan kemampuan apa yang disediakan.
+    Setiap plugin bekerja berbeda. Periksa deskripsi plugin di tab **Discover** atau homepage-nya untuk mempelajari skills dan kemampuan apa yang disediakan.
   </Step>
 </Steps>
 
@@ -195,7 +197,7 @@ Misalnya, `anthropics/claude-code` merujuk ke repositori `claude-code` yang dimi
 
 ### Tambahkan dari host Git lainnya
 
-Tambahkan repositori git apa pun dengan memberikan URL lengkap. Ini bekerja dengan host Git apa pun, termasuk GitLab, Bitbucket, dan server self-hosted:
+Tambahkan repositori git apa pun dengan memberikan URL lengkap. Ini bekerja dengan host Git apa pun, termasuk GitLab, Bitbucket, dan server self-hosted. Sertakan akhiran `.git` sehingga Claude Code mengkloning repositori daripada memperlakukan URL sebagai tautan langsung ke file `marketplace.json` yang dihosting.
 
 Menggunakan HTTPS:
 
@@ -257,15 +259,21 @@ Untuk memilih [cakupan instalasi](/id/settings#configuration-scopes) yang berbed
 
 Anda juga dapat melihat plugin dengan cakupan **managed**—ini diinstal oleh administrator melalui [managed settings](/id/settings#settings-files) dan tidak dapat dimodifikasi.
 
-Jalankan `/plugin` dan buka tab **Installed** untuk melihat plugin Anda dikelompokkan menurut cakupan.
-
 <Warning>
   Pastikan Anda mempercayai plugin sebelum menginstalnya. Anthropic tidak mengontrol MCP servers, file, atau perangkat lunak lain apa yang disertakan dalam plugin dan tidak dapat memverifikasi bahwa mereka bekerja seperti yang dimaksudkan. Periksa homepage setiap plugin untuk informasi lebih lanjut.
 </Warning>
 
 ## Kelola plugin yang diinstal
 
-Jalankan `/plugin` dan buka tab **Installed** untuk melihat, mengaktifkan, menonaktifkan, atau menghapus plugin Anda. Ketik untuk memfilter daftar berdasarkan nama atau deskripsi plugin.
+Jalankan `/plugin` dan buka tab **Installed** untuk melihat, mengaktifkan, menonaktifkan, atau menghapus plugin Anda. Daftar dikelompokkan menurut cakupan dan diurutkan sehingga Anda melihat masalah terlebih dahulu: plugin dengan kesalahan pemuatan atau dependensi yang tidak terselesaikan muncul di bagian atas, diikuti oleh favorit Anda, dengan plugin yang dinonaktifkan dilipat di belakang header yang runtuh di bagian bawah.
+
+Dari daftar Anda dapat:
+
+* tekan `f` untuk menandai atau menghapus tanda favorit pada plugin yang dipilih
+* ketik untuk memfilter berdasarkan nama atau deskripsi plugin
+* tekan Enter untuk membuka tampilan detail plugin dan mengaktifkan, menonaktifkan, atau menghapusnya
+
+Saat Anda menginstal plugin yang mendeklarasikan dependensi, output instalasi mencantumkan dependensi mana yang diinstal secara otomatis bersama dengannya.
 
 Anda juga dapat mengelola plugin dengan perintah langsung.
 
@@ -400,8 +408,8 @@ Jika Anda melihat "unknown command" atau perintah `/plugin` tidak muncul:
 
 1. **Periksa versi Anda**: Jalankan `claude --version` untuk melihat apa yang diinstal.
 2. **Perbarui Claude Code**:
-   * **Homebrew**: `brew upgrade claude-code`
-   * **npm**: `npm update -g @anthropic-ai/claude-code`
+   * **Homebrew**: `brew upgrade claude-code` (atau `brew upgrade claude-code@latest` jika Anda menginstal cask itu)
+   * **npm**: `npm install -g @anthropic-ai/claude-code@latest`
    * **Native installer**: Jalankan kembali perintah install dari [Setup](/id/setup)
 3. **Restart Claude Code**: Setelah memperbarui, restart terminal Anda dan jalankan `claude` lagi.
 

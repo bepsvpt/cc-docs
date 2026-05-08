@@ -317,8 +317,16 @@ Quand un plugin `--plugin-dir` a le même nom qu'un plugin marketplace installé
 
 Pour tester un plugin qui est déjà empaqueté en tant qu'archive `.zip` et hébergé à une URL, comme un artefact de build CI, utilisez `--plugin-url` à la place. Claude Code récupère l'archive au démarrage et la charge pour cette session uniquement. Si la récupération échoue ou que l'archive est invalide, Claude Code signale une erreur de chargement de plugin et démarre sans elle. Les mêmes [considérations de confiance](/fr/discover-plugins#security) s'appliquent que pour toute source de plugin : pointez uniquement ce drapeau vers des archives que vous contrôlez ou en lesquelles vous avez confiance.
 
+Pour charger plusieurs plugins, répétez le drapeau pour chaque URL :
+
 ```bash theme={null}
-claude --plugin-url https://example.com/my-plugin.zip
+claude --plugin-url https://example.com/my-plugin.zip --plugin-url https://example.com/other.zip
+```
+
+Ou passez des URL séparées par des espaces en tant qu'un seul argument entre guillemets :
+
+```bash theme={null}
+claude --plugin-url "https://example.com/my-plugin.zip https://example.com/other.zip"
 ```
 
 ### Déboguez les problèmes de plugin

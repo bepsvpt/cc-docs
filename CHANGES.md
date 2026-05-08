@@ -1,5 +1,423 @@
 # Documentation Changes
 
+## 2026-05-08
+
+243 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Claude Code auf Amazon Bedrock** (`amazon-bedrock.md`): 12 lines added, 112 removed
+  - New section: "## Service-Tiers"
+- **Claude Code im Web verwenden** (`claude-code-on-the-web.md`): 38 lines added, 3 removed
+  - New section: "## Fehlerbehebung"
+  - New section: "### Sitzungserstellung fehlgeschlagen"
+  - New section: "### Remote Control-Sitzung abgelaufen oder Zugriff verweigert"
+  - New section: "### Umgebung abgelaufen"
+- **CLI-Referenz** (`cli-reference.md`): 65 lines added, 65 removed
+- **Claude Code Desktop verwenden** (`desktop.md`): 23 lines added, 6 removed
+  - New section: "#### SSH-Hosts einschränken, mit denen Benutzer sich verbinden können"
+- **Entdecken und installieren Sie vorgefertigte Plugins über Marktplätze** (`discover-plugins.md`): 16 lines added, 8 removed
+- **Claude Code erweitern** (`features-overview.md`): 1 lines added, 1 removed
+- **Claude Code auf Google Vertex AI** (`google-vertex-ai.md`): 23 lines added, 112 removed
+  - New section: "#### Erweiterte Anmeldedaten-Konfiguration"
+- **Hooks-Referenz** (`hooks.md`): 8 lines added, 7 removed
+- **Claude Code mit Tools über MCP verbinden** (`mcp.md`): 11 lines added, 1 removed
+- **Wie Claude sich Ihr Projekt merkt** (`memory.md`): 12 lines added, 0 removed
+- **Claude Code auf Microsoft Foundry** (`microsoft-foundry.md`): 1 lines added, 111 removed
+- **Modellkonfiguration** (`model-config.md`): 4 lines added, 0 removed
+- **Ausgabestile** (`output-styles.md`): 16 lines added, 7 removed
+- **Claude Code Übersicht** (`overview.md`): 1 lines added, 635 removed
+- **Plugins erstellen** (`plugins.md`): 9 lines added, 1 removed
+- **Schnellstart** (`quickstart.md`): 3 lines added, 636 removed
+- **Claude Code-Einstellungen** (`settings.md`): 98 lines added, 91 removed
+- **Benutzerdefinierte Subagenten erstellen** (`sub-agents.md`): 3 lines added, 3 removed
+- **Übersicht zur Enterprise-Bereitstellung** (`third-party-integrations.md`): 73 lines added, 1 removed
+- **Claude Code in VS Code verwenden** (`vs-code.md`): 2 lines added, 0 removed
+
+### English
+
+
+**Modified**
+
+- **Claude Code on Amazon Bedrock** (`amazon-bedrock.md`): 2 lines added, 112 removed
+- **Authentication** (`authentication.md`): 1 lines added, 0 removed
+- **Changelog** (`changelog.md`): 20 lines added, 0 removed
+- **Use Claude Code on the web** (`claude-code-on-the-web.md`): 9 lines added, 3 removed
+- **CLI reference** (`cli-reference.md`): 2 lines added, 2 removed
+- **Use Claude Code Desktop** (`desktop.md`): 23 lines added, 6 removed
+  - New section: "#### Restrict which SSH hosts users can connect to"
+- **Discover and install prebuilt plugins through marketplaces** (`discover-plugins.md`): 1 lines added, 1 removed
+- **Environment variables** (`env-vars.md`): 5 lines added, 3 removed
+- **Extend Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Claude Code on Google Vertex AI** (`google-vertex-ai.md`): 23 lines added, 112 removed
+  - New section: "#### Advanced credential configuration"
+- **Hooks reference** (`hooks.md`): 8 lines added, 7 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 3 lines added, 1 removed
+- **How Claude remembers your project** (`memory.md`): 12 lines added, 0 removed
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 1 lines added, 111 removed
+- **Model configuration** (`model-config.md`): 4 lines added, 0 removed
+- **Output styles** (`output-styles.md`): 13 lines added, 8 removed
+- **Claude Code overview** (`overview.md`): 0 lines added, 634 removed
+- **Create plugins** (`plugins.md`): 9 lines added, 1 removed
+- **Quickstart** (`quickstart.md`): 0 lines added, 524 removed
+- **Claude Code settings** (`settings.md`): 93 lines added, 86 removed
+- **Create custom subagents** (`sub-agents.md`): 3 lines added, 3 removed
+- **Enterprise deployment overview** (`third-party-integrations.md`): 1 lines added, 111 removed
+- **Use Claude Code in VS Code** (`vs-code.md`): 2 lines added, 0 removed
+
+### Español
+
+
+**Modified**
+
+- **Claude Code en Amazon Bedrock** (`amazon-bedrock.md`): 12 lines added, 112 removed
+  - New section: "## Niveles de servicio"
+- **Usar Claude Code en la web** (`claude-code-on-the-web.md`): 38 lines added, 3 removed
+  - New section: "## Solución de problemas"
+  - New section: "### Falló la creación de sesión"
+  - New section: "### Sesión de Control Remoto expirada o acceso denegado"
+  - New section: "### Entorno expirado"
+- **Referencia de CLI** (`cli-reference.md`): 8 lines added, 8 removed
+- **Usar Claude Code Desktop** (`desktop.md`): 23 lines added, 6 removed
+  - New section: "#### Restringir a qué hosts SSH pueden conectarse los usuarios"
+- **Descubra e instale plugins pregenerados a través de mercados** (`discover-plugins.md`): 57 lines added, 49 removed
+  - New section: "### Code intelligence"
+  - New section: "#### Lo que Claude gana con los plugins de code intelligence"
+  - New section: "### External integrations"
+  - New section: "### Development workflows"
+  - New section: "### Output styles"
+- **Extender Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Claude Code en Google Vertex AI** (`google-vertex-ai.md`): 23 lines added, 112 removed
+  - New section: "#### Configuración avanzada de credenciales"
+- **Referencia de hooks** (`hooks.md`): 8 lines added, 7 removed
+- **Conectar Claude Code a herramientas mediante MCP** (`mcp.md`): 11 lines added, 1 removed
+- **Cómo Claude recuerda su proyecto** (`memory.md`): 12 lines added, 0 removed
+- **Claude Code en Microsoft Foundry** (`microsoft-foundry.md`): 1 lines added, 111 removed
+- **Configuración del modelo** (`model-config.md`): 4 lines added, 0 removed
+- **Estilos de salida** (`output-styles.md`): 16 lines added, 7 removed
+- **Descripción general de Claude Code** (`overview.md`): 1 lines added, 635 removed
+- **Crear plugins** (`plugins.md`): 9 lines added, 1 removed
+- **Inicio rápido** (`quickstart.md`): 3 lines added, 636 removed
+- **Configuración de Claude Code** (`settings.md`): 98 lines added, 91 removed
+- **Crear subagentes personalizados** (`sub-agents.md`): 3 lines added, 3 removed
+- **Descripción general de implementación empresarial** (`third-party-integrations.md`): 73 lines added, 1 removed
+- **Usar Claude Code en VS Code** (`vs-code.md`): 4 lines added, 2 removed
+
+### Français
+
+
+**Modified**
+
+- **Claude Code sur Amazon Bedrock** (`amazon-bedrock.md`): 12 lines added, 112 removed
+  - New section: "## Niveaux de service"
+- **Utiliser Claude Code sur le web** (`claude-code-on-the-web.md`): 42 lines added, 7 removed
+  - New section: "## Dépannage"
+  - New section: "### Échec de la création de session"
+  - New section: "### Session Remote Control expirée ou accès refusé"
+  - New section: "### Environnement expiré"
+- **Référence CLI** (`cli-reference.md`): 65 lines added, 65 removed
+- **Utiliser Claude Code Desktop** (`desktop.md`): 23 lines added, 6 removed
+  - New section: "#### Restreindre les hôtes SSH auxquels les utilisateurs peuvent se connecter"
+- **Découvrir et installer des plugins prédéfinis via les marketplaces** (`discover-plugins.md`): 25 lines added, 17 removed
+- **Étendre Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Claude Code sur Google Vertex AI** (`google-vertex-ai.md`): 24 lines added, 113 removed
+  - New section: "#### Configuration avancée des identifiants"
+- **Référence des hooks** (`hooks.md`): 8 lines added, 7 removed
+- **Connecter Claude Code aux outils via MCP** (`mcp.md`): 11 lines added, 1 removed
+- **Comment Claude se souvient de votre projet** (`memory.md`): 12 lines added, 0 removed
+- **Claude Code sur Microsoft Foundry** (`microsoft-foundry.md`): 1 lines added, 111 removed
+- **Configuration du modèle** (`model-config.md`): 4 lines added, 0 removed
+- **Styles de sortie** (`output-styles.md`): 16 lines added, 7 removed
+- **Aperçu de Claude Code** (`overview.md`): 1 lines added, 635 removed
+- **Créer des plugins** (`plugins.md`): 9 lines added, 1 removed
+- **Démarrage rapide** (`quickstart.md`): 4 lines added, 637 removed
+- **Paramètres Claude Code** (`settings.md`): 98 lines added, 91 removed
+- **Créer des sous-agents personnalisés** (`sub-agents.md`): 3 lines added, 3 removed
+- **Aperçu du déploiement en entreprise** (`third-party-integrations.md`): 73 lines added, 1 removed
+- **Utiliser Claude Code dans VS Code** (`vs-code.md`): 2 lines added, 0 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Claude Code di Amazon Bedrock** (`amazon-bedrock.md`): 12 lines added, 112 removed
+  - New section: "## Tingkat layanan"
+- **Gunakan Claude Code di web** (`claude-code-on-the-web.md`): 38 lines added, 3 removed
+  - New section: "## Troubleshooting"
+  - New section: "### Pembuatan sesi gagal"
+  - New section: "### Sesi Remote Control kedaluwarsa atau akses ditolak"
+  - New section: "### Lingkungan kedaluwarsa"
+- **Referensi CLI** (`cli-reference.md`): 65 lines added, 65 removed
+- **Gunakan Claude Code Desktop** (`desktop.md`): 23 lines added, 6 removed
+  - New section: "#### Restrict which SSH hosts users can connect to"
+- **Temukan dan instal plugin yang sudah dibuat melalui marketplace** (`discover-plugins.md`): 19 lines added, 11 removed
+- **Perluas Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Claude Code di Google Vertex AI** (`google-vertex-ai.md`): 23 lines added, 112 removed
+  - New section: "#### Konfigurasi kredensial lanjutan"
+- **Referensi hooks** (`hooks.md`): 8 lines added, 7 removed
+- **Hubungkan Claude Code ke alat melalui MCP** (`mcp.md`): 11 lines added, 1 removed
+- **Bagaimana Claude mengingat proyek Anda** (`memory.md`): 13 lines added, 1 removed
+- **Claude Code di Microsoft Foundry** (`microsoft-foundry.md`): 1 lines added, 111 removed
+- **Konfigurasi model** (`model-config.md`): 5 lines added, 1 removed
+- **Output styles** (`output-styles.md`): 17 lines added, 11 removed
+- **Ikhtisar Claude Code** (`overview.md`): 1 lines added, 635 removed
+- **Buat plugins** (`plugins.md`): 9 lines added, 1 removed
+- **Panduan Cepat** (`quickstart.md`): 3 lines added, 636 removed
+- **Pengaturan Claude Code** (`settings.md`): 98 lines added, 91 removed
+- **Buat subagent khusus** (`sub-agents.md`): 3 lines added, 3 removed
+- **Ikhtisar penyebaran enterprise** (`third-party-integrations.md`): 73 lines added, 1 removed
+- **Gunakan Claude Code di VS Code** (`vs-code.md`): 2 lines added, 0 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Claude Code su Amazon Bedrock** (`amazon-bedrock.md`): 12 lines added, 112 removed
+  - New section: "## Livelli di servizio"
+- **Usa Claude Code sul web** (`claude-code-on-the-web.md`): 42 lines added, 7 removed
+  - New section: "## Risoluzione dei problemi"
+  - New section: "### Creazione della sessione non riuscita"
+  - New section: "### Sessione Remote Control scaduta o accesso negato"
+  - New section: "### Ambiente scaduto"
+- **Riferimento CLI** (`cli-reference.md`): 65 lines added, 65 removed
+- **Usa Claude Code Desktop** (`desktop.md`): 23 lines added, 6 removed
+  - New section: "#### Restrict which SSH hosts users can connect to"
+- **Scopri e installa plugin precostruiti tramite marketplace** (`discover-plugins.md`): 19 lines added, 11 removed
+- **Estendi Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Claude Code su Google Vertex AI** (`google-vertex-ai.md`): 23 lines added, 112 removed
+  - New section: "#### Configurazione avanzata delle credenziali"
+- **Riferimento dei hooks** (`hooks.md`): 8 lines added, 7 removed
+- **Connetti Claude Code ai tuoi strumenti tramite MCP** (`mcp.md`): 12 lines added, 2 removed
+  - New section: "# Aggiungi un server con ambito del progetto"
+- **Come Claude ricorda il tuo progetto** (`memory.md`): 12 lines added, 0 removed
+- **Claude Code su Microsoft Foundry** (`microsoft-foundry.md`): 1 lines added, 111 removed
+- **Configurazione del modello** (`model-config.md`): 4 lines added, 0 removed
+- **Output styles** (`output-styles.md`): 30 lines added, 52 removed
+- **Panoramica di Claude Code** (`overview.md`): 1 lines added, 635 removed
+- **Creare plugin** (`plugins.md`): 9 lines added, 1 removed
+- **Guida rapida** (`quickstart.md`): 3 lines added, 636 removed
+- **Impostazioni di Claude Code** (`settings.md`): 98 lines added, 91 removed
+- **Creare subagent personalizzati** (`sub-agents.md`): 3 lines added, 3 removed
+- **Panoramica della distribuzione aziendale** (`third-party-integrations.md`): 73 lines added, 1 removed
+- **Usa Claude Code in VS Code** (`vs-code.md`): 2 lines added, 0 removed
+
+### 日本語
+
+
+**Modified**
+
+- **Amazon Bedrock 上の Claude Code** (`amazon-bedrock.md`): 15 lines added, 115 removed
+  - New section: "## サービスティア"
+- **ウェブ上の Claude Code を使用する** (`claude-code-on-the-web.md`): 38 lines added, 3 removed
+  - New section: "## トラブルシューティング"
+  - New section: "### セッション作成に失敗"
+  - New section: "### Remote Control セッションの有効期限切れまたはアクセス拒否"
+  - New section: "### 環境の有効期限切れ"
+- **CLI リファレンス** (`cli-reference.md`): 71 lines added, 71 removed
+- **Claude Code Desktop を使用する** (`desktop.md`): 17 lines added, 0 removed
+  - New section: "#### ユーザーが接続できる SSH ホストを制限する"
+- **マーケットプレイスから事前構築されたプラグインを発見してインストールする** (`discover-plugins.md`): 45 lines added, 37 removed
+- **Claude Code を拡張する** (`features-overview.md`): 1 lines added, 1 removed
+- **Google Vertex AI 上の Claude Code** (`google-vertex-ai.md`): 25 lines added, 114 removed
+  - New section: "#### 高度な認証情報設定"
+- **Hooks リファレンス** (`hooks.md`): 8 lines added, 7 removed
+- **MCP を使用して Claude Code をツールに接続する** (`mcp.md`): 15 lines added, 5 removed
+- **Claude があなたのプロジェクトを記憶する方法** (`memory.md`): 13 lines added, 1 removed
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 1 lines added, 111 removed
+- **モデル設定** (`model-config.md`): 4 lines added, 0 removed
+- **出力スタイル** (`output-styles.md`): 17 lines added, 8 removed
+- **Claude Code の概要** (`overview.md`): 1 lines added, 635 removed
+- **プラグインを作成する** (`plugins.md`): 9 lines added, 1 removed
+- **クイックスタート** (`quickstart.md`): 3 lines added, 636 removed
+- **Claude Code の設定** (`settings.md`): 28 lines added, 21 removed
+- **カスタムサブエージェントの作成** (`sub-agents.md`): 3 lines added, 3 removed
+- **エンタープライズデプロイメント概要** (`third-party-integrations.md`): 73 lines added, 1 removed
+- **VS Code で Claude Code を使用する** (`vs-code.md`): 2 lines added, 0 removed
+
+### 한국어
+
+
+**Modified**
+
+- **Amazon Bedrock의 Claude Code** (`amazon-bedrock.md`): 12 lines added, 112 removed
+  - New section: "## 서비스 계층"
+- **웹에서 Claude Code 사용하기** (`claude-code-on-the-web.md`): 38 lines added, 3 removed
+  - New section: "## 문제 해결"
+  - New section: "### 세션 생성 실패"
+  - New section: "### Remote Control 세션 만료 또는 액세스 거부"
+  - New section: "### 환경 만료"
+- **CLI 참조** (`cli-reference.md`): 65 lines added, 65 removed
+- **Claude Code Desktop 사용하기** (`desktop.md`): 17 lines added, 0 removed
+  - New section: "#### SSH 호스트 연결을 제한하여 사용자가 연결할 수 있는 호스트를 제한합니다"
+- **마켓플레이스를 통해 미리 빌드된 플러그인 발견 및 설치** (`discover-plugins.md`): 20 lines added, 12 removed
+- **Claude Code 확장하기** (`features-overview.md`): 2 lines added, 2 removed
+- **Google Vertex AI에서 Claude Code 사용하기** (`google-vertex-ai.md`): 23 lines added, 112 removed
+  - New section: "#### 고급 자격증명 구성"
+- **Hooks 참조** (`hooks.md`): 8 lines added, 7 removed
+- **MCP를 통해 Claude Code를 도구에 연결하기** (`mcp.md`): 12 lines added, 2 removed
+- **Claude가 프로젝트를 기억하는 방법** (`memory.md`): 10 lines added, 0 removed
+- **Microsoft Foundry의 Claude Code** (`microsoft-foundry.md`): 1 lines added, 111 removed
+- **모델 구성** (`model-config.md`): 16 lines added, 12 removed
+- **출력 스타일** (`output-styles.md`): 18 lines added, 9 removed
+- **Claude Code 개요** (`overview.md`): 1 lines added, 635 removed
+- **플러그인 만들기** (`plugins.md`): 9 lines added, 1 removed
+- **빠른 시작** (`quickstart.md`): 3 lines added, 636 removed
+- **Claude Code 설정** (`settings.md`): 28 lines added, 21 removed
+- **사용자 정의 subagent 만들기** (`sub-agents.md`): 3 lines added, 3 removed
+- **엔터프라이즈 배포 개요** (`third-party-integrations.md`): 73 lines added, 1 removed
+- **VS Code에서 Claude Code 사용하기** (`vs-code.md`): 2 lines added, 0 removed
+
+### Português
+
+
+**Modified**
+
+- **Claude Code no Amazon Bedrock** (`amazon-bedrock.md`): 12 lines added, 112 removed
+  - New section: "## Camadas de serviço"
+- **Use Claude Code na web** (`claude-code-on-the-web.md`): 39 lines added, 4 removed
+  - New section: "## Troubleshooting"
+  - New section: "### Session creation failed"
+  - New section: "### Remote Control session expired or access denied"
+  - New section: "### Environment expired"
+- **Referência de CLI** (`cli-reference.md`): 8 lines added, 8 removed
+- **Use Claude Code Desktop** (`desktop.md`): 28 lines added, 11 removed
+  - New section: "#### Restringir quais hosts SSH os usuários podem se conectar"
+  - New section: "### Controles do console de administração"
+  - New section: "### Políticas de gerenciamento de dispositivos"
+  - New section: "### Autenticação e SSO"
+  - New section: "### Manipulação de dados"
+- **Descubra e instale plugins pré-construídos através de marketplaces** (`discover-plugins.md`): 19 lines added, 11 removed
+- **Estender Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Claude Code no Google Vertex AI** (`google-vertex-ai.md`): 23 lines added, 112 removed
+  - New section: "#### Configuração avançada de credenciais"
+- **Referência de hooks** (`hooks.md`): 8 lines added, 7 removed
+- **Conectar Claude Code a ferramentas via MCP** (`mcp.md`): 11 lines added, 1 removed
+- **Como Claude se lembra do seu projeto** (`memory.md`): 13 lines added, 1 removed
+- **Claude Code no Microsoft Foundry** (`microsoft-foundry.md`): 1 lines added, 111 removed
+- **Configuração de modelo** (`model-config.md`): 4 lines added, 0 removed
+- **Estilos de saída** (`output-styles.md`): 16 lines added, 7 removed
+- **Visão geral do Claude Code** (`overview.md`): 1 lines added, 635 removed
+- **Criar plugins** (`plugins.md`): 9 lines added, 1 removed
+- **Guia de Início Rápido** (`quickstart.md`): 3 lines added, 636 removed
+- **Configurações do Claude Code** (`settings.md`): 98 lines added, 91 removed
+- **Criar subagentes personalizados** (`sub-agents.md`): 3 lines added, 3 removed
+- **Visão geral da implantação empresarial** (`third-party-integrations.md`): 73 lines added, 1 removed
+- **Use Claude Code in VS Code** (`vs-code.md`): 5 lines added, 3 removed
+
+### Русский
+
+
+**Modified**
+
+- **Claude Code на Amazon Bedrock** (`amazon-bedrock.md`): 12 lines added, 112 removed
+  - New section: "## Уровни обслуживания"
+- **Использование Claude Code в веб-интерфейсе** (`claude-code-on-the-web.md`): 38 lines added, 3 removed
+  - New section: "## Troubleshooting"
+  - New section: "### Session creation failed"
+  - New section: "### Remote Control session expired or access denied"
+  - New section: "### Environment expired"
+- **Справочник CLI** (`cli-reference.md`): 8 lines added, 8 removed
+- **Использование Claude Code Desktop** (`desktop.md`): 23 lines added, 6 removed
+  - New section: "#### Ограничение SSH-хостов, к которым могут подключаться пользователи"
+- **Откройте и установите готовые плагины через маркетплейсы** (`discover-plugins.md`): 20 lines added, 12 removed
+- **Расширение Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Claude Code на Google Vertex AI** (`google-vertex-ai.md`): 23 lines added, 112 removed
+  - New section: "#### Расширенная конфигурация учетных данных"
+- **Справочник по hooks** (`hooks.md`): 16 lines added, 15 removed
+  - New section: "## Входные и выходные данные Hook"
+  - New section: "### Общие входные поля"
+  - New section: "### Выходные коды выхода"
+  - New section: "#### Поведение exit code 2 для каждого события"
+  - New section: "### Обработка HTTP ответа"
+- **Подключите Claude Code к инструментам через MCP** (`mcp.md`): 11 lines added, 1 removed
+- **Как Claude запоминает ваш проект** (`memory.md`): 12 lines added, 0 removed
+- **Claude Code на Microsoft Foundry** (`microsoft-foundry.md`): 1 lines added, 111 removed
+- **Конфигурация модели** (`model-config.md`): 4 lines added, 0 removed
+- **Output styles** (`output-styles.md`): 16 lines added, 7 removed
+- **Обзор Claude Code** (`overview.md`): 1 lines added, 635 removed
+- **Создание plugins** (`plugins.md`): 9 lines added, 1 removed
+- **Быстрый старт** (`quickstart.md`): 4 lines added, 637 removed
+- **Параметры Claude Code** (`settings.md`): 98 lines added, 91 removed
+- **Создание пользовательских subagents** (`sub-agents.md`): 3 lines added, 3 removed
+- **Обзор корпоративного развертывания** (`third-party-integrations.md`): 73 lines added, 1 removed
+- **Использование Claude Code в VS Code** (`vs-code.md`): 2 lines added, 0 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **Amazon Bedrock 上的 Claude Code** (`amazon-bedrock.md`): 12 lines added, 112 removed
+  - New section: "## 服务层级"
+- **在网络上使用 Claude Code** (`claude-code-on-the-web.md`): 38 lines added, 3 removed
+  - New section: "## 故障排除"
+  - New section: "### 会话创建失败"
+  - New section: "### 远程控制会话已过期或访问被拒绝"
+  - New section: "### 环境已过期"
+- **CLI 参考** (`cli-reference.md`): 2 lines added, 2 removed
+- **使用 Claude Code Desktop** (`desktop.md`): 17 lines added, 0 removed
+  - New section: "#### 限制用户可以连接的 SSH 主机"
+- **通过市场发现和安装预构建插件** (`discover-plugins.md`): 21 lines added, 13 removed
+- **扩展 Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Google Vertex AI 上的 Claude Code** (`google-vertex-ai.md`): 23 lines added, 112 removed
+  - New section: "#### 高级凭证配置"
+- **Hooks 参考** (`hooks.md`): 8 lines added, 7 removed
+- **通过 MCP 将 Claude Code 连接到工具** (`mcp.md`): 14 lines added, 4 removed
+- **Claude 如何记住你的项目** (`memory.md`): 12 lines added, 0 removed
+- **Microsoft Foundry 上的 Claude Code** (`microsoft-foundry.md`): 2 lines added, 112 removed
+  - New section: "# Microsoft Foundry 上的 Claude Code"
+- **模型配置** (`model-config.md`): 4 lines added, 0 removed
+- **输出样式** (`output-styles.md`): 16 lines added, 7 removed
+- **Claude Code 概述** (`overview.md`): 1 lines added, 635 removed
+- **创建插件** (`plugins.md`): 9 lines added, 1 removed
+- **快速开始** (`quickstart.md`): 4 lines added, 637 removed
+- **Claude Code 设置** (`settings.md`): 14 lines added, 7 removed
+- **创建自定义 subagents** (`sub-agents.md`): 3 lines added, 3 removed
+- **企业部署概览** (`third-party-integrations.md`): 73 lines added, 1 removed
+- **在 VS Code 中使用 Claude Code** (`vs-code.md`): 2 lines added, 0 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **Amazon Bedrock 上的 Claude Code** (`amazon-bedrock.md`): 12 lines added, 112 removed
+  - New section: "## 服務層級"
+- **在網頁上使用 Claude Code** (`claude-code-on-the-web.md`): 38 lines added, 3 removed
+  - New section: "## 故障排除"
+  - New section: "### 工作階段建立失敗"
+  - New section: "### 遠端控制工作階段已過期或存取被拒絕"
+  - New section: "### 環境已過期"
+- **CLI 參考** (`cli-reference.md`): 2 lines added, 2 removed
+- **使用 Claude Code Desktop** (`desktop.md`): 17 lines added, 0 removed
+  - New section: "#### 限制使用者可以連接的 SSH 主機"
+- **透過市場探索和安裝預建外掛程式** (`discover-plugins.md`): 19 lines added, 11 removed
+- **擴展 Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Google Vertex AI 上的 Claude Code** (`google-vertex-ai.md`): 24 lines added, 113 removed
+  - New section: "#### 進階認證設定"
+- **Hooks 參考** (`hooks.md`): 8 lines added, 7 removed
+- **透過 MCP 將 Claude Code 連接到工具** (`mcp.md`): 12 lines added, 2 removed
+- **Claude 如何記住您的專案** (`memory.md`): 12 lines added, 0 removed
+- **Microsoft Foundry 上的 Claude Code** (`microsoft-foundry.md`): 2 lines added, 112 removed
+  - New section: "# Microsoft Foundry 上的 Claude Code"
+- **模型配置** (`model-config.md`): 4 lines added, 0 removed
+- **輸出樣式** (`output-styles.md`): 16 lines added, 7 removed
+- **Claude Code 概述** (`overview.md`): 1 lines added, 635 removed
+- **建立 plugins** (`plugins.md`): 9 lines added, 1 removed
+- **快速入門** (`quickstart.md`): 3 lines added, 636 removed
+- **Claude Code 設定** (`settings.md`): 13 lines added, 6 removed
+- **建立自訂 subagents** (`sub-agents.md`): 3 lines added, 3 removed
+- **企業部署概述** (`third-party-integrations.md`): 73 lines added, 1 removed
+- **在 VS Code 中使用 Claude Code** (`vs-code.md`): 2 lines added, 0 removed
+
+---
+
 ## 2026-05-07
 
 184 pages modified

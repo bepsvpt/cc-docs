@@ -4,7 +4,7 @@
 
 # 透過市場探索和安裝預建外掛程式
 
-> 從市場探索和安裝外掛程式，以使用新命令、代理和功能擴展 Claude Code。
+> 從市場探索和安裝外掛程式，以使用新技能、代理和功能擴展 Claude Code。
 
 外掛程式透過技能、代理、hooks 和 MCP servers 擴展 Claude Code。外掛程式市場是幫助您探索和安裝這些擴展的目錄，無需自己構建它們。
 
@@ -35,6 +35,8 @@
 ```shell theme={null}
 /plugin install github@claude-plugins-official
 ```
+
+如果 Claude Code 報告在任何市場中找不到外掛程式，您的市場可能遺失或已過期。執行 `/plugin marketplace update claude-plugins-official` 以重新整理它，或如果您之前未新增過，執行 `/plugin marketplace add anthropics/claude-plugins-official`。然後重試安裝。
 
 <Note>
   官方市場由 Anthropic 維護。若要將外掛程式提交到官方市場，請使用其中一個應用內提交表單：
@@ -95,7 +97,7 @@
 
 ### 開發工作流程
 
-為常見開發任務新增命令和代理的外掛程式：
+為常見開發任務新增技能和代理的外掛程式：
 
 * **commit-commands**：Git 提交工作流程，包括提交、推送和 PR 建立
 * **pr-review-toolkit**：用於審查拉取請求的專門代理
@@ -142,7 +144,7 @@ Anthropic 也維護一個[演示外掛程式市場](https://github.com/anthropic
     * **Project scope**：為此儲存庫上的所有協作者安裝
     * **Local scope**：僅在此儲存庫中為自己安裝
 
-    例如，選擇 **commit-commands**（新增 git 工作流程命令的外掛程式）並將其安裝到您的使用者範圍。
+    例如，選擇 **commit-commands**（新增 git 工作流程技能的外掛程式）並將其安裝到您的使用者範圍。
 
     您也可以直接從命令列安裝：
 
@@ -154,7 +156,7 @@ Anthropic 也維護一個[演示外掛程式市場](https://github.com/anthropic
   </Step>
 
   <Step title="使用您的新外掛程式">
-    安裝後，執行 `/reload-plugins` 以啟動外掛程式。外掛程式命令由外掛程式名稱命名空間，因此 **commit-commands** 提供 `/commit-commands:commit` 之類的命令。
+    安裝後，執行 `/reload-plugins` 以啟動外掛程式。外掛程式技能由外掛程式名稱命名空間，因此 **commit-commands** 提供 `/commit-commands:commit` 之類的技能。
 
     透過對檔案進行變更並執行以下命令來試試看：
 
@@ -164,7 +166,7 @@ Anthropic 也維護一個[演示外掛程式市場](https://github.com/anthropic
 
     這會暫存您的變更、產生提交訊息並建立提交。
 
-    每個外掛程式的工作方式不同。檢查 **Discover** 標籤中的外掛程式描述或其首頁，以瞭解它提供的命令和功能。
+    每個外掛程式的工作方式不同。檢查 **Discover** 標籤中的外掛程式描述或其首頁，以瞭解它提供的技能和功能。
   </Step>
 </Steps>
 
@@ -195,7 +197,7 @@ Anthropic 也維護一個[演示外掛程式市場](https://github.com/anthropic
 
 ### 從其他 Git 主機新增
 
-透過提供完整 URL 新增任何 git 儲存庫。這適用於任何 Git 主機，包括 GitLab、Bitbucket 和自託管伺服器：
+透過提供完整 URL 新增任何 git 儲存庫。這適用於任何 Git 主機，包括 GitLab、Bitbucket 和自託管伺服器。包含 `.git` 後綴，以便 Claude Code 複製儲存庫，而不是將 URL 視為託管 `marketplace.json` 檔案的直接連結。
 
 使用 HTTPS：
 
@@ -257,15 +259,21 @@ Anthropic 也維護一個[演示外掛程式市場](https://github.com/anthropic
 
 您也可能看到具有 **managed** 範圍的外掛程式，這些是由管理員透過[受管設定](/zh-TW/settings#settings-files)安裝的，無法修改。
 
-執行 `/plugin` 並前往 **Installed** 標籤以查看按範圍分組的外掛程式。
-
 <Warning>
   在安裝外掛程式之前，請確保您信任它。Anthropic 不控制外掛程式中包含的 MCP servers、檔案或其他軟體，也無法驗證它們是否按預期工作。檢查每個外掛程式的首頁以獲取更多資訊。
 </Warning>
 
 ## 管理已安裝的外掛程式
 
-執行 `/plugin` 並前往 **Installed** 標籤以檢視、啟用、停用或解除安裝外掛程式。輸入以按外掛程式名稱或描述篩選清單。
+執行 `/plugin` 並前往 **Installed** 標籤以檢視、啟用、停用或解除安裝外掛程式。清單按範圍分組，並排序以便您首先看到問題：具有載入錯誤或未解決依賴項的外掛程式出現在頂部，然後是您的最愛，停用的外掛程式摺疊在底部的摺疊標題後面。
+
+從清單中，您可以：
+
+* 按 `f` 以將選定的外掛程式加入最愛或取消加入最愛
+* 輸入以按外掛程式名稱或描述篩選
+* 按 Enter 以開啟外掛程式的詳細檢視並啟用、停用或解除安裝它
+
+當您安裝聲明依賴項的外掛程式時，安裝輸出會列出哪些依賴項與其一起自動安裝。
 
 您也可以使用直接命令管理外掛程式。
 
@@ -400,8 +408,8 @@ export FORCE_AUTOUPDATE_PLUGINS=1
 
 1. **檢查您的版本**：執行 `claude --version` 以查看已安裝的內容。
 2. **更新 Claude Code**：
-   * **Homebrew**：`brew upgrade claude-code`
-   * **npm**：`npm update -g @anthropic-ai/claude-code`
+   * **Homebrew**：`brew upgrade claude-code`（或如果您安裝了該 cask，執行 `brew upgrade claude-code@latest`）
+   * **npm**：`npm install -g @anthropic-ai/claude-code@latest`
    * **原生安裝程式**：從[設定](/zh-TW/setup)重新執行安裝命令
 3. **重新啟動 Claude Code**：更新後，重新啟動您的終端機並再次執行 `claude`。
 

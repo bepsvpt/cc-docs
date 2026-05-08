@@ -564,11 +564,27 @@ O exemplo a seguir pré-configura uma única conexão que abre em `~/projects` n
 
 Cada entrada requer `id`, `name` e `sshHost`. Os campos `sshPort`, `sshIdentityFile` e `startDirectory` são opcionais. Os usuários também podem adicionar `sshConfigs` ao seu próprio `~/.claude/settings.json`, que é onde as conexões adicionadas através do diálogo são armazenadas.
 
+#### Restringir quais hosts SSH os usuários podem se conectar
+
+Administradores podem limitar as sessões SSH do Desktop a um conjunto aprovado de hosts adicionando `sshHostAllowlist` a um arquivo de [configurações gerenciadas](/pt/settings#settings-precedence). Quando definido, os usuários podem se conectar apenas a hosts cujo nome de host resolvido corresponde a um dos padrões. Defina-o como um array vazio para desabilitar sessões SSH completamente.
+
+O exemplo a seguir permite conexões a qualquer host sob `devboxes.example.com` e a um único host bastion nomeado:
+
+```json theme={null}
+{
+  "sshHostAllowlist": ["*.devboxes.example.com", "bastion.example.com"]
+}
+```
+
+Padrões são insensíveis a maiúsculas e minúsculas. `*` corresponde a qualquer host, e `*.example.com` corresponde a `example.com` e qualquer subdomínio. Qualquer outra coisa é uma correspondência exata. A verificação é executada contra o nome de host após resolução `~/.ssh/config` via `ssh -G`, portanto entradas `Host` aliases e `ProxyCommand`/`ProxyJump` são permitidas desde que o `HostName` resolvido corresponda.
+
+`sshHostAllowlist` é lido apenas de configurações gerenciadas; valores em configurações de usuário ou projeto são ignorados. Apenas o aplicativo Claude Desktop honra esta configuração; a CLI Claude Code e extensões IDE não a leem, e não restringe comandos `ssh` executados através da ferramenta Bash. Governa quais hosts o aplicativo Desktop se conecta, não saída de rede, portanto combine-o com controles de rede ou zero-trust da sua organização se você precisar de um limite rígido.
+
 ## Configuração corporativa
 
 Organizações em planos Team ou Enterprise podem gerenciar o comportamento do aplicativo desktop através de controles do console de administração, arquivos de configurações gerenciadas e políticas de gerenciamento de dispositivos.
 
-### Admin console controls
+### Controles do console de administração
 
 Essas configurações são configuradas através do [console de configurações de administração](https://claude.ai/admin-settings/claude-code):
 
@@ -581,33 +597,34 @@ Essas configurações são configuradas através do [console de configurações 
 
 Configurações gerenciadas sobrescrevem configurações de projeto e usuário e se aplicam quando Desktop gera sessões CLI. Você pode definir essas chaves no arquivo de [configurações gerenciadas](/pt/settings#settings-precedence) de sua organização ou enviá-las remotamente através do console de administração.
 
-| Chave                                      | Descrição                                                                                                                                                                                     |
-| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `permissions.disableBypassPermissionsMode` | defina como `"disable"` para impedir usuários de ativar o modo Bypass permissions.                                                                                                            |
-| `disableAutoMode`                          | defina como `"disable"` para impedir usuários de ativar o modo [Auto](/pt/permission-modes#eliminate-prompts-with-auto-mode). Remove Auto do seletor de modo. Também aceito em `permissions`. |
-| `autoMode`                                 | customize o que o classificador de modo auto confia e bloqueia em sua organização. Veja [Configurar o modo auto](/pt/auto-mode-config).                                                       |
-| `sshConfigs`                               | pré-configure [conexões SSH](#pre-configure-ssh-connections-for-your-team) que aparecem no dropdown de ambiente. Usuários não podem editar ou excluir conexões gerenciadas.                   |
+| Chave                                      | Descrição                                                                                                                                                                                                                     |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `permissions.disableBypassPermissionsMode` | defina como `"disable"` para impedir usuários de ativar o modo Bypass permissions.                                                                                                                                            |
+| `disableAutoMode`                          | defina como `"disable"` para impedir usuários de ativar o modo [Auto](/pt/permission-modes#eliminate-prompts-with-auto-mode). Remove Auto do seletor de modo. Também aceito em `permissions`.                                 |
+| `autoMode`                                 | customize o que o classificador de modo auto confia e bloqueia em sua organização. Veja [Configurar o modo auto](/pt/auto-mode-config).                                                                                       |
+| `sshConfigs`                               | pré-configure [conexões SSH](#pre-configure-ssh-connections-for-your-team) que aparecem no dropdown de ambiente. Usuários não podem editar ou excluir conexões gerenciadas.                                                   |
+| `sshHostAllowlist`                         | restrinja [sessões SSH](#restrict-which-ssh-hosts-users-can-connect-to) a hosts cujo nome de host resolvido corresponde a um desses padrões. Uma matriz vazia desativa sessões SSH. Lido apenas de configurações gerenciadas. |
 
 Um arquivo de configurações gerenciadas implantado em disco em cada máquina se aplica a sessões Desktop. Configurações gerenciadas enviadas remotamente através do console de administração atualmente alcançam apenas sessões CLI e IDE, portanto, para implantações Desktop, distribua o arquivo via MDM ou use os [controles do console de administração](#admin-console-controls) acima.
 
 `permissions.disableBypassPermissionsMode` e `disableAutoMode` também funcionam em configurações de usuário e projeto, mas colocá-los em configurações gerenciadas impede que usuários os sobrescrevam. `autoMode` é lido de configurações de usuário, `.claude/settings.local.json` e configurações gerenciadas, mas não de `.claude/settings.json` verificado: um repo clonado não pode injetar suas próprias regras de classificador. Para a lista completa de configurações apenas gerenciadas incluindo `allowManagedPermissionRulesOnly` e `allowManagedHooksOnly`, veja [configurações apenas gerenciadas](/pt/permissions#managed-only-settings).
 
-### Device management policies
+### Políticas de gerenciamento de dispositivos
 
 Equipes de TI podem gerenciar o aplicativo desktop através de MDM em macOS ou group policy no Windows. As políticas disponíveis incluem ativar ou desativar o recurso Claude Code, controlar atualizações automáticas e definir uma URL de implantação personalizada.
 
 * **macOS**: configure via domínio de preferência `com.anthropic.Claude` usando ferramentas como Jamf ou Kandji
 * **Windows**: configure via registro em `SOFTWARE\Policies\Claude`
 
-### Authentication and SSO
+### Autenticação e SSO
 
 Organizações corporativas podem exigir SSO para todos os usuários. Veja [autenticação](/pt/authentication) para detalhes de nível de plano e [Configurando SSO](https://support.claude.com/en/articles/13132885-setting-up-single-sign-on-sso) para configuração SAML e OIDC.
 
-### Data handling
+### Manipulação de dados
 
 Claude Code processa seu código localmente em sessões locais ou na infraestrutura em nuvem da Anthropic em sessões remotas. Conversas e contexto de código são enviados para a API da Anthropic para processamento. Veja [manipulação de dados](/pt/data-usage) para detalhes sobre retenção de dados, privacidade e conformidade.
 
-### Deployment
+### Implantação
 
 Desktop pode ser distribuído através de ferramentas de implantação corporativa:
 

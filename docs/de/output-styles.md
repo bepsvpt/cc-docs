@@ -6,7 +6,9 @@
 
 > Passen Sie Claude Code für Anwendungsfälle über Softwareentwicklung hinaus an
 
-Ausgabestile ermöglichen es Ihnen, Claude Code als jeden Agententyp zu verwenden, während Sie seine Kernfunktionen wie das Ausführen lokaler Skripte, das Lesen/Schreiben von Dateien und das Nachverfolgen von TODOs beibehalten.
+Ausgabestile ändern, wie Claude antwortet, nicht was Claude weiß. Sie ändern die Systemaufforderung, um Rolle, Ton und Ausgabeformat festzulegen, während die Kernfunktionen wie das Ausführen von Skripten, das Lesen und Schreiben von Dateien sowie das Nachverfolgen von TODOs erhalten bleiben. Verwenden Sie einen, wenn Sie sich in jedem Durchgang immer wieder nach derselben Stimme oder demselben Format erkundigen, oder wenn Sie möchten, dass Claude als etwas anderes als ein Softwareentwickler fungiert.
+
+Für Anweisungen zu Ihrem Projekt, Konventionen oder Ihrer Codebasis verwenden Sie stattdessen [CLAUDE.md](/de/memory).
 
 ## Integrierte Ausgabestile
 
@@ -63,17 +65,24 @@ tasks. [Your custom instructions here...]
 [Define how the assistant should behave in this style...]
 ```
 
-Sie können diese Dateien auf Benutzerebene (`~/.claude/output-styles`) oder Projektebene (`.claude/output-styles`) speichern.
+Sie können diese Dateien auf drei Ebenen speichern:
+
+* Benutzer: `~/.claude/output-styles`
+* Projekt: `.claude/output-styles`
+* Verwaltete Richtlinie: `.claude/output-styles` im [Verzeichnis für verwaltete Einstellungen](/de/settings#settings-files)
+
+[Plugins](/de/plugins-reference) können auch Ausgabestile in einem `output-styles/`-Verzeichnis bereitstellen.
 
 ### Frontmatter
 
 Ausgabestil-Dateien unterstützen Frontmatter zum Angeben von Metadaten:
 
-| Frontmatter                | Zweck                                                                                              | Standard                   |
-| :------------------------- | :------------------------------------------------------------------------------------------------- | :------------------------- |
-| `name`                     | Name des Ausgabestils, falls nicht der Dateiname                                                   | Wird vom Dateinamen geerbt |
-| `description`              | Beschreibung des Ausgabestils, angezeigt in der `/config`-Auswahl                                  | Keine                      |
-| `keep-coding-instructions` | Ob die Teile der Systemaufforderung von Claude Code bezüglich Codierung beibehalten werden sollen. | false                      |
+| Frontmatter                | Zweck                                                                                                                                                                                                                                                                          | Standard                   |
+| :------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------- |
+| `name`                     | Name des Ausgabestils, falls nicht der Dateiname                                                                                                                                                                                                                               | Wird vom Dateinamen geerbt |
+| `description`              | Beschreibung des Ausgabestils, angezeigt in der `/config`-Auswahl                                                                                                                                                                                                              | Keine                      |
+| `keep-coding-instructions` | Ob die Teile der Systemaufforderung von Claude Code bezüglich Codierung beibehalten werden sollen.                                                                                                                                                                             | false                      |
+| `force-for-plugin`         | Nur Plugin-Ausgabestile: Wenden Sie diesen Stil automatisch an, wenn das Plugin aktiviert ist, ohne dass Benutzer ihn auswählen müssen. Überschreibt die `outputStyle`-Einstellung des Benutzers. Wenn mehrere aktivierte Plugins dies festlegen, gewinnt das zuerst geladene. | false                      |
 
 ## Vergleiche mit verwandten Funktionen
 

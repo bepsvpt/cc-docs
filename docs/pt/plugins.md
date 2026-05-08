@@ -317,8 +317,16 @@ Conforme você faz mudanças no seu plugin, execute `/reload-plugins` para pegar
 
 Para testar um plugin que já está empacotado como um arquivo `.zip` e hospedado em uma URL, como um artefato de compilação de CI, use `--plugin-url` em vez disso. Claude Code busca o arquivo no início e o carrega apenas para essa sessão. Se a busca falhar ou o arquivo for inválido, Claude Code relata um erro de carregamento de plugin e inicia sem ele. As mesmas [considerações de confiança](/pt/discover-plugins#security) se aplicam como para qualquer fonte de plugin: apenas aponte esse flag para arquivos que você controla ou confia.
 
+Para carregar múltiplos plugins, repita a flag para cada URL:
+
 ```bash theme={null}
-claude --plugin-url https://example.com/my-plugin.zip
+claude --plugin-url https://example.com/my-plugin.zip --plugin-url https://example.com/other.zip
+```
+
+Ou passe URLs separadas por espaço como um argumento entre aspas:
+
+```bash theme={null}
+claude --plugin-url "https://example.com/my-plugin.zip https://example.com/other.zip"
 ```
 
 ### Depure problemas de plugin

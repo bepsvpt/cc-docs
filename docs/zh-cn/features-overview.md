@@ -249,7 +249,7 @@ Claude Code 结合了一个能够推理代码的模型和[内置工具](/zh-CN/h
 
     **上下文成本：** 低，直到使用。仅用户 skills 在调用前成本为零。
 
-    **在 subagents 中：** Skills 在 subagents 中的工作方式不同。不是按需加载，而是传递给 subagent 的 skills 在启动时完全预加载到其上下文中。Subagents 不从主会话继承 skills；您必须明确指定它们。
+    **在 subagents 中：** Skills 在 subagents 中的工作方式不同。不是按需加载，而是在 subagent 的 `skills:` 字段中列出的 skills 在启动时完全预加载到其上下文中。Subagents 仍然可以通过 Skill 工具发现和调用未列出的项目、用户和插件 skills。
 
     <Tip>对于有副作用的 skills，使用 `disable-model-invocation: true`。这节省上下文并确保只有您触发它们。</Tip>
   </Tab>

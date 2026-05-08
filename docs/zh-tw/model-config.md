@@ -17,6 +17,10 @@
   * Foundry：部署名稱
   * Vertex：版本名稱
 
+<Note>
+  `ANTHROPIC_BASE_URL` 改變請求的發送位置，而不是哪個模型回答它們。若要透過 LLM 閘道路由 Claude，請參閱 [LLM 閘道配置](/zh-TW/llm-gateway)。
+</Note>
+
 ### 模型別名
 
 模型別名提供了一種便捷的方式來選擇模型設定，無需記住確切的版本號：

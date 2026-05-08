@@ -262,12 +262,12 @@ Subagent는 주 대화의 현재 작업 디렉토리에서 시작합니다. Suba
 | :---------------- | :-- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `name`            | 예   | 소문자 및 하이픈을 사용한 고유 식별자                                                                                                                                                                                                               |
 | `description`     | 예   | Claude가 이 subagent에 위임해야 할 때                                                                                                                                                                                                        |
-| `tools`           | 아니오 | Subagent가 사용할 수 있는 [도구](#available-tools). 생략하면 모든 도구 상속                                                                                                                                                                            |
+| `tools`           | 아니오 | Subagent가 사용할 수 있는 [도구](#available-tools). 생략하면 모든 도구 상속. Skills를 컨텍스트에 미리 로드하려면 여기에 `Skill`을 나열하는 대신 `skills` 필드를 사용합니다                                                                                                            |
 | `disallowedTools` | 아니오 | 거부할 도구, 상속되거나 지정된 목록에서 제거됨                                                                                                                                                                                                          |
 | `model`           | 아니오 | 사용할 [모델](#choose-a-model): `sonnet`, `opus`, `haiku`, 전체 모델 ID (예: `claude-opus-4-7`), 또는 `inherit`. 기본값: `inherit`                                                                                                                 |
 | `permissionMode`  | 아니오 | [권한 모드](#permission-modes): `default`, `acceptEdits`, `auto`, `dontAsk`, `bypassPermissions`, 또는 `plan`. [플러그인 subagent](#choose-the-subagent-scope)에서는 무시됨                                                                         |
 | `maxTurns`        | 아니오 | Subagent가 중지되기 전의 최대 에이전트 턴 수                                                                                                                                                                                                       |
-| `skills`          | 아니오 | 시작 시 subagent의 컨텍스트에 로드할 [Skills](/ko/skills). 호출 가능하게 만들어지는 것이 아니라 전체 skill 콘텐츠가 주입됩니다. Subagent는 부모 대화에서 skills를 상속하지 않습니다                                                                                                        |
+| `skills`          | 아니오 | 시작 시 subagent의 컨텍스트에 로드할 [Skills](/ko/skills). 전체 skill 콘텐츠가 주입되며, 호출 가능하게 만들어지는 것이 아닙니다. Subagent는 여전히 Skill 도구를 통해 나열되지 않은 프로젝트, 사용자, 플러그인 skills를 호출할 수 있습니다                                                                     |
 | `mcpServers`      | 아니오 | 이 subagent에서 사용 가능한 [MCP servers](/ko/mcp). 각 항목은 이미 구성된 서버를 참조하는 서버 이름 (예: `"slack"`) 또는 서버 이름을 키로 하고 전체 [MCP server config](/ko/mcp#installing-mcp-servers)를 값으로 하는 인라인 정의입니다. [플러그인 subagent](#choose-the-subagent-scope)에서는 무시됨 |
 | `hooks`           | 아니오 | 이 subagent로 범위가 지정된 [라이프사이클 hooks](#define-hooks-for-subagents). [플러그인 subagent](#choose-the-subagent-scope)에서는 무시됨                                                                                                                 |
 | `memory`          | 아니오 | [지속적 메모리 범위](#enable-persistent-memory): `user`, `project`, 또는 `local`. 교차 세션 학습 활성화                                                                                                                                                |
@@ -418,7 +418,7 @@ skills:
 Implement API endpoints. Follow the conventions and patterns from the preloaded skills.
 ```
 
-각 skill의 전체 콘텐츠가 subagent의 컨텍스트에 주입되며, 호출 가능하게 만들어지는 것이 아닙니다. Subagent는 부모 대화에서 skills를 상속하지 않으므로 명시적으로 나열해야 합니다.
+각 skill의 전체 콘텐츠가 subagent의 컨텍스트에 주입됩니다. 이 필드는 어떤 skills를 미리 로드할지 제어하며, subagent가 액세스할 수 있는 skills를 제어하지 않습니다: 이 필드가 없으면 subagent는 여전히 실행 중에 Skill 도구를 통해 프로젝트, 사용자, 플러그인 skills를 검색하고 호출할 수 있습니다. Subagent가 skills를 완전히 호출하지 못하도록 방지하려면 [`tools`](#available-tools) 목록에서 `Skill`을 생략하거나 `disallowedTools`에 추가합니다.
 
 `disable-model-invocation: true`를 설정하는 skills는 미리 로드할 수 없습니다. 미리 로드는 Claude가 호출할 수 있는 동일한 skills 세트에서 가져오기 때문입니다. 나열된 skill이 누락되었거나 비활성화된 경우 Claude Code는 이를 건너뛰고 디버그 로그에 경고를 기록합니다.
 

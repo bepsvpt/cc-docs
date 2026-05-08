@@ -113,10 +113,10 @@ Team 和 Enterprise 管理員可以在 [claude.ai/admin-settings/claude-code](ht
 
 每個雲端工作階段在 claude.ai 上都有一個成績單 URL，工作階段可以從 `CLAUDE_CODE_REMOTE_SESSION_ID` 環境變數讀取自己的 ID。使用此在 PR 正文、提交訊息、Slack 貼文或生成的報告中放置可追蹤的連結，以便審查者可以開啟產生它們的執行。
 
-要求 Claude 從環境變數構造連結。以下命令列印 URL：
+變數的值使用 `cse_` 前綴，而成績單 URL 路徑採用相同的 ID，但使用 `session_` 前綴。建立連結時替換前綴。以下命令列印 URL：
 
 ```bash theme={null}
-echo "https://claude.ai/code/${CLAUDE_CODE_REMOTE_SESSION_ID}"
+echo "https://claude.ai/code/${CLAUDE_CODE_REMOTE_SESSION_ID/#cse_/session_}"
 ```
 
 ### 執行測試、啟動服務和新增套件
@@ -156,7 +156,7 @@ Docker 可用於執行容器化服務。要求 Claude 執行 `docker compose up`
 | 操作                 | 方式                                                                                |
 | :----------------- | :-------------------------------------------------------------------------------- |
 | 新增環境               | 選擇目前環境以開啟選擇器，然後選擇**新增環境**。對話框包括名稱、網路存取級別、環境變數和設定指令碼。                              |
-| 編輯環境               | 選擇環境名稱右側的設定圖示。                                                                    |
+| 編輯環境               | 選擇顯示目前環境名稱的雲端圖示以開啟選擇器，將滑鼠懸停在環境上，然後按一下右側出現的設定圖示。                                   |
 | 封存環境               | 開啟環境進行編輯並選擇**封存**。封存的環境隱藏在選擇器中，但現有工作階段繼續執行。                                       |
 | 為 `--remote` 設定預設值 | 在您的終端中執行 `/remote-env`。如果您有單一環境，此命令顯示您目前的配置。`/remote-env` 僅選擇預設值；從網頁介面新增、編輯和封存環境。 |
 
@@ -184,6 +184,8 @@ apt update && apt install -y gh
 ```
 
 如果指令碼以非零值退出，工作階段將無法啟動。將 `|| true` 附加到非關鍵命令以避免在不穩定的安裝失敗時阻止工作階段。
+
+保持指令碼的總執行時間在大約五分鐘以下，以便[環境快取](#environment-caching)可以建置。使用 `&` 和 `wait` 並行執行獨立安裝。如果單一下載無法在五分鐘限制內完成，請將其移動到在背景啟動它的 [SessionStart hook](#setup-scripts-vs-sessionstart-hooks)。
 
 <Note>
   安裝套件的設定指令碼需要網路存取才能到達登錄。預設**信任**網路存取允許連接到[常見套件登錄](#default-allowed-domains)，包括 npm、PyPI、RubyGems 和 crates.io。如果您的環境使用**無**網路存取，指令碼將無法安裝套件。
@@ -264,6 +266,12 @@ SessionStart hooks 在雲端工作階段中有一些限制：
 ## 網路存取
 
 網路存取控制來自雲端環境的出站連接。每個環境指定一個存取級別，您可以使用自訂允許的域擴展它。預設值為**信任**，允許套件登錄和其他[允許清單域](#default-allowed-domains)。
+
+若要更改環境的網路存取，請[開啟它進行編輯](#configure-your-environment)並在對話框中使用**網路存取**選擇器。沒有單獨的環境頁面。雲端圖示出現在您啟動雲端工作階段或配置[例行工作](/zh-TW/routines#environments-and-network-access)的任何地方。
+
+<Note>
+  MCP 連接器流量通過 Anthropic 的伺服器路由，因此您在工作階段或例行工作上啟用的連接器無需將其主機新增到**允許的域**即可工作。連接器按工作階段或按例行工作配置；移除您不需要的任何連接器以限制 Claude 可以到達的工具。這依賴於[安全性和隔離](#security-and-isolation)下提到的相同 Anthropic 綁定通道。
+</Note>
 
 ### 存取級別
 
@@ -754,6 +762,32 @@ Claude 可能會在 GitHub 上回覆審查評論執行緒作為解決它們的�
 * **認證保護**：敏感認證（如 git 認證或簽署金鑰）永遠不在沙箱內與 Claude Code 一起。驗證通過使用限定認證的安全代理進行處理。
 * **安全分析**：程式碼在隔離的 VM 內進行分析和修改，然後建立 PR
 
+## 故障排除
+
+對於出現在對話中的執行時 API 錯誤，例如 `API Error: 500`、`529 Overloaded`、`429` 或 `Prompt is too long`，請參閱[錯誤參考](/zh-TW/errors)。這些錯誤及其修復與 CLI 和 Desktop 應用程式共享。下面的部分涵蓋特定於雲端工作階段的問題。
+
+### 工作階段建立失敗
+
+如果新工作階段無法啟動，出現 `Session creation failed` 或在佈建時停滯，Claude Code 無法分配雲端環境。
+
+* 檢查 [status.claude.com](https://status.claude.com) 以查找雲端工作階段事件
+* 一分鐘後重試，因為容量是按需佈建的
+* 確認您的儲存庫可到達。私人儲存庫需要在該儲存庫上安裝 GitHub App 存取，或通過 `/web-setup` 同步的 `gh` 令牌。請參閱 [GitHub 驗證選項](#github-authentication-options)。
+
+### 遠端控制工作階段已過期或存取被拒絕
+
+`--teleport` 通過與雲端工作階段使用的相同遠端控制工作階段基礎設施連接，因此驗證和工作階段過期錯誤會以遠端控制措辭出現。您可能會看到 `Remote Control session has expired` 或 `Access denied`。連接令牌是短期的，並限定於您的帳戶。
+
+* 在本機執行 `/login` 以刷新您的認證，然後重新連接
+* 確認您登入到擁有工作階段的相同帳戶
+* 如果您看到 `Remote Control may not be available for this organization`，您的管理員尚未為您的計畫啟用遠端工作階段
+
+### 環境已過期
+
+雲端工作階段在不活動一段時間後停止，基礎環境被回收。從本機終端，這會顯示為 `Could not resume session ... its environment has expired. Creating a fresh session instead.` 在網頁上，工作階段在工作階段清單中標記為已過期。
+
+從 [claude.ai/code](https://claude.ai/code) 重新開啟工作階段以佈建新環境，並恢復您的對話歷史記錄。
+
 ## 限制
 
 在依賴雲端工作階段進行工作流程之前，請考慮這些限制：
@@ -761,6 +795,7 @@ Claude 可能會在 GitHub 上回覆審查評論執行緒作為解決它們的�
 * **速率限制**：Claude Code 網頁版與您帳戶內所有其他 Claude 和 Claude Code 使用共享速率限制。並行執行多個任務會按比例消耗更多速率限制。雲端 VM 沒有單獨的計算費用。
 * **儲存庫驗證**：您只能在驗證到相同帳戶時將工作階段從網頁移動到本機
 * **平台限制**：儲存庫複製和拉取請求建立需要 GitHub。自託管[GitHub Enterprise Server](/zh-TW/github-enterprise-server) 執行個體支援 Team 和 Enterprise 計畫。GitLab、Bitbucket 和其他非 GitHub 儲存庫可以作為[本機捆綁](#send-local-repositories-without-github)發送到雲端工作階段，但工作階段無法將結果推送回遠端
+* **組織 IP 允許清單**：雲端工作階段從 Anthropic 管理的基礎設施而不是您的網路呼叫 Anthropic API。如果您的組織啟用了 [IP 允許清單](https://support.claude.com/en/articles/13200993-restrict-access-to-claude-with-ip-allowlisting)，每個雲端工作階段都會失敗，出現驗證錯誤。這同樣適用於[程式碼審查](/zh-TW/code-review)和[例行工作](/zh-TW/routines)。聯絡 [Anthropic 支援](https://support.claude.com/)以從您的組織的 IP 允許清單中豁免 Anthropic 託管的服務。
 
 ## 相關資源
 

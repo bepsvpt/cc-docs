@@ -564,6 +564,22 @@ SSH 會話可讓您在遠端機器上執行 Claude Code，同時使用桌面應�
 
 每個項目都需要 `id`、`name` 和 `sshHost`。`sshPort`、`sshIdentityFile` 和 `startDirectory` 欄位是選用的。使用者也可以將 `sshConfigs` 新增到他們自己的 `~/.claude/settings.json`，這是透過對話框新增的連線的儲存位置。
 
+#### 限制使用者可以連接的 SSH 主機
+
+管理員可以透過將 `sshHostAllowlist` 新增到[受管設定](/zh-TW/settings#settings-precedence)檔案來限制 Desktop 的 SSH 會話到已核准的主機集合。設定後，使用者只能連接到其解析的主機名稱與其中一個模式相符的主機。將其設定為空陣列以完全停用 SSH 會話。
+
+以下範例允許連接到 `devboxes.example.com` 下的任何主機以及單一命名的堡壘主機：
+
+```json theme={null}
+{
+  "sshHostAllowlist": ["*.devboxes.example.com", "bastion.example.com"]
+}
+```
+
+模式不區分大小寫。`*` 符合任何主機，`*.example.com` 符合 `example.com` 和任何子網域。其他任何內容都是精確符合。檢查會針對透過 `ssh -G` 進行 `~/.ssh/config` 解析後的主機名稱執行，因此允許 `Host` 別名和 `ProxyCommand`/`ProxyJump` 項目，只要解析的 `HostName` 相符即可。
+
+`sshHostAllowlist` 僅從受管設定讀取；使用者或專案設定中的值會被忽略。只有 Claude Desktop 應用程式遵守此設定；Claude Code CLI 和 IDE 擴充功能不讀取它，它也不限制透過 Bash 工具執行的 `ssh` 命令。它控制 Desktop 應用程式連接的主機，而不是網路出口，因此如果您需要硬邊界，請將其與您組織的網路或零信任控制配對。
+
 ## 企業配置
 
 Teams 或 Enterprise 計畫上的組織可以透過管理員主控台控制、受管設定檔案和裝置管理原則來管理桌面應用程式行為。
@@ -587,6 +603,7 @@ Teams 或 Enterprise 計畫上的組織可以透過管理員主控台控制、�
 | `disableAutoMode`                          | 設定為 `"disable"` 以防止使用者啟用 [Auto](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode) 模式。從模式選擇器中移除 Auto。也在 `permissions` 下接受。 |
 | `autoMode`                                 | 自訂 auto 模式分類器在您的組織中信任和阻止的內容。請參閱[配置 auto 模式](/zh-TW/auto-mode-config)。                                                             |
 | `sshConfigs`                               | 預先配置[SSH 連線](#pre-configure-ssh-connections-for-your-team)，在環境下拉式選單中顯示。使用者無法編輯或刪除受管連線。                                            |
+| `sshHostAllowlist`                         | 限制 [SSH 會話](#restrict-which-ssh-hosts-users-can-connect-to)連線到已解析主機名稱符合這些模式之一的主機。空陣列會停用 SSH 會話。僅從受管設定讀取。                          |
 
 部署到每台機器上磁碟的受管設定檔案適用於 Desktop 會話。透過管理員主控台推送的遠端受管設定目前僅適用於 CLI 和 IDE 會話，因此對於 Desktop 部署，請透過 MDM 分發檔案或使用上面的[管理員主控台控制](#admin-console-controls)。
 

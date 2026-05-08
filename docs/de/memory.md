@@ -132,6 +132,16 @@ Claude Code liest `CLAUDE.md`, nicht `AGENTS.md`. Wenn Ihr Repository bereits `A
 Verwenden Sie Plan Mode für Änderungen unter `src/billing/`.
 ```
 
+Ein Symlink funktioniert auch, wenn Sie keine Claude-spezifischen Inhalte hinzufügen müssen:
+
+```bash theme={null}
+ln -s AGENTS.md CLAUDE.md
+```
+
+Unter Windows erfordert das Erstellen eines Symlinks Administratorrechte oder Developer Mode, daher verwenden Sie stattdessen den Import `@AGENTS.md`.
+
+Das Ausführen von [`/init`](/de/commands) in einem Repo, das bereits eine `AGENTS.md` hat, liest diese und integriert die relevanten Teile in die generierte `CLAUDE.md`. Es liest auch andere Tool-Konfigurationen wie `.cursorrules` und `.windsurfrules`.
+
 ### Wie CLAUDE.md-Dateien geladen werden
 
 Claude Code liest CLAUDE.md-Dateien, indem es die Verzeichnisstruktur von Ihrem aktuellen Arbeitsverzeichnis aus durchläuft und jedes Verzeichnis unterwegs auf `CLAUDE.md`- und `CLAUDE.local.md`-Dateien überprüft. Das bedeutet, wenn Sie Claude Code in `foo/bar/` ausführen, lädt es Anweisungen aus `foo/bar/CLAUDE.md`, `foo/CLAUDE.md` und allen `CLAUDE.local.md`-Dateien daneben.
@@ -377,6 +387,8 @@ Zum Debuggen:
 * Überprüfen Sie, dass die relevante CLAUDE.md an einem Ort ist, der für Ihre Sitzung geladen wird (siehe [Wählen Sie, wo Sie CLAUDE.md-Dateien ablegen](#choose-where-to-put-claude-md-files)).
 * Machen Sie Anweisungen spezifischer. „Verwenden Sie 2-Leerzeichen-Einrückung" funktioniert besser als „formatieren Sie Code schön".
 * Suchen Sie nach widersprüchlichen Anweisungen über CLAUDE.md-Dateien hinweg. Wenn zwei Dateien unterschiedliche Anleitungen für das gleiche Verhalten geben, kann Claude eine willkürlich auswählen.
+
+Wenn die Anweisung etwas ist, das an einem bestimmten Punkt ausgeführt werden muss, z. B. vor jedem Commit oder nach jeder Dateibearbeitung, schreiben Sie sie stattdessen als [Hook](/de/hooks-guide). Hooks werden als Shell-Befehle bei festen Lebenszyklusereignissen ausgeführt und gelten unabhängig davon, was Claude entscheidet zu tun.
 
 Für Anweisungen, die Sie auf System-Prompt-Ebene haben möchten, verwenden Sie [`--append-system-prompt`](/de/cli-reference#system-prompt-flags). Dies muss bei jeder Invokation übergeben werden, daher ist es besser für Skripte und Automatisierung als für interaktive Nutzung geeignet.
 

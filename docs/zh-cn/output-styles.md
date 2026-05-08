@@ -6,7 +6,9 @@
 
 > 将 Claude Code 适配用于软件工程之外的用途
 
-输出样式允许你将 Claude Code 用作任何类型的代理，同时保留其核心功能，例如运行本地脚本、读取/写入文件和跟踪 TODO。
+输出样式改变 Claude 的响应方式，而不是 Claude 知道什么。它们修改系统提示以设置角色、语气和输出格式，同时保留核心功能，如运行脚本、读取和写入文件以及跟踪 TODO。当你在每个回合中不断重新提示相同的语音或格式时，或者当你希望 Claude 充当软件工程师以外的角色时，请使用一个。
+
+有关你的项目、约定或代码库的说明，请改用 [CLAUDE.md](/zh-CN/memory)。
 
 ## 内置输出样式
 
@@ -63,17 +65,24 @@ tasks. [Your custom instructions here...]
 [Define how the assistant should behave in this style...]
 ```
 
-你可以在用户级别（`~/.claude/output-styles`）或项目级别（`.claude/output-styles`）保存这些文件。
+你可以在三个级别保存这些文件：
+
+* 用户：`~/.claude/output-styles`
+* 项目：`.claude/output-styles`
+* 托管策略：[托管设置目录](/zh-CN/settings#settings-files)内的 `.claude/output-styles`
+
+[Plugins](/zh-CN/plugins-reference) 也可以在 `output-styles/` 目录中提供输出样式。
 
 ### Frontmatter
 
 输出样式文件支持 frontmatter 来指定元数据：
 
-| Frontmatter                | 目的                              | 默认值    |
-| :------------------------- | :------------------------------ | :----- |
-| `name`                     | 输出样式的名称，如果不是文件名                 | 从文件名继承 |
-| `description`              | 输出样式的描述，在 `/config` 选择器中显示      | 无      |
-| `keep-coding-instructions` | 是否保留 Claude Code 系统提示中与编码相关的部分。 | false  |
+| Frontmatter                | 目的                                                                                                  | 默认值    |
+| :------------------------- | :-------------------------------------------------------------------------------------------------- | :----- |
+| `name`                     | 输出样式的名称，如果不是文件名                                                                                     | 从文件名继承 |
+| `description`              | 输出样式的描述，在 `/config` 选择器中显示                                                                          | 无      |
+| `keep-coding-instructions` | 是否保留 Claude Code 系统提示中与编码相关的部分。                                                                     | false  |
+| `force-for-plugin`         | 仅限 Plugin 输出样式：在启用 plugin 时自动应用此样式，无需要求用户选择它。覆盖用户的 `outputStyle` 设置。如果多个启用的 plugin 设置了此项，则第一个加载的获胜。 | false  |
 
 ## 与相关功能的比较
 

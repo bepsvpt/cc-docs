@@ -132,6 +132,16 @@ Claude Code membaca `CLAUDE.md`, bukan `AGENTS.md`. Jika repositori Anda sudah m
 Gunakan plan mode untuk perubahan di bawah `src/billing/`.
 ```
 
+Symlink juga berfungsi jika Anda tidak perlu menambahkan konten khusus Claude:
+
+```bash theme={null}
+ln -s AGENTS.md CLAUDE.md
+```
+
+Di Windows, membuat symlink memerlukan hak istimewa Administrator atau Developer Mode, jadi gunakan impor `@AGENTS.md` sebagai gantinya.
+
+Menjalankan [`/init`](/id/commands) di repo yang sudah memiliki `AGENTS.md` membacanya dan menggabungkan bagian yang relevan ke dalam `CLAUDE.md` yang dihasilkan. Itu juga membaca konfigurasi alat lain seperti `.cursorrules` dan `.windsurfrules`.
+
 ### Bagaimana file CLAUDE.md dimuat
 
 Claude Code membaca file CLAUDE.md dengan berjalan naik pohon direktori dari direktori kerja saat ini, memeriksa setiap direktori di sepanjang jalan untuk file `CLAUDE.md` dan `CLAUDE.local.md`. Ini berarti jika Anda menjalankan Claude Code di `foo/bar/`, itu memuat instruksi dari `foo/bar/CLAUDE.md`, `foo/CLAUDE.md`, dan file `CLAUDE.local.md` apa pun di sebelahnya.
@@ -378,6 +388,8 @@ Untuk men-debug:
 * Buat instruksi lebih spesifik. "Gunakan indentasi 2 spasi" bekerja lebih baik daripada "format kode dengan baik."
 * Cari instruksi yang bertentangan di seluruh file CLAUDE.md. Jika dua file memberikan panduan berbeda untuk perilaku yang sama, Claude mungkin memilih satu secara sembarangan.
 
+Jika instruksi adalah sesuatu yang harus berjalan pada titik tertentu, seperti sebelum setiap commit atau setelah setiap pengeditan file, tulislah sebagai [hook](/id/hooks-guide) sebagai gantinya. Hook dieksekusi sebagai perintah shell pada peristiwa siklus hidup tetap dan berlaku terlepas dari apa yang Claude putuskan untuk lakukan.
+
 Untuk instruksi yang Anda inginkan di tingkat prompt sistem, gunakan [`--append-system-prompt`](/id/cli-reference#system-prompt-flags). Ini harus dilewatkan setiap invokasi, jadi lebih cocok untuk skrip dan otomasi daripada penggunaan interaktif.
 
 <Tip>
@@ -394,7 +406,7 @@ File di atas 200 baris mengonsumsi lebih banyak konteks dan dapat mengurangi kep
 
 ### Instruksi tampak hilang setelah `/compact`
 
-CLAUDE.md root proyek bertahan dari pemadatan: setelah `/compact`, Claude membaca ulang CLAUDE.md dari disk dan menyuntikkannya kembali ke dalam sesi. File CLAUDE.md bersarang di subdirektori tidak disuntikkan kembali secara otomatis; mereka dimuat ulang saat berikutnya Claude membaca file di subdirektori tersebut.
+CLAUDE.md root proyek bertahan dari pemadatan: setelah `/compact`, Claude membaca ulang dari disk dan menyuntikkannya kembali ke dalam sesi. File CLAUDE.md bersarang di subdirektori tidak disuntikkan kembali secara otomatis; mereka dimuat ulang saat berikutnya Claude membaca file di subdirektori tersebut.
 
 Jika instruksi hilang setelah pemadatan, itu diberikan hanya dalam percakapan atau berada di CLAUDE.md bersarang yang belum dimuat ulang. Tambahkan instruksi percakapan ke CLAUDE.md untuk membuatnya bertahan. Lihat [Apa yang bertahan pemadatan](/id/context-window#what-survives-compaction) untuk rincian lengkap.
 

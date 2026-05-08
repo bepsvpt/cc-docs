@@ -132,6 +132,16 @@ Claude Code lit `CLAUDE.md`, pas `AGENTS.md`. Si votre référentiel utilise dé
 Utilisez le mode plan pour les modifications sous `src/billing/`.
 ```
 
+Un lien symbolique fonctionne également si vous n'avez pas besoin d'ajouter du contenu spécifique à Claude Code :
+
+```bash theme={null}
+ln -s AGENTS.md CLAUDE.md
+```
+
+Sur Windows, créer un lien symbolique nécessite les privilèges d'administrateur ou le mode développeur, donc utilisez plutôt l'import `@AGENTS.md`.
+
+L'exécution de [`/init`](/fr/commands) dans un référentiel qui a déjà un `AGENTS.md` le lit et incorpore les parties pertinentes dans le `CLAUDE.md` généré. Il lit également d'autres configurations d'outils comme `.cursorrules` et `.windsurfrules`.
+
 ### Comment les fichiers CLAUDE.md se chargent
 
 Claude Code lit les fichiers CLAUDE.md en remontant l'arborescence des répertoires à partir de votre répertoire de travail actuel, en vérifiant chaque répertoire en chemin pour les fichiers `CLAUDE.md` et `CLAUDE.local.md`. Cela signifie que si vous exécutez Claude Code dans `foo/bar/`, il charge les instructions de `foo/bar/CLAUDE.md`, `foo/CLAUDE.md` et tous les fichiers `CLAUDE.local.md` à côté d'eux.
@@ -377,6 +387,8 @@ Pour déboguer :
 * Vérifiez que le CLAUDE.md pertinent se trouve dans un emplacement qui se charge pour votre session (consultez [Choisir où placer les fichiers CLAUDE.md](#choose-where-to-put-claude-md-files)).
 * Rendez les instructions plus spécifiques. « Utiliser l'indentation à 2 espaces » fonctionne mieux que « formater le code correctement ».
 * Recherchez les instructions conflictuelles dans les fichiers CLAUDE.md. Si deux fichiers donnent des conseils différents pour le même comportement, Claude peut en choisir un arbitrairement.
+
+Si l'instruction est quelque chose qui doit s'exécuter à un moment spécifique, comme avant chaque commit ou après chaque modification de fichier, écrivez-la plutôt comme un [hook](/fr/hooks-guide). Les hooks s'exécutent en tant que commandes shell à des événements de cycle de vie fixes et s'appliquent indépendamment de ce que Claude décide de faire.
 
 Pour les instructions que vous voulez au niveau de l'invite système, utilisez [`--append-system-prompt`](/fr/cli-reference#system-prompt-flags). Cela doit être passé à chaque invocation, donc c'est mieux adapté aux scripts et à l'automatisation qu'à l'utilisation interactive.
 

@@ -249,7 +249,7 @@ Ogni funzionalità si carica in diversi punti della vostra sessione. Le schede s
 
     **Costo del contesto:** Basso fino a quando non vengono utilizzate. Le skills solo utente hanno costo zero fino a quando non vengono invocate.
 
-    **Nelle subagents:** Le skills funzionano diversamente nei subagents. Invece del caricamento su richiesta, le skills passate a un subagent vengono completamente precaricate nel suo contesto all'avvio. I subagents non ereditano le skills dalla sessione principale; dovete specificarle esplicitamente.
+    **Nei subagents:** Le skills funzionano diversamente nei subagents. Invece del caricamento su richiesta, le skills elencate nel campo `skills:` dell'agente vengono completamente precaricate nel suo contesto all'avvio. I subagents possono comunque scoprire e invocare skills di progetto, utente e plugin non elencate attraverso lo strumento Skill.
 
     <Tip>Utilizzate `disable-model-invocation: true` per le skills con effetti collaterali. Questo risparmia contesto e assicura che solo voi le attiviate.</Tip>
   </Tab>

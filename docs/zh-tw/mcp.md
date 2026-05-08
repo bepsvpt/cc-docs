@@ -327,6 +327,10 @@ claude mcp remove github
 /mcp
 ```
 
+`/mcp` 面板會在每個已連接的 server 旁邊顯示工具計數，並標記宣告工具功能但未公開任何工具的 servers。
+
+server 名稱 `workspace` 保留供內部使用。如果您的配置定義了具有該名稱的 server，Claude Code 會在載入時跳過它，並顯示警告要求您重新命名它。
+
 ### 動態工具更新
 
 Claude Code 支援 MCP `list_changed` 通知，允許 MCP servers 動態更新其可用工具、提示和資源，而無需您斷開連接並重新連接。當 MCP server 傳送 `list_changed` 通知時，Claude Code 會自動重新整理該 server 的可用功能。
@@ -423,7 +427,7 @@ Plugin servers 在列表中出現，並有指示器顯示它們來自 plugins。
 
 ## MCP 安裝範圍
 
-MCP servers 可以在三個不同的範圍級別進行配置。您選擇的範圍控制 server 在哪些專案中載入，以及配置是否與您的團隊共享。
+MCP servers 可以在三個不同的範圍級別進行配置。您選擇的範圍控制 server 在哪些專案中載入，以及配置是否與您的團隊共享。管理員也可以透過[受管配置](#managed-mcp-configuration)在企業級別部署 servers。
 
 | 範圍                        | 載入位置   | 與團隊共享    | 儲存位置                |
 | ------------------------- | ------ | -------- | ------------------- |
@@ -944,6 +948,8 @@ Claude Code 在執行 helper 時設定這些環境變數：
   </Step>
 </Steps>
 
+您在 Claude Code 中新增的 server 優先於指向相同 URL 的 claude.ai connector。發生這種情況時，`/mcp` 會將 connector 列為隱藏，並顯示如何移除重複項（如果您寧願使用 connector）。
+
 若要在 Claude Code 中停用 claude.ai MCP servers，請將 `ENABLE_CLAUDEAI_MCP_SERVERS` 環境變數設定為 `false`：
 
 ```bash theme={null}
@@ -1183,6 +1189,8 @@ ENABLE_TOOL_SEARCH=false claude
 
 `alwaysLoad` 欄位在所有伺服器類型上可用，需要 Claude Code v2.1.121 或更新版本。MCP 伺服器也可以透過在工具的 `_meta` 物件中包含 `"anthropic/alwaysLoad": true` 來標記個別工具為始終載入，這對該工具只有相同的效果。
 
+設定 `alwaysLoad: true` 也會阻止啟動直到伺服器連線，上限為標準 5 秒連線逾時。即使設定了 [`MCP_CONNECTION_NONBLOCKING=1`](/zh-TW/env-vars)，這也適用，因為工具必須在建立第一個提示時存在。當啟用非阻塞時，其他伺服器仍在背景中連線。
+
 ## 使用 MCP 提示作為命令
 
 MCP servers 可以公開提示，這些提示在 Claude Code 中變成可用的命令。
@@ -1231,7 +1239,7 @@ MCP servers 可以公開提示，這些提示在 Claude Code 中變成可用的�
 
 這些選項允許 IT 管理員：
 
-* **控制 MCP servers 員工可以存取的內容**：在整個組織中部署一組標準化的已批准 MCP servers
+* **控制員工可以存取的 MCP servers**：在整個組織中部署一組標準化的已批准 MCP servers
 * **防止未授權的 MCP servers**：限制使用者新增未批准的 MCP servers
 * **完全停用 MCP**：如果需要，完全移除 MCP 功能
 
@@ -1350,6 +1358,8 @@ URL 模式使用 `*` 支援萬用字元以符合任何字元序列。這對於�
 * `https://mcp.company.com/*` - 允許特定網域上的所有路徑
 * `https://*.example.com/*` - 允許 example.com 的任何子網域
 * `http://localhost:*/*` - 允許 localhost 上的任何連接埠
+
+主機名稱符合不區分大小寫，並忽略尾部 FQDN 點，符合 DNS 語義。像 `*://Mcp.Example.com/*` 這樣的模式符合 `https://mcp.example.com/api`，而 `https://mcp.example.com.` 的處理方式與 `https://mcp.example.com` 相同。配置和路徑保持區分大小寫。
 
 **遠端 server 行為**：
 

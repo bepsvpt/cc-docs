@@ -317,8 +317,16 @@ claude --plugin-dir ./my-plugin
 
 要测试已打包为 `.zip` 存档并托管在 URL 上的插件（例如 CI 构建工件），请改用 `--plugin-url`。Claude Code 在启动时获取存档并仅为该会话加载它。如果获取失败或存档无效，Claude Code 会报告插件加载错误并在没有它的情况下启动。与任何插件源相同的[信任考虑](/zh-CN/discover-plugins#security)适用：仅将此标志指向你控制或信任的存档。
 
+要加载多个插件，请为每个 URL 重复该标志：
+
 ```bash theme={null}
-claude --plugin-url https://example.com/my-plugin.zip
+claude --plugin-url https://example.com/my-plugin.zip --plugin-url https://example.com/other.zip
+```
+
+或将空格分隔的 URL 作为一个带引号的参数传递：
+
+```bash theme={null}
+claude --plugin-url "https://example.com/my-plugin.zip https://example.com/other.zip"
 ```
 
 ### 调试插件问题

@@ -325,6 +325,10 @@ claude mcp remove github
 /mcp
 ```
 
+`/mcp` 패널은 각 연결된 서버 옆에 도구 개수를 표시하고 도구 기능을 광고하지만 도구를 노출하지 않는 서버에 플래그를 지정합니다.
+
+서버 이름 `workspace`는 내부 사용을 위해 예약되어 있습니다. 구성에서 해당 이름의 서버를 정의하면 Claude Code는 로드 시 이를 건너뛰고 이름을 바꾸도록 요청하는 경고를 표시합니다.
+
 ### 동적 도구 업데이트
 
 Claude Code는 MCP `list_changed` 알림을 지원하므로 MCP 서버가 연결을 끊었다가 다시 연결할 필요 없이 사용 가능한 도구, 프롬프트 및 리소스를 동적으로 업데이트할 수 있습니다. MCP 서버가 `list_changed` 알림을 보내면 Claude Code는 해당 서버에서 사용 가능한 기능을 자동으로 새로 고칩니다.
@@ -421,7 +425,7 @@ MCP 서버는 또한 메시지를 세션에 직접 푸시할 수 있으므로 Cl
 
 ## MCP 설치 범위
 
-MCP 서버는 세 가지 범위에서 구성할 수 있습니다. 선택한 범위는 서버가 로드되는 프로젝트와 구성이 팀과 공유되는지 여부를 제어합니다.
+MCP 서버는 세 가지 범위에서 구성할 수 있습니다. 선택한 범위는 서버가 로드되는 프로젝트와 구성이 팀과 공유되는지 여부를 제어합니다. 관리자는 [관리형 구성](#managed-mcp-configuration)을 통해 엔터프라이즈 수준에서 서버를 배포할 수도 있습니다.
 
 | 범위                     | 로드 위치    | 팀과 공유        | 저장 위치                |
 | ---------------------- | -------- | ------------ | -------------------- |
@@ -498,7 +502,7 @@ claude mcp add --transport http hubspot --scope user https://mcp.hubspot.com/ant
 
 ### 범위 계층 및 우선순위
 
-동일한 이름의 서버가 둘 이상의 위치에 정의되면 Claude Code는 가장 높은 우선순위 소스의 정의를 사용하여 한 번 연결합니다:
+동일한 서버가 둘 이상의 위치에 정의되면 Claude Code는 가장 높은 우선순위 소스의 정의를 사용하여 한 번 연결합니다:
 
 1. 로컬 범위
 2. 프로젝트 범위
@@ -942,6 +946,8 @@ Claude Desktop에서 MCP 서버를 이미 구성한 경우 가져올 수 있습�
   </Step>
 </Steps>
 
+Claude Code에서 추가한 서버는 동일한 URL을 가리키는 claude.ai 커넥터보다 [우선순위](#scope-hierarchy-and-precedence)를 갖습니다. 이 경우 `/mcp`는 커넥터를 숨김으로 표시하고 커넥터를 사용하려는 경우 중복을 제거하는 방법을 표시합니다.
+
 Claude Code에서 claude.ai MCP 서버를 비활성화하려면 `ENABLE_CLAUDEAI_MCP_SERVERS` 환경 변수를 `false`로 설정합니다:
 
 ```bash theme={null}
@@ -1181,6 +1187,8 @@ ENABLE_TOOL_SEARCH=false claude
 
 `alwaysLoad` 필드는 모든 서버 유형에서 사용 가능하며 Claude Code v2.1.121 이상이 필요합니다. MCP 서버는 도구의 `_meta` 객체에 `"anthropic/alwaysLoad": true`를 포함하여 개별 도구를 항상 로드되도록 표시할 수도 있으며, 이는 해당 도구에만 동일한 효과를 갖습니다.
 
+`alwaysLoad: true`를 설정하면 서버가 연결될 때까지 시작이 차단되며, 표준 5초 연결 타임아웃으로 제한됩니다. 이는 [`MCP_CONNECTION_NONBLOCKING=1`](/ko/env-vars)이 설정된 경우에도 적용됩니다. 첫 번째 프롬프트가 빌드될 때 도구가 있어야 하기 때문입니다. 비차단이 활성화된 경우 다른 서버는 여전히 백그라운드에서 연결됩니다.
+
 ## MCP 프롬프트를 명령으로 사용
 
 MCP 서버는 Claude Code에서 명령으로 사용 가능하게 되는 프롬프트를 노출할 수 있습니다.
@@ -1348,6 +1356,8 @@ URL 패턴은 `*`를 사용하여 와일드카드를 지원하여 모든 문자 
 * `https://mcp.company.com/*` - 특정 도메인의 모든 경로 허용
 * `https://*.example.com/*` - example.com의 모든 하위 도메인 허용
 * `http://localhost:*/*` - localhost의 모든 포트 허용
+
+호스트명 일치는 대소문자를 구분하지 않으며 후행 FQDN 점을 무시하여 DNS 의미론을 따릅니다. `*://Mcp.Example.com/*`와 같은 패턴은 `https://mcp.example.com/api`와 일치하며, `https://mcp.example.com.`은 `https://mcp.example.com`과 동일하게 처리됩니다. 스킴과 경로는 대소문자를 구분합니다.
 
 **원격 서버 동작**:
 

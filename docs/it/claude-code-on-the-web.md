@@ -113,10 +113,10 @@ La CLI `gh` non è preinstallata. Se hai bisogno di un comando `gh` che gli stru
 
 Ogni sessione cloud ha un URL di trascrizione su claude.ai e la sessione può leggere il suo ID dalla variabile di ambiente `CLAUDE_CODE_REMOTE_SESSION_ID`. Usa questo per mettere un link tracciabile nei corpi PR, nei messaggi di commit, nei post Slack o nei report generati in modo che un revisore possa aprire l'esecuzione che li ha prodotti.
 
-Chiedi a Claude di costruire il link dalla variabile di ambiente. Il seguente comando stampa l'URL:
+Il valore della variabile utilizza un prefisso `cse_`, mentre il percorso dell'URL di trascrizione utilizza lo stesso ID con un prefisso `session_`. Sostituisci il prefisso quando costruisci il link. Il seguente comando stampa l'URL:
 
 ```bash theme={null}
-echo "https://claude.ai/code/${CLAUDE_CODE_REMOTE_SESSION_ID}"
+echo "https://claude.ai/code/${CLAUDE_CODE_REMOTE_SESSION_ID/#cse_/session_}"
 ```
 
 ### Esegui test, avvia servizi e aggiungi pacchetti
@@ -156,7 +156,7 @@ Gli ambienti controllano l'[accesso alla rete](#network-access), le variabili di
 | Azione                                | Come                                                                                                                                                                                                                                   |
 | :------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Aggiungi un ambiente                  | Seleziona l'ambiente attuale per aprire il selettore, quindi seleziona **Aggiungi ambiente**. La finestra di dialogo include nome, livello di accesso alla rete, variabili di ambiente e script di configurazione.                     |
-| Modifica un ambiente                  | Seleziona l'icona delle impostazioni a destra del nome dell'ambiente.                                                                                                                                                                  |
+| Modifica un ambiente                  | Seleziona l'icona cloud che mostra il nome dell'ambiente attuale per aprire il selettore, passa il mouse su un ambiente e fai clic sull'icona delle impostazioni che appare a destra.                                                  |
 | Archivia un ambiente                  | Apri l'ambiente per la modifica e seleziona **Archivia**. Gli ambienti archiviati sono nascosti dal selettore ma le sessioni esistenti continuano a essere eseguite.                                                                   |
 | Imposta il predefinito per `--remote` | Esegui `/remote-env` nel tuo terminale. Se hai un singolo ambiente, questo comando mostra la tua configurazione attuale. `/remote-env` seleziona solo il predefinito; aggiungi, modifica e archivia gli ambienti dall'interfaccia web. |
 
@@ -174,7 +174,7 @@ Uno script di configurazione è uno script Bash che viene eseguito quando inizia
 
 Gli script vengono eseguiti come root su Ubuntu 24.04, quindi `apt install` e la maggior parte dei gestori di pacchetti di linguaggio funzionano.
 
-Per aggiungere uno script di configurazione, apri la finestra di dialogo delle impostazioni dell'ambiente e inserisci il tuo script nel campo **Script di configurazione**.
+Per aggiungere uno script di configurazione, apri la finestra di dialogo delle impostazioni dell'ambiente e inserisci il tuo script nel campo **Setup script**.
 
 Questo esempio installa la CLI `gh`, che non è preinstallata:
 
@@ -184,6 +184,8 @@ apt update && apt install -y gh
 ```
 
 Se lo script esce con un codice diverso da zero, la sessione non si avvia. Aggiungi `|| true` ai comandi non critici per evitare di bloccare la sessione su un'installazione intermittente fallita.
+
+Mantieni il tempo di esecuzione totale dello script sotto circa cinque minuti in modo che la [cache dell'ambiente](#environment-caching) possa essere costruita. Esegui installazioni indipendenti in parallelo con `&` e `wait`. Se un singolo download non rientra nel limite di cinque minuti, spostalo in un [hook SessionStart](#setup-scripts-vs-sessionstart-hooks) che lo avvia in background.
 
 <Note>
   Gli script di configurazione che installano pacchetti hanno bisogno di accesso alla rete per raggiungere i registri. L'accesso alla rete predefinito **Trusted** consente connessioni ai [domini di pacchetti comuni](#default-allowed-domains) inclusi npm, PyPI, RubyGems e crates.io. Gli script non riusciranno a installare pacchetti se il tuo ambiente usa l'accesso alla rete **None**.
@@ -265,6 +267,12 @@ La sostituzione dell'immagine di base con la tua immagine Docker non è ancora s
 
 L'accesso alla rete controlla le connessioni in uscita dall'ambiente cloud. Ogni ambiente specifica un livello di accesso e puoi estenderlo con domini personalizzati consentiti. Il predefinito è **Trusted**, che consente i registri di pacchetti e altri [domini consentiti](#default-allowed-domains).
 
+Per modificare l'accesso alla rete di un ambiente, [aprilo per la modifica](#configure-your-environment) e usa il selettore **Network access** nella finestra di dialogo. Non esiste una pagina Ambienti separata. L'icona cloud appare ovunque tu avvii una sessione cloud o configuri una [routine](/it/routines#environments-and-network-access).
+
+<Note>
+  Il traffico del connettore MCP viene instradato attraverso i server di Anthropic, quindi i connettori che abiliti su una sessione o routine funzionano senza aggiungere i loro host ai **Domini consentiti**. I connettori sono configurati per sessione o per routine; rimuovi quelli che non hai bisogno di limitare quali strumenti Claude può raggiungere. Questo si basa sullo stesso canale legato ad Anthropic notato in [Sicurezza e isolamento](#security-and-isolation).
+</Note>
+
 ### Livelli di accesso
 
 Scegli un livello di accesso quando crei o modifichi un ambiente:
@@ -280,7 +288,7 @@ Le operazioni GitHub usano un [proxy separato](#github-proxy) che è indipendent
 
 ### Consenti domini specifici
 
-Per consentire domini che non sono nell'elenco Trusted, seleziona **Custom** nelle impostazioni di accesso alla rete dell'ambiente. Appare un campo **Domini consentiti**. Inserisci un dominio per riga:
+Per consentire domini che non sono nell'elenco Trusted, seleziona **Custom** nelle impostazioni di accesso alla rete dell'ambiente. Appare un campo **Allowed domains**. Inserisci un dominio per riga:
 
 ```text theme={null}
 api.example.com
@@ -288,7 +296,7 @@ api.example.com
 registry.example.com
 ```
 
-Usa `*.` per la corrispondenza dei sottodomini con caratteri jolly. Seleziona **Includi anche l'elenco predefinito di gestori di pacchetti comuni** per mantenere i [domini Trusted](#default-allowed-domains) insieme alle tue voci personalizzate, o lascialo deselezionato per consentire solo quello che elenchi.
+Usa `*.` per la corrispondenza dei sottodomini con caratteri jolly. Seleziona **Also include default list of common package managers** per mantenere i [domini Trusted](#default-allowed-domains) insieme alle tue voci personalizzate, o lascialo deselezionato per consentire solo quello che elenchi.
 
 ### Proxy GitHub
 
@@ -640,7 +648,7 @@ Estrai una sessione cloud nel tuo terminale usando uno di questi:
 * **Usando `--teleport`**: dalla riga di comando, esegui `claude --teleport` per un selettore di sessione interattivo, o `claude --teleport <session-id>` per riprendere una sessione specifica direttamente. Se hai modifiche non sottoposte a commit, ti verrà chiesto di archiviarle prima.
 * **Usando `/teleport`**: all'interno di una sessione CLI esistente, esegui `/teleport` (o `/tp`) per aprire lo stesso selettore di sessione senza riavviare Claude Code.
 * **Da `/tasks`**: esegui `/tasks` per vedere le tue sessioni in background, quindi premi `t` per teletrasportarti in una
-* **Dall'interfaccia web**: seleziona **Apri in CLI** per copiare un comando che puoi incollare nel tuo terminale
+* **Dall'interfaccia web**: seleziona **Open in CLI** per copiare un comando che puoi incollare nel tuo terminale
 
 Quando teletrasporti una sessione, Claude verifica che sei nel repository corretto, recupera e controlla il ramo dalla sessione cloud e carica la cronologia completa della conversazione nel tuo terminale.
 
@@ -754,6 +762,32 @@ Ogni sessione cloud è separata dalla tua macchina e dalle altre sessioni attrav
 * **Protezione delle credenziali**: le credenziali sensibili come le credenziali git o le chiavi di firma non sono mai all'interno della sandbox con Claude Code. L'autenticazione viene gestita tramite un proxy sicuro utilizzando credenziali con ambito.
 * **Analisi sicura**: il codice viene analizzato e modificato all'interno di VM isolate prima di creare PR
 
+## Risoluzione dei problemi
+
+Per gli errori API di runtime che appaiono nella conversazione come `API Error: 500`, `529 Overloaded`, `429` o `Prompt is too long`, vedi il [riferimento degli errori](/it/errors). Questi errori e le loro correzioni sono condivisi con la CLI e l'app Desktop. Le sezioni seguenti coprono i problemi specifici delle sessioni cloud.
+
+### Creazione della sessione non riuscita
+
+Se una nuova sessione non si avvia con `Session creation failed` o si blocca al provisioning, Claude Code non ha potuto allocare un ambiente cloud.
+
+* Controlla [status.claude.com](https://status.claude.com) per gli incidenti delle sessioni cloud
+* Riprova dopo un minuto, poiché la capacità viene fornita su richiesta
+* Conferma che il tuo repository sia raggiungibile. I repository privati richiedono l'app GitHub installata con accesso a quel repository, o un token `gh` sincronizzato tramite `/web-setup`. Vedi [Opzioni di autenticazione GitHub](#github-authentication-options).
+
+### Sessione Remote Control scaduta o accesso negato
+
+`--teleport` si connette attraverso la stessa infrastruttura della sessione Remote Control che le sessioni cloud utilizzano, quindi gli errori di autenticazione e scadenza della sessione si presentano con la terminologia Remote Control. Potresti vedere `Remote Control session has expired` o `Access denied`. Il token di connessione è di breve durata e limitato al tuo account.
+
+* Esegui `/login` localmente per aggiornare le tue credenziali, quindi riconnettiti
+* Conferma che sei connesso allo stesso account che possiede la sessione
+* Se vedi `Remote Control may not be available for this organization`, il tuo amministratore non ha abilitato le sessioni remote per il tuo piano
+
+### Ambiente scaduto
+
+Le sessioni cloud si fermano dopo un periodo di inattività e l'ambiente sottostante viene recuperato. Da un terminale locale, questo si presenta come `Could not resume session ... its environment has expired. Creating a fresh session instead.` Sul web, la sessione è contrassegnata come scaduta nell'elenco delle sessioni.
+
+Riapri la sessione da [claude.ai/code](https://claude.ai/code) per fornire un ambiente fresco con la cronologia della conversazione ripristinata.
+
 ## Limitazioni
 
 Prima di fare affidamento sulle sessioni cloud per un flusso di lavoro, tieni conto di questi vincoli:
@@ -761,6 +795,7 @@ Prima di fare affidamento sulle sessioni cloud per un flusso di lavoro, tieni co
 * **Limiti di velocità**: Claude Code sul web condivide i limiti di velocità con tutti gli altri utilizzi di Claude e Claude Code all'interno del tuo account. L'esecuzione di più attività in parallelo consumerà più limiti di velocità proporzionalmente. Non esiste alcun addebito di calcolo separato per la VM cloud.
 * **Autenticazione del repository**: puoi spostare le sessioni da web a locale solo quando sei autenticato allo stesso account
 * **Restrizioni della piattaforma**: il clonaggio del repository e la creazione di pull request richiedono GitHub. Le istanze self-hosted di [GitHub Enterprise Server](/it/github-enterprise-server) sono supportate per i piani Team e Enterprise. GitLab, Bitbucket e altri repository non GitHub possono essere inviati alle sessioni cloud come [bundle locale](#send-local-repositories-without-github), ma la sessione non può eseguire il push dei risultati di nuovo al remoto
+* **Elenco IP consentiti dell'organizzazione**: le sessioni cloud chiamano l'API Anthropic dall'infrastruttura gestita da Anthropic, non dalla tua rete. Se la tua organizzazione ha [IP allowlisting](https://support.claude.com/en/articles/13200993-restrict-access-to-claude-with-ip-allowlisting) abilitato, ogni sessione cloud fallisce con un errore di autenticazione. Lo stesso vale per [Code Review](/it/code-review) e [Routines](/it/routines). Contatta il [supporto Anthropic](https://support.claude.com/) per esentare i servizi ospitati da Anthropic dall'elenco IP consentiti della tua organizzazione.
 
 ## Risorse correlate
 

@@ -32,6 +32,8 @@ VS Code 扩展为 Claude Code 提供了原生图形界面，直接集成到您�
 
 或在 VS Code 中，按 `Cmd+Shift+X`（Mac）或 `Ctrl+Shift+X`（Windows/Linux）打开扩展视图，搜索"Claude Code"，然后点击**安装**。
 
+该扩展也可以安装在其他 VS Code 分支中，如 Windsurf 或 Kiro。在编辑器的扩展视图中搜索"Claude Code"，或从 [Open VSX 注册表](https://open-vsx.org/extension/Anthropic/claude-code) 安装。如果您的编辑器无法安装该扩展，请在其集成终端中运行 `claude`。[CLI](/zh-CN/quickstart) 可在任何终端中使用。
+
 <Note>如果安装后扩展没有出现，请重启 VS Code 或从命令面板运行"Developer: Reload Window"。</Note>
 
 ## 开始使用

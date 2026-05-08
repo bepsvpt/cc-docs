@@ -327,6 +327,10 @@ claude mcp remove github
 /mcp
 ```
 
+El panel `/mcp` muestra el recuento de herramientas junto a cada servidor conectado e indica los servidores que anuncian la capacidad de herramientas pero no exponen ninguna herramienta.
+
+El nombre del servidor `workspace` está reservado para uso interno. Si su configuración define un servidor con ese nombre, Claude Code lo omite al cargar y muestra una advertencia pidiéndole que lo renombre.
+
 ### Actualizaciones dinámicas de herramientas
 
 Claude Code admite notificaciones `list_changed` de MCP, permitiendo que los servidores MCP actualicen dinámicamente sus herramientas disponibles, indicaciones y recursos sin requerir que se desconecte y reconecte. Cuando un servidor MCP envía una notificación `list_changed`, Claude Code actualiza automáticamente las capacidades disponibles de ese servidor.
@@ -423,7 +427,7 @@ Vea la [referencia de componentes de plugins](/es/plugins-reference#mcp-servers)
 
 ## Alcances de instalación de MCP
 
-Los servidores MCP se pueden configurar en tres alcances diferentes según sus necesidades:
+Los servidores MCP se pueden configurar en tres alcances. El alcance que elija controla en qué proyectos se carga el servidor y si la configuración se comparte con su equipo. Los administradores también pueden implementar servidores a nivel empresarial a través de [configuración administrada](#managed-mcp-configuration).
 
 | Alcance                    | Se carga en          | Compartido con equipo                 | Almacenado en                       |
 | -------------------------- | -------------------- | ------------------------------------- | ----------------------------------- |
@@ -944,6 +948,8 @@ Si ha iniciado sesión en Claude Code con una cuenta de [Claude.ai](https://clau
   </Step>
 </Steps>
 
+Un servidor que ha agregado en Claude Code tiene [precedencia](#scope-hierarchy-and-precedence) sobre un conector de claude.ai que apunta a la misma URL. Cuando esto sucede, `/mcp` enumera el conector como oculto y muestra cómo eliminar el duplicado si prefiere usar el conector.
+
 Para desactivar servidores MCP de Claude.ai en Claude Code, establezca la variable de entorno `ENABLE_CLAUDEAI_MCP_SERVERS` en `false`:
 
 ```bash theme={null}
@@ -1183,6 +1189,8 @@ La siguiente entrada `.mcp.json` exime un servidor HTTP mientras deja otros serv
 
 El campo `alwaysLoad` está disponible en todos los tipos de servidor y requiere Claude Code v2.1.121 o posterior. Un servidor MCP también puede marcar herramientas individuales como siempre cargadas incluyendo `"anthropic/alwaysLoad": true` en el objeto `_meta` de la herramienta, que tiene el mismo efecto solo para esa herramienta.
 
+Establecer `alwaysLoad: true` también bloquea el inicio hasta que el servidor se conecte, limitado al tiempo de espera de conexión estándar de 5 segundos. Esto se aplica incluso cuando [`MCP_CONNECTION_NONBLOCKING=1`](/es/env-vars) está establecido, ya que las herramientas deben estar presentes cuando se construye el primer mensaje. Otros servidores aún se conectan en segundo plano cuando el modo no bloqueante está habilitado.
+
 ## Usar indicaciones MCP como comandos
 
 Los servidores MCP pueden exponer indicaciones que se vuelven disponibles como comandos en Claude Code.
@@ -1350,6 +1358,8 @@ Los patrones de URL admiten comodines usando `*` para coincidir con cualquier se
 * `https://mcp.company.com/*` - Permitir todas las rutas en un dominio específico
 * `https://*.example.com/*` - Permitir cualquier subdominio de example.com
 * `http://localhost:*/*` - Permitir cualquier puerto en localhost
+
+La coincidencia de nombres de host no distingue entre mayúsculas y minúsculas e ignora un punto FQDN final, coincidiendo con la semántica de DNS. Un patrón como `*://Mcp.Example.com/*` coincide con `https://mcp.example.com/api`, y `https://mcp.example.com.` se trata igual que `https://mcp.example.com`. Los esquemas y rutas permanecen sensibles a mayúsculas y minúsculas.
 
 **Comportamiento del servidor remoto**:
 

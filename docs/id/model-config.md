@@ -17,6 +17,10 @@ Untuk pengaturan `model` di Claude Code, Anda dapat mengonfigurasi salah satu da
   * Foundry: nama deployment
   * Vertex: nama versi
 
+<Note>
+  `ANTHROPIC_BASE_URL` mengubah tempat permintaan dikirim, bukan model mana yang menjawabnya. Untuk merutekan Claude melalui gateway LLM, lihat [konfigurasi gateway LLM](/id/llm-gateway).
+</Note>
+
 ### Alias model
 
 Alias model menyediakan cara yang nyaman untuk memilih pengaturan model tanpa perlu mengingat nomor versi yang tepat:
@@ -30,7 +34,7 @@ Alias model menyediakan cara yang nyaman untuk memilih pengaturan model tanpa pe
 | **`haiku`**      | Menggunakan model Haiku yang cepat dan efisien untuk tugas sederhana                                                                                                       |
 | **`sonnet[1m]`** | Menggunakan Sonnet dengan [jendela konteks 1 juta token](https://platform.claude.com/docs/id/build-with-claude/context-windows#1m-token-context-window) untuk sesi panjang |
 | **`opus[1m]`**   | Menggunakan Opus dengan [jendela konteks 1 juta token](https://platform.claude.com/docs/id/build-with-claude/context-windows#1m-token-context-window) untuk sesi panjang   |
-| **`opusplan`**   | Mode khusus yang menggunakan `opus` selama plan mode, kemudian beralih ke `sonnet` untuk eksekusi                                                                          |
+| **`opusplan`**   | Mode khusus yang menggunakan `opus` selama Plan Mode, kemudian beralih ke `sonnet` untuk eksekusi                                                                          |
 
 Di Anthropic API, `opus` diselesaikan ke Opus 4.7 dan `sonnet` diselesaikan ke Sonnet 4.6. Di Bedrock, Vertex, dan Foundry, `opus` diselesaikan ke Opus 4.6 dan `sonnet` diselesaikan ke Sonnet 4.5; model yang lebih baru tersedia di penyedia tersebut dengan memilih nama model lengkap secara eksplisit atau mengatur `ANTHROPIC_DEFAULT_OPUS_MODEL` atau `ANTHROPIC_DEFAULT_SONNET_MODEL`.
 

@@ -564,6 +564,22 @@ L'exemple suivant pré-configure une seule connexion qui s'ouvre dans `~/project
 
 Chaque entrée nécessite `id`, `name` et `sshHost`. Les champs `sshPort`, `sshIdentityFile` et `startDirectory` sont optionnels. Les utilisateurs peuvent également ajouter `sshConfigs` à leur propre `~/.claude/settings.json`, qui est l'endroit où les connexions ajoutées via la boîte de dialogue sont stockées.
 
+#### Restreindre les hôtes SSH auxquels les utilisateurs peuvent se connecter
+
+Les administrateurs peuvent limiter les sessions SSH de Desktop à un ensemble approuvé d'hôtes en ajoutant `sshHostAllowlist` à un fichier de [paramètres gérés](/fr/settings#settings-precedence). Lorsqu'il est défini, les utilisateurs ne peuvent se connecter qu'à des hôtes dont le nom d'hôte résolu correspond à l'un des modèles. Définissez-le sur un tableau vide pour désactiver complètement les sessions SSH.
+
+L'exemple suivant autorise les connexions à n'importe quel hôte sous `devboxes.example.com` et à un seul hôte bastion nommé :
+
+```json theme={null}
+{
+  "sshHostAllowlist": ["*.devboxes.example.com", "bastion.example.com"]
+}
+```
+
+Les modèles sont insensibles à la casse. `*` correspond à n'importe quel hôte, et `*.example.com` correspond à `example.com` et à n'importe quel sous-domaine. Tout le reste est une correspondance exacte. La vérification s'exécute sur le nom d'hôte après la résolution `~/.ssh/config` via `ssh -G`, de sorte que les alias `Host` et les entrées `ProxyCommand`/`ProxyJump` sont autorisés tant que le `HostName` résolu correspond.
+
+`sshHostAllowlist` est lu uniquement à partir des paramètres gérés ; les valeurs dans les paramètres utilisateur ou projet sont ignorées. Seule l'application Claude Desktop honore ce paramètre ; la CLI Claude Code et les extensions IDE ne le lisent pas, et il ne restreint pas les commandes `ssh` exécutées via l'outil Bash. Il gouverne les hôtes auxquels l'application Desktop se connecte, pas la sortie réseau, donc associez-le aux contrôles réseau ou zero-trust de votre organisation si vous avez besoin d'une limite stricte.
+
 ## Configuration d'entreprise
 
 Les organisations sur les plans Team ou Enterprise peuvent gérer le comportement de l'application de bureau via les contrôles de la console d'administration, les fichiers de paramètres gérés et les politiques de gestion des appareils.
@@ -581,12 +597,13 @@ Ces paramètres sont configurés via la [console de paramètres d'administration
 
 Les paramètres gérés remplacent les paramètres du projet et de l'utilisateur et s'appliquent quand Desktop génère des sessions CLI. Vous pouvez définir ces clés dans le fichier [paramètres gérés](/fr/settings#settings-precedence) de votre organisation ou les pousser à distance via la console d'administration.
 
-| Clé                                        | Description                                                                                                                                                                                                                  |
-| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `permissions.disableBypassPermissionsMode` | définissez sur `"disable"` pour empêcher les utilisateurs d'activer le mode de contournement des permissions.                                                                                                                |
-| `disableAutoMode`                          | définissez sur `"disable"` pour empêcher les utilisateurs d'activer le mode [Auto](/fr/permission-modes#eliminate-prompts-with-auto-mode). Supprime Auto du sélecteur de mode. Également accepté sous `permissions`.         |
-| `autoMode`                                 | personnalisez ce que le classificateur du mode auto fait confiance et bloque dans votre organisation. Voir [Configurer le mode auto](/fr/auto-mode-config).                                                                  |
-| `sshConfigs`                               | pré-configurez les [connexions SSH](#pre-configure-ssh-connections-for-your-team) qui apparaissent dans la liste déroulante de l'environnement. Les utilisateurs ne peuvent pas modifier ou supprimer les connexions gérées. |
+| Clé                                        | Description                                                                                                                                                                                                                                        |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `permissions.disableBypassPermissionsMode` | définissez sur `"disable"` pour empêcher les utilisateurs d'activer le mode de contournement des permissions.                                                                                                                                      |
+| `disableAutoMode`                          | définissez sur `"disable"` pour empêcher les utilisateurs d'activer le mode [Auto](/fr/permission-modes#eliminate-prompts-with-auto-mode). Supprime Auto du sélecteur de mode. Également accepté sous `permissions`.                               |
+| `autoMode`                                 | personnalisez ce que le classificateur du mode auto fait confiance et bloque dans votre organisation. Voir [Configurer le mode auto](/fr/auto-mode-config).                                                                                        |
+| `sshConfigs`                               | pré-configurez les [connexions SSH](#pre-configure-ssh-connections-for-your-team) qui apparaissent dans la liste déroulante de l'environnement. Les utilisateurs ne peuvent pas modifier ou supprimer les connexions gérées.                       |
+| `sshHostAllowlist`                         | restreignez les [sessions SSH](#restrict-which-ssh-hosts-users-can-connect-to) aux hôtes dont le nom d'hôte résolu correspond à l'un de ces modèles. Un tableau vide désactive les sessions SSH. Lecture à partir des paramètres gérés uniquement. |
 
 Un fichier de paramètres gérés déployé sur le disque de chaque machine s'applique aux sessions Desktop. Les paramètres gérés poussés à distance via la console d'administration atteignent actuellement uniquement les sessions CLI et IDE, donc pour les déploiements Desktop, distribuez le fichier via MDM ou utilisez les [contrôles de la console d'administration](#admin-console-controls) ci-dessus.
 

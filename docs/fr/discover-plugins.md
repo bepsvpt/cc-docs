@@ -4,9 +4,9 @@
 
 # Découvrir et installer des plugins prédéfinis via les marketplaces
 
-> Trouvez et installez des plugins depuis les marketplaces pour étendre Claude Code avec de nouvelles commandes, agents et capacités.
+> Trouvez et installez des plugins depuis les marketplaces pour étendre Claude Code avec de nouvelles compétences, agents et capacités.
 
-Les plugins étendent Claude Code avec des skills, des agents, des hooks et des MCP servers. Les marketplaces de plugins sont des catalogues qui vous aident à découvrir et installer ces extensions sans les construire vous-même.
+Les plugins étendent Claude Code avec des skills, des agents, des hooks et des serveurs MCP. Les marketplaces de plugins sont des catalogues qui vous aident à découvrir et installer ces extensions sans les construire vous-même.
 
 Vous cherchez à créer et distribuer votre propre marketplace ? Consultez [Créer et distribuer une marketplace de plugins](/fr/plugin-marketplaces).
 
@@ -35,6 +35,8 @@ Pour installer un plugin depuis la marketplace officielle, utilisez `/plugin ins
 ```shell theme={null}
 /plugin install github@claude-plugins-official
 ```
+
+Si Claude Code signale que le plugin n'est pas trouvé dans une marketplace, votre marketplace est soit manquante soit obsolète. Exécutez `/plugin marketplace update claude-plugins-official` pour l'actualiser, ou `/plugin marketplace add anthropics/claude-plugins-official` si vous ne l'avez pas encore ajoutée. Ensuite, réessayez l'installation.
 
 <Note>
   La marketplace officielle est maintenue par Anthropic. Pour soumettre un plugin à la marketplace officielle, utilisez l'un des formulaires de soumission intégrés à l'application :
@@ -70,7 +72,7 @@ Ces plugins nécessitent que le binaire du serveur de langage soit installé sur
 Vous pouvez également [créer votre propre plugin LSP](/fr/plugins-reference#lsp-servers) pour d'autres langages.
 
 <Note>
-  Si vous voyez `Executable not found in $PATH` dans l'onglet `/plugin` Errors après avoir installé un plugin, installez le binaire requis du tableau ci-dessus.
+  Si vous voyez `Executable not found in $PATH` dans l'onglet Errors de `/plugin` après avoir installé un plugin, installez le binaire requis du tableau ci-dessus.
 </Note>
 
 #### Ce que Claude gagne des plugins de code intelligence
@@ -84,7 +86,7 @@ Si vous rencontrez des problèmes, consultez [Dépannage de la code intelligence
 
 ### Intégrations externes
 
-Ces plugins regroupent des [MCP servers](/fr/mcp) préconfigurés pour que vous puissiez connecter Claude à des services externes sans configuration manuelle :
+Ces plugins regroupent des [serveurs MCP](/fr/mcp) préconfigurés pour que vous puissiez connecter Claude à des services externes sans configuration manuelle :
 
 * **Contrôle de source** : `github`, `gitlab`
 * **Gestion de projet** : `atlassian` (Jira/Confluence), `asana`, `linear`, `notion`
@@ -95,7 +97,7 @@ Ces plugins regroupent des [MCP servers](/fr/mcp) préconfigurés pour que vous 
 
 ### Workflows de développement
 
-Plugins qui ajoutent des commandes et des agents pour les tâches de développement courantes :
+Plugins qui ajoutent des skills et des agents pour les tâches de développement courantes :
 
 * **commit-commands** : Workflows de commit Git incluant commit, push et création de PR
 * **pr-review-toolkit** : Agents spécialisés pour examiner les pull requests
@@ -142,7 +144,7 @@ Anthropic maintient également une [marketplace de plugins de démonstration](ht
     * **Project scope** : installez pour tous les collaborateurs sur ce référentiel
     * **Local scope** : installez pour vous-même dans ce référentiel uniquement
 
-    Par exemple, sélectionnez **commit-commands** (un plugin qui ajoute des commandes de workflow git) et installez-le à votre portée utilisateur.
+    Par exemple, sélectionnez **commit-commands** (un plugin qui ajoute des skills de workflow git) et installez-le à votre portée utilisateur.
 
     Vous pouvez également installer directement depuis la ligne de commande :
 
@@ -154,7 +156,7 @@ Anthropic maintient également une [marketplace de plugins de démonstration](ht
   </Step>
 
   <Step title="Utiliser votre nouveau plugin">
-    Après l'installation, exécutez `/reload-plugins` pour activer le plugin. Les commandes de plugin sont espacées par le nom du plugin, donc **commit-commands** fournit des commandes comme `/commit-commands:commit`.
+    Après l'installation, exécutez `/reload-plugins` pour activer le plugin. Les skills de plugin sont espacés par le nom du plugin, donc **commit-commands** fournit des skills comme `/commit-commands:commit`.
 
     Essayez en effectuant une modification à un fichier et en exécutant :
 
@@ -164,7 +166,7 @@ Anthropic maintient également une [marketplace de plugins de démonstration](ht
 
     Cela prépare vos modifications, génère un message de commit et crée le commit.
 
-    Chaque plugin fonctionne différemment. Consultez la description du plugin dans l'onglet **Discover** ou sa page d'accueil pour apprendre quelles commandes et capacités il fournit.
+    Chaque plugin fonctionne différemment. Consultez la description du plugin dans l'onglet **Discover** ou sa page d'accueil pour apprendre quels skills et capacités il fournit.
   </Step>
 </Steps>
 
@@ -195,7 +197,7 @@ Par exemple, `anthropics/claude-code` fait référence au référentiel `claude-
 
 ### Ajouter depuis d'autres hôtes Git
 
-Ajoutez n'importe quel référentiel git en fournissant l'URL complète. Cela fonctionne avec n'importe quel hôte Git, y compris GitLab, Bitbucket et les serveurs auto-hébergés :
+Ajoutez n'importe quel référentiel git en fournissant l'URL complète. Cela fonctionne avec n'importe quel hôte Git, y compris GitLab, Bitbucket et les serveurs auto-hébergés. Incluez le suffixe `.git` pour que Claude Code clone le référentiel plutôt que de traiter l'URL comme un lien direct vers un fichier `marketplace.json` hébergé.
 
 Utilisation de HTTPS :
 
@@ -257,15 +259,21 @@ Pour choisir une [portée d'installation](/fr/settings#configuration-scopes) dif
 
 Vous pouvez également voir des plugins avec la portée **managed**—ceux-ci sont installés par les administrateurs via [managed settings](/fr/settings#settings-files) et ne peuvent pas être modifiés.
 
-Exécutez `/plugin` et allez à l'onglet **Installed** pour voir vos plugins groupés par portée.
-
 <Warning>
-  Assurez-vous de faire confiance à un plugin avant de l'installer. Anthropic ne contrôle pas quels MCP servers, fichiers ou autres logiciels sont inclus dans les plugins et ne peut pas vérifier qu'ils fonctionnent comme prévu. Consultez la page d'accueil de chaque plugin pour plus d'informations.
+  Assurez-vous de faire confiance à un plugin avant de l'installer. Anthropic ne contrôle pas quels serveurs MCP, fichiers ou autres logiciels sont inclus dans les plugins et ne peut pas vérifier qu'ils fonctionnent comme prévu. Consultez la page d'accueil de chaque plugin pour plus d'informations.
 </Warning>
 
 ## Gérer les plugins installés
 
-Exécutez `/plugin` et allez à l'onglet **Installed** pour visualiser, activer, désactiver ou désinstaller vos plugins. Tapez pour filtrer la liste par nom ou description du plugin.
+Exécutez `/plugin` et allez à l'onglet **Installed** pour visualiser, activer, désactiver ou désinstaller vos plugins. La liste est groupée par portée et triée pour que vous voyiez d'abord les problèmes : les plugins avec des erreurs de chargement ou des dépendances non résolues apparaissent en haut, suivis de vos favoris, avec les plugins désactivés repliés derrière un en-tête réduit en bas.
+
+Depuis la liste, vous pouvez :
+
+* appuyer sur `f` pour ajouter ou retirer le plugin sélectionné de vos favoris
+* taper pour filtrer par nom ou description du plugin
+* appuyer sur Enter pour ouvrir la vue détaillée d'un plugin et l'activer, le désactiver ou le désinstaller
+
+Quand vous installez un plugin qui déclare des dépendances, la sortie d'installation liste quelles dépendances ont été auto-installées avec lui.
 
 Vous pouvez également gérer les plugins avec des commandes directes.
 
@@ -302,7 +310,7 @@ Quand vous installez, activez ou désactivez des plugins pendant une session, ex
 /reload-plugins
 ```
 
-Claude Code recharge tous les plugins actifs et affiche les comptages pour les plugins, les skills, les agents, les hooks, les MCP servers de plugin et les serveurs LSP de plugin.
+Claude Code recharge tous les plugins actifs et affiche les comptages pour les plugins, les skills, les agents, les hooks, les serveurs MCP de plugin et les serveurs LSP de plugin.
 
 ## Gérer les marketplaces
 
@@ -400,8 +408,8 @@ Si vous voyez « unknown command » ou la commande `/plugin` n'apparaît pas :
 
 1. **Vérifiez votre version** : Exécutez `claude --version` pour voir ce qui est installé.
 2. **Mettez à jour Claude Code** :
-   * **Homebrew** : `brew upgrade claude-code`
-   * **npm** : `npm update -g @anthropic-ai/claude-code`
+   * **Homebrew** : `brew upgrade claude-code` (ou `brew upgrade claude-code@latest` si vous avez installé ce cask)
+   * **npm** : `npm install -g @anthropic-ai/claude-code@latest`
    * **Native installer** : Réexécutez la commande d'installation depuis [Setup](/fr/setup)
 3. **Redémarrez Claude Code** : Après la mise à jour, redémarrez votre terminal et exécutez `claude` à nouveau.
 
@@ -416,7 +424,7 @@ Pour un dépannage détaillé avec des solutions, consultez [Dépannage](/fr/plu
 
 ### Problèmes de code intelligence
 
-* **Le serveur de langage ne démarre pas** : vérifiez que le binaire est installé et disponible dans votre `$PATH`. Consultez l'onglet `/plugin` Errors pour plus de détails.
+* **Le serveur de langage ne démarre pas** : vérifiez que le binaire est installé et disponible dans votre `$PATH`. Consultez l'onglet Errors de `/plugin` pour plus de détails.
 * **Utilisation élevée de la mémoire** : les serveurs de langage comme `rust-analyzer` et `pyright` peuvent consommer une mémoire importante sur les grands projets. Si vous rencontrez des problèmes de mémoire, désactivez le plugin avec `/plugin disable <plugin-name>` et fiez-vous aux outils de recherche intégrés de Claude à la place.
 * **Diagnostics faux positifs dans les monorepos** : les serveurs de langage peuvent signaler des erreurs d'import non résolues pour les packages internes si l'espace de travail n'est pas configuré correctement. Ceux-ci n'affectent pas la capacité de Claude à modifier le code.
 

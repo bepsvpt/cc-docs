@@ -76,117 +76,7 @@ export const ContactSalesCard = ({surface}) => {
     </div>;
 };
 
-export const Experiment = ({flag, treatment, children}) => {
-  const VID_KEY = 'exp_vid';
-  const CONSENT_COUNTRIES = new Set(['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'RE', 'GP', 'MQ', 'GF', 'YT', 'BL', 'MF', 'PM', 'WF', 'PF', 'NC', 'AW', 'CW', 'SX', 'FO', 'GL', 'AX', 'GB', 'UK', 'AI', 'BM', 'IO', 'VG', 'KY', 'FK', 'GI', 'MS', 'PN', 'SH', 'TC', 'GG', 'JE', 'IM', 'CA', 'BR', 'IN']);
-  const fnv1a = s => {
-    let h = 0x811c9dc5;
-    for (let i = 0; i < s.length; i++) {
-      h ^= s.charCodeAt(i);
-      h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
-    }
-    return h >>> 0;
-  };
-  const bucket = (seed, vid) => fnv1a(fnv1a(seed + vid) + '') % 10000 < 5000 ? 'control' : 'treatment';
-  const [decision] = useState(() => {
-    const params = new URLSearchParams(location.search);
-    const preBucketed = document.documentElement.dataset['gb_' + flag.replace(/-/g, '_')];
-    const force = params.get('gb-force');
-    if (force) {
-      for (const p of force.split(',')) {
-        const [k, v] = p.split(':');
-        if (k === flag) return {
-          variant: v || 'treatment',
-          track: false
-        };
-      }
-    }
-    if (navigator.globalPrivacyControl) {
-      return {
-        variant: 'control',
-        track: false
-      };
-    }
-    const prefsMatch = document.cookie.match(/(?:^|; )anthropic-consent-preferences=([^;]+)/);
-    if (prefsMatch) {
-      try {
-        if (JSON.parse(decodeURIComponent(prefsMatch[1])).analytics !== true) {
-          return {
-            variant: 'control',
-            track: false
-          };
-        }
-      } catch {
-        return {
-          variant: 'control',
-          track: false
-        };
-      }
-    } else {
-      const country = params.get('country')?.toUpperCase() || (document.cookie.match(/(?:^|; )cf_geo=([A-Z]{2})/) || [])[1];
-      if (!country || CONSENT_COUNTRIES.has(country)) {
-        return {
-          variant: 'control',
-          track: false
-        };
-      }
-    }
-    let vid;
-    try {
-      const ajsMatch = document.cookie.match(/(?:^|; )ajs_anonymous_id=([^;]+)/);
-      if (ajsMatch) {
-        vid = decodeURIComponent(ajsMatch[1]).replace(/^"|"$/g, '');
-      } else {
-        vid = localStorage.getItem(VID_KEY);
-        if (!vid) {
-          vid = crypto.randomUUID();
-        }
-        document.cookie = `ajs_anonymous_id=${vid}; domain=.claude.com; path=/; Secure; SameSite=Lax; max-age=31536000`;
-      }
-      try {
-        localStorage.setItem(VID_KEY, vid);
-      } catch {}
-    } catch {
-      return {
-        variant: 'control',
-        track: false
-      };
-    }
-    const variant = preBucketed === '1' ? 'treatment' : preBucketed === '0' ? 'control' : bucket(flag, vid);
-    return {
-      variant,
-      track: true,
-      vid
-    };
-  });
-  useEffect(() => {
-    if (!decision.track) return;
-    fetch('https://api.anthropic.com/api/event_logging/v2/batch', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-service-name': 'claude_code_docs'
-      },
-      body: JSON.stringify({
-        events: [{
-          event_type: 'GrowthbookExperimentEvent',
-          event_data: {
-            device_id: decision.vid,
-            anonymous_id: decision.vid,
-            timestamp: new Date().toISOString(),
-            experiment_id: flag,
-            variation_id: decision.variant === 'treatment' ? 1 : 0,
-            environment: 'production'
-          }
-        }]
-      }),
-      keepalive: true
-    }).catch(() => {});
-  }, []);
-  return decision.variant === 'treatment' ? treatment : children;
-};
-
-<Experiment flag="docs-contact-sales-cta" treatment={<ContactSalesCard surface="vertex" />} />
+<ContactSalesCard surface="vertex" />
 
 ## Conditions préalables
 
@@ -253,7 +143,7 @@ gcloud services enable aiplatform.googleapis.com
 Demandez l'accès aux modèles Claude dans Vertex AI :
 
 1. Accédez au [Vertex AI Model Garden](https://console.cloud.google.com/vertex-ai/model-garden)
-2. Recherchez les modèles « Claude »
+2. Recherchez les modèles ' Claude '
 3. Demandez l'accès aux modèles Claude souhaités (par exemple, Claude Sonnet 4.6)
 4. Attendez l'approbation (peut prendre 24 à 48 heures)
 
@@ -266,8 +156,23 @@ Pour plus d'informations, consultez la [documentation d'authentification Google 
 Claude Code v2.1.121 ou version ultérieure prend en charge la [Fédération d'identité de charge de travail basée sur certificat X.509](https://cloud.google.com/iam/docs/workload-identity-federation-with-x509-certificates) via la même chaîne Application Default Credentials. Définissez `GOOGLE_APPLICATION_CREDENTIALS` sur le chemin de votre fichier de configuration des identifiants.
 
 <Note>
-  Lors de l'authentification, Claude Code utilisera automatiquement l'ID de projet de la variable d'environnement `ANTHROPIC_VERTEX_PROJECT_ID`. Pour remplacer cela, définissez l'une de ces variables d'environnement : `GCLOUD_PROJECT`, `GOOGLE_CLOUD_PROJECT` ou `GOOGLE_APPLICATION_CREDENTIALS`.
+  Claude Code utilise `ANTHROPIC_VERTEX_PROJECT_ID` comme ID de projet pour les demandes Vertex AI. Les variables d'environnement `GCLOUD_PROJECT` et `GOOGLE_CLOUD_PROJECT` et le fichier d'identifiants référencé par `GOOGLE_APPLICATION_CREDENTIALS` ont la priorité sur celui-ci. Si aucun de ces éléments n'est défini, l'ID de projet est résolu à partir de votre configuration `gcloud` ou du compte de service attaché.
 </Note>
+
+#### Configuration avancée des identifiants
+
+Claude Code prend en charge l'actualisation automatique des identifiants GCP via le paramètre `gcpAuthRefresh`. Lorsque Claude Code détecte que vos identifiants GCP ont expiré ou ne peuvent pas être chargés, il exécute la commande configurée pour obtenir de nouveaux identifiants avant de réessayer la demande.
+
+```json theme={null}
+{
+  "gcpAuthRefresh": "gcloud auth application-default login",
+  "env": {
+    "ANTHROPIC_VERTEX_PROJECT_ID": "your-project-id"
+  }
+}
+```
+
+La sortie de la commande s'affiche à l'utilisateur, mais l'entrée interactive n'est pas prise en charge. Cela fonctionne bien pour les flux d'authentification basés sur navigateur où l'interface de ligne de commande affiche une URL et vous complétez l'authentification dans le navigateur. La commande d'actualisation expire après trois minutes si l'authentification ne se termine pas. Si vous définissez `gcpAuthRefresh` dans les paramètres du projet tels que `.claude/settings.json`, la commande s'exécute uniquement après que vous ayez accepté l'invite de confiance de l'espace de travail.
 
 ### 4. Configurer Claude Code
 
@@ -362,6 +267,12 @@ Claude Opus 4.7, Opus 4.6 et Sonnet 4.6 prennent en charge la [fenêtre de conte
 L'[assistant de configuration](#sign-in-with-vertex-ai) offre une option de contexte 1M lorsqu'il épingle les modèles. Pour l'activer pour un modèle épinglé manuellement à la place, ajoutez `[1m]` à l'ID du modèle. Consultez [Épingler les modèles pour les déploiements tiers](/fr/model-config#pin-models-for-third-party-deployments) pour plus de détails.
 
 ## Résolution des problèmes
+
+Si vous rencontrez des erreurs « Impossible de charger les identifiants par défaut » :
+
+* Exécutez `gcloud auth application-default login` pour configurer les identifiants par défaut de l'application
+* Définissez `GOOGLE_APPLICATION_CREDENTIALS` sur le chemin d'un fichier de clé de compte de service
+* Consultez [Configurer les identifiants GCP](#3-configure-gcp-credentials) pour toutes les options
 
 Si vous rencontrez des problèmes de quota :
 

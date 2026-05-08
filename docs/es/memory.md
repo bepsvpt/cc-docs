@@ -132,6 +132,16 @@ Claude Code lee `CLAUDE.md`, no `AGENTS.md`. Si su repositorio ya usa `AGENTS.md
 Use plan mode para cambios bajo `src/billing/`.
 ```
 
+Un enlace simbólico también funciona si no necesita agregar contenido específico de Claude Code:
+
+```bash theme={null}
+ln -s AGENTS.md CLAUDE.md
+```
+
+En Windows, crear un enlace simbólico requiere privilegios de administrador o modo de desarrollador, así que use la importación `@AGENTS.md` en su lugar.
+
+Ejecutar [`/init`](/es/commands) en un repositorio que ya tiene un `AGENTS.md` lo lee e incorpora las partes relevantes en el `CLAUDE.md` generado. También lee otras configuraciones de herramientas como `.cursorrules` y `.windsurfrules`.
+
 ### Cómo se cargan los archivos CLAUDE.md
 
 Claude Code lee los archivos CLAUDE.md caminando hacia arriba en el árbol de directorios desde su directorio de trabajo actual, verificando cada directorio en el camino para archivos `CLAUDE.md` y `CLAUDE.local.md`. Esto significa que si ejecuta Claude Code en `foo/bar/`, carga instrucciones desde `foo/bar/CLAUDE.md`, `foo/CLAUDE.md` y cualquier archivo `CLAUDE.local.md` junto a ellos.
@@ -377,6 +387,8 @@ Para depurar:
 * Verifique que el CLAUDE.md relevante esté en una ubicación que se cargue para su sesión (consulte [Elija dónde colocar los archivos CLAUDE.md](#choose-where-to-put-claude-md-files)).
 * Haga instrucciones más específicas. "Usar indentación de 2 espacios" funciona mejor que "formatear código bien".
 * Busque instrucciones conflictivas en archivos CLAUDE.md. Si dos archivos dan orientación diferente para el mismo comportamiento, Claude puede elegir uno arbitrariamente.
+
+Si la instrucción es algo que debe ejecutarse en un punto específico, como antes de cada commit o después de cada edición de archivo, escríbala como un [hook](/es/hooks-guide) en su lugar. Los hooks se ejecutan como comandos de shell en eventos de ciclo de vida fijos y se aplican independientemente de lo que Claude decida hacer.
 
 Para instrucciones que desea a nivel de prompt del sistema, use [`--append-system-prompt`](/es/cli-reference#system-prompt-flags). Esto debe pasarse en cada invocación, por lo que es más adecuado para scripts y automatización que para uso interactivo.
 

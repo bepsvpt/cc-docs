@@ -113,10 +113,10 @@ Team 和 Enterprise 管理员可以在 [claude.ai/admin-settings/claude-code](ht
 
 每个云会话在 claude.ai 上都有一个成绩单 URL，会话可以从 `CLAUDE_CODE_REMOTE_SESSION_ID` 环境变量读取自己的 ID。使用这个在 PR 正文、提交消息、Slack 帖子或生成的报告中放置可追踪的链接，以便审查者可以打开生成它们的运行。
 
-要求 Claude 从环境变量构造链接。以下命令打印 URL：
+该变量的值使用 `cse_` 前缀，而成绩单 URL 路径采用相同的 ID，带有 `session_` 前缀。在构建链接时替换前缀。以下命令打印 URL：
 
 ```bash theme={null}
-echo "https://claude.ai/code/${CLAUDE_CODE_REMOTE_SESSION_ID}"
+echo "https://claude.ai/code/${CLAUDE_CODE_REMOTE_SESSION_ID/#cse_/session_}"
 ```
 
 ### 运行测试、启动服务和添加包
@@ -156,7 +156,7 @@ Docker 可用于运行容器化服务。要求 Claude 运行 `docker compose up`
 | 操作                 | 如何操作                                                                            |
 | :----------------- | :------------------------------------------------------------------------------ |
 | 添加环境               | 选择当前环境以打开选择器，然后选择**添加环境**。对话框包括名称、网络访问级别、环境变量和设置脚本。                             |
-| 编辑环境               | 选择环境名称右侧的设置图标。                                                                  |
+| 编辑环境               | 选择显示当前环境名称的云图标以打开选择器，悬停在环境上，然后单击右侧出现的设置图标。                                      |
 | 归档环境               | 打开环境进行编辑并选择**归档**。归档的环境从选择器中隐藏，但现有会话继续运行。                                       |
 | 为 `--remote` 设置默认值 | 在终端中运行 `/remote-env`。如果你有单个环境，此命令显示你的当前配置。`/remote-env` 仅选择默认值；从网络界面添加、编辑和归档环境。 |
 
@@ -184,6 +184,8 @@ apt update && apt install -y gh
 ```
 
 如果脚本以非零值退出，会话将无法启动。将 `|| true` 附加到非关键命令以避免在不稳定的安装失败时阻止会话。
+
+保持脚本的总运行时间在大约五分钟以内，以便[环境缓存](#environment-caching)可以构建。使用 `&` 和 `wait` 并行运行独立的安装。如果单个下载不适合五分钟的限制，请将其移动到[SessionStart hook](#setup-scripts-vs-sessionstart-hooks)，在后台启动它。
 
 <Note>
   安装包的设置脚本需要网络访问才能到达注册表。默认**受信任**网络访问允许连接到[常见包注册表](#default-allowed-domains)，包括 npm、PyPI、RubyGems 和 crates.io。如果你的环境使用**无**网络访问，脚本将无法安装包。
@@ -264,6 +266,12 @@ SessionStart hooks 在云会话中有一些限制：
 ## 网络访问
 
 网络访问控制来自云环境的出站连接。每个环境指定一个访问级别，你可以使用自定义允许的域来扩展它。默认值是**受信任**，它允许包注册表和其他[允许列表域](#default-allowed-domains)。
+
+要更改环境的网络访问，[打开它进行编辑](#configure-your-environment)并在对话框中使用**网络访问**选择器。没有单独的环境页面。云图标出现在你启动云会话或配置[例程](/zh-CN/routines#environments-and-network-access)的任何地方。
+
+<Note>
+  MCP 连接器流量通过 Anthropic 的服务器路由，所以你在会话或例程上启用的连接器无需将其主机添加到**允许的域**即可工作。连接器按会话或按例程配置；删除你不需要的任何连接器以限制 Claude 可以到达的工具。这依赖于[安全和隔离](#security-and-isolation)下提到的相同 Anthropic 绑定通道。
+</Note>
 
 ### 访问级别
 
@@ -754,6 +762,32 @@ Claude 可能会作为解决审查评论线程的一部分在 GitHub 上回复�
 * **凭证保护**：敏感凭证（如 git 凭证或签名密钥）永远不会在沙箱内与 Claude Code 一起。身份验证通过使用作用域凭证的安全代理处理。
 * **安全分析**：代码在隔离的 VM 内分析和修改，然后创建 PR
 
+## 故障排除
+
+对于出现在对话中的运行时 API 错误，如 `API Error: 500`、`529 Overloaded`、`429` 或 `Prompt is too long`，请参阅[错误参考](/zh-CN/errors)。这些错误及其修复与 CLI 和 Desktop 应用共享。下面的部分涵盖特定于云会话的问题。
+
+### 会话创建失败
+
+如果新会话无法启动，显示 `Session creation failed` 或在配置时停滞，Claude Code 无法分配云环境。
+
+* 检查 [status.claude.com](https://status.claude.com) 以了解云会话事件
+* 一分钟后重试，因为容量是按需配置的
+* 确认你的存储库可访问。私有存储库需要在该存储库上安装 GitHub App 并具有访问权限，或通过 `/web-setup` 同步的 `gh` 令牌。请参阅[GitHub 身份验证选项](#github-authentication-options)。
+
+### 远程控制会话已过期或访问被拒绝
+
+`--teleport` 通过与云会话使用的相同远程控制会话基础设施连接，所以身份验证和会话过期错误会显示远程控制措辞。你可能会看到 `Remote Control session has expired` 或 `Access denied`。连接令牌是短期的，并限定于你的账户。
+
+* 在本地运行 `/login` 以刷新你的凭证，然后重新连接
+* 确认你已登录到拥有会话的相同账户
+* 如果你看到 `Remote Control may not be available for this organization`，你的管理员尚未为你的计划启用远程会话
+
+### 环境已过期
+
+云会话在不活动一段时间后停止，底层环境被回收。从本地终端，这显示为 `Could not resume session ... its environment has expired. Creating a fresh session instead.` 在网络上，会话在会话列表中标记为已过期。
+
+从 [claude.ai/code](https://claude.ai/code) 重新打开会话以配置新环境，并恢复你的对话历史。
+
 ## 限制
 
 在依赖云会话进行工作流之前，请考虑这些约束：
@@ -761,6 +795,7 @@ Claude 可能会作为解决审查评论线程的一部分在 GitHub 上回复�
 * **速率限制**：Claude Code on the web 与你账户内所有其他 Claude 和 Claude Code 使用共享速率限制。并行运行多个任务会按比例消耗更多速率限制。云 VM 没有单独的计算费用。
 * **存储库身份验证**：你只能在认证到相同账户时将会话从网络移动到本地
 * **平台限制**：存储库克隆和拉取请求创建需要 GitHub。自托管[GitHub Enterprise Server](/zh-CN/github-enterprise-server) 实例支持 Team 和 Enterprise 计划。GitLab、Bitbucket 和其他非 GitHub 存储库可以作为[本地捆绑](#send-local-repositories-without-github)发送到云会话，但会话无法将结果推送回远程
+* **组织 IP 允许列表**：云会话从 Anthropic 管理的基础设施而不是你的网络调用 Anthropic API。如果你的组织启用了 [IP 允许列表](https://support.claude.com/en/articles/13200993-restrict-access-to-claude-with-ip-allowlisting)，每个云会话都会失败，显示身份验证错误。这同样适用于[代码审查](/zh-CN/code-review)和[例程](/zh-CN/routines)。联系 [Anthropic 支持](https://support.claude.com/)以从你的组织的 IP 允许列表中豁免 Anthropic 托管的服务。
 
 ## 相关资源
 

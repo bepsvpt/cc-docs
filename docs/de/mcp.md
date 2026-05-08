@@ -327,6 +327,10 @@ claude mcp remove github
 /mcp
 ```
 
+Das `/mcp`-Panel zeigt die Tool-Anzahl neben jedem verbundenen Server an und kennzeichnet Server, die die Tools-Funktion ankündigen, aber keine Tools bereitstellen.
+
+Der Servername `workspace` ist für interne Verwendung reserviert. Wenn Ihre Konfiguration einen Server mit diesem Namen definiert, überspringt Claude Code ihn beim Laden und zeigt eine Warnung an, die Sie auffordert, ihn umzubenennen.
+
 ### Dynamische Tool-Updates
 
 Claude Code unterstützt MCP-`list_changed`-Benachrichtigungen, die es MCP-Servern ermöglichen, ihre verfügbaren Tools, Prompts und Ressourcen dynamisch zu aktualisieren, ohne dass Sie die Verbindung trennen und erneut verbinden müssen. Wenn ein MCP-Server eine `list_changed`-Benachrichtigung sendet, aktualisiert Claude Code automatisch die verfügbaren Funktionen von diesem Server.
@@ -423,7 +427,7 @@ Siehe die [Plugin-Komponenten-Referenz](/de/plugins-reference#mcp-servers) für 
 
 ## MCP-Installationsbereiche
 
-MCP-Server können auf drei verschiedenen Bereichsebenen konfiguriert werden. Der Bereich, den Sie wählen, steuert, in welchen Projekten der Server geladen wird und ob die Konfiguration mit Ihrem Team geteilt wird.
+MCP-Server können auf drei verschiedenen Bereichsebenen konfiguriert werden. Der Bereich, den Sie wählen, steuert, in welchen Projekten der Server geladen wird und ob die Konfiguration mit Ihrem Team geteilt wird. Administratoren können Server auch auf Unternehmensebene über [verwaltete Konfiguration](#managed-mcp-configuration) bereitstellen.
 
 | Bereich                   | Wird geladen in       | Mit Team geteilt           | Gespeichert in              |
 | ------------------------- | --------------------- | -------------------------- | --------------------------- |
@@ -944,6 +948,8 @@ Wenn Sie sich in Claude Code mit einem [Claude.ai](https://claude.ai)-Konto ange
   </Step>
 </Steps>
 
+Ein Server, den Sie in Claude Code hinzugefügt haben, hat [Vorrang](#scope-hierarchy-and-precedence) vor einem Claude.ai-Connector, der auf dieselbe URL verweist. Wenn dies geschieht, listet `/mcp` den Connector als verborgen auf und zeigt, wie Sie das Duplikat entfernen können, wenn Sie lieber den Connector verwenden möchten.
+
 Um Claude.ai-MCP-Server in Claude Code zu deaktivieren, setzen Sie die Umgebungsvariable `ENABLE_CLAUDEAI_MCP_SERVERS` auf `false`:
 
 ```bash theme={null}
@@ -1183,6 +1189,8 @@ Der folgende `.mcp.json`-Eintrag nimmt einen HTTP-Server von der Verschiebung au
 
 Das Feld `alwaysLoad` ist auf allen Server-Typen verfügbar und erfordert Claude Code v2.1.121 oder später. Ein MCP-Server kann auch einzelne Tools als immer geladen markieren, indem `"anthropic/alwaysLoad": true` im `_meta`-Objekt des Tools enthalten ist, was denselben Effekt nur für dieses Tool hat.
 
+Das Setzen von `alwaysLoad: true` blockiert auch den Start, bis sich der Server verbindet, begrenzt auf das Standard-Verbindungs-Timeout von 5 Sekunden. Dies gilt auch, wenn [`MCP_CONNECTION_NONBLOCKING=1`](/de/env-vars) gesetzt ist, da die Tools vorhanden sein müssen, wenn der erste Prompt erstellt wird. Andere Server verbinden sich weiterhin im Hintergrund, wenn Nonblocking aktiviert ist.
+
 ## MCP-Prompts als Befehle verwenden
 
 MCP-Server können Prompts verfügbar machen, die in Claude Code als Befehle verfügbar werden.
@@ -1350,6 +1358,8 @@ URL-Muster unterstützen Wildcards mit `*`, um eine beliebige Zeichenfolge zu en
 * `https://mcp.company.com/*` – Alle Pfade auf einer bestimmten Domäne zulassen
 * `https://*.example.com/*` – Jede Subdomain von example.com zulassen
 * `http://localhost:*/*` – Jeden Port auf localhost zulassen
+
+Hostname-Abgleich ist case-insensitiv und ignoriert einen nachgestellten FQDN-Punkt, was DNS-Semantik entspricht. Ein Muster wie `*://Mcp.Example.com/*` entspricht `https://mcp.example.com/api`, und `https://mcp.example.com.` wird genauso behandelt wie `https://mcp.example.com`. Schemata und Pfade bleiben case-sensitiv.
 
 **Verhalten von Remote-Servern**:
 

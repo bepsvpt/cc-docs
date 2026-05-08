@@ -317,8 +317,16 @@ claude --plugin-dir ./my-plugin
 
 Чтобы протестировать plugin, который уже упакован как архив `.zip` и размещён по URL-адресу, например артефакт сборки CI, используйте вместо этого `--plugin-url`. Claude Code загружает архив при запуске и загружает его только для этого сеанса. Если загрузка не удаётся или архив недействителен, Claude Code сообщает об ошибке загрузки plugin и запускается без него. Те же [соображения доверия](/ru/discover-plugins#security) применяются как для любого источника plugin: указывайте этот флаг только на архивы, которыми вы управляете или которым доверяете.
 
+Чтобы загружать несколько plugins, повторите флаг для каждого URL:
+
 ```bash theme={null}
-claude --plugin-url https://example.com/my-plugin.zip
+claude --plugin-url https://example.com/my-plugin.zip --plugin-url https://example.com/other.zip
+```
+
+Или передайте разделённые пробелами URL-адреса как один аргумент в кавычках:
+
+```bash theme={null}
+claude --plugin-url "https://example.com/my-plugin.zip https://example.com/other.zip"
 ```
 
 ### Отладка проблем plugin

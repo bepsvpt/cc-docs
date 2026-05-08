@@ -32,6 +32,8 @@ Klik tautan untuk IDE Anda untuk menginstal secara langsung:
 
 Atau di VS Code, tekan `Cmd+Shift+X` (Mac) atau `Ctrl+Shift+X` (Windows/Linux) untuk membuka tampilan Extensions, cari "Claude Code", dan klik **Install**.
 
+Ekstensi juga dapat diinstal di fork VS Code lainnya seperti Windsurf atau Kiro. Cari "Claude Code" di tampilan Extensions editor Anda, atau instal dari [registri Open VSX](https://open-vsx.org/extension/Anthropic/claude-code). Jika editor Anda tidak dapat menginstal ekstensi, jalankan `claude` di terminal terintegrasi-nya. [CLI](/id/quickstart) berfungsi di terminal apa pun.
+
 <Note>Jika ekstensi tidak muncul setelah instalasi, restart VS Code atau jalankan "Developer: Reload Window" dari Command Palette.</Note>
 
 ## Memulai

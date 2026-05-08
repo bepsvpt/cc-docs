@@ -249,7 +249,7 @@ Cada característica se carga en diferentes puntos de su sesión. Las pestañas 
 
     **Costo de contexto:** Bajo hasta que se use. Las skills solo de usuario tienen costo cero hasta que se invoquen.
 
-    **En subagents:** Las skills funcionan de manera diferente en subagents. En lugar de carga bajo demanda, las skills pasadas a un subagent se precarga completamente en su contexto al iniciar. Los subagents no heredan skills de la sesión principal; debe especificarlas explícitamente.
+    **En subagents:** Las skills funcionan de manera diferente en subagents. En lugar de carga bajo demanda, las skills listadas en el campo `skills:` del subagent se precarga completamente en su contexto al iniciar. Los subagents aún pueden descubrir e invocar skills de proyecto, usuario y plugin no listadas a través de la herramienta Skill.
 
     <Tip>Use `disable-model-invocation: true` para skills con efectos secundarios. Esto ahorra contexto y asegura que solo usted las desencadene.</Tip>
   </Tab>

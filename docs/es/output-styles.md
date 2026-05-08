@@ -6,7 +6,9 @@
 
 > Adapte Claude Code para usos más allá de la ingeniería de software
 
-Los estilos de salida le permiten usar Claude Code como cualquier tipo de agente mientras se mantienen sus capacidades principales, como ejecutar scripts locales, leer/escribir archivos y realizar un seguimiento de TODOs.
+Los estilos de salida cambian cómo responde Claude, no lo que Claude sabe. Modifican el mensaje del sistema para establecer el rol, el tono y el formato de salida mientras se mantienen las capacidades principales como ejecutar scripts, leer y escribir archivos y realizar un seguimiento de TODOs. Use uno cuando siga re-solicitando la misma voz o formato en cada turno, o cuando desee que Claude actúe como algo diferente a un ingeniero de software.
+
+Para instrucciones sobre su proyecto, convenciones o base de código, use [CLAUDE.md](/es/memory) en su lugar.
 
 ## Estilos de salida integrados
 
@@ -63,17 +65,24 @@ tasks. [Your custom instructions here...]
 [Define how the assistant should behave in this style...]
 ```
 
-Puede guardar estos archivos en el nivel de usuario (`~/.claude/output-styles`) o en el nivel de proyecto (`.claude/output-styles`).
+Puede guardar estos archivos en tres niveles:
+
+* Usuario: `~/.claude/output-styles`
+* Proyecto: `.claude/output-styles`
+* Política administrada: `.claude/output-styles` dentro del [directorio de configuración administrada](/es/settings#settings-files)
+
+Los [Plugins](/es/plugins-reference) también pueden enviar estilos de salida en un directorio `output-styles/`.
 
 ### Frontmatter
 
 Los archivos de estilo de salida admiten frontmatter para especificar metadatos:
 
-| Frontmatter                | Propósito                                                                                                | Predeterminado                   |
-| :------------------------- | :------------------------------------------------------------------------------------------------------- | :------------------------------- |
-| `name`                     | Nombre del estilo de salida, si no es el nombre del archivo                                              | Se hereda del nombre del archivo |
-| `description`              | Descripción del estilo de salida, mostrada en el selector `/config`                                      | Ninguno                          |
-| `keep-coding-instructions` | Si se deben mantener las partes del mensaje del sistema de Claude Code relacionadas con la codificación. | false                            |
+| Frontmatter                | Propósito                                                                                                                                                                                                                                                                             | Predeterminado                   |
+| :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------- |
+| `name`                     | Nombre del estilo de salida, si no es el nombre del archivo                                                                                                                                                                                                                           | Se hereda del nombre del archivo |
+| `description`              | Descripción del estilo de salida, mostrada en el selector `/config`                                                                                                                                                                                                                   | Ninguno                          |
+| `keep-coding-instructions` | Si se deben mantener las partes del mensaje del sistema de Claude Code relacionadas con la codificación.                                                                                                                                                                              | false                            |
+| `force-for-plugin`         | Solo estilos de salida de plugins: aplique este estilo automáticamente siempre que el plugin esté habilitado, sin requerir que los usuarios lo seleccionen. Anula la configuración `outputStyle` del usuario. Si varios plugins habilitados establecen esto, el primero cargado gana. | false                            |
 
 ## Comparaciones con características relacionadas
 

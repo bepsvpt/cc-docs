@@ -17,6 +17,10 @@ Für die `model`-Einstellung in Claude Code können Sie konfigurieren:
   * Foundry: einen Bereitstellungsnamen
   * Vertex: einen Versionsnamen
 
+<Note>
+  `ANTHROPIC_BASE_URL` ändert, wohin Anfragen gesendet werden, nicht welches Modell sie beantwortet. Um Claude durch ein LLM-Gateway zu leiten, siehe [LLM-Gateway-Konfiguration](/de/llm-gateway).
+</Note>
+
 ### Modellaliase
 
 Modellaliase bieten eine bequeme Möglichkeit, Modelleinstellungen auszuwählen, ohne sich genaue Versionsnummern merken zu müssen:

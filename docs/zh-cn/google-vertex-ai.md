@@ -76,117 +76,7 @@ export const ContactSalesCard = ({surface}) => {
     </div>;
 };
 
-export const Experiment = ({flag, treatment, children}) => {
-  const VID_KEY = 'exp_vid';
-  const CONSENT_COUNTRIES = new Set(['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'RE', 'GP', 'MQ', 'GF', 'YT', 'BL', 'MF', 'PM', 'WF', 'PF', 'NC', 'AW', 'CW', 'SX', 'FO', 'GL', 'AX', 'GB', 'UK', 'AI', 'BM', 'IO', 'VG', 'KY', 'FK', 'GI', 'MS', 'PN', 'SH', 'TC', 'GG', 'JE', 'IM', 'CA', 'BR', 'IN']);
-  const fnv1a = s => {
-    let h = 0x811c9dc5;
-    for (let i = 0; i < s.length; i++) {
-      h ^= s.charCodeAt(i);
-      h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
-    }
-    return h >>> 0;
-  };
-  const bucket = (seed, vid) => fnv1a(fnv1a(seed + vid) + '') % 10000 < 5000 ? 'control' : 'treatment';
-  const [decision] = useState(() => {
-    const params = new URLSearchParams(location.search);
-    const preBucketed = document.documentElement.dataset['gb_' + flag.replace(/-/g, '_')];
-    const force = params.get('gb-force');
-    if (force) {
-      for (const p of force.split(',')) {
-        const [k, v] = p.split(':');
-        if (k === flag) return {
-          variant: v || 'treatment',
-          track: false
-        };
-      }
-    }
-    if (navigator.globalPrivacyControl) {
-      return {
-        variant: 'control',
-        track: false
-      };
-    }
-    const prefsMatch = document.cookie.match(/(?:^|; )anthropic-consent-preferences=([^;]+)/);
-    if (prefsMatch) {
-      try {
-        if (JSON.parse(decodeURIComponent(prefsMatch[1])).analytics !== true) {
-          return {
-            variant: 'control',
-            track: false
-          };
-        }
-      } catch {
-        return {
-          variant: 'control',
-          track: false
-        };
-      }
-    } else {
-      const country = params.get('country')?.toUpperCase() || (document.cookie.match(/(?:^|; )cf_geo=([A-Z]{2})/) || [])[1];
-      if (!country || CONSENT_COUNTRIES.has(country)) {
-        return {
-          variant: 'control',
-          track: false
-        };
-      }
-    }
-    let vid;
-    try {
-      const ajsMatch = document.cookie.match(/(?:^|; )ajs_anonymous_id=([^;]+)/);
-      if (ajsMatch) {
-        vid = decodeURIComponent(ajsMatch[1]).replace(/^"|"$/g, '');
-      } else {
-        vid = localStorage.getItem(VID_KEY);
-        if (!vid) {
-          vid = crypto.randomUUID();
-        }
-        document.cookie = `ajs_anonymous_id=${vid}; domain=.claude.com; path=/; Secure; SameSite=Lax; max-age=31536000`;
-      }
-      try {
-        localStorage.setItem(VID_KEY, vid);
-      } catch {}
-    } catch {
-      return {
-        variant: 'control',
-        track: false
-      };
-    }
-    const variant = preBucketed === '1' ? 'treatment' : preBucketed === '0' ? 'control' : bucket(flag, vid);
-    return {
-      variant,
-      track: true,
-      vid
-    };
-  });
-  useEffect(() => {
-    if (!decision.track) return;
-    fetch('https://api.anthropic.com/api/event_logging/v2/batch', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-service-name': 'claude_code_docs'
-      },
-      body: JSON.stringify({
-        events: [{
-          event_type: 'GrowthbookExperimentEvent',
-          event_data: {
-            device_id: decision.vid,
-            anonymous_id: decision.vid,
-            timestamp: new Date().toISOString(),
-            experiment_id: flag,
-            variation_id: decision.variant === 'treatment' ? 1 : 0,
-            environment: 'production'
-          }
-        }]
-      }),
-      keepalive: true
-    }).catch(() => {});
-  }, []);
-  return decision.variant === 'treatment' ? treatment : children;
-};
-
-<Experiment flag="docs-contact-sales-cta" treatment={<ContactSalesCard surface="vertex" />} />
+<ContactSalesCard surface="vertex" />
 
 ## 前置条件
 
@@ -266,8 +156,23 @@ Claude Code 使用标准的 Google Cloud 身份验证。
 Claude Code v2.1.121 或更高版本通过相同的应用默认凭证链支持[基于 X.509 证书的工作负载身份联合](https://cloud.google.com/iam/docs/workload-identity-federation-with-x509-certificates)。将 `GOOGLE_APPLICATION_CREDENTIALS` 设置为您的凭证配置文件的路径。
 
 <Note>
-  进行身份验证时，Claude Code 将自动使用 `ANTHROPIC_VERTEX_PROJECT_ID` 环境变量中的项目 ID。要覆盖此设置，请设置以下环境变量之一：`GCLOUD_PROJECT`、`GOOGLE_CLOUD_PROJECT` 或 `GOOGLE_APPLICATION_CREDENTIALS`。
+  Claude Code 使用 `ANTHROPIC_VERTEX_PROJECT_ID` 作为 Vertex AI 请求的项目 ID。`GCLOUD_PROJECT` 和 `GOOGLE_CLOUD_PROJECT` 环境变量以及 `GOOGLE_APPLICATION_CREDENTIALS` 引用的凭证文件优先于它。如果这些都未设置，项目 ID 将从您的 `gcloud` 配置或附加的服务账户解析。
 </Note>
+
+#### 高级凭证配置
+
+Claude Code 通过 `gcpAuthRefresh` 设置支持 GCP 的自动凭证刷新。当 Claude Code 检测到您的 GCP 凭证已过期或无法加载时，它会运行配置的命令以在重试请求之前获取新凭证。
+
+```json theme={null}
+{
+  "gcpAuthRefresh": "gcloud auth application-default login",
+  "env": {
+    "ANTHROPIC_VERTEX_PROJECT_ID": "your-project-id"
+  }
+}
+```
+
+命令的输出会显示给用户，但不支持交互式输入。这对于基于浏览器的身份验证流程效果很好，其中 CLI 显示 URL，您在浏览器中完成身份验证。如果身份验证未在三分钟内完成，刷新命令将超时。如果您在项目设置（如 `.claude/settings.json`）中设置 `gcpAuthRefresh`，该命令仅在您接受工作区信任提示后运行。
 
 ### 4. 配置 Claude Code
 
@@ -362,6 +267,12 @@ Claude Opus 4.7、Opus 4.6 和 Sonnet 4.6 在 Vertex AI 上支持 [1M token cont
 [设置向导](#sign-in-with-vertex-ai)在固定模型时提供 1M context 选项。要为手动固定的模型启用它，请在模型 ID 后附加 `[1m]`。有关详细信息，请参阅[为第三方部署固定模型](/zh-CN/model-config#pin-models-for-third-party-deployments)。
 
 ## 故障排除
+
+如果您遇到"无法加载默认凭证"错误：
+
+* 运行 `gcloud auth application-default login` 来设置应用默认凭证
+* 将 `GOOGLE_APPLICATION_CREDENTIALS` 设置为服务账户密钥文件路径
+* 查看 [配置 GCP 凭证](#3-configure-gcp-credentials) 了解所有选项
 
 如果您遇到配额问题：
 

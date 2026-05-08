@@ -4,7 +4,7 @@
 
 # 마켓플레이스를 통해 미리 빌드된 플러그인 발견 및 설치
 
-> 마켓플레이스에서 플러그인을 찾아 설치하여 Claude Code를 새로운 명령어, 에이전트 및 기능으로 확장합니다.
+> 마켓플레이스에서 플러그인을 찾아 설치하여 Claude Code를 새로운 skills, agents 및 기능으로 확장합니다.
 
 플러그인은 Claude Code를 skills, agents, hooks 및 MCP servers로 확장합니다. 플러그인 마켓플레이스는 직접 빌드하지 않고도 이러한 확장 기능을 발견하고 설치할 수 있도록 도와주는 카탈로그입니다.
 
@@ -35,6 +35,8 @@
 ```shell theme={null}
 /plugin install github@claude-plugins-official
 ```
+
+Claude Code가 플러그인을 어떤 마켓플레이스에서도 찾을 수 없다고 보고하면 마켓플레이스가 누락되었거나 오래되었을 수 있습니다. `/plugin marketplace update claude-plugins-official`을 실행하여 새로 고치거나, 이전에 추가하지 않았다면 `/plugin marketplace add anthropics/claude-plugins-official`을 실행합니다. 그런 다음 설치를 다시 시도합니다.
 
 <Note>
   공식 마켓플레이스는 Anthropic에서 유지 관리합니다. 공식 마켓플레이스에 플러그인을 제출하려면 다음 앱 내 제출 양식 중 하나를 사용하세요:
@@ -95,10 +97,10 @@
 
 ### 개발 워크플로우
 
-일반적인 개발 작업을 위한 명령어 및 에이전트를 추가하는 플러그인:
+일반적인 개발 작업을 위한 skills 및 agents를 추가하는 플러그인:
 
 * **commit-commands**: commit, push 및 PR 생성을 포함한 Git commit 워크플로우
-* **pr-review-toolkit**: pull request 검토를 위한 특화된 에이전트
+* **pr-review-toolkit**: pull request 검토를 위한 특화된 agents
 * **agent-sdk-dev**: Claude Agent SDK로 빌드하기 위한 도구
 * **plugin-dev**: 자신의 플러그인을 만들기 위한 도구 모음
 
@@ -142,7 +144,7 @@ Anthropic은 또한 플러그인 시스템으로 가능한 것을 보여주는 �
     * **Project scope**: 이 저장소의 모든 협력자를 위해 설치
     * **Local scope**: 이 저장소에서만 자신을 위해 설치
 
-    예를 들어 **commit-commands**(git 워크플로우 명령어를 추가하는 플러그인)를 선택하고 사용자 범위에 설치합니다.
+    예를 들어 **commit-commands**(git 워크플로우 skills를 추가하는 플러그인)를 선택하고 사용자 범위에 설치합니다.
 
     명령줄에서 직접 설치할 수도 있습니다:
 
@@ -154,7 +156,7 @@ Anthropic은 또한 플러그인 시스템으로 가능한 것을 보여주는 �
   </Step>
 
   <Step title="새 플러그인 사용">
-    설치 후 `/reload-plugins`를 실행하여 플러그인을 활성화합니다. 플러그인 명령어는 플러그인 이름으로 네임스페이스되므로 **commit-commands**는 `/commit-commands:commit`과 같은 명령어를 제공합니다.
+    설치 후 `/reload-plugins`를 실행하여 플러그인을 활성화합니다. 플러그인 skills는 플러그인 이름으로 네임스페이스되므로 **commit-commands**는 `/commit-commands:commit`과 같은 skills를 제공합니다.
 
     파일을 변경하고 다음을 실행하여 시도해보세요:
 
@@ -164,7 +166,7 @@ Anthropic은 또한 플러그인 시스템으로 가능한 것을 보여주는 �
 
     이는 변경 사항을 스테이징하고, commit 메시지를 생성하며, commit을 만듭니다.
 
-    각 플러그인은 다르게 작동합니다. **Discover** 탭의 플러그인 설명이나 해당 홈페이지를 확인하여 제공하는 명령어 및 기능을 알아보세요.
+    각 플러그인은 다르게 작동합니다. **Discover** 탭의 플러그인 설명이나 해당 홈페이지를 확인하여 제공하는 skills 및 기능을 알아보세요.
   </Step>
 </Steps>
 
@@ -195,7 +197,7 @@ Anthropic은 또한 플러그인 시스템으로 가능한 것을 보여주는 �
 
 ### 다른 Git 호스트에서 추가
 
-전체 URL을 제공하여 모든 git 저장소를 추가합니다. 이는 GitLab, Bitbucket 및 자체 호스팅 서버를 포함한 모든 Git 호스트에서 작동합니다:
+전체 URL을 제공하여 모든 git 저장소를 추가합니다. 이는 GitLab, Bitbucket 및 자체 호스팅 서버를 포함한 모든 Git 호스트에서 작동합니다. `.git` 접미사를 포함하여 Claude Code가 URL을 호스팅된 `marketplace.json` 파일에 대한 직접 링크로 취급하지 않고 저장소를 복제하도록 합니다.
 
 HTTPS 사용:
 
@@ -257,15 +259,21 @@ URL을 통해 원격 `marketplace.json` 파일을 추가합니다:
 
 **managed** 범위의 플러그인도 볼 수 있습니다. 이는 관리자가 [관리되는 설정](/ko/settings#settings-files)을 통해 설치하며 수정할 수 없습니다.
 
-`/plugin`을 실행하고 **Installed** 탭으로 이동하여 범위별로 그룹화된 플러그인을 확인합니다.
-
 <Warning>
   플러그인을 설치하기 전에 신뢰할 수 있는지 확인하세요. Anthropic은 플러그인에 포함된 MCP servers, 파일 또는 기타 소프트웨어를 제어하지 않으며 의도한 대로 작동하는지 확인할 수 없습니다. 자세한 내용은 각 플러그인의 홈페이지를 확인하세요.
 </Warning>
 
 ## 설치된 플러그인 관리
 
-`/plugin`을 실행하고 **Installed** 탭으로 이동하여 플러그인을 보고, 활성화하고, 비활성화하거나, 제거합니다. 플러그인 이름 또는 설명으로 목록을 필터링하려면 입력합니다.
+`/plugin`을 실행하고 **Installed** 탭으로 이동하여 플러그인을 보고, 활성화하고, 비활성화하거나, 제거합니다. 목록은 범위별로 그룹화되고 문제가 먼저 표시되도록 정렬됩니다: 로드 오류 또는 해결되지 않은 종속성이 있는 플러그인이 맨 위에 나타나고, 그 다음 즐겨찾기가 나타나며, 비활성화된 플러그인은 맨 아래의 축소된 헤더 뒤에 접혀 있습니다.
+
+목록에서 다음을 수행할 수 있습니다:
+
+* `f`를 눌러 선택한 플러그인을 즐겨찾기에 추가하거나 제거
+* 입력하여 플러그인 이름 또는 설명으로 필터링
+* Enter를 눌러 플러그인의 세부 정보 보기를 열고 활성화, 비활성화 또는 제거
+
+종속성을 선언하는 플러그인을 설치하면 설치 출력에 함께 자동 설치된 종속성이 나열됩니다.
 
 직접 명령어로 플러그인을 관리할 수도 있습니다.
 
@@ -400,8 +408,8 @@ Claude Code 업데이트를 수동으로 관리하지만 여전히 자동 플러
 
 1. **버전 확인**: `claude --version`을 실행하여 설치된 항목을 확인합니다.
 2. **Claude Code 업데이트**:
-   * **Homebrew**: `brew upgrade claude-code`
-   * **npm**: `npm update -g @anthropic-ai/claude-code`
+   * **Homebrew**: `brew upgrade claude-code`(또는 해당 cask를 설치한 경우 `brew upgrade claude-code@latest`)
+   * **npm**: `npm install -g @anthropic-ai/claude-code@latest`
    * **네이티브 설치 프로그램**: [설정](/ko/setup)에서 설치 명령어를 다시 실행합니다.
 3. **Claude Code 재시작**: 업데이트 후 터미널을 재시작하고 `claude`를 다시 실행합니다.
 

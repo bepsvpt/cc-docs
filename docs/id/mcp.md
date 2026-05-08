@@ -327,6 +327,10 @@ claude mcp remove github
 /mcp
 ```
 
+Panel `/mcp` menampilkan jumlah alat di sebelah setiap server yang terhubung dan menandai server yang mengiklankan kemampuan alat tetapi tidak mengekspos alat apa pun.
+
+Nama server `workspace` dicadangkan untuk penggunaan internal. Jika konfigurasi Anda menentukan server dengan nama tersebut, Claude Code melewatinya saat waktu muat dan menampilkan peringatan yang meminta Anda untuk mengganti namanya.
+
 ### Pembaruan alat dinamis
 
 Claude Code mendukung notifikasi `list_changed` MCP, memungkinkan server MCP untuk secara dinamis memperbarui alat, prompt, dan sumber daya yang tersedia tanpa memerlukan Anda untuk memutuskan dan menghubungkan kembali. Ketika server MCP mengirim notifikasi `list_changed`, Claude Code secara otomatis menyegarkan kemampuan yang tersedia dari server tersebut.
@@ -423,7 +427,7 @@ Lihat [referensi komponen plugin](/id/plugins-reference#mcp-servers) untuk detai
 
 ## Cakupan instalasi MCP
 
-Server MCP dapat dikonfigurasi pada tiga cakupan berbeda. Cakupan yang Anda pilih mengontrol proyek mana tempat server dimuat dan apakah konfigurasi dibagikan dengan tim Anda.
+Server MCP dapat dikonfigurasi pada tiga cakupan berbeda. Cakupan yang Anda pilih mengontrol proyek mana tempat server dimuat dan apakah konfigurasi dibagikan dengan tim Anda. Administrator juga dapat menerapkan server di tingkat enterprise melalui [konfigurasi terkelola](#managed-mcp-configuration).
 
 | Cakupan                  | Dimuat dalam          | Dibagikan dengan tim      | Disimpan dalam             |
 | ------------------------ | --------------------- | ------------------------- | -------------------------- |
@@ -944,6 +948,8 @@ Jika Anda telah masuk ke Claude Code dengan akun [Claude.ai](https://claude.ai),
   </Step>
 </Steps>
 
+Server yang telah Anda tambahkan di Claude Code mengambil [prioritas](#scope-hierarchy-and-precedence) atas konektor claude.ai yang menunjuk ke URL yang sama. Ketika ini terjadi, `/mcp` mencantumkan konektor sebagai tersembunyi dan menunjukkan cara menghapus duplikat jika Anda lebih suka menggunakan konektor.
+
 Untuk menonaktifkan server MCP claude.ai di Claude Code, atur variabel lingkungan `ENABLE_CLAUDEAI_MCP_SERVERS` ke `false`:
 
 ```bash theme={null}
@@ -1183,6 +1189,8 @@ Entri `.mcp.json` berikut mengecualikan satu server HTTP sambil membiarkan serve
 
 Field `alwaysLoad` tersedia di semua jenis server dan memerlukan Claude Code v2.1.121 atau lebih baru. Server MCP juga dapat menandai alat individual sebagai selalu-dimuat dengan menyertakan `"anthropic/alwaysLoad": true` dalam objek `_meta` alat, yang memiliki efek yang sama hanya untuk alat tersebut.
 
+Pengaturan `alwaysLoad: true` juga memblokir startup sampai server terhubung, dibatasi pada timeout koneksi standar 5 detik. Ini berlaku bahkan ketika [`MCP_CONNECTION_NONBLOCKING=1`](/id/env-vars) diatur, karena alat harus ada saat prompt pertama dibangun. Server lain masih terhubung di latar belakang ketika nonblocking diaktifkan.
+
 ## Gunakan prompt MCP sebagai perintah
 
 Server MCP dapat mengekspos prompt yang menjadi tersedia sebagai perintah di Claude Code.
@@ -1350,6 +1358,8 @@ Pola URL mendukung wildcard menggunakan `*` untuk mencocokkan urutan karakter ap
 * `https://mcp.company.com/*` - Izinkan semua jalur di domain tertentu
 * `https://*.example.com/*` - Izinkan subdomain apa pun dari example.com
 * `http://localhost:*/*` - Izinkan port apa pun di localhost
+
+Pencocokan nama host tidak peka huruf besar-kecil dan mengabaikan titik FQDN yang tertinggal, sesuai dengan semantik DNS. Pola seperti `*://Mcp.Example.com/*` cocok dengan `https://mcp.example.com/api`, dan `https://mcp.example.com.` diperlakukan sama dengan `https://mcp.example.com`. Skema dan jalur tetap peka huruf besar-kecil.
 
 **Perilaku server jarak jauh**:
 

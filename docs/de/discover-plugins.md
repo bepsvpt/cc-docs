@@ -36,6 +36,8 @@ Um ein Plugin aus dem offiziellen Marktplatz zu installieren, verwenden Sie `/pl
 /plugin install github@claude-plugins-official
 ```
 
+Wenn Claude Code meldet, dass das Plugin in keinem Marktplatz gefunden wird, fehlt Ihnen entweder der Marktplatz oder er ist veraltet. Führen Sie `/plugin marketplace update claude-plugins-official` aus, um ihn zu aktualisieren, oder `/plugin marketplace add anthropics/claude-plugins-official`, wenn Sie ihn noch nicht hinzugefügt haben. Versuchen Sie dann die Installation erneut.
+
 <Note>
   Der offizielle Marktplatz wird von Anthropic gepflegt. Um ein Plugin beim offiziellen Marktplatz einzureichen, verwenden Sie eines der In-App-Einreichungsformulare:
 
@@ -45,7 +47,7 @@ Um ein Plugin aus dem offiziellen Marktplatz zu installieren, verwenden Sie `/pl
   Um Plugins unabhängig zu verteilen, [erstellen Sie Ihren eigenen Marktplatz](/de/plugin-marketplaces) und teilen Sie ihn mit Benutzern.
 </Note>
 
-Der offizielle Marktplatz umfasst mehrere Plugin-Kategorien:
+Der offizielle Marktplatz umfasst mehrere Kategorien von Plugins:
 
 ### Code-Intelligenz
 
@@ -195,7 +197,7 @@ Beispielsweise bezieht sich `anthropics/claude-code` auf das Repository `claude-
 
 ### Hinzufügen von anderen Git-Hosts
 
-Fügen Sie ein beliebiges Git-Repository hinzu, indem Sie die vollständige URL angeben. Dies funktioniert mit jedem Git-Host, einschließlich GitLab, Bitbucket und selbstgehosteten Servern:
+Fügen Sie ein beliebiges Git-Repository hinzu, indem Sie die vollständige URL angeben. Dies funktioniert mit jedem Git-Host, einschließlich GitLab, Bitbucket und selbstgehosteten Servern. Fügen Sie das Suffix `.git` ein, damit Claude Code das Repository klont, anstatt die URL als direkten Link zu einer gehosteten `marketplace.json`-Datei zu behandeln.
 
 Mit HTTPS:
 
@@ -257,15 +259,21 @@ Um einen anderen [Installationsbereich](/de/settings#configuration-scopes) zu w�
 
 Sie können auch Plugins mit **managed**-Bereich sehen – diese werden von Administratoren über [verwaltete Einstellungen](/de/settings#settings-files) installiert und können nicht geändert werden.
 
-Führen Sie `/plugin` aus und gehen Sie zur Registerkarte **Installed**, um Ihre Plugins nach Bereich gruppiert zu sehen.
-
 <Warning>
   Stellen Sie sicher, dass Sie einem Plugin vertrauen, bevor Sie es installieren. Anthropic kontrolliert nicht, welche MCP servers, Dateien oder andere Software in Plugins enthalten sind, und kann nicht überprüfen, dass sie wie beabsichtigt funktionieren. Überprüfen Sie die Homepage jedes Plugins für weitere Informationen.
 </Warning>
 
 ## Verwalten Sie installierte Plugins
 
-Führen Sie `/plugin` aus und gehen Sie zur Registerkarte **Installed**, um Ihre Plugins anzuzeigen, zu aktivieren, zu deaktivieren oder zu deinstallieren. Geben Sie ein, um die Liste nach Plugin-Name oder Beschreibung zu filtern.
+Führen Sie `/plugin` aus und gehen Sie zur Registerkarte **Installed**, um Ihre Plugins anzuzeigen, zu aktivieren, zu deaktivieren oder zu deinstallieren. Die Liste ist nach Bereich gruppiert und sortiert, sodass Sie zuerst Probleme sehen: Plugins mit Ladefehlern oder ungelösten Abhängigkeiten erscheinen oben, gefolgt von Ihren Favoriten, mit deaktivierten Plugins, die hinter einem eingeklappten Header am unteren Rand verborgen sind.
+
+Aus der Liste können Sie:
+
+* `f` drücken, um das ausgewählte Plugin zu favorisieren oder zu entfavorisieren
+* Eingeben, um nach Plugin-Name oder Beschreibung zu filtern
+* Enter drücken, um die Detailansicht eines Plugins zu öffnen und es zu aktivieren, zu deaktivieren oder zu deinstallieren
+
+Wenn Sie ein Plugin installieren, das Abhängigkeiten deklariert, listet die Installationsausgabe auf, welche Abhängigkeiten zusammen mit ihm automatisch installiert wurden.
 
 Sie können Plugins auch mit direkten Befehlen verwalten.
 
@@ -400,8 +408,8 @@ Wenn Sie „unknown command" sehen oder der `/plugin`-Befehl nicht angezeigt wir
 
 1. **Überprüfen Sie Ihre Version**: Führen Sie `claude --version` aus, um zu sehen, was installiert ist.
 2. **Aktualisieren Sie Claude Code**:
-   * **Homebrew**: `brew upgrade claude-code`
-   * **npm**: `npm update -g @anthropic-ai/claude-code`
+   * **Homebrew**: `brew upgrade claude-code` (oder `brew upgrade claude-code@latest`, wenn Sie diesen Cask installiert haben)
+   * **npm**: `npm install -g @anthropic-ai/claude-code@latest`
    * **Native Installer**: Führen Sie den Installationsbefehl von [Setup](/de/setup) erneut aus
 3. **Starten Sie Claude Code neu**: Starten Sie nach dem Update Ihr Terminal neu und führen Sie `claude` erneut aus.
 
@@ -410,7 +418,7 @@ Wenn Sie „unknown command" sehen oder der `/plugin`-Befehl nicht angezeigt wir
 * **Marktplatz wird nicht geladen**: Überprüfen Sie, dass die URL zugänglich ist und dass `.claude-plugin/marketplace.json` unter dem Pfad vorhanden ist
 * **Plugin-Installationsfehler**: Überprüfen Sie, dass Plugin-Quell-URLs zugänglich sind und Repositories öffentlich sind (oder Sie haben Zugriff)
 * **Dateien nach der Installation nicht gefunden**: Plugins werden in einen Cache kopiert, daher funktionieren Pfade, die auf Dateien außerhalb des Plugin-Verzeichnisses verweisen, nicht
-* **Plugin-Skills werden nicht angezeigt**: Löschen Sie den Cache mit `rm -rf ~/.claude/plugins/cache`, starten Sie Claude Code neu und installieren Sie das Plugin erneut.
+* **Plugin-Befehle werden nicht angezeigt**: Löschen Sie den Cache mit `rm -rf ~/.claude/plugins/cache`, starten Sie Claude Code neu und installieren Sie das Plugin erneut.
 
 Für detaillierte Fehlerbehebung mit Lösungen siehe [Fehlerbehebung](/de/plugin-marketplaces#troubleshooting) im Marktplatz-Leitfaden. Für Debugging-Tools siehe [Debugging- und Entwicklungstools](/de/plugins-reference#debugging-and-development-tools).
 

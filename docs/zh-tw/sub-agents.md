@@ -262,12 +262,12 @@ Frontmatter 定義 subagent 的中繼資料和配置。主體成為指導 subage
 | :---------------- | :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `name`            | Yes      | 使用小寫字母和連字號的唯一識別碼                                                                                                                                                                                                 |
 | `description`     | Yes      | Claude 何時應委派給此 subagent                                                                                                                                                                                          |
-| `tools`           | No       | [Tools](#available-tools) subagent 可以使用。如果省略，繼承所有工具                                                                                                                                                              |
+| `tools`           | No       | [Tools](#available-tools) subagent 可以使用。如果省略，繼承所有工具。若要將 Skills 預載入上下文，請使用 `skills` 欄位而不是在此列出 `Skill`                                                                                                             |
 | `disallowedTools` | No       | 要拒絕的工具，從繼承或指定的清單中移除                                                                                                                                                                                              |
 | `model`           | No       | [Model](#choose-a-model) 使用：`sonnet`、`opus`、`haiku`、完整模型 ID（例如，`claude-opus-4-7`）或 `inherit`。預設為 `inherit`                                                                                                       |
 | `permissionMode`  | No       | [Permission mode](#permission-modes)：`default`、`acceptEdits`、`auto`、`dontAsk`、`bypassPermissions` 或 `plan`。針對 [plugin subagents](#choose-the-subagent-scope) 被忽略                                                 |
 | `maxTurns`        | No       | subagent 停止前的最大代理轉數                                                                                                                                                                                              |
-| `skills`          | No       | [Skills](/zh-TW/skills) 在啟動時載入到 subagent 的上下文中。注入完整技能內容，而不僅僅是可供呼叫。Subagents 不從父對話繼承技能                                                                                                                            |
+| `skills`          | No       | [Skills](/zh-TW/skills) 在啟動時預載入到 subagent 的上下文中。注入完整技能內容，而不僅僅是描述。Subagents 仍然可以透過 Skill 工具呼叫未列出的專案、使用者和外掛程式技能                                                                                                    |
 | `mcpServers`      | No       | [MCP servers](/zh-TW/mcp) 可用於此 subagent。每個條目要麼是參考已配置伺服器的伺服器名稱（例如，`"slack"`），要麼是內聯定義，其中伺服器名稱為鍵，完整 [MCP server config](/zh-TW/mcp#installing-mcp-servers) 為值。針對 [plugin subagents](#choose-the-subagent-scope) 被忽略 |
 | `hooks`           | No       | [Lifecycle hooks](#define-hooks-for-subagents) 限定於此 subagent。針對 [plugin subagents](#choose-the-subagent-scope) 被忽略                                                                                               |
 | `memory`          | No       | [Persistent memory scope](#enable-persistent-memory)：`user`、`project` 或 `local`。啟用跨工作階段學習                                                                                                                        |
@@ -418,7 +418,7 @@ skills:
 Implement API endpoints. Follow the conventions and patterns from the preloaded skills.
 ```
 
-每個技能的完整內容被注入到 subagent 的上下文中，而不僅僅是可供呼叫。Subagents 不從父對話繼承技能；您必須明確列出它們。
+每個列出的技能的完整內容被注入到 subagent 的上下文中。此欄位控制哪些技能被預載入，而不是 subagent 可以存取哪些技能：沒有它，subagent 仍然可以在執行期間透過 Skill 工具發現和呼叫專案、使用者和外掛程式技能。若要防止 subagent 完全呼叫技能，請從 [`tools`](#available-tools) 清單中省略 `Skill` 或將其新增到 `disallowedTools`。
 
 您無法預載入設定 [`disable-model-invocation: true`](/zh-TW/skills#control-who-invokes-a-skill) 的技能，因為預載入來自 Claude 可以呼叫的相同技能集。如果列出的技能遺失或已停用，Claude Code 會跳過它並將警告記錄到除錯日誌。
 

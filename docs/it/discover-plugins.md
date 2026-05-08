@@ -4,7 +4,7 @@
 
 # Scopri e installa plugin precostruiti tramite marketplace
 
-> Trova e installa plugin dai marketplace per estendere Claude Code con nuovi comandi, agenti e funzionalità.
+> Trova e installa plugin dai marketplace per estendere Claude Code con nuove skills, agenti e funzionalità.
 
 I plugin estendono Claude Code con skills, agenti, hooks e MCP servers. I marketplace dei plugin sono cataloghi che vi aiutano a scoprire e installare queste estensioni senza doverle costruire da soli.
 
@@ -35,6 +35,8 @@ Per installare un plugin dal marketplace ufficiale, utilizzate `/plugin install 
 ```shell theme={null}
 /plugin install github@claude-plugins-official
 ```
+
+Se Claude Code segnala che il plugin non è trovato in alcun marketplace, il vostro marketplace è mancante o obsoleto. Eseguite `/plugin marketplace update claude-plugins-official` per aggiornarlo, oppure `/plugin marketplace add anthropics/claude-plugins-official` se non lo avete ancora aggiunto. Quindi riprovate l'installazione.
 
 <Note>
   Il marketplace ufficiale è mantenuto da Anthropic. Per inviare un plugin al marketplace ufficiale, utilizzate uno dei moduli di invio in-app:
@@ -95,7 +97,7 @@ Questi plugin raggruppano [MCP servers](/it/mcp) preconfigurati in modo che poss
 
 ### Flussi di lavoro di sviluppo
 
-Plugin che aggiungono comandi e agenti per attività di sviluppo comuni:
+Plugin che aggiungono skills e agenti per attività di sviluppo comuni:
 
 * **commit-commands**: Flussi di lavoro di commit Git inclusi commit, push e creazione di PR
 * **pr-review-toolkit**: Agenti specializzati per la revisione delle pull request
@@ -142,7 +144,7 @@ Anthropic mantiene anche un [marketplace di plugin demo](https://github.com/anth
     * **Project scope**: installate per tutti i collaboratori su questo repository
     * **Local scope**: installate per voi stessi solo in questo repository
 
-    Ad esempio, selezionate **commit-commands** (un plugin che aggiunge comandi di flusso di lavoro git) e installatelo nel vostro ambito utente.
+    Ad esempio, selezionate **commit-commands** (un plugin che aggiunge skills di flusso di lavoro git) e installatelo nel vostro ambito utente.
 
     Potete anche installare direttamente dalla riga di comando:
 
@@ -154,7 +156,7 @@ Anthropic mantiene anche un [marketplace di plugin demo](https://github.com/anth
   </Step>
 
   <Step title="Utilizzare il vostro nuovo plugin">
-    Dopo l'installazione, eseguite `/reload-plugins` per attivare il plugin. I comandi dei plugin sono nello spazio dei nomi del nome del plugin, quindi **commit-commands** fornisce comandi come `/commit-commands:commit`.
+    Dopo l'installazione, eseguite `/reload-plugins` per attivare il plugin. Le skills dei plugin sono nello spazio dei nomi del nome del plugin, quindi **commit-commands** fornisce skills come `/commit-commands:commit`.
 
     Provate eseguendo una modifica a un file e eseguendo:
 
@@ -164,7 +166,7 @@ Anthropic mantiene anche un [marketplace di plugin demo](https://github.com/anth
 
     Questo mette in stage le vostre modifiche, genera un messaggio di commit e crea il commit.
 
-    Ogni plugin funziona diversamente. Controllate la descrizione del plugin nella scheda **Discover** o la sua homepage per sapere quali comandi e funzionalità fornisce.
+    Ogni plugin funziona diversamente. Controllate la descrizione del plugin nella scheda **Discover** o la sua homepage per sapere quali skills e funzionalità fornisce.
   </Step>
 </Steps>
 
@@ -195,7 +197,7 @@ Ad esempio, `anthropics/claude-code` si riferisce al repository `claude-code` di
 
 ### Aggiungere da altri host Git
 
-Aggiungete qualsiasi repository git fornendo l'URL completo. Questo funziona con qualsiasi host Git, inclusi GitLab, Bitbucket e server self-hosted:
+Aggiungete qualsiasi repository git fornendo l'URL completo. Questo funziona con qualsiasi host Git, inclusi GitLab, Bitbucket e server self-hosted. Includete il suffisso `.git` in modo che Claude Code cloni il repository piuttosto che trattare l'URL come un collegamento diretto a un file `marketplace.json` ospitato.
 
 Utilizzando HTTPS:
 
@@ -257,15 +259,21 @@ Per scegliere un [ambito di installazione](/it/settings#configuration-scopes) di
 
 Potete anche vedere plugin con ambito **managed**—questi sono installati dagli amministratori tramite [impostazioni gestite](/it/settings#settings-files) e non possono essere modificati.
 
-Eseguite `/plugin` e andate alla scheda **Installed** per vedere i vostri plugin raggruppati per ambito.
-
 <Warning>
   Assicuratevi di fidarvi di un plugin prima di installarlo. Anthropic non controlla quali MCP server, file o altro software sono inclusi nei plugin e non può verificare che funzionino come previsto. Controllate la homepage di ogni plugin per ulteriori informazioni.
 </Warning>
 
 ## Gestire i plugin installati
 
-Eseguite `/plugin` e andate alla scheda **Installed** per visualizzare, abilitare, disabilitare o disinstallare i vostri plugin. Digitate per filtrare l'elenco per nome o descrizione del plugin.
+Eseguite `/plugin` e andate alla scheda **Installed** per visualizzare, abilitare, disabilitare o disinstallare i vostri plugin. L'elenco è raggruppato per ambito e ordinato in modo che vediate prima i problemi: i plugin con errori di caricamento o dipendenze non risolte appaiono in alto, seguiti dai vostri preferiti, con i plugin disabilitati ripiegati dietro un'intestazione compressa in fondo.
+
+Dall'elenco potete:
+
+* premere `f` per contrassegnare come preferito o rimuovere il contrassegno dal plugin selezionato
+* digitare per filtrare per nome o descrizione del plugin
+* premere Enter per aprire la vista dettagli di un plugin e abilitare, disabilitare o disinstallarlo
+
+Quando installate un plugin che dichiara dipendenze, l'output dell'installazione elenca quali dipendenze sono state installate automaticamente insieme ad esso.
 
 Potete anche gestire i plugin con comandi diretti.
 
@@ -400,8 +408,8 @@ Se vedete "unknown command" o il comando `/plugin` non appare:
 
 1. **Controllate la vostra versione**: Eseguite `claude --version` per vedere cosa è installato.
 2. **Aggiornate Claude Code**:
-   * **Homebrew**: `brew upgrade claude-code`
-   * **npm**: `npm update -g @anthropic-ai/claude-code`
+   * **Homebrew**: `brew upgrade claude-code` (o `brew upgrade claude-code@latest` se avete installato quel cask)
+   * **npm**: `npm install -g @anthropic-ai/claude-code@latest`
    * **Programma di installazione nativo**: Rieseguite il comando di installazione da [Setup](/it/setup)
 3. **Riavviate Claude Code**: Dopo l'aggiornamento, riavviate il vostro terminale ed eseguite `claude` di nuovo.
 

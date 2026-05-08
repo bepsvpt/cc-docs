@@ -132,6 +132,14 @@ Claude Code는 `CLAUDE.md`를 읽으며 `AGENTS.md`를 읽지 않습니다. 저�
 `src/billing/` 아래의 변경 사항에 대해 Plan Mode를 사용합니다.
 ```
 
+Windows에서 심볼릭 링크를 만들려면 관리자 권한 또는 개발자 모드가 필요하므로 대신 `@AGENTS.md` 가져오기를 사용합니다.
+
+```bash theme={null}
+ln -s AGENTS.md CLAUDE.md
+```
+
+이미 `AGENTS.md`가 있는 저장소에서 [`/init`](/ko/commands)을 실행하면 이를 읽고 관련 부분을 생성된 `CLAUDE.md`에 통합합니다. 또한 `.cursorrules` 및 `.windsurfrules`과 같은 다른 도구 구성을 읽습니다.
+
 ### CLAUDE.md 파일이 로드되는 방식
 
 Claude Code는 현재 작업 디렉토리에서 디렉토리 트리를 따라 올라가며 CLAUDE.md 파일을 읽고 각 디렉토리를 확인합니다. 즉, `foo/bar/`에서 Claude Code를 실행하면 `foo/bar/CLAUDE.md`, `foo/CLAUDE.md` 및 그 옆의 모든 `CLAUDE.local.md` 파일에서 지침을 로드합니다.
@@ -377,6 +385,8 @@ CLAUDE.md 콘텐츠는 시스템 프롬프트의 일부가 아니라 시스템 �
 * 관련 CLAUDE.md가 세션에 대해 로드되는 위치에 있는지 확인합니다([CLAUDE.md 파일을 어디에 배치할지 선택](#choose-where-to-put-claude-md-files) 참조).
 * 지침을 더 구체적으로 만듭니다. "2칸 들여쓰기 사용"이 "코드를 제대로 포맷합니다"보다 더 잘 작동합니다.
 * CLAUDE.md 파일 전체에서 충돌하는 지침을 찾습니다. 두 파일이 동일한 동작에 대해 다른 지침을 제공하면 Claude가 하나를 임의로 선택할 수 있습니다.
+
+명령이 모든 커밋 전이나 각 파일 편집 후와 같이 특정 시점에 실행되어야 하는 경우, 대신 [hook](/ko/hooks-guide)으로 작성합니다. Hook은 고정된 라이프사이클 이벤트에서 셸 명령으로 실행되며 Claude가 무엇을 하기로 결정하든 관계없이 적용됩니다.
 
 시스템 프롬프트 수준의 지침의 경우 [`--append-system-prompt`](/ko/cli-reference#system-prompt-flags)를 사용합니다. 이는 모든 호출 시 전달되어야 하므로 대화형 사용보다는 스크립트 및 자동화에 더 적합합니다.
 

@@ -564,6 +564,22 @@ Das folgende Beispiel konfiguriert eine einzelne Verbindung vor, die sich in `~/
 
 Jeder Eintrag erfordert `id`, `name` und `sshHost`. Die Felder `sshPort`, `sshIdentityFile` und `startDirectory` sind optional. Benutzer können auch `sshConfigs` zu ihrer eigenen `~/.claude/settings.json` hinzufügen, wo Verbindungen, die über den Dialog hinzugefügt werden, gespeichert sind.
 
+#### SSH-Hosts einschränken, mit denen Benutzer sich verbinden können
+
+Administratoren können Desktop-SSH-Sitzungen auf einen genehmigten Satz von Hosts beschränken, indem sie `sshHostAllowlist` zu einer [verwalteten Einstellungsdatei](/de/settings#settings-precedence) hinzufügen. Wenn diese festgelegt ist, können Benutzer sich nur mit Hosts verbinden, deren aufgelöster Hostname einem der Muster entspricht. Setzen Sie es auf ein leeres Array, um SSH-Sitzungen vollständig zu deaktivieren.
+
+Das folgende Beispiel erlaubt Verbindungen zu jedem Host unter `devboxes.example.com` und zu einem einzelnen benannten Bastion-Host:
+
+```json theme={null}
+{
+  "sshHostAllowlist": ["*.devboxes.example.com", "bastion.example.com"]
+}
+```
+
+Muster sind nicht case-sensitiv. `*` passt auf jeden Host, und `*.example.com` passt auf `example.com` und jede Subdomain. Alles andere ist eine exakte Übereinstimmung. Die Überprüfung wird gegen den Hostnamen nach `~/.ssh/config`-Auflösung über `ssh -G` durchgeführt, sodass `Host`-Aliase und `ProxyCommand`/`ProxyJump`-Einträge zulässig sind, solange der aufgelöste `HostName` passt.
+
+`sshHostAllowlist` wird nur aus verwalteten Einstellungen gelesen; Werte in Benutzer- oder Projekteinstellungen werden ignoriert. Nur die Claude Desktop-App berücksichtigt diese Einstellung; die Claude Code CLI und IDE-Erweiterungen lesen sie nicht, und sie beschränkt keine `ssh`-Befehle, die über das Bash-Tool ausgeführt werden. Sie regelt, mit welchen Hosts sich die Desktop-App verbindet, nicht den Netzwerk-Egress, daher kombinieren Sie sie mit den Netzwerk- oder Zero-Trust-Kontrollen Ihrer Organisation, wenn Sie eine harte Grenze benötigen.
+
 ## Unternehmenskonfiguration
 
 Organisationen in Team- oder Enterprise-Plänen können das Verhalten der Desktop-App durch Admin-Konsolen-Steuerelemente, verwaltete Einstellungsdateien und Geräteverwaltungsrichtlinien verwalten.
@@ -581,12 +597,13 @@ Diese Einstellungen werden über die [Admin-Einstellungskonsole](https://claude.
 
 Verwaltete Einstellungen überschreiben Projekt- und Benutzereinstellungen und gelten, wenn Desktop CLI-Sitzungen startet. Sie können diese Schlüssel in der [verwalteten Einstellungsdatei](/de/settings#settings-precedence) Ihrer Organisation oder remote über die Admin-Konsole festlegen.
 
-| Schlüssel                                  | Beschreibung                                                                                                                                                                                                               |
-| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `permissions.disableBypassPermissionsMode` | auf `"disable"` setzen, um Benutzer daran zu hindern, den Bypass-Berechtigungsmodus zu aktivieren.                                                                                                                         |
-| `disableAutoMode`                          | auf `"disable"` setzen, um Benutzer daran zu hindern, den [Auto](/de/permission-modes#eliminate-prompts-with-auto-mode)-Modus zu aktivieren. Entfernt Auto aus dem Moduswahlschalter. Auch unter `permissions` akzeptiert. |
-| `autoMode`                                 | passen Sie an, was der Auto-Modus-Klassifizierer über Ihre Organisation vertraut und blockiert. Siehe [Auto-Modus konfigurieren](/de/auto-mode-config).                                                                    |
-| `sshConfigs`                               | vorkonfigurieren Sie [SSH-Verbindungen](#pre-configure-ssh-connections-for-your-team), die in der Umgebungs-Dropdown angezeigt werden. Benutzer können verwaltete Verbindungen nicht bearbeiten oder löschen.              |
+| Schlüssel                                  | Beschreibung                                                                                                                                                                                                                                      |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `permissions.disableBypassPermissionsMode` | auf `"disable"` setzen, um Benutzer daran zu hindern, den Bypass-Berechtigungsmodus zu aktivieren.                                                                                                                                                |
+| `disableAutoMode`                          | auf `"disable"` setzen, um Benutzer daran zu hindern, den [Auto](/de/permission-modes#eliminate-prompts-with-auto-mode)-Modus zu aktivieren. Entfernt Auto aus dem Moduswahlschalter. Auch unter `permissions` akzeptiert.                        |
+| `autoMode`                                 | passen Sie an, was der Auto-Modus-Klassifizierer über Ihre Organisation vertraut und blockiert. Siehe [Auto-Modus konfigurieren](/de/auto-mode-config).                                                                                           |
+| `sshConfigs`                               | vorkonfigurieren Sie [SSH-Verbindungen](#pre-configure-ssh-connections-for-your-team), die in der Umgebungs-Dropdown angezeigt werden. Benutzer können verwaltete Verbindungen nicht bearbeiten oder löschen.                                     |
+| `sshHostAllowlist`                         | beschränken Sie [SSH-Sitzungen](#restrict-which-ssh-hosts-users-can-connect-to) auf Hosts, deren aufgelöster Hostname einem dieser Muster entspricht. Ein leeres Array deaktiviert SSH-Sitzungen. Wird nur aus verwalteten Einstellungen gelesen. |
 
 Eine verwaltete Einstellungsdatei, die auf jedem Computer auf der Festplatte bereitgestellt wird, gilt für Desktop-Sitzungen. Verwaltete Einstellungen, die remote über die Admin-Konsole hochgeladen werden, erreichen derzeit nur CLI- und IDE-Sitzungen. Für Desktop-Bereitstellungen verteilen Sie die Datei daher über MDM oder verwenden Sie die [Admin-Konsolen-Steuerelemente](#admin-console-controls) oben.
 
