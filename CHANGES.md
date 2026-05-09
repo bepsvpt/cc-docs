@@ -1,5 +1,246 @@
 # Documentation Changes
 
+## 2026-05-09
+
+147 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Orchestrieren Sie Teams von Claude Code-Sitzungen** (`agent-teams.md`): 1 lines added, 1 removed
+- **Hooks-Referenz** (`hooks.md`): 10 lines added, 10 removed
+- **Interaktiver Modus** (`interactive-mode.md`): 1 lines added, 1 removed
+- **Claude Code mit Tools über MCP verbinden** (`mcp.md`): 2 lines added, 0 removed
+- **Berechtigungen konfigurieren** (`permissions.md`): 7 lines added, 0 removed
+- **Plugins-Referenz** (`plugins-reference.md`): 8 lines added, 3 removed
+- **Sicherheit** (`security.md`): 1 lines added, 1 removed
+- **Serververwaltete Einstellungen konfigurieren** (`server-managed-settings.md`): 3 lines added, 2 removed
+- **Claude Code-Einstellungen** (`settings.md`): 28 lines added, 1 removed
+  - New section: "### Berechnen Sie verwaltete Einstellungen mit einem Policy Helper"
+- **Erweiterte Einrichtung** (`setup.md`): 2 lines added, 0 removed
+- **Konfigurieren Sie Ihr Terminal für Claude Code** (`terminal-config.md`): 1 lines added, 1 removed
+- **Claude Code in VS Code verwenden** (`vs-code.md`): 1 lines added, 1 removed
+
+### English
+
+
+**Modified**
+
+- **Orchestrate teams of Claude Code sessions** (`agent-teams.md`): 1 lines added, 1 removed
+- **Changelog** (`changelog.md`): 63 lines added, 0 removed
+- **Commands** (`commands.md`): 24 lines added, 5 removed
+  - New section: "## Commands across a typical workflow"
+  - New section: "## All commands"
+- **Environment variables** (`env-vars.md`): 2 lines added, 0 removed
+- **Hooks reference** (`hooks.md`): 3 lines added, 3 removed
+- **Interactive mode** (`interactive-mode.md`): 1 lines added, 1 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 2 lines added, 0 removed
+- **Monitoring** (`monitoring-usage.md`): 3 lines added, 3 removed
+- **Configure permissions** (`permissions.md`): 7 lines added, 0 removed
+- **Plugins reference** (`plugins-reference.md`): 8 lines added, 3 removed
+- **Security** (`security.md`): 1 lines added, 1 removed
+- **Configure server-managed settings** (`server-managed-settings.md`): 3 lines added, 2 removed
+- **Claude Code settings** (`settings.md`): 28 lines added, 1 removed
+  - New section: "### Compute managed settings with a policy helper"
+- **Advanced setup** (`setup.md`): 2 lines added, 0 removed
+- **Configure your terminal for Claude Code** (`terminal-config.md`): 1 lines added, 1 removed
+- **Use Claude Code in VS Code** (`vs-code.md`): 1 lines added, 1 removed
+
+### Español
+
+
+**Modified**
+
+- **Orquestar equipos de sesiones de Claude Code** (`agent-teams.md`): 1 lines added, 1 removed
+- **Referencia de hooks** (`hooks.md`): 4 lines added, 4 removed
+- **Modo interactivo** (`interactive-mode.md`): 1 lines added, 1 removed
+- **Conectar Claude Code a herramientas mediante MCP** (`mcp.md`): 2 lines added, 0 removed
+- **Configurar permisos** (`permissions.md`): 7 lines added, 0 removed
+- **Referencia de plugins** (`plugins-reference.md`): 8 lines added, 3 removed
+- **Seguridad** (`security.md`): 1 lines added, 1 removed
+- **Configurar la configuración administrada por servidor** (`server-managed-settings.md`): 3 lines added, 2 removed
+- **Configuración de Claude Code** (`settings.md`): 28 lines added, 1 removed
+  - New section: "### Calcular configuraciones administradas con un asistente de política"
+- **Configuración avanzada** (`setup.md`): 2 lines added, 0 removed
+- **Configura tu terminal para Claude Code** (`terminal-config.md`): 1 lines added, 1 removed
+- **Usar Claude Code en VS Code** (`vs-code.md`): 15 lines added, 15 removed
+
+### Français
+
+
+**Modified**
+
+- **Orchestrer des équipes de sessions Claude Code** (`agent-teams.md`): 3 lines added, 3 removed
+- **Référence des hooks** (`hooks.md`): 3 lines added, 3 removed
+- **Mode interactif** (`interactive-mode.md`): 1 lines added, 1 removed
+- **Connecter Claude Code aux outils via MCP** (`mcp.md`): 2 lines added, 0 removed
+- **Configurer les autorisations** (`permissions.md`): 7 lines added, 0 removed
+- **Référence des plugins** (`plugins-reference.md`): 8 lines added, 3 removed
+- **Sécurité** (`security.md`): 1 lines added, 1 removed
+- **Configurer les paramètres gérés par le serveur** (`server-managed-settings.md`): 3 lines added, 2 removed
+- **Paramètres Claude Code** (`settings.md`): 28 lines added, 1 removed
+  - New section: "### Calculer les paramètres gérés avec un assistant de politique"
+- **Configuration avancée** (`setup.md`): 2 lines added, 0 removed
+- **Configurez votre terminal pour Claude Code** (`terminal-config.md`): 1 lines added, 1 removed
+- **Utiliser Claude Code dans VS Code** (`vs-code.md`): 1 lines added, 1 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Koordinasikan tim Claude Code sessions** (`agent-teams.md`): 1 lines added, 1 removed
+- **Referensi hooks** (`hooks.md`): 3 lines added, 3 removed
+- **Mode interaktif** (`interactive-mode.md`): 1 lines added, 1 removed
+- **Hubungkan Claude Code ke alat melalui MCP** (`mcp.md`): 2 lines added, 0 removed
+- **Konfigurasi izin** (`permissions.md`): 7 lines added, 0 removed
+- **Referensi Plugins** (`plugins-reference.md`): 9 lines added, 4 removed
+- **Keamanan** (`security.md`): 1 lines added, 1 removed
+- **Konfigurasi pengaturan yang dikelola server** (`server-managed-settings.md`): 3 lines added, 2 removed
+- **Pengaturan Claude Code** (`settings.md`): 29 lines added, 2 removed
+  - New section: "### Hitung pengaturan yang dikelola dengan policy helper"
+- **Pengaturan lanjutan** (`setup.md`): 2 lines added, 0 removed
+- **Konfigurasi terminal Anda untuk Claude Code** (`terminal-config.md`): 1 lines added, 1 removed
+- **Gunakan Claude Code di VS Code** (`vs-code.md`): 1 lines added, 1 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Orchestrare team di sessioni Claude Code** (`agent-teams.md`): 1 lines added, 1 removed
+- **Riferimento dei hooks** (`hooks.md`): 3 lines added, 3 removed
+- **Modalità interattiva** (`interactive-mode.md`): 1 lines added, 1 removed
+- **Connetti Claude Code ai tuoi strumenti tramite MCP** (`mcp.md`): 2 lines added, 0 removed
+- **Configurare le autorizzazioni** (`permissions.md`): 7 lines added, 0 removed
+- **Riferimento dei plugin** (`plugins-reference.md`): 8 lines added, 3 removed
+- **Sicurezza** (`security.md`): 1 lines added, 1 removed
+- **Configurare le impostazioni gestite dal server** (`server-managed-settings.md`): 3 lines added, 2 removed
+- **Impostazioni di Claude Code** (`settings.md`): 29 lines added, 2 removed
+  - New section: "### Calcola le impostazioni gestite con un policy helper"
+- **Configurazione avanzata** (`setup.md`): 2 lines added, 0 removed
+- **Configura il tuo terminale per Claude Code** (`terminal-config.md`): 1 lines added, 1 removed
+- **Usa Claude Code in VS Code** (`vs-code.md`): 1 lines added, 1 removed
+
+### 日本語
+
+
+**Modified**
+
+- **Claude Code セッションのチームを調整する** (`agent-teams.md`): 1 lines added, 1 removed
+- **Hooks リファレンス** (`hooks.md`): 3 lines added, 3 removed
+- **インタラクティブモード** (`interactive-mode.md`): 1 lines added, 1 removed
+- **MCP を使用して Claude Code をツールに接続する** (`mcp.md`): 2 lines added, 0 removed
+- **権限を設定する** (`permissions.md`): 7 lines added, 0 removed
+- **プラグインリファレンス** (`plugins-reference.md`): 8 lines added, 3 removed
+- **セキュリティ** (`security.md`): 1 lines added, 1 removed
+- **サーバー管理設定を構成する** (`server-managed-settings.md`): 3 lines added, 2 removed
+- **Claude Code の設定** (`settings.md`): 28 lines added, 1 removed
+  - New section: "### ポリシーヘルパーで managed 設定を計算"
+- **高度なセットアップ** (`setup.md`): 2 lines added, 0 removed
+- **Claude Code 用にターミナルを設定する** (`terminal-config.md`): 1 lines added, 1 removed
+- **VS Code で Claude Code を使用する** (`vs-code.md`): 1 lines added, 1 removed
+
+### 한국어
+
+
+**Modified**
+
+- **Claude Code 세션 팀 조율하기** (`agent-teams.md`): 1 lines added, 1 removed
+- **Hooks 참조** (`hooks.md`): 3 lines added, 3 removed
+- **대화형 모드** (`interactive-mode.md`): 2 lines added, 2 removed
+- **MCP를 통해 Claude Code를 도구에 연결하기** (`mcp.md`): 2 lines added, 0 removed
+- **플러그인 참조** (`plugins-reference.md`): 8 lines added, 3 removed
+- **보안** (`security.md`): 1 lines added, 1 removed
+- **서버 관리 설정 구성** (`server-managed-settings.md`): 3 lines added, 2 removed
+- **Claude Code 설정** (`settings.md`): 28 lines added, 1 removed
+  - New section: "### 정책 도우미로 managed 설정 계산"
+- **고급 설정** (`setup.md`): 2 lines added, 0 removed
+- **Claude Code를 위한 터미널 구성** (`terminal-config.md`): 1 lines added, 1 removed
+- **VS Code에서 Claude Code 사용하기** (`vs-code.md`): 1 lines added, 1 removed
+
+### Português
+
+
+**Modified**
+
+- **Orquestre equipes de sessões Claude Code** (`agent-teams.md`): 2 lines added, 2 removed
+- **Referência de hooks** (`hooks.md`): 3 lines added, 3 removed
+- **Modo interativo** (`interactive-mode.md`): 1 lines added, 1 removed
+- **Conectar Claude Code a ferramentas via MCP** (`mcp.md`): 2 lines added, 0 removed
+- **Configurar permissões** (`permissions.md`): 7 lines added, 0 removed
+- **Referência de plugins** (`plugins-reference.md`): 8 lines added, 3 removed
+- **Segurança** (`security.md`): 1 lines added, 1 removed
+- **Configurar configurações gerenciadas pelo servidor** (`server-managed-settings.md`): 3 lines added, 2 removed
+- **Configurações do Claude Code** (`settings.md`): 28 lines added, 1 removed
+  - New section: "### Calcular configurações gerenciadas com um auxiliar de política"
+- **Configuração avançada** (`setup.md`): 2 lines added, 0 removed
+- **Configure seu terminal para Claude Code** (`terminal-config.md`): 1 lines added, 1 removed
+- **Use Claude Code in VS Code** (`vs-code.md`): 2 lines added, 2 removed
+  - New section: "## Configurar configurações"
+
+### Русский
+
+
+**Modified**
+
+- **Координируйте команды сеансов Claude Code** (`agent-teams.md`): 1 lines added, 1 removed
+- **Справочник по hooks** (`hooks.md`): 3 lines added, 3 removed
+- **Интерактивный режим** (`interactive-mode.md`): 1 lines added, 1 removed
+- **Подключите Claude Code к инструментам через MCP** (`mcp.md`): 2 lines added, 0 removed
+- **Настройка разрешений** (`permissions.md`): 7 lines added, 0 removed
+- **Справочник по плагинам** (`plugins-reference.md`): 8 lines added, 3 removed
+- **Безопасность** (`security.md`): 1 lines added, 1 removed
+- **Настройка параметров, управляемых сервером** (`server-managed-settings.md`): 3 lines added, 2 removed
+- **Параметры Claude Code** (`settings.md`): 28 lines added, 1 removed
+  - New section: "### Вычислить управляемые параметры с помощью помощника политики"
+- **Расширенная настройка** (`setup.md`): 2 lines added, 0 removed
+- **Настройте ваш терминал для Claude Code** (`terminal-config.md`): 1 lines added, 1 removed
+- **Использование Claude Code в VS Code** (`vs-code.md`): 1 lines added, 1 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **协调 Claude Code 会话团队** (`agent-teams.md`): 3 lines added, 3 removed
+- **Hooks 参考** (`hooks.md`): 3 lines added, 3 removed
+- **交互模式** (`interactive-mode.md`): 1 lines added, 1 removed
+- **通过 MCP 将 Claude Code 连接到工具** (`mcp.md`): 2 lines added, 0 removed
+- **配置权限** (`permissions.md`): 7 lines added, 0 removed
+- **Plugins 参考** (`plugins-reference.md`): 8 lines added, 3 removed
+- **安全性** (`security.md`): 1 lines added, 1 removed
+- **配置服务器管理的设置** (`server-managed-settings.md`): 3 lines added, 2 removed
+- **Claude Code 设置** (`settings.md`): 28 lines added, 1 removed
+  - New section: "### 使用策略助手计算 managed 设置"
+- **高级设置** (`setup.md`): 2 lines added, 0 removed
+- **为 Claude Code 配置您的终端** (`terminal-config.md`): 1 lines added, 1 removed
+- **在 VS Code 中使用 Claude Code** (`vs-code.md`): 1 lines added, 1 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **協調 Claude Code 工作階段團隊** (`agent-teams.md`): 1 lines added, 1 removed
+- **Hooks 參考** (`hooks.md`): 5 lines added, 7 removed
+- **互動模式** (`interactive-mode.md`): 1 lines added, 1 removed
+- **透過 MCP 將 Claude Code 連接到工具** (`mcp.md`): 2 lines added, 0 removed
+- **設定權限** (`permissions.md`): 8 lines added, 1 removed
+- **Plugins 參考** (`plugins-reference.md`): 32 lines added, 27 removed
+- **安全性** (`security.md`): 1 lines added, 1 removed
+- **設定伺服器管理的設定** (`server-managed-settings.md`): 3 lines added, 2 removed
+- **Claude Code 設定** (`settings.md`): 28 lines added, 1 removed
+  - New section: "### 使用政策協助程式計算 managed 設定"
+- **進階設定** (`setup.md`): 2 lines added, 0 removed
+- **為 Claude Code 配置您的終端機** (`terminal-config.md`): 1 lines added, 1 removed
+- **在 VS Code 中使用 Claude Code** (`vs-code.md`): 1 lines added, 1 removed
+
+---
+
 ## 2026-05-08
 
 243 pages modified

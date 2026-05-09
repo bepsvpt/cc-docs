@@ -210,6 +210,13 @@ Exemplos:
 * `Edit(//tmp/scratch.txt)`: edita o caminho absoluto `/tmp/scratch.txt`
 * `Read(src/**)`: lê de `<diretório-atual>/src/`
 
+Uma regra só corresponde a arquivos sob sua âncora, portanto a âncora determina o quão longe uma regra deny alcança. Nomes de arquivo simples seguem semântica gitignore e correspondem em qualquer profundidade, portanto `Read(.env)` e `Read(**/.env)` são equivalentes:
+
+| Regra deny                      | Bloqueia                                                 | Não bloqueia                                            |
+| ------------------------------- | -------------------------------------------------------- | ------------------------------------------------------- |
+| `Read(.env)` ou `Read(**/.env)` | qualquer `.env` no ou sob o diretório atual              | `.env` em um diretório pai ou outro projeto             |
+| `Read(//**/.env)`               | qualquer `.env` em qualquer lugar do sistema de arquivos | nada; a regra é ancorada na raiz do sistema de arquivos |
+
 <Note>
   Em padrões gitignore, `*` corresponde a arquivos em um único diretório enquanto `**` corresponde recursivamente entre diretórios. Para permitir acesso a todos os arquivos, use apenas o nome da ferramenta sem parênteses: `Read`, `Edit` ou `Write`.
 </Note>

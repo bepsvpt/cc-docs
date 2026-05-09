@@ -398,6 +398,8 @@ npm 套件安裝與獨立安裝程式相同的原生二進位檔案。npm 透過
 
 支援的 npm 安裝平台為 `darwin-arm64`、`darwin-x64`、`linux-x64`、`linux-arm64`、`linux-x64-musl`、`linux-arm64-musl`、`win32-x64` 和 `win32-arm64`。您的套件管理員必須允許選擇性依賴項。如果安裝後二進位檔案遺失，請參閱[疑難排解](/zh-TW/troubleshoot-install#native-binary-not-found-after-npm-install)。
 
+若要升級 npm 安裝，請執行 `npm install -g @anthropic-ai/claude-code@latest`。避免使用 `npm update -g`，因為它會遵守原始安裝的 semver 範圍，可能無法將您移至最新版本。
+
 <Warning>
   請勿使用 `sudo npm install -g`，因為這可能導致權限問題和安全風險。如果您遇到權限錯誤，請參閱[疑難排解權限錯誤](/zh-TW/troubleshoot-install#permission-errors-during-installation)。
 </Warning>

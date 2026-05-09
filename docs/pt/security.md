@@ -59,7 +59,7 @@ Para detalhes completos, consulte nossos [Termos de Serviço Comerciais](https:/
 * **Aprovação de solicitação de rede**: Ferramentas que fazem solicitações de rede requerem aprovação do usuário por padrão
 * **Janelas de contexto isoladas**: Web fetch usa uma janela de contexto separada para evitar injetar prompts potencialmente maliciosos
 * **Verificação de confiança**: Primeiras execuções de base de código e novos MCP servers requerem verificação de confiança
-  * Nota: A verificação de confiança é desabilitada ao executar de forma não interativa com a flag `-p`
+  * Nota: A verificação de confiança é desabilitada ao executar de forma não interativa com a flag `-p`. A exceção é [`--worktree`](/pt/worktrees), que ainda requer que a confiança tenha sido aceita para o diretório
 * **Detecção de injeção de comando**: Comandos bash suspeitos requerem aprovação manual mesmo se previamente permitidos
 * **Correspondência fail-closed**: Comandos não correspondidos padrão para exigir aprovação manual
 * **Descrições em linguagem natural**: Comandos bash complexos incluem explicações para compreensão do usuário

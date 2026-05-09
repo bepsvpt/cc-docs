@@ -59,7 +59,7 @@ Untuk detail lengkap, silakan tinjau [Commercial Terms of Service](https://www.a
 * **Persetujuan permintaan jaringan**: Alat yang membuat permintaan jaringan memerlukan persetujuan pengguna secara default
 * **Jendela konteks terisolasi**: Web fetch menggunakan jendela konteks terpisah untuk menghindari injeksi prompt yang berpotensi berbahaya
 * **Verifikasi kepercayaan**: Jalankan codebase pertama kali dan server MCP baru memerlukan verifikasi kepercayaan
-  * Catatan: Verifikasi kepercayaan dinonaktifkan saat menjalankan secara non-interaktif dengan flag `-p`
+  * Catatan: Verifikasi kepercayaan dinonaktifkan saat menjalankan secara non-interaktif dengan flag `-p`. Pengecualiannya adalah [`--worktree`](/id/worktrees), yang masih memerlukan kepercayaan telah diterima untuk direktori
 * **Deteksi command injection**: Perintah bash yang mencurigakan memerlukan persetujuan manual bahkan jika sebelumnya allowlisted
 * **Pencocokan fail-closed**: Perintah yang tidak cocok secara default memerlukan persetujuan manual
 * **Deskripsi bahasa alami**: Perintah bash kompleks menyertakan penjelasan untuk pemahaman pengguna

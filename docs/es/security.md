@@ -59,7 +59,7 @@ Para obtener detalles completos, consulte nuestros [Términos de Servicio Comerc
 * **Aprobación de solicitudes de red**: Las herramientas que realizan solicitudes de red requieren aprobación del usuario de forma predeterminada
 * **Ventanas de contexto aisladas**: La obtención web utiliza una ventana de contexto separada para evitar inyectar solicitudes potencialmente maliciosas
 * **Verificación de confianza**: Las primeras ejecuciones de base de código y los nuevos servidores MCP requieren verificación de confianza
-  * Nota: La verificación de confianza está deshabilitada cuando se ejecuta de forma no interactiva con la bandera `-p`
+  * Nota: La verificación de confianza está deshabilitada cuando se ejecuta de forma no interactiva con la bandera `-p`. La excepción es [`--worktree`](/es/worktrees), que aún requiere que la confianza haya sido aceptada para el directorio
 * **Detección de inyección de comandos**: Los comandos bash sospechosos requieren aprobación manual incluso si fueron permitidos previamente
 * **Coincidencia de cierre seguro**: Los comandos no coincidentes se establecen de forma predeterminada para requerir aprobación manual
 * **Descripciones en lenguaje natural**: Los comandos bash complejos incluyen explicaciones para la comprensión del usuario

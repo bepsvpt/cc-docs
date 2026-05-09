@@ -398,6 +398,8 @@ npm 包安装与独立安装程序相同的原生二进制文件。npm 通过每
 
 支持的 npm 安装平台是 `darwin-arm64`、`darwin-x64`、`linux-x64`、`linux-arm64`、`linux-x64-musl`、`linux-arm64-musl`、`win32-x64` 和 `win32-arm64`。您的包管理器必须允许可选依赖项。如果安装后二进制文件丢失，请参阅[故障排除](/zh-CN/troubleshoot-install#native-binary-not-found-after-npm-install)。
 
+要升级 npm 安装，请运行 `npm install -g @anthropic-ai/claude-code@latest`。避免使用 `npm update -g`，因为它遵循原始安装的 semver 范围，可能不会将您移动到最新版本。
+
 <Warning>
   不要使用 `sudo npm install -g`，因为这可能导致权限问题和安全风险。如果遇到权限错误，请参阅[故障排除权限错误](/zh-CN/troubleshoot-install#permission-errors-during-installation)。
 </Warning>

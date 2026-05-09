@@ -41,7 +41,7 @@ Wenn Ihre Geräte in einer MDM- oder Endpunktverwaltungslösung registriert sind
   </Step>
 
   <Step title="Definieren Sie Ihre Einstellungen">
-    Fügen Sie Ihre Konfiguration als JSON hinzu. Alle [in `settings.json` verfügbaren Einstellungen](/de/settings#available-settings) werden unterstützt, einschließlich [hooks](/de/hooks), [Umgebungsvariablen](/de/env-vars) und [nur verwaltete Einstellungen](/de/permissions#managed-only-settings) wie `allowManagedPermissionRulesOnly`.
+    Fügen Sie Ihre Konfiguration als JSON hinzu. Alle [in `settings.json` verfügbaren Einstellungen](/de/settings#available-settings) werden unterstützt, mit Ausnahme derjenigen, die auf die Bereitstellung auf OS-Ebene beschränkt sind. Siehe [Aktuelle Einschränkungen](#current-limitations) für diese kurze Liste. Dies umfasst [hooks](/de/hooks), [Umgebungsvariablen](/de/env-vars) und [nur verwaltete Einstellungen](/de/permissions#managed-only-settings) wie `allowManagedPermissionRulesOnly`.
 
     Dieses Beispiel erzwingt eine Berechtigungsverweigerungsliste, verhindert, dass Benutzer Berechtigungen umgehen, und beschränkt Berechtigungsregeln auf diejenigen, die in verwalteten Einstellungen definiert sind:
 
@@ -93,7 +93,7 @@ Wenn Ihre Geräte in einer MDM- oder Endpunktverwaltungslösung registriert sind
     }
     ```
 
-    Da Hooks Shell-Befehle ausführen, sehen Benutzer einen [Sicherheitsgenehmigungsdialog](#security-approval-dialogs), bevor sie angewendet werden. Siehe [Auto-Modus konfigurieren](/de/auto-mode-config), um zu erfahren, wie die `autoMode` Einträge beeinflussen, was der Klassifizierer blockiert, und wichtige Warnungen zu den Feldern `allow` und `soft_deny`.
+    Da Hooks Shell-Befehle ausführen, sehen Benutzer einen [Sicherheitsgenehmigungsdialog](#security-approval-dialogs), bevor sie angewendet werden. Siehe [Auto-Modus konfigurieren](/de/auto-mode-config), um zu erfahren, wie die `autoMode` Einträge beeinflussen, was der Klassifizierer blockiert, und wichtige Warnungen zu den Feldern `environment`, `allow`, `soft_deny` und `hard_deny`.
   </Step>
 
   <Step title="Speichern und bereitstellen">
@@ -124,6 +124,7 @@ Serververwaltete Einstellungen haben die folgenden Einschränkungen:
 
 * Einstellungen gelten einheitlich für alle Benutzer in der Organisation. Konfigurationen pro Gruppe werden noch nicht unterstützt.
 * [MCP-Serverkonfigurationen](/de/mcp#managed-mcp-configuration) können nicht über serververwaltete Einstellungen verteilt werden.
+* Einstellungen, die auf OS-Ebene-Richtlinienquellen beschränkt sind, wie `policyHelper` und `wslInheritsWindowsSettings`, werden nicht berücksichtigt. Stellen Sie sie stattdessen über MDM oder eine System-Datei `managed-settings.json` bereit.
 
 ## Einstellungsbereitstellung
 

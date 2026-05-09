@@ -402,10 +402,10 @@ tmux kill-session -t <session-name>
 
 Les équipes d'agents sont expérimentales. Les limitations actuelles à connaître :
 
-* **Pas de reprise de session avec les coéquipiers in-process** : `/resume` et `/rewind` ne restaurent pas les coéquipiers in-process. Après la reprise d'une session, le chef peut tenter de envoyer un message aux coéquipiers qui n'existent plus. Si cela se produit, dites au chef de générer de nouveaux coéquipiers.
+* **Pas de reprise de session avec les coéquipiers in-process** : `/resume` et `/rewind` ne restaurent pas les coéquipiers in-process. Après la reprise d'une session, le chef peut tenter d'envoyer un message aux coéquipiers qui n'existent plus. Si cela se produit, dites au chef de générer de nouveaux coéquipiers.
 * **L'état des tâches peut être en retard** : les coéquipiers échouent parfois à marquer les tâches comme complètes, ce qui bloque les tâches dépendantes. Si une tâche semble bloquée, vérifiez si le travail est réellement terminé et mettez à jour l'état de la tâche manuellement ou dites au chef de pousser le coéquipier.
 * **L'arrêt peut être lent** : les coéquipiers terminent leur demande actuelle ou appel d'outil avant de s'arrêter, ce qui peut prendre du temps.
-* **Une équipe par session** : un chef ne peut gérer qu'une seule équipe à la fois. Nettoyez l'équipe actuelle avant de démarrer une nouvelle.
+* **Une équipe à la fois** : un chef ne peut gérer qu'une seule équipe. Nettoyez l'équipe actuelle avant de créer une nouvelle.
 * **Pas d'équipes imbriquées** : les coéquipiers ne peuvent pas générer leurs propres équipes ou coéquipiers. Seul le chef peut gérer l'équipe.
 * **Le chef est fixe** : la session qui crée l'équipe est le chef pour sa durée de vie. Vous ne pouvez pas promouvoir un coéquipier en chef ou transférer le leadership.
 * **Permissions définies au moment de la génération** : tous les coéquipiers commencent avec le mode de permission du chef. Vous pouvez modifier les modes de coéquipiers individuels après la génération, mais vous ne pouvez pas définir les modes par coéquipier au moment de la génération.
@@ -420,5 +420,5 @@ Les équipes d'agents sont expérimentales. Les limitations actuelles à connaî
 Explorez les approches connexes pour le travail parallèle et la délégation :
 
 * **Délégation légère** : les [subagents](/fr/sub-agents) génèrent des agents auxiliaires pour la recherche ou la vérification au sein de votre session, mieux pour les tâches qui n'ont pas besoin de coordination inter-agents
-* **Sessions parallèles manuelles** : les [Git worktrees](/fr/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) vous permettent d'exécuter plusieurs sessions Claude Code vous-même sans coordination d'équipe automatisée
+* **Sessions parallèles manuelles** : les [Git worktrees](/fr/worktrees) vous permettent d'exécuter plusieurs sessions Claude Code vous-même sans coordination d'équipe automatisée
 * **Comparer les approches** : consultez la comparaison [subagent vs équipe d'agents](/fr/features-overview#compare-similar-features) pour une répartition côte à côte

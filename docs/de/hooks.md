@@ -1226,9 +1226,9 @@ Es gibt kein Timeout oder Wiederholungslimit. Die Sitzung bleibt auf der Festpla
 
 Wenn das verschobene Tool nicht mehr verfügbar ist, wenn Sie fortsetzen, beendet sich der Prozess mit `stop_reason: "tool_deferred_unavailable"` und `is_error: true` bevor der Hook ausgelöst wird. Dies geschieht, wenn ein MCP-Server, der das Tool bereitgestellt hat, für die fortgesetzte Sitzung nicht verbunden ist. Die Nutzlast `deferred_tool_use` ist immer noch enthalten, damit Sie identifizieren können, welches Tool fehlte.
 
-<Warning>
-  `--resume` stellt den Berechtigungsmodus aus der vorherigen Sitzung nicht wieder her. Übergeben Sie das gleiche `--permission-mode`-Flag bei der Wiederaufnahme, das aktiv war, als das Tool verschoben wurde. Claude Code protokolliert eine Warnung, wenn sich die Modi unterscheiden.
-</Warning>
+<Note>
+  `--resume` stellt den Berechtigungsmodus wieder her, der aktiv war, als das Tool verschoben wurde, daher müssen Sie `--permission-mode` nicht erneut übergeben. Die Ausnahmen sind `plan` und `bypassPermissions`, die niemals übertragen werden. Das explizite Übergeben von `--permission-mode` bei der Wiederaufnahme überschreibt den wiederhergestellten Wert.
+</Note>
 
 ### PermissionRequest
 
@@ -1357,13 +1357,13 @@ Passt auf Tool-Namen, gleiche Werte wie PreToolUse.
 
 `PostToolUse`-Hooks können Claude nach der Tool-Ausführung Feedback geben. Zusätzlich zu den [JSON-Ausgabefeldern](#json-output), die für alle Hooks verfügbar sind, kann Ihr Hook-Skript diese ereignisspezifischen Felder zurückgeben:
 
-| Feld                   | Beschreibung                                                                                                                                         |
-| :--------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `decision`             | `"block"` fordert Claude mit dem `reason` auf. Weglassen, um die Aktion fortzusetzen                                                                 |
-| `reason`               | Erklärung, die Claude angezeigt wird, wenn `decision` `"block"` ist                                                                                  |
-| `additionalContext`    | Zeichenkette, die zu Claudes Kontext zusammen mit dem Tool-Ergebnis hinzugefügt wird. Siehe [Kontext für Claude hinzufügen](#add-context-for-claude) |
-| `updatedToolOutput`    | Ersetzt die Ausgabe des Tools durch den bereitgestellten Wert vor dem Senden an Claude. Der Wert muss der Ausgabeform des Tools entsprechen          |
-| `updatedMCPToolOutput` | Ersetzt die Ausgabe nur für [MCP-Tools](#match-mcp-tools). Bevorzugen Sie `updatedToolOutput`, das für alle Tools funktioniert                       |
+| Feld                   | Beschreibung                                                                                                                                                        |
+| :--------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `decision`             | `"block"` fügt den `reason` neben dem Tool-Ergebnis hinzu. Claude sieht immer noch die ursprüngliche Ausgabe; um sie zu ersetzen, verwenden Sie `updatedToolOutput` |
+| `reason`               | Erklärung, die Claude angezeigt wird, wenn `decision` `"block"` ist                                                                                                 |
+| `additionalContext`    | Zeichenkette, die zu Claudes Kontext zusammen mit dem Tool-Ergebnis hinzugefügt wird. Siehe [Kontext für Claude hinzufügen](#add-context-for-claude)                |
+| `updatedToolOutput`    | Ersetzt die Ausgabe des Tools durch den bereitgestellten Wert vor dem Senden an Claude. Der Wert muss der Ausgabeform des Tools entsprechen                         |
+| `updatedMCPToolOutput` | Ersetzt die Ausgabe nur für [MCP-Tools](#match-mcp-tools). Bevorzugen Sie `updatedToolOutput`, das für alle Tools funktioniert                                      |
 
 Das Beispiel unten ersetzt die Ausgabe eines `Bash`-Aufrufs. Der Ersatzwert entspricht der Ausgabeform des `Bash`-Tools:
 

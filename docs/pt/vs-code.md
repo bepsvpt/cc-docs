@@ -293,7 +293,7 @@ vscode://anthropic.claude-code/open?prompt=review%20my%20changes
 
 Para iniciar uma sessão de terminal em vez de uma aba VS Code, use o manipulador `claude-cli://` da CLI. Consulte [Launch sessions from links](/pt/deep-links).
 
-## Configure settings
+## Configurar configurações
 
 A extensão tem dois tipos de configurações:
 
@@ -320,7 +320,7 @@ A extensão tem dois tipos de configurações:
 | `environmentVariables`            | `[]`      | Defina variáveis de ambiente para o processo Claude. Use configurações Claude Code em vez disso para configuração compartilhada.                                                                                                                                                                                                                                               |
 | `disableLoginPrompt`              | `false`   | Pule prompts de autenticação (para configurações de provedor de terceiros)                                                                                                                                                                                                                                                                                                     |
 | `allowDangerouslySkipPermissions` | `false`   | Adiciona [Auto mode](/pt/permission-modes#eliminate-prompts-with-auto-mode) e Bypass permissions ao seletor de modo. Auto mode tem [requisitos de plano, admin, modelo e provedor](/pt/permission-modes#eliminate-prompts-with-auto-mode), então pode permanecer indisponível mesmo com este toggle ativado. Use Bypass permissions apenas em sandboxes sem acesso à internet. |
-| `claudeProcessWrapper`            | -         | Caminho executável usado para iniciar o processo Claude                                                                                                                                                                                                                                                                                                                        |
+| `claudeProcessWrapper`            | -         | Executável usado para iniciar o processo Claude. O caminho do binário incluído é passado como um argumento quando presente. Defina isso para um binário `claude` instalado separadamente se a compilação da extensão não incluir um para sua plataforma.                                                                                                                       |
 
 ## VS Code extension vs. Claude Code CLI
 

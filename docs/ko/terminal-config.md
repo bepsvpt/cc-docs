@@ -107,7 +107,7 @@ set -s extended-keys on
 set -as terminal-features 'xterm*:extkeys'
 ```
 
-`allow-passthrough` 줄은 알림 및 진행률 업데이트가 tmux에 의해 삼켜지는 대신 iTerm2, Ghostty 또는 Kitty에 도달하도록 합니다. `extended-keys` 줄은 tmux가 Shift+Enter를 일반 Enter와 구별하도록 하여 줄 바꿈 단축키가 작동하도록 합니다.
+`allow-passthrough` 줄은 알림 및 진행률 업데이트가 tmux에 의해 삼켜지는 대신 외부 터미널에 도달하도록 합니다. `extended-keys` 줄은 tmux가 Shift+Enter를 일반 Enter와 구별하도록 하여 줄 바꿈 단축키가 작동하도록 합니다.
 
 ## 색상 테마 일치
 

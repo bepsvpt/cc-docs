@@ -107,7 +107,7 @@ set -s extended-keys on
 set -as terminal-features 'xterm*:extkeys'
 ```
 
-La riga `allow-passthrough` consente alle notifiche e agli aggiornamenti di avanzamento di raggiungere iTerm2, Ghostty o Kitty invece di essere inghiottiti da tmux. Le righe `extended-keys` consentono a tmux di distinguere Shift+Invio da Invio semplice in modo che la scorciatoia della nuova riga funzioni.
+La riga `allow-passthrough` consente alle notifiche e agli aggiornamenti di avanzamento di raggiungere il terminale esterno invece di essere inghiottiti da tmux. Le righe `extended-keys` consentono a tmux di distinguere Shift+Invio da Invio semplice in modo che la scorciatoia della nuova riga funzioni.
 
 ## Abbina il tema dei colori
 

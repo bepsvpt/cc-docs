@@ -320,7 +320,7 @@ vscode://anthropic.claude-code/open?prompt=review%20my%20changes
 | `environmentVariables`            | `[]`      | 為 Claude 程序設定環境變數。改為使用 Claude Code 設定以進行共享配置。                                                                                                                                                                                                           |
 | `disableLoginPrompt`              | `false`   | 跳過身份驗證提示（用於第三方提供者設定）                                                                                                                                                                                                                                    |
 | `allowDangerouslySkipPermissions` | `false`   | 將 [Auto mode](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode) 和 Bypass permissions 添加到模式選擇器。Auto mode 有[計畫、管理員、模型和提供者要求](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode)，因此即使此切換打開，該選項也可能保持不可用。僅在沒有網際網路存取的沙箱中使用 Bypass permissions。 |
-| `claudeProcessWrapper`            | -         | 用於啟動 Claude 程序的可執行檔路徑                                                                                                                                                                                                                                   |
+| `claudeProcessWrapper`            | -         | 用於啟動 Claude 程序的可執行檔。當存在時，捆綁的二進制檔案路徑會作為引數傳遞。如果擴充功能組建不包含您平台的二進制檔案，請將此設定為單獨安裝的 `claude` 二進制檔案。                                                                                                                                                             |
 
 ## VS Code 擴充功能與 Claude Code CLI
 

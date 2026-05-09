@@ -360,7 +360,7 @@ Plugins 使用與其他 Claude Code 設定相同的範圍系統。如需安裝�
 
 `.claude-plugin/plugin.json` 檔案定義您的 plugin 的中繼資料和設定。本節記錄所有支援的欄位和選項。
 
-manifest 是選用的。如果省略，Claude Code 會自動探索 [預設位置](#file-locations-reference) 中的元件，並從目錄名稱衍生 plugin 名稱。當您需要提供中繼資料或自訂元件路徑時，請使用 manifest。
+manifest 是選用的。如果省略，Claude Code 會自動探索[預設位置](#file-locations-reference)中的元件，並從目錄名稱衍生 plugin 名稱。當您需要提供中繼資料或自訂元件路徑時，請使用 manifest。
 
 ### 完整架構
 
@@ -408,33 +408,33 @@ manifest 是選用的。如果省略，Claude Code 會自動探索 [預設位置
 
 ### 中繼資料欄位
 
-| 欄位            | 類型     | 描述                                                                                                                                                                                                | 範例                                                                |
-| :------------ | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :---------------------------------------------------------------- |
-| `$schema`     | string | JSON Schema URL，用於編輯器自動完成和驗證。Claude Code 在載入時忽略此欄位。                                                                                                                                               | `"https://json.schemastore.org/claude-code-plugin-manifest.json"` |
-| `version`     | string | 選用。語義版本。設定此項會將 plugin 固定到該版本字串，因此使用者只會在您提升版本時收到更新。如果省略，Claude Code 會回退到 git commit SHA，因此每個 commit 都被視為新版本。如果也在 marketplace 項目中設定，`plugin.json` 優先。請參閱 [Version management](#version-management)。 | `"2.1.0"`                                                         |
-| `description` | string | plugin 用途的簡短說明                                                                                                                                                                                    | `"Deployment automation tools"`                                   |
-| `author`      | object | 作者資訊                                                                                                                                                                                              | `{"name": "Dev Team", "email": "dev@company.com"}`                |
-| `homepage`    | string | 文件 URL                                                                                                                                                                                            | `"https://docs.example.com"`                                      |
-| `repository`  | string | 原始程式碼 URL                                                                                                                                                                                         | `"https://github.com/user/plugin"`                                |
-| `license`     | string | 授權識別碼                                                                                                                                                                                             | `"MIT"`、`"Apache-2.0"`                                            |
-| `keywords`    | array  | 探索標籤                                                                                                                                                                                              | `["deployment", "ci-cd"]`                                         |
+| 欄位            | 類型     | 描述                                                                                                                                                                                               | 範例                                                                |
+| :------------ | :----- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
+| `$schema`     | string | JSON Schema URL，用於編輯器自動完成和驗證。Claude Code 在載入時忽略此欄位。                                                                                                                                              | `"https://json.schemastore.org/claude-code-plugin-manifest.json"` |
+| `version`     | string | 選用。語義版本。設定此項會將 plugin 固定到該版本字串，因此使用者只會在您提升版本時收到更新。如果省略，Claude Code 會回退到 git commit SHA，因此每個 commit 都被視為新版本。如果也在 marketplace 項目中設定，`plugin.json` 優先。請參閱[Version management](#version-management)。 | `"2.1.0"`                                                         |
+| `description` | string | plugin 用途的簡短說明                                                                                                                                                                                   | `"Deployment automation tools"`                                   |
+| `author`      | object | 作者資訊                                                                                                                                                                                             | `{"name": "Dev Team", "email": "dev@company.com"}`                |
+| `homepage`    | string | 文件 URL                                                                                                                                                                                           | `"https://docs.example.com"`                                      |
+| `repository`  | string | 原始程式碼 URL                                                                                                                                                                                        | `"https://github.com/user/plugin"`                                |
+| `license`     | string | 授權識別碼                                                                                                                                                                                            | `"MIT"`、`"Apache-2.0"`                                            |
+| `keywords`    | array  | 探索標籤                                                                                                                                                                                             | `["deployment", "ci-cd"]`                                         |
 
 ### 元件路徑欄位
 
-| 欄位                      | 類型                    | 描述                                                                                                              | 範例                                                   |
-| :---------------------- | :-------------------- | :-------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
-| `skills`                | string\|array         | 包含 `<name>/SKILL.md` 的自訂 skill 目錄（取代預設 `skills/`）                                                               | `"./custom/skills/"`                                 |
-| `commands`              | string\|array         | 自訂平面 `.md` skill 檔案或目錄（取代預設 `commands/`）                                                                        | `"./custom/cmd.md"` 或 `["./cmd1.md"]`                |
-| `agents`                | string\|array         | 自訂 agent 檔案（取代預設 `agents/`）                                                                                     | `"./custom/agents/reviewer.md"`                      |
-| `hooks`                 | string\|array\|object | Hook 設定路徑或內聯設定                                                                                                  | `"./my-extra-hooks.json"`                            |
-| `mcpServers`            | string\|array\|object | MCP 設定路徑或內聯設定                                                                                                   | `"./my-extra-mcp-config.json"`                       |
-| `outputStyles`          | string\|array         | 自訂輸出樣式檔案/目錄（取代預設 `output-styles/`）                                                                              | `"./styles/"`                                        |
-| `lspServers`            | string\|array\|object | [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) 設定，用於程式碼智慧（前往定義、尋找參考等）        | `"./.lsp.json"`                                      |
-| `experimental.themes`   | string\|array         | 色彩主題檔案/目錄（取代預設 `themes/`）。請參閱 [Themes](#themes)                                                                 | `"./themes/"`                                        |
-| `experimental.monitors` | string\|array         | 背景 [Monitor](/zh-TW/tools-reference#monitor-tool) 設定，在 plugin 啟用時自動啟動。請參閱 [Monitors](#monitors)                 | `"./monitors.json"`                                  |
-| `userConfig`            | object                | 在啟用時提示使用者的使用者可設定值。請參閱 [User configuration](#user-configuration)                                                 | 請參閱下方                                                |
-| `channels`              | array                 | 訊息注入的頻道宣告（Telegram、Slack、Discord 風格）。請參閱 [Channels](#channels)                                                  | 請參閱下方                                                |
-| `dependencies`          | array                 | 此 plugin 需要的其他 plugins，可選擇使用 semver 版本限制。請參閱 [Constrain plugin dependency versions](/zh-TW/plugin-dependencies) | `[{ "name": "secrets-vault", "version": "~2.1.0" }]` |
+| 欄位                      | 類型                    | 描述                                                                                                             | 範例                                                   |
+| :---------------------- | :-------------------- | :------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
+| `skills`                | string\|array         | 包含 `<name>/SKILL.md` 的自訂 skill 目錄（除了預設 `skills/`）                                                              | `"./custom/skills/"`                                 |
+| `commands`              | string\|array         | 自訂平面 `.md` skill 檔案或目錄（取代預設 `commands/`）                                                                       | `"./custom/cmd.md"` 或 `["./cmd1.md"]`                |
+| `agents`                | string\|array         | 自訂 agent 檔案（取代預設 `agents/`）                                                                                    | `"./custom/agents/reviewer.md"`                      |
+| `hooks`                 | string\|array\|object | Hook 設定路徑或內聯設定                                                                                                 | `"./my-extra-hooks.json"`                            |
+| `mcpServers`            | string\|array\|object | MCP 設定路徑或內聯設定                                                                                                  | `"./my-extra-mcp-config.json"`                       |
+| `outputStyles`          | string\|array         | 自訂輸出樣式檔案/目錄（取代預設 `output-styles/`）                                                                             | `"./styles/"`                                        |
+| `lspServers`            | string\|array\|object | [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) 設定，用於程式碼智慧（前往定義、尋找參考等）       | `"./.lsp.json"`                                      |
+| `experimental.themes`   | string\|array         | 色彩主題檔案/目錄（取代預設 `themes/`）。請參閱[Themes](#themes)                                                                 | `"./themes/"`                                        |
+| `experimental.monitors` | string\|array         | 背景 [Monitor](/zh-TW/tools-reference#monitor-tool) 設定，在 plugin 啟用時自動啟動。請參閱[Monitors](#monitors)                 | `"./monitors.json"`                                  |
+| `userConfig`            | object                | 在啟用時提示使用者的使用者可設定值。請參閱[User configuration](#user-configuration)                                                 | 請參閱下方                                                |
+| `channels`              | array                 | 訊息注入的頻道宣告（Telegram、Slack、Discord 風格）。請參閱[Channels](#channels)                                                  | 請參閱下方                                                |
+| `dependencies`          | array                 | 此 plugin 需要的其他 plugins，可選擇使用 semver 版本限制。請參閱[Constrain plugin dependency versions](/zh-TW/plugin-dependencies) | `[{ "name": "secrets-vault", "version": "~2.1.0" }]` |
 
 ### 實驗性元件
 
@@ -510,12 +510,17 @@ manifest 是選用的。如果省略，Claude Code 會自動探索 [預設位置
 
 ### 路徑行為規則
 
-對於 `skills`、`commands`、`agents`、`outputStyles`、`experimental.themes` 和 `experimental.monitors`，自訂路徑取代預設值。如果 manifest 指定 `skills`，預設 `skills/` 目錄不會被掃描；如果它指定 `experimental.monitors`，預設 `monitors/monitors.json` 不會被載入。[Hooks](#hooks)、[MCP servers](#mcp-servers) 和 [LSP servers](#lsp-servers) 有不同的語義來處理多個來源。
+自訂路徑是否取代或擴展 plugin 的預設目錄取決於欄位：
+
+* **取代預設值**：`commands`、`agents`、`outputStyles`、`experimental.themes`、`experimental.monitors`。例如，當 manifest 指定 `commands` 時，預設 `commands/` 目錄不會被掃描。若要保留預設值並新增更多，請明確列出：`"commands": ["./commands/", "./extras/"]`
+* **新增到預設值**：`skills`。預設 `skills/` 目錄始終被掃描，`skills` 中列出的目錄與其一起載入
+* **自有合併規則**：[hooks](#hooks)、[MCP servers](#mcp-servers) 和 [LSP servers](#lsp-servers)。請參閱每個部分以了解多個來源如何組合
+
+對於所有路徑欄位：
 
 * 所有路徑必須相對於 plugin 根目錄，並以 `./` 開頭
 * 來自自訂路徑的元件使用相同的命名和命名空間規則
 * 可以將多個路徑指定為陣列
-* 若要保留預設目錄並為 skills、commands、agents 或 output styles 新增更多路徑，請在陣列中包含預設值：`"skills": ["./skills/", "./extras/"]`
 * 當 skill 路徑指向直接包含 `SKILL.md` 的目錄時，例如 `"skills": ["./"]` 指向 plugin 根目錄，frontmatter 中的 `name` 欄位決定 skill 的叫用名稱。這提供了一個穩定的名稱，無論安裝目錄如何。如果 frontmatter 中未設定 `name`，目錄基名將用作後備。
 
 **路徑範例**：

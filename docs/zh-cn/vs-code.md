@@ -320,7 +320,7 @@ vscode://anthropic.claude-code/open?prompt=review%20my%20changes
 | `environmentVariables`            | `[]`      | 为 Claude 进程设置环境变量。对于共享配置，请改用 Claude Code 设置。                                                                                                                                                                                                          |
 | `disableLoginPrompt`              | `false`   | 跳过身份验证提示（用于第三方提供商设置）                                                                                                                                                                                                                                  |
 | `allowDangerouslySkipPermissions` | `false`   | 添加 [Auto mode](/zh-CN/permission-modes#eliminate-prompts-with-auto-mode) 和 Bypass permissions 到模式选择器。Auto mode 有[计划、管理员、模型和提供商要求](/zh-CN/permission-modes#eliminate-prompts-with-auto-mode)，因此即使此切换打开，该选项也可能保持不可用。仅在没有互联网访问的沙箱中使用 Bypass permissions。 |
-| `claudeProcessWrapper`            | -         | 用于启动 Claude 进程的可执行文件路径                                                                                                                                                                                                                                |
+| `claudeProcessWrapper`            | -         | 用于启动 Claude 进程的可执行文件。当存在时，捆绑的二进制文件路径作为参数传递。如果扩展构建不包含您的平台的二进制文件，请将其设置为单独安装的 `claude` 二进制文件。                                                                                                                                                            |
 
 ## VS Code 扩展与 Claude Code CLI
 

@@ -107,7 +107,7 @@ set -s extended-keys on
 set -as terminal-features 'xterm*:extkeys'
 ```
 
-Baris `allow-passthrough` memungkinkan notifikasi dan pembaruan kemajuan mencapai iTerm2, Ghostty, atau Kitty alih-alih ditelan oleh tmux. Baris `extended-keys` memungkinkan tmux membedakan Shift+Enter dari Enter biasa sehingga pintasan baris baru bekerja.
+Baris `allow-passthrough` memungkinkan notifikasi dan pembaruan kemajuan mencapai terminal luar alih-alih ditelan oleh tmux. Baris `extended-keys` memungkinkan tmux membedakan Shift+Enter dari Enter biasa sehingga pintasan baris baru bekerja.
 
 ## Cocokkan tema warna
 

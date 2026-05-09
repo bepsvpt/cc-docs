@@ -210,6 +210,13 @@ Ejemplos:
 * `Edit(//tmp/scratch.txt)`: edita la ruta absoluta `/tmp/scratch.txt`
 * `Read(src/**)`: lee desde `<current-directory>/src/`
 
+Una regla solo coincide con archivos bajo su anclaje, por lo que el anclaje determina cuán lejos llega una regla de negación. Los nombres de archivo desnudos siguen la semántica de gitignore y coinciden en cualquier profundidad, por lo que `Read(.env)` y `Read(**/.env)` son equivalentes:
+
+| Regla de negación              | Bloquea                                                     | No bloquea                                                     |
+| ------------------------------ | ----------------------------------------------------------- | -------------------------------------------------------------- |
+| `Read(.env)` o `Read(**/.env)` | cualquier `.env` en o bajo el directorio actual             | `.env` en un directorio padre u otro proyecto                  |
+| `Read(//**/.env)`              | cualquier `.env` en cualquier lugar del sistema de archivos | nada; la regla está anclada en la raíz del sistema de archivos |
+
 <Note>
   En patrones gitignore, `*` coincide con archivos en un solo directorio mientras que `**` coincide recursivamente en directorios. Para permitir todo acceso a archivos, use solo el nombre de la herramienta sin paréntesis: `Read`, `Edit` o `Write`.
 </Note>

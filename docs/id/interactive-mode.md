@@ -288,7 +288,7 @@ Ketika Anda pertama kali membuka sesi, perintah contoh yang digelapkan muncul di
 
 Setelah Claude merespons, saran terus muncul berdasarkan riwayat percakapan Anda, seperti langkah lanjutan dari permintaan multi-bagian atau kelanjutan alami dari alur kerja Anda.
 
-* Tekan **Tab** atau **Right arrow** untuk menerima saran, atau tekan **Enter** untuk menerima dan mengirimkan
+* Tekan **Tab** atau **Right arrow** untuk menempatkan saran di input prompt, kemudian **Enter** untuk mengirimkan
 * Mulai mengetik untuk menolaknya
 
 Saran berjalan sebagai permintaan latar belakang yang menggunakan kembali cache prompt percakapan induk, sehingga biaya tambahan minimal. Claude Code melewati pembuatan saran ketika cache dingin untuk menghindari biaya yang tidak perlu.

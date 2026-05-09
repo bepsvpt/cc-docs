@@ -41,7 +41,7 @@ Se seus dispositivos estão inscritos em uma solução MDM ou gerenciamento de e
   </Step>
 
   <Step title="Definir suas configurações">
-    Adicione sua configuração como JSON. Todas as [configurações disponíveis em `settings.json`](/pt/settings#available-settings) são suportadas, incluindo [hooks](/pt/hooks), [variáveis de ambiente](/pt/env-vars) e [configurações apenas gerenciadas](/pt/permissions#managed-only-settings) como `allowManagedPermissionRulesOnly`.
+    Adicione sua configuração como JSON. Todas as [configurações disponíveis em `settings.json`](/pt/settings#available-settings) são suportadas, exceto aquelas restritas à entrega de política em nível do SO; veja [Limitações atuais](#current-limitations) para essa lista curta. Isso inclui [hooks](/pt/hooks), [variáveis de ambiente](/pt/env-vars) e [configurações apenas gerenciadas](/pt/permissions#managed-only-settings) como `allowManagedPermissionRulesOnly`.
 
     Este exemplo impõe uma lista de negação de permissões, impede que os usuários ignorem as permissões e restringe as regras de permissão àquelas definidas nas configurações gerenciadas:
 
@@ -93,7 +93,7 @@ Se seus dispositivos estão inscritos em uma solução MDM ou gerenciamento de e
     }
     ```
 
-    Como hooks executam comandos shell, os usuários veem uma [caixa de diálogo de aprovação de segurança](#security-approval-dialogs) antes de serem aplicados. Veja [Configurar o modo automático](/pt/auto-mode-config) para saber como as entradas `autoMode` afetam o que o classificador bloqueia e avisos importantes sobre os campos `allow` e `soft_deny`.
+    Como hooks executam comandos shell, os usuários veem uma [caixa de diálogo de aprovação de segurança](#security-approval-dialogs) antes de serem aplicados. Veja [Configurar o modo automático](/pt/auto-mode-config) para saber como as entradas `autoMode` afetam o que o classificador bloqueia e avisos importantes sobre os campos `environment`, `allow`, `soft_deny` e `hard_deny`.
   </Step>
 
   <Step title="Salvar e implantar">
@@ -124,6 +124,7 @@ As configurações gerenciadas pelo servidor têm as seguintes limitações:
 
 * As configurações se aplicam uniformemente a todos os usuários da organização. Configurações por grupo ainda não são suportadas.
 * [Configurações de servidor MCP](/pt/mcp#managed-mcp-configuration) não podem ser distribuídas através de configurações gerenciadas pelo servidor.
+* Configurações restritas a fontes de política em nível do SO, como `policyHelper` e `wslInheritsWindowsSettings`, não são honradas. Implante-as através de MDM ou um arquivo `managed-settings.json` do sistema.
 
 ## Entrega de configurações
 

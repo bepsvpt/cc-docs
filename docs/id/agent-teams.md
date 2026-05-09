@@ -420,5 +420,5 @@ Tim agent bersifat eksperimental. Keterbatasan saat ini untuk diketahui:
 Jelajahi pendekatan terkait untuk pekerjaan paralel dan delegasi:
 
 * **Delegasi ringan**: [subagents](/id/sub-agents) menelurkan agent pembantu untuk penelitian atau verifikasi dalam session Anda, lebih baik untuk tugas yang tidak memerlukan koordinasi inter-agent
-* **Session paralel manual**: [Git worktrees](/id/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) memungkinkan Anda menjalankan beberapa session Claude Code sendiri tanpa koordinasi tim otomatis
+* **Session paralel manual**: [Git worktrees](/id/worktrees) memungkinkan Anda menjalankan beberapa session Claude Code sendiri tanpa koordinasi tim otomatis
 * **Bandingkan pendekatan**: lihat perbandingan [subagent vs tim agent](/id/features-overview#compare-similar-features) untuk rincian side-by-side

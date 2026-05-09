@@ -210,6 +210,13 @@ Contoh:
 * `Edit(//tmp/scratch.txt)`: edit jalur absolut `/tmp/scratch.txt`
 * `Read(src/**)`: membaca dari `<current-directory>/src/`
 
+Aturan hanya cocok dengan file di bawah jangkarannya, jadi jangkar menentukan seberapa jauh aturan deny mencapai. Nama file telanjang mengikuti semantik gitignore dan cocok di kedalaman apa pun, jadi `Read(.env)` dan `Read(**/.env)` setara:
+
+| Aturan deny                       | Memblokir                                          | Tidak memblokir                                    |
+| --------------------------------- | -------------------------------------------------- | -------------------------------------------------- |
+| `Read(.env)` atau `Read(**/.env)` | `.env` apa pun di atau di bawah direktori saat ini | `.env` di direktori induk atau proyek lain         |
+| `Read(//**/.env)`                 | `.env` apa pun di mana pun di sistem file          | tidak ada; aturan ini berlabuh di akar sistem file |
+
 <Note>
   Dalam pola gitignore, `*` mencocokkan file dalam satu direktori sementara `**` mencocokkan secara rekursif di seluruh direktori. Untuk memungkinkan semua akses file, gunakan hanya nama alat tanpa tanda kurung: `Read`, `Edit`, atau `Write`.
 </Note>

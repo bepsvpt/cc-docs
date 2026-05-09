@@ -423,7 +423,7 @@ Questo nome viene utilizzato per lo spazio dei nomi dei componenti. Ad esempio, 
 
 | Campo                   | Tipo                  | Descrizione                                                                                                                                                                    | Esempio                                              |
 | :---------------------- | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
-| `skills`                | string\|array         | Directory di skills personalizzate contenenti `<name>/SKILL.md` (sostituisce il valore predefinito `skills/`)                                                                  | `"./custom/skills/"`                                 |
+| `skills`                | string\|array         | Directory di skills personalizzate contenenti `<name>/SKILL.md` (in aggiunta al valore predefinito `skills/`)                                                                  | `"./custom/skills/"`                                 |
 | `commands`              | string\|array         | File di skill markdown flat personalizzati o directory (sostituisce il valore predefinito `commands/`)                                                                         | `"./custom/cmd.md"` o `["./cmd1.md"]`                |
 | `agents`                | string\|array         | File di agent personalizzati (sostituisce il valore predefinito `agents/`)                                                                                                     | `"./custom/agents/reviewer.md"`                      |
 | `hooks`                 | string\|array\|object | Percorsi di configurazione degli hooks o configurazione inline                                                                                                                 | `"./my-extra-hooks.json"`                            |
@@ -510,12 +510,17 @@ Il campo `server` è obbligatorio e deve corrispondere a una chiave in `mcpServe
 
 ### Regole del comportamento del percorso
 
-Per `skills`, `commands`, `agents`, `outputStyles`, `experimental.themes` e `experimental.monitors`, un percorso personalizzato sostituisce il valore predefinito. Se il manifest specifica `skills`, la directory predefinita `skills/` non viene scansionata; se specifica `experimental.monitors`, il valore predefinito `monitors/monitors.json` non viene caricato. [Hooks](#hooks), [MCP servers](#mcp-servers) e [LSP servers](#lsp-servers) hanno semantica diversa per gestire più fonti.
+Se un percorso personalizzato sostituisce o estende la directory predefinita del plugin dipende dal campo:
+
+* **Sostituisce il valore predefinito**: `commands`, `agents`, `outputStyles`, `experimental.themes`, `experimental.monitors`. Ad esempio, quando il manifest specifica `commands`, la directory predefinita `commands/` non viene scansionata. Per mantenere il valore predefinito e aggiungerne altri, elencalo esplicitamente: `"commands": ["./commands/", "./extras/"]`
+* **Aggiunge al valore predefinito**: `skills`. La directory predefinita `skills/` viene sempre scansionata e le directory elencate in `skills` vengono caricate insieme ad essa
+* **Regole di merge proprie**: [hooks](#hooks), [MCP servers](#mcp-servers) e [LSP servers](#lsp-servers). Vedi ogni sezione per come più fonti si combinano
+
+Per tutti i campi del percorso:
 
 * Tutti i percorsi devono essere relativi alla radice del plugin e iniziare con `./`
 * I componenti dai percorsi personalizzati utilizzano le stesse regole di denominazione e spazio dei nomi
 * È possibile specificare più percorsi come array
-* Per mantenere la directory predefinita e aggiungere più percorsi per skills, commands, agents o output styles, includi il valore predefinito nel tuo array: `"skills": ["./skills/", "./extras/"]`
 * Quando un percorso di skill punta a una directory che contiene direttamente un `SKILL.md`, ad esempio `"skills": ["./"]` che punta alla radice del plugin, il campo frontmatter `name` in `SKILL.md` determina il nome di invocazione della skill. Questo fornisce un nome stabile indipendentemente dalla directory di installazione. Se `name` non è impostato nel frontmatter, il nome della directory viene utilizzato come fallback.
 
 **Esempi di percorso**:

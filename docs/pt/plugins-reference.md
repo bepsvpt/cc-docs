@@ -423,7 +423,7 @@ Este nome é usado para namespacing de componentes. Por exemplo, na UI, o agent 
 
 | Campo                   | Tipo                  | Descrição                                                                                                                                                                    | Exemplo                                              |
 | :---------------------- | :-------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
-| `skills`                | string\|array         | Diretórios de skill personalizados contendo `<name>/SKILL.md` (substitui padrão `skills/`)                                                                                   | `"./custom/skills/"`                                 |
+| `skills`                | string\|array         | Diretórios de skill personalizados contendo `<name>/SKILL.md` (além do padrão `skills/`)                                                                                     | `"./custom/skills/"`                                 |
 | `commands`              | string\|array         | Arquivos de skill `.md` planos personalizados ou diretórios (substitui padrão `commands/`)                                                                                   | `"./custom/cmd.md"` ou `["./cmd1.md"]`               |
 | `agents`                | string\|array         | Arquivos de agent personalizados (substitui padrão `agents/`)                                                                                                                | `"./custom/agents/reviewer.md"`                      |
 | `hooks`                 | string\|array\|object | Caminhos de configuração de hooks ou configuração inline                                                                                                                     | `"./my-extra-hooks.json"`                            |
@@ -510,12 +510,17 @@ O campo `server` é obrigatório e deve corresponder a uma chave em `mcpServers`
 
 ### Regras de comportamento de caminho
 
-Para `skills`, `commands`, `agents`, `outputStyles`, `experimental.themes` e `experimental.monitors`, um caminho personalizado substitui o padrão. Se o manifesto especificar `skills`, o diretório padrão `skills/` não é verificado; se especificar `experimental.monitors`, o padrão `monitors/monitors.json` não é carregado. [Hooks](#hooks), [MCP servers](#mcp-servers) e [LSP servers](#lsp-servers) têm semântica diferente para lidar com múltiplas fontes.
+Se um caminho personalizado substitui ou estende o diretório padrão do plugin depende do campo:
+
+* **Substitui o padrão**: `commands`, `agents`, `outputStyles`, `experimental.themes`, `experimental.monitors`. Por exemplo, quando o manifesto especifica `commands`, o diretório padrão `commands/` não é verificado. Para manter o padrão e adicionar mais, liste-o explicitamente: `"commands": ["./commands/", "./extras/"]`
+* **Adiciona ao padrão**: `skills`. O diretório padrão `skills/` é sempre verificado, e diretórios listados em `skills` são carregados junto com ele
+* **Regras de mesclagem próprias**: [hooks](#hooks), [MCP servers](#mcp-servers) e [LSP servers](#lsp-servers). Veja cada seção para como múltiplas fontes se combinam
+
+Para todos os campos de caminho:
 
 * Todos os caminhos devem ser relativos à raiz do plugin e começar com `./`
 * Componentes de caminhos personalizados usam as mesmas regras de nomenclatura e namespacing
 * Múltiplos caminhos podem ser especificados como arrays
-* Para manter o diretório padrão e adicionar mais caminhos para skills, commands, agents ou output styles, inclua o padrão em seu array: `"skills": ["./skills/", "./extras/"]`
 * Quando um caminho de skill aponta para um diretório que contém um `SKILL.md` diretamente, por exemplo `"skills": ["./"]` apontando para a raiz do plugin, o campo frontmatter `name` em `SKILL.md` determina o nome de invocação da skill. Isso fornece um nome estável independentemente do diretório de instalação. Se `name` não estiver definido no frontmatter, o nome base do diretório é usado como fallback.
 
 **Exemplos de caminho**:

@@ -1226,9 +1226,9 @@ InstructionsLoaded hooks 沒有決定控制。它們無法阻止或修改指令�
 
 如果恢復時延遲的工具不再可用，程序以 `stop_reason: "tool_deferred_unavailable"` 和 `is_error: true` 退出，在 hook 觸發之前。這發生在提供工具的 MCP 伺服器對於恢復的工作階段未連接時。`deferred_tool_use` 有效負載仍然包括在內，以便您可以識別哪個工具遺失。
 
-<Warning>
-  `--resume` 不會從先前的工作階段恢復權限模式。在恢復時傳遞與工具被延遲時活動的相同 `--permission-mode` 標誌。Claude Code 在模式不同時記錄警告。
-</Warning>
+<Note>
+  `--resume` 恢復工具被延遲時活動的權限模式，因此您不需要再次傳遞 `--permission-mode`。例外是 `plan` 和 `bypassPermissions`，它們永遠不會被帶過。在恢復時明確傳遞 `--permission-mode` 會覆蓋恢復的值。
+</Note>
 
 ### PermissionRequest
 
@@ -1494,11 +1494,9 @@ PostToolUseFailure hooks 接收與 PostToolUse 相同的 `tool_name` 和 `tool_i
 }
 ```
 
-<Note>
-  注入的 `additionalContext` 被持久化到工作階段成績單。在 `--continue` 或 `--resume` 時，保存的文字從磁碟重新播放，hook 不會針對過去的轉向重新執行。優先選擇靜態上下文，例如慣例或檔案類型指導，而不是動態值，例如時間戳或目前提交 SHA，因為這些在恢復時變得陳舊。
+注入的 `additionalContext` 被持久化到工作階段成績單。在 `--continue` 或 `--resume` 時，保存的文字從磁碟重新播放，hook 不會針對過去的轉向重新執行。優先選擇靜態上下文，例如慣例或檔案類型指導，而不是動態值，例如時間戳或目前提交 SHA，因為這些在恢復時變得陳舊。
 
-  將上下文框架為事實資訊而不是命令式系統指令。寫成帶外系統命令的文字可以觸發 Claude 的提示注入防禦，這會將注入呈現給使用者而不是對其採取行動。
-</Note>
+將上下文框架為事實資訊而不是命令式系統指令。寫成帶外系統命令的文字可以觸發 Claude 的提示注入防禦，這會將注入呈現給使用者而不是對其採取行動。
 
 返回 `decision: "block"` 或 `continue: false` 在下一個模型呼叫之前停止代理迴圈。
 

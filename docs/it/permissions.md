@@ -210,6 +210,13 @@ Esempi:
 * `Edit(//tmp/scratch.txt)`: modifica il percorso assoluto `/tmp/scratch.txt`
 * `Read(src/**)`: legge da `<current-directory>/src/`
 
+Una regola corrisponde solo ai file sotto il suo ancoraggio, quindi l'ancoraggio determina quanto lontano una regola deny raggiunge. I nomi di file nudi seguono la semantica gitignore e corrispondono a qualsiasi profondità, quindi `Read(.env)` e `Read(**/.env)` sono equivalenti:
+
+| Regola deny                    | Blocca                                              | Non blocca                                             |
+| ------------------------------ | --------------------------------------------------- | ------------------------------------------------------ |
+| `Read(.env)` o `Read(**/.env)` | qualsiasi `.env` alla o sotto la directory corrente | `.env` in una directory padre o in un altro progetto   |
+| `Read(//**/.env)`              | qualsiasi `.env` in qualsiasi punto del filesystem  | nulla; la regola è ancorata alla radice del filesystem |
+
 <Note>
   Nei modelli gitignore, `*` corrisponde ai file in una singola directory mentre `**` corrisponde ricorsivamente tra le directory. Per consentire l'accesso a tutti i file, utilizzate solo il nome dello strumento senza parentesi: `Read`, `Edit` o `Write`.
 </Note>

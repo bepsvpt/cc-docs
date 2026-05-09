@@ -1226,9 +1226,9 @@ Non c'è timeout o limite di tentativi. La sessione rimane su disco fino a quand
 
 Se lo strumento rinviato non è più disponibile quando riprendi, il processo esce con `stop_reason: "tool_deferred_unavailable"` e `is_error: true` prima che l'hook si attivi. Questo accade quando un server MCP che ha fornito lo strumento non è connesso per la sessione ripresa. Il payload `deferred_tool_use` è ancora incluso in modo da poter identificare quale strumento è scomparso.
 
-<Warning>
-  `--resume` non ripristina la modalità di autorizzazione dalla sessione precedente. Passare lo stesso flag `--permission-mode` su resume che era attivo quando lo strumento è stato rinviato. Claude Code registra un avviso se le modalità differiscono.
-</Warning>
+<Note>
+  `--resume` ripristina la modalità di autorizzazione che era attiva quando lo strumento è stato rinviato, quindi non è necessario passare di nuovo `--permission-mode`. Le eccezioni sono `plan` e `bypassPermissions`, che non vengono mai trasportati. Passare `--permission-mode` esplicitamente su resume sovrascrive il valore ripristinato.
+</Note>
 
 ### PermissionRequest
 

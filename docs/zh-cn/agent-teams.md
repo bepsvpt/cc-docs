@@ -419,6 +419,6 @@ Agent teams 是实验性的。需要注意的当前限制：
 
 探索用于并行工作和委派的相关方法：
 
-* **轻量级委派**：[subagents](/zh-CN/sub-agents) 在你的会话中为研究或验证生成辅助代理，更适合不需要代理间协调的任务
-* **手动并行会话**：[Git worktrees](/zh-CN/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) 让你自己运行多个 Claude Code 会话，无需自动化团队协调
-* **比较方法**：有关并排分解，请参阅 [subagent vs agent team](/zh-CN/features-overview#compare-similar-features) 比较
+* **轻量级委派**：[subagents](/zh-CN/sub-agents) 在你的会话中生成辅助代理以进行研究或验证，更适合不需要代理间协调的任务
+* **手动并行会话**：[Git worktrees](/zh-CN/worktrees) 让你自己运行多个 Claude Code 会话，无需自动化团队协调
+* **比较方法**：查看 [subagent vs agent team](/zh-CN/features-overview#compare-similar-features) 比较以获得并排分解

@@ -420,5 +420,5 @@ Agent-Teams sind experimentell. Aktuelle Einschränkungen, die Sie beachten soll
 Erkunden Sie verwandte Ansätze für parallele Arbeit und Delegation:
 
 * **Leichte Delegation**: [subagents](/de/sub-agents) erzeugen Helper-Agenten für Recherche oder Überprüfung innerhalb Ihrer Sitzung, besser für Aufgaben, die keine Inter-Agent-Koordination benötigen
-* **Manuelle parallele Sitzungen**: [Git worktrees](/de/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) ermöglichen es Ihnen, mehrere Claude Code-Sitzungen selbst ohne automatisierte Teamkoordination auszuführen
+* **Manuelle parallele Sitzungen**: [Git worktrees](/de/worktrees) ermöglichen es Ihnen, mehrere Claude Code-Sitzungen selbst ohne automatisierte Teamkoordination auszuführen
 * **Vergleichen Sie Ansätze**: siehe den [Subagent vs Agent-Team](/de/features-overview#compare-similar-features) Vergleich für eine Seite-an-Seite-Aufschlüsselung

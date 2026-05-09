@@ -41,7 +41,7 @@ Se i vostri dispositivi sono registrati in una soluzione MDM o di gestione degli
   </Step>
 
   <Step title="Definire le impostazioni">
-    Aggiungere la configurazione come JSON. Tutte le [impostazioni disponibili in `settings.json`](/it/settings#available-settings) sono supportate, inclusi [hooks](/it/hooks), [variabili di ambiente](/it/env-vars), e [impostazioni solo gestite](/it/permissions#managed-only-settings) come `allowManagedPermissionRulesOnly`.
+    Aggiungere la configurazione come JSON. Tutte le [impostazioni disponibili in `settings.json`](/it/settings#available-settings) sono supportate eccetto quelle limitate alla distribuzione delle politiche a livello del sistema operativo; vedere [Limitazioni attuali](#current-limitations) per questo breve elenco. Questo include [hooks](/it/hooks), [variabili di ambiente](/it/env-vars), e [impostazioni solo gestite](/it/permissions#managed-only-settings) come `allowManagedPermissionRulesOnly`.
 
     Questo esempio applica un elenco di negazione delle autorizzazioni, impedisce agli utenti di ignorare le autorizzazioni e limita le regole di autorizzazione a quelle definite nelle impostazioni gestite:
 
@@ -93,7 +93,7 @@ Se i vostri dispositivi sono registrati in una soluzione MDM o di gestione degli
     }
     ```
 
-    Poiché gli hook eseguono comandi shell, gli utenti vedono una [finestra di dialogo di approvazione della sicurezza](#security-approval-dialogs) prima che vengano applicati. Vedere [Configurare la modalità auto](/it/auto-mode-config) per come le voci `autoMode` influenzano ciò che il classificatore blocca e avvertimenti importanti sui campi `allow` e `soft_deny`.
+    Poiché gli hook eseguono comandi shell, gli utenti vedono una [finestra di dialogo di approvazione della sicurezza](#security-approval-dialogs) prima che vengano applicati. Vedere [Configurare la modalità auto](/it/auto-mode-config) per come le voci `autoMode` influenzano ciò che il classificatore blocca e avvertimenti importanti sui campi `environment`, `allow`, `soft_deny` e `hard_deny`.
   </Step>
 
   <Step title="Salvare e distribuire">
@@ -124,6 +124,7 @@ Le impostazioni gestite dal server hanno le seguenti limitazioni:
 
 * Le impostazioni si applicano uniformemente a tutti gli utenti dell'organizzazione. Le configurazioni per gruppo non sono ancora supportate.
 * Le [configurazioni del server MCP](/it/mcp#managed-mcp-configuration) non possono essere distribuite tramite impostazioni gestite dal server.
+* Le impostazioni limitate alle fonti delle politiche a livello del sistema operativo, come `policyHelper` e `wslInheritsWindowsSettings`, non vengono rispettate. Distribuirle invece tramite MDM o un file `managed-settings.json` di sistema.
 
 ## Consegna delle impostazioni
 

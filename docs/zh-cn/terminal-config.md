@@ -107,7 +107,7 @@ set -s extended-keys on
 set -as terminal-features 'xterm*:extkeys'
 ```
 
-`allow-passthrough` 行让通知和进度更新到达 iTerm2、Ghostty 或 Kitty，而不是被 tmux 吞没。`extended-keys` 行让 tmux 区分 Shift+Enter 和纯 Enter，以便换行快捷键工作。
+`allow-passthrough` 行让通知和进度更新到达外部终端，而不是被 tmux 吞没。`extended-keys` 行让 tmux 区分 Shift+Enter 和纯 Enter，以便换行快捷键工作。
 
 ## 匹配颜色主题
 

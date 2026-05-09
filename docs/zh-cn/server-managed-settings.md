@@ -41,7 +41,7 @@ Claude Code 支持两种集中配置方法。服务器管理的设置从 Anthrop
   </Step>
 
   <Step title="定义您的设置">
-    将您的配置添加为 JSON。支持 [`settings.json` 中可用的所有设置](/zh-CN/settings#available-settings)，包括 [hooks](/zh-CN/hooks)、[环境变量](/zh-CN/env-vars) 和[仅限托管的设置](/zh-CN/permissions#managed-only-settings)，如 `allowManagedPermissionRulesOnly`。
+    将您的配置添加为 JSON。支持 [`settings.json` 中可用的所有设置](/zh-CN/settings#available-settings)，除了限制于操作系统级别策略传递的设置外；有关该简短列表，请参阅[当前限制](#current-limitations)。这包括 [hooks](/zh-CN/hooks)、[环境变量](/zh-CN/env-vars) 和[仅限托管的设置](/zh-CN/permissions#managed-only-settings)，如 `allowManagedPermissionRulesOnly`。
 
     此示例强制执行权限拒绝列表，防止用户绕过权限，并将权限规则限制为在托管设置中定义的规则：
 
@@ -93,7 +93,7 @@ Claude Code 支持两种集中配置方法。服务器管理的设置从 Anthrop
     }
     ```
 
-    由于 hooks 执行 shell 命令，用户在应用前会看到[安全批准对话框](#security-approval-dialogs)。有关 `autoMode` 条目如何影响分类器阻止的内容以及关于 `allow` 和 `soft_deny` 字段的重要警告，请参阅[配置 auto mode](/zh-CN/auto-mode-config)。
+    由于 hooks 执行 shell 命令，用户在应用前会看到[安全批准对话框](#security-approval-dialogs)。有关 `autoMode` 条目如何影响分类器阻止的内容以及关于 `environment`、`allow`、`soft_deny` 和 `hard_deny` 字段的重要警告，请参阅[配置 auto mode](/zh-CN/auto-mode-config)。
   </Step>
 
   <Step title="保存并部署">
@@ -124,6 +124,7 @@ Claude Code 支持两种集中配置方法。服务器管理的设置从 Anthrop
 
 * 设置统一应用于组织中的所有用户。尚不支持按组配置。
 * [MCP 服务器配置](/zh-CN/mcp#managed-mcp-configuration)无法通过服务器管理的设置分发。
+* 限制于操作系统级别策略源的设置，如 `policyHelper` 和 `wslInheritsWindowsSettings`，不被遵守。改为通过 MDM 或系统 `managed-settings.json` 文件部署它们。
 
 ## 设置传递
 

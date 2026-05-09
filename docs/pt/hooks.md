@@ -1226,9 +1226,9 @@ Não há timeout ou limite de tentativas. A sessão permanece no disco até que 
 
 Se a ferramenta adiada não estiver mais disponível quando você retomar, o processo sai com `stop_reason: "tool_deferred_unavailable"` e `is_error: true` antes do hook disparar. Isso acontece quando um servidor MCP que forneceu a ferramenta não está conectado para a sessão retomada. O payload `deferred_tool_use` ainda é incluído para que você possa identificar qual ferramenta desapareceu.
 
-<Warning>
-  `--resume` não restaura o modo de permissão da sessão anterior. Passe a mesma flag `--permission-mode` na retomada que estava ativa quando a ferramenta foi adiada. Claude Code registra um aviso se os modos diferem.
-</Warning>
+<Note>
+  `--resume` restaura o modo de permissão que estava ativo quando a ferramenta foi adiada, então você não precisa passar `--permission-mode` novamente. As exceções são `plan` e `bypassPermissions`, que nunca são transportados. Passar `--permission-mode` explicitamente na retomada sobrescreve o valor restaurado.
+</Note>
 
 ### PermissionRequest
 

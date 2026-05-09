@@ -423,7 +423,7 @@ Dieser Name wird für die Namensgebung von Komponenten verwendet. Beispielsweise
 
 | Feld                    | Typ                   | Beschreibung                                                                                                                                                        | Beispiel                                             |
 | :---------------------- | :-------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :--------------------------------------------------- |
-| `skills`                | string\|array         | Benutzerdefinierte Skill-Verzeichnisse mit `<name>/SKILL.md` Struktur (ersetzt Standard `skills/`)                                                                  | `"./custom/skills/"`                                 |
+| `skills`                | string\|array         | Benutzerdefinierte Skill-Verzeichnisse mit `<name>/SKILL.md` Struktur (zusätzlich zum Standard `skills/`)                                                           | `"./custom/skills/"`                                 |
 | `commands`              | string\|array         | Benutzerdefinierte flache `.md` Skill-Dateien oder Verzeichnisse (ersetzt Standard `commands/`)                                                                     | `"./custom/cmd.md"` oder `["./cmd1.md"]`             |
 | `agents`                | string\|array         | Benutzerdefinierte Agent-Dateien (ersetzt Standard `agents/`)                                                                                                       | `"./custom/agents/reviewer.md"`                      |
 | `hooks`                 | string\|array\|object | Hook-Konfigurationspfade oder Inline-Konfiguration                                                                                                                  | `"./my-extra-hooks.json"`                            |
@@ -510,12 +510,17 @@ Das `server` Feld ist erforderlich und muss einem Schlüssel in den `mcpServers`
 
 ### Pfad-Verhaltensregeln
 
-Für `skills`, `commands`, `agents`, `outputStyles`, `experimental.themes` und `experimental.monitors` ersetzt ein benutzerdefinierter Pfad den Standard. Wenn das Manifest `skills` angibt, wird das Standard-Verzeichnis `skills/` nicht gescannt; wenn es `experimental.monitors` angibt, wird die Standard-Datei `monitors/monitors.json` nicht geladen. [Hooks](#hooks), [MCP-Server](#mcp-servers) und [LSP-Server](#lsp-servers) haben unterschiedliche Semantiken für die Behandlung mehrerer Quellen.
+Ob ein benutzerdefinierter Pfad das Standard-Verzeichnis des Plugins ersetzt oder erweitert, hängt vom Feld ab:
+
+* **Ersetzt den Standard**: `commands`, `agents`, `outputStyles`, `experimental.themes`, `experimental.monitors`. Beispielsweise wird das Standard-Verzeichnis `commands/` nicht gescannt, wenn das Manifest `commands` angibt. Um den Standard zu behalten und mehr hinzuzufügen, listen Sie ihn explizit auf: `"commands": ["./commands/", "./extras/"]`
+* **Fügt zum Standard hinzu**: `skills`. Das Standard-Verzeichnis `skills/` wird immer gescannt, und Verzeichnisse, die in `skills` aufgelistet sind, werden zusammen mit ihm geladen
+* **Eigene Merge-Regeln**: [hooks](#hooks), [MCP-Server](#mcp-servers) und [LSP-Server](#lsp-servers). Siehe jeden Abschnitt für die Kombinationsweise mehrerer Quellen
+
+Für alle Pfadfelder:
 
 * Alle Pfade müssen relativ zum Plugin-Root sein und mit `./` beginnen
 * Komponenten aus benutzerdefinierten Pfaden verwenden die gleichen Benennungs- und Namensgebungsregeln
 * Mehrere Pfade können als Arrays angegeben werden
-* Um das Standard-Verzeichnis zu behalten und mehr Pfade für Skills, Befehle, Agents oder Output-Styles hinzuzufügen, schließen Sie den Standard in Ihr Array ein: `"skills": ["./skills/", "./extras/"]`
 * Wenn ein Skill-Pfad auf ein Verzeichnis verweist, das direkt ein `SKILL.md` enthält, beispielsweise `"skills": ["./"]` verweist auf den Plugin-Root, bestimmt das Frontmatter-Feld `name` in `SKILL.md` den Aufrufen-Namen des Skills. Dies gibt einen stabilen Namen unabhängig vom Installationsverzeichnis. Wenn `name` nicht im Frontmatter gesetzt ist, wird der Verzeichnis-Basename als Fallback verwendet.
 
 **Pfad-Beispiele**:

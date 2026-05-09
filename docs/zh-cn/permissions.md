@@ -210,6 +210,13 @@ Read 和 Edit 规则都遵循 [gitignore](https://git-scm.com/docs/gitignore) �
 * `Edit(//tmp/scratch.txt)`：编辑绝对路径 `/tmp/scratch.txt`
 * `Read(src/**)`：从 `<current-directory>/src/` 读取
 
+一个规则只匹配其锚点下的文件，因此锚点决定了 deny 规则的范围。裸文件名遵循 gitignore 语义并在任何深度匹配，因此 `Read(.env)` 和 `Read(**/.env)` 是等价的：
+
+| Deny 规则                        | 阻止                  | 不阻止                |
+| ------------------------------ | ------------------- | ------------------ |
+| `Read(.env)` 或 `Read(**/.env)` | 当前目录或其下的任何 `.env`   | 父目录或另一个项目中的 `.env` |
+| `Read(//**/.env)`              | 文件系统上任何地方的任何 `.env` | 无；规则锚定在文件系统根目录     |
+
 <Note>
   在 gitignore 模式中，`*` 匹配单个目录中的文件，而 `**` 递归匹配目录。要允许所有文件访问，只需使用工具名称而不带括号：`Read`、`Edit` 或 `Write`。
 </Note>

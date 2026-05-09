@@ -169,7 +169,7 @@ Claude Code 使用**範圍系統**來決定設定的適用位置和共享對象�
 | `attribution`                     | 自訂 git 提交和拉取請求的歸屬。請參閱[歸屬設定](#attribution-settings)                                                                                                                                                                                                                                                                                             | `{"commit": "🤖 Generated with Claude Code", "pr": ""}`                                                                       |
 | `autoMemoryDirectory`             | [自動記憶](/zh-TW/memory#storage-location)儲存的自訂目錄。接受絕對路徑或 `~/` 前綴的路徑。從政策和使用者設定以及 `--settings` 旗標接受。不從專案或本機設定接受，因為複製的儲存庫可能提供任一檔案以將記憶寫入重定向到敏感位置                                                                                                                                                                                                      | `"~/my-memory-dir"`                                                                                                           |
 | `autoMemoryEnabled`               | 啟用[自動記憶](/zh-TW/memory#enable-or-disable-auto-memory)。當為 `false` 時，Claude 不會從自動記憶目錄讀取或寫入。預設：`true`。您也可以在工作階段期間使用 `/memory` 切換此設定。若要透過環境變數停用，請在 `env` 中設定 [`CLAUDE_CODE_DISABLE_AUTO_MEMORY`](/zh-TW/env-vars)                                                                                                                                  | `false`                                                                                                                       |
-| `autoMode`                        | 自訂[自動模式](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode)分類器阻止和允許的內容。包含 `environment`、`allow` 和 `soft_deny` 陣列的散文規則。在陣列中包含字面字串 `"$defaults"` 以在該位置繼承內建規則。請參閱[設定自動模式](/zh-TW/auto-mode-config)。不從共享專案設定讀取                                                                                                                              | `{"soft_deny": ["$defaults", "Never run terraform apply"]}`                                                                   |
+| `autoMode`                        | 自訂[自動模式](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode)分類器阻止和允許的內容。包含 `environment`、`allow`、`soft_deny` 和 `hard_deny` 陣列的散文規則。在陣列中包含字面字串 `"$defaults"` 以在該位置繼承內建規則。請參閱[設定自動模式](/zh-TW/auto-mode-config)。不從共享專案設定讀取                                                                                                                  | `{"soft_deny": ["$defaults", "Never run terraform apply"]}`                                                                   |
 | `autoScrollEnabled`               | 在[全螢幕渲染](/zh-TW/fullscreen)中，跟隨新輸出到對話的底部。預設：`true`。在 `/config` 中顯示為**自動捲軸**。當此設定關閉時，權限提示仍會捲軸進入檢視                                                                                                                                                                                                                                               | `false`                                                                                                                       |
 | `autoUpdatesChannel`              | 遵循更新的發行頻道。使用 `"stable"` 以取得通常約一週舊的版本並跳過有重大迴歸的版本，或 `"latest"`（預設）以取得最新版本。若要完全停用自動更新，請在 `env` 中設定 [`DISABLE_AUTOUPDATER`](/zh-TW/setup#disable-auto-updates)                                                                                                                                                                                     | `"stable"`                                                                                                                    |
 | `availableModels`                 | 限制使用者可透過 `/model`、`--model` 或 `ANTHROPIC_MODEL` 選擇的模型。不影響預設選項。請參閱[限制模型選擇](/zh-TW/model-config#restrict-model-selection)                                                                                                                                                                                                                        | `["sonnet", "haiku"]`                                                                                                         |
@@ -215,6 +215,7 @@ Claude Code 使用**範圍系統**來決定設定的適用位置和共享對象�
 | `permissions`                     | 請參閱下表以了解權限的結構。                                                                                                                                                                                                                                                                                                                                 |                                                                                                                               |
 | `plansDirectory`                  | 自訂計畫檔案的儲存位置。路徑相對於專案根目錄。預設：`~/.claude/plans`                                                                                                                                                                                                                                                                                                    | `"./plans"`                                                                                                                   |
 | `pluginTrustMessage`              | （Managed 設定僅限）在安裝前顯示的 plugin 信任警告中附加的自訂訊息。使用此選項新增組織特定的內容，例如確認來自您內部 marketplace 的 plugins 已經過審查。                                                                                                                                                                                                                                                | `"All plugins from our marketplace are approved by IT"`                                                                       |
+| `policyHelper`                    | {/* min-version: 2.1.136 */}管理員部署的可執行檔，在啟動時動態計算 managed 設定。僅從 MDM 或系統 `managed-settings.json` 檔案受尊重。請參閱[使用政策協助程式計算 managed 設定](#compute-managed-settings-with-a-policy-helper)。需要 Claude Code v2.1.136 或更新版本                                                                                                                                   | `{"path": "/usr/local/bin/claude-policy"}`                                                                                    |
 | `preferredNotifChannel`           | 工作完成和權限提示通知的方法：`"auto"`、`"terminal_bell"`、`"iterm2"`、`"iterm2_with_bell"`、`"kitty"`、`"ghostty"` 或 `"notifications_disabled"`。預設：`"auto"`，在 iTerm2、Ghostty 和 Kitty 中傳送桌面通知，在其他終端機中不執行任何操作。設定 `"terminal_bell"` 以在任何終端機中響鈴字元。在 `/config` 中顯示為**通知**。請參閱[取得終端機鈴聲或通知](/zh-TW/terminal-config#get-a-terminal-bell-or-notification)                  | `"terminal_bell"`                                                                                                             |
 | `prefersReducedMotion`            | 減少或停用 UI 動畫（微調器、閃爍、閃光效果）以提高可訪問性                                                                                                                                                                                                                                                                                                                | `true`                                                                                                                        |
 | `prUrlTemplate`                   | PR 徽章的 URL 範本，顯示在頁尾和工具結果摘要中。替換 `gh` 報告的 PR URL 中的 `{host}`、`{owner}`、`{repo}`、`{number}` 和 `{url}`。使用以指向內部程式碼審查工具而不是 `github.com`。不影響 Claude 散文中的 `#123` 自動連結                                                                                                                                                                                  | `"https://reviews.example.com/{owner}/{repo}/pull/{number}"`                                                                  |
@@ -469,6 +470,32 @@ your-repo-file-index --query "$query" | head -20
   "httpHookAllowedEnvVars": ["MY_TOKEN", "HOOK_SECRET"]
 }
 ```
+
+### 使用政策協助程式計算 managed 設定
+
+`policyHelper` 設定指向在啟動時計算 managed 設定的可執行檔，因此管理員可以從裝置狀態、身份或遠端服務衍生政策，而不是靜態檔案。從 MDM 或系統 `managed-settings.json` 檔案設定它。Claude Code 在任何其他範圍中出現 `policyHelper` 時會忽略它，包括使用者設定、專案設定、HKCU 登錄 hive 和[伺服器管理的設定](/zh-TW/server-managed-settings)。
+
+該設定接受這些金鑰：
+
+| 金鑰                  | 類型     | 說明                                          |
+| ------------------- | ------ | ------------------------------------------- |
+| `path`              | string | 協助程式可執行檔的絕對路徑                               |
+| `timeoutMs`         | number | 在將執行視為失敗之前等待協助程式多長時間                        |
+| `refreshIntervalMs` | number | 在背景中重新執行協助程式的頻率。設定為 `0` 以停用重新整理，或至少 `60000` |
+
+協助程式將 JSON 信封寫入 stdout。將設定放在 `managedSettings` 金鑰下，而不是在頂層，因為裸設定物件會以 `managedSettings` 未定義的方式解析並應用任何內容：
+
+```json theme={null}
+{
+  "managedSettings": {
+    "permissions": { "deny": ["Read(//etc/secrets/**)"] }
+  },
+  "claudeMd": "# Organization context\n...",
+  "appendSystemPrompt": "Always cite the internal style guide."
+}
+```
+
+當協助程式發出 `managedSettings` 時，該物件會替換該執行的檔案型 managed 設定。當協助程式在啟動時以非零狀態結束時，Claude Code 會列印錯誤並拒絕啟動，因此需要中斷恢復能力的協助程式應從自己的快取提供並以 `0` 結束。
 
 ### 設定優先順序
 

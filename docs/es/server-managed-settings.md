@@ -41,7 +41,7 @@ Si sus dispositivos están inscritos en una solución MDM o de administración d
   </Step>
 
   <Step title="Definir su configuración">
-    Agregue su configuración como JSON. Todas las [configuraciones disponibles en `settings.json`](/es/settings#available-settings) son compatibles, incluidos [hooks](/es/hooks), [variables de entorno](/es/env-vars) y [configuraciones solo administradas](/es/permissions#managed-only-settings) como `allowManagedPermissionRulesOnly`.
+    Agregue su configuración como JSON. Todas las [configuraciones disponibles en `settings.json`](/es/settings#available-settings) son compatibles excepto las restringidas a la entrega de políticas a nivel del sistema operativo; consulte [Limitaciones actuales](#current-limitations) para esa lista breve. Esto incluye [hooks](/es/hooks), [variables de entorno](/es/env-vars) y [configuraciones solo administradas](/es/permissions#managed-only-settings) como `allowManagedPermissionRulesOnly`.
 
     Este ejemplo aplica una lista de denegación de permisos, impide que los usuarios omitan permisos y restringe las reglas de permisos a las definidas en la configuración administrada:
 
@@ -93,7 +93,7 @@ Si sus dispositivos están inscritos en una solución MDM o de administración d
     }
     ```
 
-    Debido a que los hooks ejecutan comandos de shell, los usuarios ven un [diálogo de aprobación de seguridad](#security-approval-dialogs) antes de que se apliquen. Consulte [Configurar el modo automático](/es/auto-mode-config) para ver cómo las entradas de `autoMode` afectan lo que el clasificador bloquea y advertencias importantes sobre los campos `allow` y `soft_deny`.
+    Debido a que los hooks ejecutan comandos de shell, los usuarios ven un [diálogo de aprobación de seguridad](#security-approval-dialogs) antes de que se apliquen. Consulte [Configurar el modo automático](/es/auto-mode-config) para ver cómo las entradas de `autoMode` afectan lo que el clasificador bloquea y advertencias importantes sobre los campos `environment`, `allow`, `soft_deny` y `hard_deny`.
   </Step>
 
   <Step title="Guardar e implementar">
@@ -124,6 +124,7 @@ La configuración administrada por servidor tiene las siguientes limitaciones:
 
 * La configuración se aplica uniformemente a todos los usuarios de la organización. Las configuraciones por grupo aún no son compatibles.
 * Las [configuraciones de servidor MCP](/es/mcp#managed-mcp-configuration) no se pueden distribuir a través de la configuración administrada por servidor.
+* Las configuraciones restringidas a fuentes de políticas a nivel del sistema operativo, como `policyHelper` y `wslInheritsWindowsSettings`, no se respetan. Impleméntelas a través de MDM o un archivo `managed-settings.json` del sistema en su lugar.
 
 ## Entrega de configuración
 

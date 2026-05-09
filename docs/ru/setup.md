@@ -398,6 +398,8 @@ npm install -g @anthropic-ai/claude-code
 
 Поддерживаемые платформы установки npm: `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64` и `win32-arm64`. Ваш менеджер пакетов должен разрешать дополнительные зависимости. См. [устранение неполадок](/ru/troubleshoot-install#native-binary-not-found-after-npm-install), если двоичный файл отсутствует после установки.
 
+Для обновления установки npm выполните `npm install -g @anthropic-ai/claude-code@latest`. Избегайте `npm update -g`, который соблюдает диапазон semver из исходной установки и может не переместить вас на самый новый выпуск.
+
 <Warning>
   НЕ используйте `sudo npm install -g`, так как это может привести к проблемам с разрешениями и рискам безопасности. Если вы столкнулись с ошибками разрешений, см. [устранение неполадок ошибок разрешений](/ru/troubleshoot-install#permission-errors-during-installation).
 </Warning>

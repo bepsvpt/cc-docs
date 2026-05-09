@@ -107,7 +107,7 @@ set -s extended-keys on
 set -as terminal-features 'xterm*:extkeys'
 ```
 
-Die `allow-passthrough`-Zeile ermöglicht es, dass Benachrichtigungen und Fortschrittsaktualisierungen iTerm2, Ghostty oder Kitty erreichen, anstatt von tmux verschluckt zu werden. Die `extended-keys`-Zeilen ermöglichen es tmux, Shift+Enter von einfachem Enter zu unterscheiden, sodass die Zeilenumbruch-Verknüpfung funktioniert.
+Die `allow-passthrough`-Zeile ermöglicht es, dass Benachrichtigungen und Fortschrittsaktualisierungen das äußere Terminal erreichen, anstatt von tmux verschluckt zu werden. Die `extended-keys`-Zeilen ermöglichen es tmux, Shift+Enter von einfachem Enter zu unterscheiden, sodass die Zeilenumbruch-Verknüpfung funktioniert.
 
 ## Passen Sie das Farbschema an
 

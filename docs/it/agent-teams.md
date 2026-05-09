@@ -420,5 +420,5 @@ I team di agenti sono sperimentali. Le limitazioni attuali di cui essere consape
 Esplorate approcci correlati per il lavoro parallelo e la delega:
 
 * **Delega leggera**: i [subagents](/it/sub-agents) generano agenti helper per ricerca o verifica all'interno della vostra sessione, migliore per compiti che non hanno bisogno di coordinamento tra agenti
-* **Sessioni parallele manuali**: i [Git worktrees](/it/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) vi permettono di eseguire più sessioni Claude Code voi stessi senza coordinamento automatico del team
+* **Sessioni parallele manuali**: i [Git worktrees](/it/worktrees) vi permettono di eseguire più sessioni Claude Code voi stessi senza coordinamento automatico del team
 * **Confrontare gli approcci**: consultate il confronto [subagent vs agent team](/it/features-overview#compare-similar-features) per una suddivisione fianco a fianco

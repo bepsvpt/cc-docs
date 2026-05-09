@@ -210,6 +210,13 @@ Beispiele:
 * `Edit(//tmp/scratch.txt)`: bearbeitet den absoluten Pfad `/tmp/scratch.txt`
 * `Read(src/**)`: liest aus `<current-directory>/src/`
 
+Eine Regel gleicht nur Dateien unter ihrem Anker ab, daher bestimmt der Anker, wie weit eine Deny-Regel reicht. Bare Dateinamen folgen gitignore-Semantik und gleichen in jeder Tiefe ab, daher sind `Read(.env)` und `Read(**/.env)` gleichwertig:
+
+| Deny-Regel                        | Blockiert                                           | Blockiert nicht                                                       |
+| --------------------------------- | --------------------------------------------------- | --------------------------------------------------------------------- |
+| `Read(.env)` oder `Read(**/.env)` | jede `.env` im oder unter dem aktuellen Verzeichnis | `.env` in einem übergeordneten Verzeichnis oder einem anderen Projekt |
+| `Read(//**/.env)`                 | jede `.env` überall im Dateisystem                  | nichts; die Regel ist am Dateisystem-Root verankert                   |
+
 <Note>
   In gitignore-Mustern gleicht `*` Dateien in einem einzelnen Verzeichnis ab, während `**` rekursiv über Verzeichnisse hinweg abgleicht. Um allen Dateizugriff zu ermöglichen, verwenden Sie einfach den Werkzeugnamen ohne Klammern: `Read`, `Edit` oder `Write`.
 </Note>

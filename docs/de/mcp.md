@@ -265,6 +265,8 @@ claude mcp add --transport http secure-api https://api.example.com/mcp \
   --header "Authorization: Bearer your-token"
 ```
 
+Bei der Konfiguration von MCP-Servern über JSON in `.mcp.json`, `~/.claude.json` oder `claude mcp add-json` akzeptiert das Feld `type` `streamable-http` als Alias für `http`. Die MCP-Spezifikation verwendet den Namen `streamable-http` für dieses Transportprotokoll, sodass Konfigurationen, die aus der Server-Dokumentation kopiert werden, ohne Änderungen funktionieren.
+
 ### Option 2: Einen Remote-SSE-Server hinzufügen
 
 <Warning>

@@ -423,7 +423,7 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
 
 | 字段                      | 类型                    | 描述                                                                                                     | 示例                                                   |
 | :---------------------- | :-------------------- | :----------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
-| `skills`                | string\|array         | 包含 `<name>/SKILL.md` 的自定义 skill 目录（替换默认 `skills/`）                                                     | `"./custom/skills/"`                                 |
+| `skills`                | string\|array         | 包含 `<name>/SKILL.md` 的自定义 skill 目录（除了默认 `skills/`）                                                     | `"./custom/skills/"`                                 |
 | `commands`              | string\|array         | 自定义平面 `.md` skill 文件或目录（替换默认 `commands/`）                                                              | `"./custom/cmd.md"` 或 `["./cmd1.md"]`                |
 | `agents`                | string\|array         | 自定义 agent 文件（替换默认 `agents/`）                                                                           | `"./custom/agents/reviewer.md"`                      |
 | `hooks`                 | string\|array\|object | Hook 配置路径或内联配置                                                                                         | `"./my-extra-hooks.json"`                            |
@@ -510,12 +510,17 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
 
 ### 路径行为规则
 
-对于 `skills`、`commands`、`agents`、`outputStyles`、`experimental.themes` 和 `experimental.monitors`，自定义路径替换默认值。如果清单指定 `skills`，则不会扫描默认 `skills/` 目录；如果指定 `experimental.monitors`，则不会加载默认 `monitors/monitors.json`。[Hooks](#hooks)、[MCP servers](#mcp-servers) 和[LSP servers](#lsp-servers)对处理多个源有不同的语义。
+自定义路径是否替换或扩展 plugin 的默认目录取决于该字段：
+
+* **替换默认值**：`commands`、`agents`、`outputStyles`、`experimental.themes`、`experimental.monitors`。例如，当清单指定 `commands` 时，不会扫描默认 `commands/` 目录。要保留默认值并添加更多，请明确列出它：`"commands": ["./commands/", "./extras/"]`
+* **添加到默认值**：`skills`。默认 `skills/` 目录始终被扫描，`skills` 中列出的目录与其一起加载
+* **自己的合并规则**：[hooks](#hooks)、[MCP servers](#mcp-servers) 和 [LSP servers](#lsp-servers)。请参阅每个部分了解多个源如何组合
+
+对于所有路径字段：
 
 * 所有路径必须相对于 plugin 根目录，并以 `./` 开头
 * 来自自定义路径的组件使用相同的命名和命名空间规则
 * 可以将多个路径指定为数组
-* 要保留默认目录并为 skills、commands、agents 或 output styles 添加更多路径，请在数组中包含默认值：`"skills": ["./skills/", "./extras/"]`
 * 当 skill 路径指向直接包含 `SKILL.md` 的目录时，例如 `"skills": ["./"]` 指向 plugin 根目录，frontmatter 中的 `name` 字段确定 skill 的调用名称。这提供了一个稳定的名称，无论安装目录如何。如果 frontmatter 中未设置 `name`，则使用目录基名作为后备。
 
 **路径示例**：

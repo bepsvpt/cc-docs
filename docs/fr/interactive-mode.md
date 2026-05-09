@@ -289,7 +289,7 @@ Lorsque vous ouvrez une session pour la première fois, une commande d'exemple g
 
 Après la réponse de Claude, les suggestions continuent à apparaître en fonction de votre historique de conversation, comme une étape de suivi d'une demande en plusieurs parties ou une continuation naturelle de votre flux de travail.
 
-* Appuyez sur **Tab** ou **Flèche droite** pour accepter la suggestion, ou appuyez sur **Entrée** pour accepter et soumettre
+* Appuyez sur **Tab** ou **Flèche droite** pour placer la suggestion dans l'entrée d'invite, puis **Entrée** pour soumettre
 * Commencez à taper pour la rejeter
 
 La suggestion s'exécute en tant que demande en arrière-plan qui réutilise le cache d'invite de la conversation parent, le coût supplémentaire est donc minimal. Claude Code ignore la génération de suggestions lorsque le cache est froid pour éviter les coûts inutiles.

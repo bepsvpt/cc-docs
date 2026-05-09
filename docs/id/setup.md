@@ -398,6 +398,8 @@ Paket npm menginstal biner asli yang sama dengan penginstal standalone. npm mena
 
 Platform instalasi npm yang didukung adalah `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64`, dan `win32-arm64`. Manajer paket Anda harus memungkinkan dependensi opsional. Lihat [troubleshooting](/id/troubleshoot-install#native-binary-not-found-after-npm-install) jika biner hilang setelah instalasi.
 
+Untuk upgrade instalasi npm, jalankan `npm install -g @anthropic-ai/claude-code@latest`. Hindari `npm update -g`, yang menghormati rentang semver dari instalasi asli dan mungkin tidak membawa Anda ke rilis terbaru.
+
 <Warning>
   JANGAN gunakan `sudo npm install -g` karena ini dapat menyebabkan masalah izin dan risiko keamanan. Jika Anda mengalami kesalahan izin, lihat [troubleshooting kesalahan izin](/id/troubleshoot-install#permission-errors-during-installation).
 </Warning>

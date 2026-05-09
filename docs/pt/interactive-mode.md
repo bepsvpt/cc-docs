@@ -289,7 +289,7 @@ Quando você abre uma sessão pela primeira vez, um comando de exemplo acinzenta
 
 Após Claude responder, as sugestões continuam aparecendo com base no seu histórico de conversa, como uma etapa de acompanhamento de uma solicitação de várias partes ou uma continuação natural do seu fluxo de trabalho.
 
-* Pressione **Tab** ou **Right arrow** para aceitar a sugestão, ou pressione **Enter** para aceitar e enviar
+* Pressione **Tab** ou **Right arrow** para colocar a sugestão na entrada de prompt, depois **Enter** para enviar
 * Comece a digitar para descartá-la
 
 A sugestão é executada como uma solicitação em segundo plano que reutiliza o cache de prompt da conversa pai, então o custo adicional é mínimo. Claude Code pula a geração de sugestão quando o cache está frio para evitar custo desnecessário.

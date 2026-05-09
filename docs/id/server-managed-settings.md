@@ -41,7 +41,7 @@ Jika perangkat Anda terdaftar dalam solusi MDM atau manajemen endpoint, pengatur
   </Step>
 
   <Step title="Tentukan pengaturan Anda">
-    Tambahkan konfigurasi Anda sebagai JSON. Semua [pengaturan yang tersedia di `settings.json`](/id/settings#available-settings) didukung, termasuk [hooks](/id/hooks), [variabel lingkungan](/id/env-vars), dan [pengaturan yang hanya dikelola](/id/permissions#managed-only-settings) seperti `allowManagedPermissionRulesOnly`.
+    Tambahkan konfigurasi Anda sebagai JSON. Semua [pengaturan yang tersedia di `settings.json`](/id/settings#available-settings) didukung kecuali yang dibatasi untuk pengiriman kebijakan tingkat OS; lihat [Batasan saat ini](#current-limitations) untuk daftar singkat itu. Ini mencakup [hooks](/id/hooks), [variabel lingkungan](/id/env-vars), dan [pengaturan yang hanya dikelola](/id/permissions#managed-only-settings) seperti `allowManagedPermissionRulesOnly`.
 
     Contoh ini memberlakukan daftar penolakan izin, mencegah pengguna dari melewati izin, dan membatasi aturan izin hanya pada yang ditentukan dalam pengaturan terkelola:
 
@@ -93,7 +93,7 @@ Jika perangkat Anda terdaftar dalam solusi MDM atau manajemen endpoint, pengatur
     }
     ```
 
-    Karena hooks menjalankan perintah shell, pengguna melihat [dialog persetujuan keamanan](#security-approval-dialogs) sebelum diterapkan. Lihat [Konfigurasi mode otomatis](/id/auto-mode-config) untuk cara entri `autoMode` mempengaruhi apa yang diblokir pengklasifikasi dan peringatan penting tentang bidang `allow` dan `soft_deny`.
+    Karena hooks menjalankan perintah shell, pengguna melihat [dialog persetujuan keamanan](#security-approval-dialogs) sebelum diterapkan. Lihat [Konfigurasi mode otomatis](/id/auto-mode-config) untuk cara entri `autoMode` mempengaruhi apa yang diblokir pengklasifikasi dan peringatan penting tentang bidang `environment`, `allow`, `soft_deny`, dan `hard_deny`.
   </Step>
 
   <Step title="Simpan dan terapkan">
@@ -124,6 +124,7 @@ Pengaturan yang dikelola server memiliki batasan berikut:
 
 * Pengaturan berlaku secara seragam untuk semua pengguna dalam organisasi. Konfigurasi per-grup belum didukung.
 * [Konfigurasi server MCP](/id/mcp#managed-mcp-configuration) tidak dapat didistribusikan melalui pengaturan yang dikelola server.
+* Pengaturan yang dibatasi untuk sumber kebijakan tingkat OS, seperti `policyHelper` dan `wslInheritsWindowsSettings`, tidak dihormati. Terapkan melalui MDM atau file `managed-settings.json` sistem sebagai gantinya.
 
 ## Pengiriman pengaturan
 

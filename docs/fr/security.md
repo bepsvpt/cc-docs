@@ -59,7 +59,7 @@ Pour plus de détails, veuillez consulter nos [Conditions commerciales](https://
 * **Approbation des demandes réseau** : Les outils qui effectuent des demandes réseau nécessitent une approbation utilisateur par défaut
 * **Fenêtres de contexte isolées** : Web fetch utilise une fenêtre de contexte séparée pour éviter d'injecter des prompts potentiellement malveillants
 * **Vérification de confiance** : Les premières exécutions de base de code et les nouveaux serveurs MCP nécessitent une vérification de confiance
-  * Remarque : La vérification de confiance est désactivée lors de l'exécution non-interactive avec le drapeau `-p`
+  * Remarque : La vérification de confiance est désactivée lors de l'exécution non-interactive avec le drapeau `-p`. L'exception est [`--worktree`](/fr/worktrees), qui nécessite toujours que la confiance ait été acceptée pour le répertoire
 * **Détection d'injection de commande** : Les commandes bash suspectes nécessitent une approbation manuelle même si elles ont été précédemment autorisées
 * **Correspondance en cas d'échec fermé** : Les commandes non appariées par défaut nécessitent une approbation manuelle
 * **Descriptions en langage naturel** : Les commandes bash complexes incluent des explications pour la compréhension de l'utilisateur

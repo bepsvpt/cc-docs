@@ -59,7 +59,7 @@ Per i dettagli completi, consultare i nostri [Termini di servizio commerciali](h
 * **Approvazione della richiesta di rete**: Gli strumenti che effettuano richieste di rete richiedono l'approvazione dell'utente per impostazione predefinita
 * **Finestre di contesto isolate**: Web fetch utilizza una finestra di contesto separata per evitare di iniettare prompt potenzialmente dannosi
 * **Verifica della fiducia**: Le prime esecuzioni di codebase e i nuovi server MCP richiedono la verifica della fiducia
-  * Nota: La verifica della fiducia è disabilitata quando si esegue in modo non interattivo con il flag `-p`
+  * Nota: La verifica della fiducia è disabilitata quando si esegue in modo non interattivo con il flag `-p`. L'eccezione è [`--worktree`](/it/worktrees), che richiede comunque che la fiducia sia stata accettata per la directory
 * **Rilevamento dell'iniezione di comandi**: I comandi bash sospetti richiedono l'approvazione manuale anche se precedentemente allowlisted
 * **Corrispondenza fail-closed**: I comandi non corrispondenti richiedono per impostazione predefinita l'approvazione manuale
 * **Descrizioni in linguaggio naturale**: I comandi bash complessi includono spiegazioni per la comprensione dell'utente

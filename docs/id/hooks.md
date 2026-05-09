@@ -1226,9 +1226,9 @@ Tidak ada timeout atau batas retry. Sesi tetap di disk sampai Anda melanjutkanny
 
 Jika tool yang ditunda tidak lagi tersedia saat Anda melanjutkan, proses keluar dengan `stop_reason: "tool_deferred_unavailable"` dan `is_error: true` sebelum hook dijalankan. Ini terjadi ketika server MCP yang menyediakan tool tidak terhubung untuk sesi yang dilanjutkan. Payload `deferred_tool_use` masih disertakan sehingga Anda dapat mengidentifikasi tool mana yang hilang.
 
-<Warning>
-  `--resume` tidak mengembalikan mode izin dari sesi sebelumnya. Teruskan flag `--permission-mode` yang sama pada resume yang aktif saat tool ditunda. Claude Code mencatat peringatan jika mode berbeda.
-</Warning>
+<Note>
+  `--resume` memulihkan mode izin yang aktif saat tool ditunda, jadi Anda tidak perlu meneruskan `--permission-mode` lagi. Pengecualiannya adalah `plan` dan `bypassPermissions`, yang tidak pernah dibawa. Meneruskan `--permission-mode` secara eksplisit pada resume menimpa nilai yang dipulihkan.
+</Note>
 
 ### PermissionRequest
 

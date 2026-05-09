@@ -41,7 +41,7 @@ Claude Code 支援兩種集中設定方法。伺服器管理的設定從 Anthrop
   </Step>
 
   <Step title="定義您的設定">
-    將您的設定新增為 JSON。支援 [`settings.json` 中提供的所有設定](/zh-TW/settings#available-settings)，包括 [hooks](/zh-TW/hooks)、[環境變數](/zh-TW/env-vars) 和[僅限受管的設定](/zh-TW/permissions#managed-only-settings)，例如 `allowManagedPermissionRulesOnly`。
+    將您的設定新增為 JSON。支援 [`settings.json` 中提供的所有設定](/zh-TW/settings#available-settings)，除了限制於作業系統層級原則傳遞的設定外；請參閱[目前的限制](#current-limitations)以取得該簡短清單。這包括 [hooks](/zh-TW/hooks)、[環境變數](/zh-TW/env-vars) 和[僅限受管的設定](/zh-TW/permissions#managed-only-settings)，例如 `allowManagedPermissionRulesOnly`。
 
     此範例強制執行權限拒絕清單，防止使用者繞過權限，並將權限規則限制為在受管設定中定義的規則：
 
@@ -93,7 +93,7 @@ Claude Code 支援兩種集中設定方法。伺服器管理的設定從 Anthrop
     }
     ```
 
-    因為 hooks 執行 shell 命令，使用者在套用前會看到[安全核准對話方塊](#security-approval-dialogs)。請參閱[設定 auto mode](/zh-TW/auto-mode-config)，了解 `autoMode` 項目如何影響分類器阻止的內容，以及關於 `allow` 和 `soft_deny` 欄位的重要警告。
+    因為 hooks 執行 shell 命令，使用者在套用前會看到[安全核准對話方塊](#security-approval-dialogs)。請參閱[設定 auto mode](/zh-TW/auto-mode-config)，了解 `autoMode` 項目如何影響分類器阻止的內容，以及關於 `environment`、`allow`、`soft_deny` 和 `hard_deny` 欄位的重要警告。
   </Step>
 
   <Step title="儲存並部署">
@@ -124,6 +124,7 @@ Claude Code 支援兩種集中設定方法。伺服器管理的設定從 Anthrop
 
 * 設定統一套用到組織中的所有使用者。尚不支援每個群組的設定。
 * [MCP 伺服器設定](/zh-TW/mcp#managed-mcp-configuration) 無法透過伺服器管理的設定分發。
+* 限制於作業系統層級原則來源的設定，例如 `policyHelper` 和 `wslInheritsWindowsSettings`，不會被接受。改為透過 MDM 或系統 `managed-settings.json` 檔案部署它們。
 
 ## 設定傳遞
 

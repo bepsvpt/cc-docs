@@ -41,7 +41,7 @@ Si vos appareils sont inscrits dans une solution MDM ou de gestion des points de
   </Step>
 
   <Step title="Définir vos paramètres">
-    Ajoutez votre configuration en JSON. Tous les [paramètres disponibles dans `settings.json`](/fr/settings#available-settings) sont pris en charge, y compris les [hooks](/fr/hooks), les [variables d'environnement](/fr/env-vars) et les [paramètres réservés à la gestion](/fr/permissions#managed-only-settings) comme `allowManagedPermissionRulesOnly`.
+    Ajoutez votre configuration en JSON. Tous les [paramètres disponibles dans `settings.json`](/fr/settings#available-settings) sont pris en charge, sauf ceux limités à la livraison de politique au niveau du système d'exploitation ; consultez [Limitations actuelles](#current-limitations) pour cette courte liste. Cela inclut les [hooks](/fr/hooks), les [variables d'environnement](/fr/env-vars) et les [paramètres réservés à la gestion](/fr/permissions#managed-only-settings) comme `allowManagedPermissionRulesOnly`.
 
     Cet exemple applique une liste de refus de permissions, empêche les utilisateurs de contourner les permissions et restreint les règles de permission à celles définies dans les paramètres gérés :
 
@@ -93,7 +93,7 @@ Si vos appareils sont inscrits dans une solution MDM ou de gestion des points de
     }
     ```
 
-    Parce que les hooks exécutent des commandes shell, les utilisateurs voient une [boîte de dialogue d'approbation de sécurité](#security-approval-dialogs) avant qu'elles ne soient appliquées. Consultez [Configurer le mode auto](/fr/auto-mode-config) pour savoir comment les entrées `autoMode` affectent ce que le classificateur bloque et les avertissements importants concernant les champs `allow` et `soft_deny`.
+    Parce que les hooks exécutent des commandes shell, les utilisateurs voient une [boîte de dialogue d'approbation de sécurité](#security-approval-dialogs) avant qu'elles ne soient appliquées. Consultez [Configurer le mode auto](/fr/auto-mode-config) pour savoir comment les entrées `autoMode` affectent ce que le classificateur bloque et les avertissements importants concernant les champs `environment`, `allow`, `soft_deny` et `hard_deny`.
   </Step>
 
   <Step title="Enregistrer et déployer">
@@ -124,6 +124,7 @@ Les paramètres gérés par le serveur ont les limitations suivantes :
 
 * Les paramètres s'appliquent uniformément à tous les utilisateurs de l'organisation. Les configurations par groupe ne sont pas encore prises en charge.
 * Les [configurations de serveur MCP](/fr/mcp#managed-mcp-configuration) ne peuvent pas être distribuées via les paramètres gérés par le serveur.
+* Les paramètres limités aux sources de politique au niveau du système d'exploitation, tels que `policyHelper` et `wslInheritsWindowsSettings`, ne sont pas respectés. Déployez-les plutôt via MDM ou un fichier `managed-settings.json` système.
 
 ## Livraison des paramètres
 

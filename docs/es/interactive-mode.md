@@ -289,7 +289,7 @@ Cuando abre una sesión por primera vez, aparece un comando de ejemplo atenuado 
 
 Después de que Claude responde, las sugerencias continúan apareciendo según su historial de conversación, como un paso de seguimiento de una solicitud de varias partes o una continuación natural de su flujo de trabajo.
 
-* Presione **Tab** o **Flecha derecha** para aceptar la sugerencia, o presione **Enter** para aceptar y enviar
+* Presione **Tab** o **Flecha derecha** para colocar la sugerencia en la entrada de indicación, luego **Intro** para enviar
 * Comience a escribir para descartarla
 
 La sugerencia se ejecuta como una solicitud de fondo que reutiliza el caché de indicación de la conversación principal, por lo que el costo adicional es mínimo. Claude Code omite la generación de sugerencias cuando el caché está frío para evitar costos innecesarios.

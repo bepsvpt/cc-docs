@@ -423,7 +423,7 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `experimental.monit
 
 | 필드                      | 타입                    | 설명                                                                                                              | 예시                                                   |
 | :---------------------- | :-------------------- | :-------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
-| `skills`                | string\|array         | `<name>/SKILL.md`를 포함하는 사용자 정의 skill 디렉토리 (기본 `skills/` 대체)                                                     | `"./custom/skills/"`                                 |
+| `skills`                | string\|array         | `<name>/SKILL.md`를 포함하는 사용자 정의 skill 디렉토리 (기본 `skills/` 외에 추가)                                                  | `"./custom/skills/"`                                 |
 | `commands`              | string\|array         | 사용자 정의 평면 `.md` skill 파일 또는 디렉토리 (기본 `commands/` 대체)                                                            | `"./custom/cmd.md"` 또는 `["./cmd1.md"]`               |
 | `agents`                | string\|array         | 사용자 정의 agent 파일 (기본 `agents/` 대체)                                                                               | `"./custom/agents/reviewer.md"`                      |
 | `hooks`                 | string\|array\|object | Hook 구성 경로 또는 인라인 구성                                                                                            | `"./my-extra-hooks.json"`                            |
@@ -510,12 +510,17 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `experimental.monit
 
 ### 경로 동작 규칙
 
-`skills`, `commands`, `agents`, `outputStyles`, `experimental.themes` 및 `experimental.monitors`의 경우 사용자 정의 경로는 기본값을 대체합니다. 매니페스트가 `skills`를 지정하면 기본 `skills/` 디렉토리는 스캔되지 않습니다. 매니페스트가 `experimental.monitors`를 지정하면 기본 `monitors/monitors.json`은 로드되지 않습니다. [Hooks](#hooks), [MCP servers](#mcp-servers) 및 [LSP servers](#lsp-servers)는 여러 소스를 처리하기 위한 다른 의미를 가집니다.
+사용자 정의 경로가 플러그인의 기본 디렉토리를 대체하는지 확장하는지는 필드에 따라 다릅니다:
+
+* **기본값 대체**: `commands`, `agents`, `outputStyles`, `experimental.themes`, `experimental.monitors`. 예를 들어 매니페스트가 `commands`를 지정하면 기본 `commands/` 디렉토리는 스캔되지 않습니다. 기본값을 유지하고 더 많은 것을 추가하려면 명시적으로 나열하세요: `"commands": ["./commands/", "./extras/"]`
+* **기본값에 추가**: `skills`. 기본 `skills/` 디렉토리는 항상 스캔되며, `skills`에 나열된 디렉토리는 함께 로드됩니다.
+* **자체 병합 규칙**: [hooks](#hooks), [MCP servers](#mcp-servers) 및 [LSP servers](#lsp-servers). 각 섹션에서 여러 소스가 어떻게 결합되는지 참조하세요.
+
+모든 경로 필드의 경우:
 
 * 모든 경로는 플러그인 루트에 상대적이어야 하며 `./`로 시작해야 합니다.
 * 사용자 정의 경로의 컴포넌트는 동일한 명명 및 네임스페이싱 규칙을 사용합니다.
 * 여러 경로를 배열로 지정할 수 있습니다.
-* skills, commands, agents 또는 output styles의 기본 디렉토리를 유지하고 더 많은 경로를 추가하려면 배열에 기본값을 포함하세요: `"skills": ["./skills/", "./extras/"]`
 * skill 경로가 `SKILL.md`를 직접 포함하는 디렉토리를 가리킬 때 (예: 플러그인 루트를 가리키는 `"skills": ["./"]`), frontmatter의 `name` 필드가 skill의 호출 이름을 결정합니다. 이는 설치 디렉토리와 관계없이 안정적인 이름을 제공합니다. `name`이 frontmatter에 설정되지 않으면 디렉토리 basename이 폴백으로 사용됩니다.
 
 **경로 예시**:

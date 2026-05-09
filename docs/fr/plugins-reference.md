@@ -423,7 +423,7 @@ Ce nom est utilisé pour l'espace de noms des composants. Par exemple, dans l'in
 
 | Champ                   | Type                  | Description                                                                                                                                                                             | Exemple                                              |
 | :---------------------- | :-------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
-| `skills`                | string\|array         | Répertoires de skills personnalisés contenant `<name>/SKILL.md` (remplace le répertoire par défaut `skills/`)                                                                           | `"./custom/skills/"`                                 |
+| `skills`                | string\|array         | Répertoires de skills personnalisés contenant `<name>/SKILL.md` (en plus du répertoire par défaut `skills/`)                                                                            | `"./custom/skills/"`                                 |
 | `commands`              | string\|array         | Fichiers de skill markdown plats personnalisés ou répertoires (remplace le répertoire par défaut `commands/`)                                                                           | `"./custom/cmd.md"` ou `["./cmd1.md"]`               |
 | `agents`                | string\|array         | Fichiers d'agents personnalisés (remplace le répertoire par défaut `agents/`)                                                                                                           | `"./custom/agents/reviewer.md"`                      |
 | `hooks`                 | string\|array\|object | Chemins de configuration des hooks ou configuration en ligne                                                                                                                            | `"./my-extra-hooks.json"`                            |
@@ -510,12 +510,17 @@ Le champ `server` est obligatoire et doit correspondre à une clé dans les `mcp
 
 ### Règles de comportement des chemins
 
-Pour `skills`, `commands`, `agents`, `outputStyles`, `experimental.themes` et `experimental.monitors`, un chemin personnalisé remplace le répertoire par défaut. Si le manifeste spécifie `skills`, le répertoire par défaut `skills/` n'est pas analysé ; si il spécifie `experimental.monitors`, le fichier par défaut `monitors/monitors.json` n'est pas chargé. Les [Hooks](#hooks), les [Serveurs MCP](#mcp-servers) et les [Serveurs LSP](#lsp-servers) ont une sémantique différente pour gérer plusieurs sources.
+Qu'un chemin personnalisé remplace ou étend le répertoire par défaut du plugin dépend du champ :
+
+* **Remplace le répertoire par défaut** : `commands`, `agents`, `outputStyles`, `experimental.themes`, `experimental.monitors`. Par exemple, quand le manifeste spécifie `commands`, le répertoire par défaut `commands/` n'est pas analysé. Pour conserver le répertoire par défaut et en ajouter d'autres, listez-le explicitement : `"commands": ["./commands/", "./extras/"]`
+* **S'ajoute au répertoire par défaut** : `skills`. Le répertoire par défaut `skills/` est toujours analysé, et les répertoires listés dans `skills` sont chargés à côté de lui
+* **Règles de fusion propres** : [hooks](#hooks), [Serveurs MCP](#mcp-servers), et [Serveurs LSP](#lsp-servers). Consultez chaque section pour savoir comment plusieurs sources se combinent
+
+Pour tous les champs de chemin :
 
 * Tous les chemins doivent être relatifs à la racine du plugin et commencer par `./`
 * Les composants des chemins personnalisés utilisent les mêmes règles de nommage et d'espace de noms
 * Plusieurs chemins peuvent être spécifiés sous forme de tableaux
-* Pour conserver le répertoire par défaut et ajouter d'autres chemins pour les skills, les commandes, les agents ou les styles de sortie, incluez le répertoire par défaut dans votre tableau : `"skills": ["./skills/", "./extras/"]`
 * Quand un chemin de skill pointe vers un répertoire qui contient directement un `SKILL.md`, par exemple `"skills": ["./"]` pointant vers la racine du plugin, le champ frontmatter `name` dans `SKILL.md` détermine le nom d'invocation de la skill. Cela donne un nom stable indépendamment du répertoire d'installation. Si `name` n'est pas défini dans le frontmatter, le nom de base du répertoire est utilisé comme secours.
 
 **Exemples de chemins** :

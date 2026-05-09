@@ -320,7 +320,7 @@ vscode://anthropic.claude-code/open?prompt=review%20my%20changes
 | `environmentVariables`            | `[]`      | Claude 프로세스에 대한 환경 변수 설정. 공유 구성을 위해 Claude Code 설정을 대신 사용합니다.                                                                                                                                                                                                       |
 | `disableLoginPrompt`              | `false`   | 인증 프롬프트 건너뛰기(타사 공급자 설정용)                                                                                                                                                                                                                                            |
 | `allowDangerouslySkipPermissions` | `false`   | [Auto mode](/ko/permission-modes#eliminate-prompts-with-auto-mode) 및 Bypass 권한을 모드 선택기에 추가합니다. Auto mode는 [계획, 관리자, 모델 및 공급자 요구 사항](/ko/permission-modes#eliminate-prompts-with-auto-mode)이 있으므로 이 토글이 켜져 있어도 사용 불가능할 수 있습니다. Bypass 권한은 인터넷 액세스가 없는 샌드박스에서만 사용합니다. |
-| `claudeProcessWrapper`            | -         | Claude 프로세스를 시작하는 데 사용되는 실행 파일 경로                                                                                                                                                                                                                                   |
+| `claudeProcessWrapper`            | -         | Claude 프로세스를 시작하는 데 사용되는 실행 파일입니다. 번들된 바이너리 경로는 존재할 때 인수로 전달됩니다. 확장 프로그램 빌드에 플랫폼용 바이너리가 포함되지 않은 경우 별도로 설치된 `claude` 바이너리로 설정합니다.                                                                                                                                    |
 
 ## VS Code 확장 프로그램 vs. Claude Code CLI
 

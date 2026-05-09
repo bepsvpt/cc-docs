@@ -107,7 +107,7 @@ set -s extended-keys on
 set -as terminal-features 'xterm*:extkeys'
 ```
 
-La línea `allow-passthrough` permite que las notificaciones y actualizaciones de progreso lleguen a iTerm2, Ghostty o Kitty en lugar de ser tragadas por tmux. Las líneas `extended-keys` permiten que tmux distinga Shift+Enter de Enter simple para que el atajo de salto de línea funcione.
+La línea `allow-passthrough` permite que las notificaciones y actualizaciones de progreso lleguen a la terminal externa en lugar de ser tragadas por tmux. Las líneas `extended-keys` permiten que tmux distinga Shift+Enter de Enter simple para que el atajo de salto de línea funcione.
 
 ## Haz coincidir el tema de color
 

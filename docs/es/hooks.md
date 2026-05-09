@@ -1226,9 +1226,9 @@ No hay límite de tiempo de espera o reintento. La sesión permanece en el disco
 
 Si la herramienta diferida ya no está disponible cuando reanuda, el proceso sale con `stop_reason: "tool_deferred_unavailable"` e `is_error: true` antes de que se active el hook. Esto sucede cuando un servidor MCP que proporcionó la herramienta no está conectado para la sesión reanudada. El payload `deferred_tool_use` aún se incluye para que pueda identificar qué herramienta desapareció.
 
-<Warning>
-  `--resume` no restaura el modo de permiso de la sesión anterior. Pase la misma bandera `--permission-mode` en reanudar que estaba activa cuando se diferió la herramienta. Claude Code registra una advertencia si los modos difieren.
-</Warning>
+<Note>
+  `--resume` restaura el modo de permiso que estaba activo cuando se diferió la herramienta, por lo que no necesita pasar `--permission-mode` nuevamente. Las excepciones son `plan` y `bypassPermissions`, que nunca se llevan. Pasar `--permission-mode` explícitamente en reanudar anula el valor restaurado.
+</Note>
 
 ### PermissionRequest
 
@@ -1359,7 +1359,7 @@ Los hooks `PostToolUse` pueden proporcionar retroalimentación a Claude después
 
 | Campo                  | Descripción                                                                                                                                                       |
 | :--------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `decision`             | `"block"` solicita a Claude con la `reason`. Omita para permitir que la acción continúe                                                                           |
+| `decision`             | `"block"` agrega la `reason` junto al resultado de la herramienta. Claude aún ve la salida original; para reemplazarla, use `updatedToolOutput`                   |
 | `reason`               | Explicación mostrada a Claude cuando `decision` es `"block"`                                                                                                      |
 | `additionalContext`    | Cadena agregada al contexto de Claude junto con el resultado de la herramienta. Consulte [Agregar contexto para Claude](#add-context-for-claude)                  |
 | `updatedToolOutput`    | Reemplaza la salida de la herramienta con el valor proporcionado antes de que se envíe a Claude. El valor debe coincidir con la forma de salida de la herramienta |

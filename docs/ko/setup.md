@@ -398,6 +398,8 @@ npm 패키지는 독립 실행형 설치 프로그램과 동일한 네이티브 
 
 지원되는 npm 설치 플랫폼은 `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64` 및 `win32-arm64`입니다. 패키지 관리자는 선택적 종속성을 허용해야 합니다. 설치 후 바이너리가 누락된 경우 [문제 해결](/ko/troubleshoot-install#native-binary-not-found-after-npm-install)을 참조하세요.
 
+npm 설치를 업그레이드하려면 `npm install -g @anthropic-ai/claude-code@latest`를 실행하세요. `npm update -g`는 원래 설치의 semver 범위를 존중하며 최신 릴리스로 이동하지 않을 수 있으므로 피하세요.
+
 <Warning>
   `sudo npm install -g`를 사용하지 마세요. 이는 권한 문제 및 보안 위험으로 이어질 수 있습니다. 권한 오류가 발생하면 [설치 중 권한 오류 문제 해결](/ko/troubleshoot-install#permission-errors-during-installation)을 참조하세요.
 </Warning>

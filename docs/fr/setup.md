@@ -398,6 +398,8 @@ Le paquet npm installe le même binaire natif que l'installateur autonome. npm r
 
 Les plateformes d'installation npm supportées sont `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64` et `win32-arm64`. Votre gestionnaire de paquets doit autoriser les dépendances optionnelles. Consultez le [dépannage](/fr/troubleshoot-install#native-binary-not-found-after-npm-install) si le binaire est manquant après l'installation.
 
+Pour mettre à niveau une installation npm, exécutez `npm install -g @anthropic-ai/claude-code@latest`. Évitez `npm update -g`, qui respecte la plage semver de l'installation d'origine et peut ne pas vous amener à la version la plus récente.
+
 <Warning>
   N'utilisez PAS `sudo npm install -g` car cela peut entraîner des problèmes de permissions et des risques de sécurité. Si vous rencontrez des erreurs de permissions, consultez le [dépannage des erreurs de permissions](/fr/troubleshoot-install#permission-errors-during-installation).
 </Warning>

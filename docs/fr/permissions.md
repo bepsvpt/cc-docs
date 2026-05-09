@@ -210,6 +210,13 @@ Exemples :
 * `Edit(//tmp/scratch.txt)` : édite le chemin absolu `/tmp/scratch.txt`
 * `Read(src/**)` : lit à partir de `<répertoire courant>/src/`
 
+Une règle ne correspond qu'aux fichiers sous son ancrage, donc l'ancrage détermine jusqu'où une règle de refus s'étend. Les noms de fichiers nus suivent la sémantique gitignore et correspondent à n'importe quelle profondeur, donc `Read(.env)` et `Read(**/.env)` sont équivalents :
+
+| Règle de refus                  | Bloque                                              | Ne bloque pas                                                 |
+| ------------------------------- | --------------------------------------------------- | ------------------------------------------------------------- |
+| `Read(.env)` ou `Read(**/.env)` | tout `.env` au ou sous le répertoire courant        | `.env` dans un répertoire parent ou un autre projet           |
+| `Read(//**/.env)`               | tout `.env` n'importe où sur le système de fichiers | rien ; la règle est ancrée à la racine du système de fichiers |
+
 <Note>
   Dans les modèles gitignore, `*` correspond aux fichiers dans un seul répertoire tandis que `**` correspond récursivement dans les répertoires. Pour autoriser tous les accès aux fichiers, utilisez simplement le nom de l'outil sans parenthèses : `Read`, `Edit` ou `Write`.
 </Note>

@@ -41,7 +41,7 @@ Claude Code는 중앙 집중식 구성을 위한 두 가지 방식을 지원합�
   </Step>
 
   <Step title="설정 정의">
-    구성을 JSON으로 추가합니다. [`settings.json`에서 사용 가능한 모든 설정](/ko/settings#available-settings)이 지원되며, [hooks](/ko/hooks), [환경 변수](/ko/env-vars), 및 `allowManagedPermissionRulesOnly`와 같은 [관리 전용 설정](/ko/permissions#managed-only-settings)도 포함됩니다.
+    구성을 JSON으로 추가합니다. [`settings.json`에서 사용 가능한 모든 설정](/ko/settings#available-settings)이 지원되며, OS 수준 정책 전달로 제한된 설정을 제외하고는 모두 지원됩니다. [현재 제한사항](#current-limitations)에서 해당 짧은 목록을 참조하십시오. 여기에는 [hooks](/ko/hooks), [환경 변수](/ko/env-vars), 및 `allowManagedPermissionRulesOnly`와 같은 [관리 전용 설정](/ko/permissions#managed-only-settings)이 포함됩니다.
 
     이 예제는 권한 거부 목록을 적용하고, 사용자가 권한을 우회하는 것을 방지하며, 권한 규칙을 관리 설정에 정의된 규칙으로만 제한합니다.
 
@@ -93,7 +93,7 @@ Claude Code는 중앙 집중식 구성을 위한 두 가지 방식을 지원합�
     }
     ```
 
-    Hook은 셸 명령을 실행하므로 사용자는 적용되기 전에 [보안 승인 대화](#security-approval-dialogs)를 봅니다. `autoMode` 항목이 분류기가 차단하는 것에 어떻게 영향을 미치는지, 그리고 `allow` 및 `soft_deny` 필드에 대한 중요한 경고는 [자동 모드 구성](/ko/auto-mode-config)을 참조하십시오.
+    Hook은 셸 명령을 실행하므로 사용자는 적용되기 전에 [보안 승인 대화](#security-approval-dialogs)를 봅니다. `autoMode` 항목이 분류기가 차단하는 것에 어떻게 영향을 미치는지, 그리고 `environment`, `allow`, `soft_deny`, 및 `hard_deny` 필드에 대한 중요한 경고는 [자동 모드 구성](/ko/auto-mode-config)을 참조하십시오.
   </Step>
 
   <Step title="저장 및 배포">
@@ -124,6 +124,7 @@ Claude Code는 중앙 집중식 구성을 위한 두 가지 방식을 지원합�
 
 * 설정은 조직의 모든 사용자에게 균일하게 적용됩니다. 그룹별 구성은 아직 지원되지 않습니다.
 * [MCP 서버 구성](/ko/mcp#managed-mcp-configuration)은 서버 관리 설정을 통해 배포할 수 없습니다.
+* OS 수준 정책 소스로 제한된 설정(예: `policyHelper` 및 `wslInheritsWindowsSettings`)은 적용되지 않습니다. 대신 MDM 또는 시스템 `managed-settings.json` 파일을 통해 배포하십시오.
 
 ## 설정 전달
 

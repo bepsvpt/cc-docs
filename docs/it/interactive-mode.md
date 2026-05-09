@@ -289,7 +289,7 @@ Quando aprite una sessione per la prima volta, un comando di esempio in grigio a
 
 Dopo che Claude risponde, i suggerimenti continuano ad apparire in base alla vostra cronologia di conversazione, come un passaggio di follow-up da una richiesta in più parti o una continuazione naturale del vostro flusso di lavoro.
 
-* Premete **Tab** o **Freccia destra** per accettare il suggerimento, oppure premete **Enter** per accettare e inviare
+* Premete **Tab** o **Freccia destra** per inserire il suggerimento nell'input del prompt, quindi **Invio** per inviare
 * Iniziate a digitare per dismissarlo
 
 Il suggerimento viene eseguito come una richiesta in background che riutilizza la cache del prompt della conversazione padre, quindi il costo aggiuntivo è minimo. Claude Code salta la generazione di suggerimenti quando la cache è fredda per evitare costi inutili.

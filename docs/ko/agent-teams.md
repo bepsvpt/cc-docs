@@ -420,5 +420,5 @@ tmux kill-session -t <session-name>
 병렬 작업 및 위임을 위한 관련 접근 방식을 탐색합니다:
 
 * **경량 위임**: [subagents](/ko/sub-agents)는 세션 내에서 연구 또는 검증을 위해 도우미 에이전트를 생성하며, 에이전트 간 조율이 필요하지 않은 작업에 더 좋습니다
-* **수동 병렬 세션**: [Git worktrees](/ko/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees)를 사용하면 자동화된 팀 조율 없이 여러 Claude Code 세션을 직접 실행할 수 있습니다
+* **수동 병렬 세션**: [Git worktrees](/ko/worktrees)를 사용하면 자동화된 팀 조율 없이 여러 Claude Code 세션을 직접 실행할 수 있습니다
 * **접근 방식 비교**: [subagent vs 에이전트 팀](/ko/features-overview#compare-similar-features) 비교를 참조하여 나란히 비교합니다

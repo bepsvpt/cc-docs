@@ -423,7 +423,7 @@ Nama ini digunakan untuk namespacing komponen. Misalnya, di UI, agent `agent-cre
 
 | Field                   | Tipe                  | Deskripsi                                                                                                                                                   | Contoh                                               |
 | :---------------------- | :-------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
-| `skills`                | string\|array         | Direktori skill khusus yang berisi `<name>/SKILL.md` (menggantikan default `skills/`)                                                                       | `"./custom/skills/"`                                 |
+| `skills`                | string\|array         | Direktori skill khusus yang berisi `<name>/SKILL.md` (selain default `skills/`)                                                                             | `"./custom/skills/"`                                 |
 | `commands`              | string\|array         | File skill `.md` datar atau direktori khusus (menggantikan default `commands/`)                                                                             | `"./custom/cmd.md"` atau `["./cmd1.md"]`             |
 | `agents`                | string\|array         | File agent khusus (menggantikan default `agents/`)                                                                                                          | `"./custom/agents/reviewer.md"`                      |
 | `hooks`                 | string\|array\|object | Jalur konfigurasi hook atau konfigurasi inline                                                                                                              | `"./my-extra-hooks.json"`                            |
@@ -510,13 +510,18 @@ Field `server` diperlukan dan harus cocok dengan kunci di `mcpServers` plugin. F
 
 ### Aturan perilaku jalur
 
-Untuk `skills`, `commands`, `agents`, `outputStyles`, `experimental.themes`, dan `experimental.monitors`, jalur khusus menggantikan default. Jika manifest menentukan `skills`, direktori default `skills/` tidak dipindai; jika menentukan `experimental.monitors`, default `monitors/monitors.json` tidak dimuat. [Hooks](#hooks), [MCP servers](#mcp-servers), dan [LSP servers](#lsp-servers) memiliki semantik berbeda untuk menangani beberapa sumber.
+Apakah jalur khusus menggantikan atau memperluas direktori default plugin tergantung pada field:
+
+* **Menggantikan default**: `commands`, `agents`, `outputStyles`, `experimental.themes`, `experimental.monitors`. Misalnya, saat manifest menentukan `commands`, direktori default `commands/` tidak dipindai. Untuk menyimpan default dan menambahkan lebih banyak, sertakan secara eksplisit: `"commands": ["./commands/", "./extras/"]`
+* **Menambah default**: `skills`. Direktori default `skills/` selalu dipindai, dan direktori yang tercantum di `skills` dimuat bersama dengannya
+* **Aturan penggabungan sendiri**: [hooks](#hooks), [MCP servers](#mcp-servers), dan [LSP servers](#lsp-servers). Lihat setiap bagian untuk cara beberapa sumber digabungkan
+
+Untuk semua field jalur:
 
 * Semua jalur harus relatif terhadap root plugin dan dimulai dengan `./`
 * Komponen dari jalur khusus menggunakan aturan penamaan dan namespacing yang sama
 * Beberapa jalur dapat ditentukan sebagai array
-* Untuk menyimpan direktori default dan menambahkan lebih banyak jalur untuk skills, commands, agents, atau output styles, sertakan default dalam array Anda: `"skills": ["./skills/", "./extras/"]`
-* Ketika jalur skill menunjuk ke direktori yang berisi `SKILL.md` secara langsung, misalnya `"skills": ["./"]` menunjuk ke root plugin, field frontmatter `name` di `SKILL.md` menentukan nama invokasi skill. Ini memberikan nama stabil terlepas dari direktori instalasi. Jika `name` tidak diatur di frontmatter, basename direktori digunakan sebagai fallback.
+* Saat jalur skill menunjuk ke direktori yang berisi `SKILL.md` secara langsung, misalnya `"skills": ["./"]` menunjuk ke root plugin, field frontmatter `name` di `SKILL.md` menentukan nama invokasi skill. Ini memberikan nama stabil terlepas dari direktori instalasi. Jika `name` tidak diatur di frontmatter, basename direktori digunakan sebagai fallback.
 
 **Contoh jalur**:
 

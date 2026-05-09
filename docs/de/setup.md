@@ -398,6 +398,8 @@ Das npm-Paket installiert die gleiche native Binärdatei wie das eigenständige 
 
 Unterstützte npm-Installationsplattformen sind `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64` und `win32-arm64`. Ihr Paketmanager muss optionale Abhängigkeiten zulassen. Siehe [Fehlerbehebung](/de/troubleshoot-install#native-binary-not-found-after-npm-install), wenn die Binärdatei nach der Installation fehlt.
 
+Um eine npm-Installation zu aktualisieren, führen Sie `npm install -g @anthropic-ai/claude-code@latest` aus. Vermeiden Sie `npm update -g`, das den Semver-Bereich aus der ursprünglichen Installation respektiert und Sie möglicherweise nicht zur neuesten Version führt.
+
 <Warning>
   Verwenden Sie NICHT `sudo npm install -g`, da dies zu Berechtigungsproblemen und Sicherheitsrisiken führen kann. Wenn Sie auf Berechtigungsfehler stoßen, siehe [Fehlerbehebung bei Berechtigungsfehlern](/de/troubleshoot-install#permission-errors-during-installation).
 </Warning>

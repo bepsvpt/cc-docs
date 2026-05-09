@@ -289,7 +289,7 @@ Wenn Sie eine Sitzung zum ersten Mal öffnen, wird ein ausgegrautes Beispiel-Bef
 
 Nachdem Claude antwortet, werden weiterhin Vorschläge basierend auf Ihrem Gesprächsverlauf angezeigt, z. B. ein Folgenschritt aus einer mehrteiligen Anfrage oder eine natürliche Fortsetzung Ihres Workflows.
 
-* Drücken Sie **Tab** oder **Rechts-Pfeil**, um den Vorschlag zu akzeptieren, oder drücken Sie **Enter**, um zu akzeptieren und einzureichen
+* Drücken Sie **Tab** oder **Rechts-Pfeil**, um den Vorschlag in die Eingabeaufforderung zu platzieren, und dann **Enter**, um einzureichen
 * Beginnen Sie zu tippen, um ihn zu verwerfen
 
 Der Vorschlag wird als Hintergrund-Anfrage ausgeführt, die den Prompt-Cache des übergeordneten Gesprächs wiederverwenden, sodass die zusätzlichen Kosten minimal sind. Claude Code überspringt die Vorschlagsgenerierung, wenn der Cache kalt ist, um unnötige Kosten zu vermeiden.

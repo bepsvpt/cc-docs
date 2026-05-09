@@ -1226,9 +1226,9 @@ Il n'y a pas de délai d'expiration ou de limite de tentatives. La session reste
 
 Si l'outil différé n'est plus disponible lorsque vous reprenez, le processus quitte avec `stop_reason: "tool_deferred_unavailable"` et `is_error: true` avant que le hook ne se déclenche. Cela se produit lorsqu'un serveur MCP qui a fourni l'outil n'est pas connecté pour la session reprise. La charge utile `deferred_tool_use` est toujours incluse afin que vous puissiez identifier quel outil a disparu.
 
-<Warning>
-  `--resume` ne restaure pas le mode de permission de la session antérieure. Passez le même drapeau `--permission-mode` lors de la reprise qui était actif lorsque l'outil a été différé. Claude Code enregistre un avertissement si les modes diffèrent.
-</Warning>
+<Note>
+  `--resume` restaure le mode de permission qui était actif lorsque l'outil a été différé, donc vous n'avez pas besoin de passer `--permission-mode` à nouveau. Les exceptions sont `plan` et `bypassPermissions`, qui ne sont jamais reportés. Passer `--permission-mode` explicitement lors de la reprise remplace la valeur restaurée.
+</Note>
 
 ### PermissionRequest
 

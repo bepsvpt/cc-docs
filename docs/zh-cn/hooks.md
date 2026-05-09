@@ -1226,9 +1226,9 @@ InstructionsLoaded hooks 没有决定控制。它们无法阻止或修改指令�
 
 如果恢复时延迟的工具不再可用，进程以 `stop_reason: "tool_deferred_unavailable"` 和 `is_error: true` 退出，在 hook 触发之前。这发生在为恢复的会话未连接提供工具的 MCP 服务器时。`deferred_tool_use` 有效负载仍然包括，以便您可以识别哪个工具丢失。
 
-<Warning>
-  `--resume` 不会从先前的会话恢复权限模式。在恢复时传递与工具被延迟时活跃的相同 `--permission-mode` 标志。Claude Code 在模式不同时记录警告。
-</Warning>
+<Note>
+  `--resume` 恢复工具被延迟时活跃的权限模式，因此您不需要再次传递 `--permission-mode`。例外是 `plan` 和 `bypassPermissions`，它们永远不会被携带。在恢复时显式传递 `--permission-mode` 会覆盖恢复的值。
+</Note>
 
 ### PermissionRequest
 

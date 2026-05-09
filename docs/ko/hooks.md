@@ -1226,9 +1226,9 @@ hook이 `"ask"`를 반환하면 사용자에게 표시되는 권한 프롬프트
 
 연기된 도구가 재개할 때 더 이상 사용 가능하지 않으면 프로세스는 `stop_reason: "tool_deferred_unavailable"`과 `is_error: true`로 종료되고 hook이 발생하기 전에 종료됩니다. 이는 도구를 제공한 MCP 서버가 재개된 세션에 연결되지 않을 때 발생합니다. `deferred_tool_use` 페이로드는 여전히 포함되므로 어느 도구가 누락되었는지 식별할 수 있습니다.
 
-<Warning>
-  `--resume`은 이전 세션의 권한 모드를 복원하지 않습니다. 도구가 연기되었을 때 활성화된 것과 동일한 `--permission-mode` 플래그를 재개할 때 전달합니다. Claude Code는 모드가 다르면 경고를 기록합니다.
-</Warning>
+<Note>
+  `--resume`은 도구가 연기되었을 때 활성화된 권한 모드를 복원하므로 재개할 때 `--permission-mode`를 다시 전달할 필요가 없습니다. 예외는 `plan` 및 `bypassPermissions`이며, 이들은 절대 이월되지 않습니다. 재개할 때 `--permission-mode`를 명시적으로 전달하면 복원된 값을 재정의합니다.
+</Note>
 
 ### PermissionRequest
 

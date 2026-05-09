@@ -423,5 +423,5 @@ Los equipos de agentes son experimentales. Las limitaciones actuales a tener en 
 Explore enfoques relacionados para trabajo paralelo y delegación:
 
 * **Delegación ligera**: [subagents](/es/sub-agents) generan agentes auxiliares para investigación o verificación dentro de su sesión, mejor para tareas que no necesitan coordinación entre agentes
-* **Sesiones paralelas manuales**: [Git worktrees](/es/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) le permiten ejecutar múltiples sesiones de Claude Code usted mismo sin coordinación de equipo automatizada
+* **Sesiones paralelas manuales**: [Git worktrees](/es/worktrees) le permiten ejecutar múltiples sesiones de Claude Code usted mismo sin coordinación de equipo automatizada
 * **Comparar enfoques**: vea la comparación [subagent vs agent team](/es/features-overview#compare-similar-features) para un desglose lado a lado

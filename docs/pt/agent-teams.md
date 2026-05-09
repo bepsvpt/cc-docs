@@ -405,7 +405,7 @@ Equipes de agentes são experimentais. Limitações atuais a serem observadas:
 * **Sem retomada de sessão com companheiros de equipe in-process**: `/resume` e `/rewind` não restauram companheiros de equipe in-process. Após retomar uma sessão, o líder pode tentar enviar mensagens para companheiros de equipe que não existem mais. Se isso acontecer, diga ao líder para gerar novos companheiros de equipe.
 * **Status da tarefa pode ficar atrasado**: os companheiros de equipe às vezes falham em marcar tarefas como concluídas, o que bloqueia tarefas dependentes. Se uma tarefa parecer presa, verifique se o trabalho está realmente pronto e atualize o status da tarefa manualmente ou diga ao líder para dar um empurrão ao companheiro de equipe.
 * **Encerramento pode ser lento**: os companheiros de equipe terminam sua solicitação atual ou chamada de ferramenta antes de encerrar, o que pode levar tempo.
-* **Uma equipe por sessão**: um líder pode gerenciar apenas uma equipe por vez. Limpe a equipe atual antes de iniciar uma nova.
+* **Uma equipe por vez**: um líder pode gerenciar apenas uma equipe. Limpe a equipe atual antes de criar uma nova.
 * **Sem equipes aninhadas**: os companheiros de equipe não podem gerar suas próprias equipes ou companheiros de equipe. Apenas o líder pode gerenciar a equipe.
 * **Líder é fixo**: a sessão que cria a equipe é o líder por sua vida útil. Você não pode promover um companheiro de equipe a líder ou transferir liderança.
 * **Permissões definidas no tempo de geração**: todos os companheiros de equipe começam com o modo de permissão do líder. Você pode alterar modos de companheiros de equipe individuais após gerar, mas não pode definir modos por companheiro de equipe no tempo de geração.
@@ -420,5 +420,5 @@ Equipes de agentes são experimentais. Limitações atuais a serem observadas:
 Explore abordagens relacionadas para trabalho paralelo e delegação:
 
 * **Delegação leve**: [subagents](/pt/sub-agents) geram agentes auxiliares para pesquisa ou verificação dentro de sua sessão, melhor para tarefas que não precisam de coordenação entre agentes
-* **Sessões paralelas manuais**: [Git worktrees](/pt/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees) permitem que você execute múltiplas sessões Claude Code você mesmo sem coordenação de equipe automatizada
+* **Sessões paralelas manuais**: [Git worktrees](/pt/worktrees) permitem que você execute múltiplas sessões Claude Code você mesmo sem coordenação de equipe automatizada
 * **Comparar abordagens**: veja a comparação [subagent vs agent team](/pt/features-overview#compare-similar-features) para um detalhamento lado a lado
