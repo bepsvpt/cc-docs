@@ -746,9 +746,9 @@ Claude가 원하지 않을 때 skill을 사용하는 경우:
 
 ### Skill 설명이 잘림
 
-Skill 설명은 Claude가 사용 가능한 항목을 알 수 있도록 컨텍스트에 로드됩니다. 모든 skill 이름은 항상 포함되지만, 많은 skills가 있으면 설명이 단축되어 문자 예산에 맞출 수 있으며, 이는 Claude가 요청과 일치하는 데 필요한 키워드를 제거할 수 있습니다. 예산은 컨텍스트 윈도우의 1%에서 동적으로 확장되며, 8,000자의 폴백이 있습니다.
+Skill 설명은 Claude가 사용 가능한 항목을 알 수 있도록 컨텍스트에 로드됩니다. 모든 skill 이름은 항상 포함되지만, 많은 skills가 있으면 설명이 단축되어 문자 예산에 맞출 수 있으며, 이는 Claude가 요청과 일치하는 데 필요한 키워드를 제거할 수 있습니다. 예산은 모델의 컨텍스트 윈도우의 1%에서 확장됩니다. 예산이 초과되면, 가장 적게 호출하는 skills의 설명이 먼저 삭제되므로 실제로 사용하는 skills는 전체 텍스트를 유지합니다. `/doctor`를 실행하여 예산이 초과되었는지 확인하고 어떤 skills가 영향을 받는지 확인합니다.
 
-제한을 높이려면 `SLASH_COMMAND_TOOL_CHAR_BUDGET` 환경 변수를 설정합니다. 다른 skills를 위해 예산을 확보하려면 [`skillOverrides`](#override-skill-visibility-from-settings)에서 낮은 우선순위 항목을 `"name-only"`로 설정하여 설명 없이 나열되도록 합니다. 또한 소스에서 `description` 및 `when_to_use` 텍스트를 자를 수 있습니다: 주요 사용 사례를 먼저 배치합니다. 각 항목의 결합된 텍스트는 예산과 관계없이 1,536자로 제한됩니다.
+예산을 높이려면 [`skillListingBudgetFraction`](/ko/settings#available-settings) 설정(예: `0.02` = 2%)을 설정하거나 `SLASH_COMMAND_TOOL_CHAR_BUDGET` 환경 변수를 고정 문자 수로 설정합니다. 다른 skills를 위해 예산을 확보하려면 [`skillOverrides`](#override-skill-visibility-from-settings)에서 낮은 우선순위 항목을 `"name-only"`로 설정하여 설명 없이 나열되도록 합니다. 또한 소스에서 `description` 및 `when_to_use` 텍스트를 자를 수 있습니다: 주요 사용 사례를 먼저 배치합니다. 각 항목의 결합된 텍스트는 예산과 관계없이 1,536자로 제한되기 때문입니다. 이 제한은 [`maxSkillDescriptionChars`](/ko/settings#available-settings)로 구성할 수 있습니다.
 
 ## 관련 리소스
 

@@ -470,14 +470,44 @@ Hook-Events werden an bestimmten Lebenszykluspunkten in Claude Code ausgelöst. 
 | `ElicitationResult`   | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
 | `SessionEnd`          | When a session terminates                                                                                                                              |
 
-Wenn mehrere Hooks übereinstimmen, gibt jeder sein eigenes Ergebnis zurück. Für Entscheidungen wählt Claude Code die restriktivste Antwort. Ein `PreToolUse`-Hook, der `deny` zurückgibt, bricht den Tool-Aufruf ab, egal was die anderen zurückgeben. Ein Hook, der `ask` zurückgibt, erzwingt die Berechtigungsaufforderung, auch wenn der Rest `allow` zurückgibt. Text aus `additionalContext` wird von jedem Hook beibehalten und zusammen an Claude übergeben.
-
 Jeder Hook hat einen `type`, der bestimmt, wie er ausgeführt wird. Die meisten Hooks verwenden `"type": "command"`, was einen Shell-Befehl ausführt. Vier weitere Typen sind verfügbar:
 
 * `"type": "http"`: Event-Daten an eine URL POSTen. Siehe [HTTP-Hooks](#http-hooks).
 * `"type": "mcp_tool"`: ein Tool auf einem bereits verbundenen MCP-Server aufrufen. Siehe [MCP-Tool-Hooks](/de/hooks#mcp-tool-hook-fields).
 * `"type": "prompt"`: Single-Turn-LLM-Bewertung. Siehe [Prompt-basierte Hooks](#prompt-based-hooks).
 * `"type": "agent"`: Multi-Turn-Verifizierung mit Tool-Zugriff. Agent-Hooks sind experimentell und können sich ändern. Siehe [Agent-basierte Hooks](#agent-based-hooks).
+
+### Ergebnisse aus mehreren Hooks kombinieren
+
+Wenn mehrere Hooks das gleiche Event abgleichen, wird jeder Hook-Befehl bis zur Fertigstellung ausgeführt, bevor Claude Code die Ergebnisse zusammenführt. Ein Hook, der `deny` zurückgibt, stoppt nicht die Ausführung von Sibling-Hooks. Verlassen Sie sich nicht darauf, dass ein Hook's `deny` Nebenwirkungen in einem anderen Hook unterdrückt.
+
+Nachdem alle übereinstimmenden Hooks fertig sind, kombiniert Claude Code ihre Ausgaben. Für `PreToolUse`-Berechtigungsentscheidungen gewinnt die restriktivste Antwort: `deny` überschreibt `ask`, was `allow` überschreibt. Text aus `additionalContext` wird von jedem Hook beibehalten und zusammen an Claude übergeben.
+
+Das folgende Beispiel registriert zwei `PreToolUse`-Hooks auf `Bash`. Der erste hängt jeden Befehl an eine Protokolldatei an und beendet sich mit 0. Der zweite führt ein Skript aus, das mit 2 beendet wird, um zu verweigern, wenn der Befehl `rm -rf` enthält:
+
+```json theme={null}
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r .tool_input.command >> ~/.claude/bash.log"
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-rm-rf.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Wenn Claude versucht, `rm -rf /tmp/build` auszuführen, werden beide Hooks parallel ausgeführt. Der Logging-Hook schreibt den Befehl in `~/.claude/bash.log` und beendet sich mit 0, was keine Entscheidung meldet. Der Guardrail-Hook beendet sich mit 2, was den Tool-Aufruf verweigert. Die Verweigerung gewinnt, sodass Claude Code den Befehl blockiert und Claude das Guardrail's stderr zeigt. Der Log-Eintrag wird trotzdem geschrieben, weil der Logging-Hook bereits ausgeführt wurde.
 
 ### Eingabe lesen und Ausgabe zurückgeben
 

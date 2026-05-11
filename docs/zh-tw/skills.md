@@ -746,9 +746,9 @@ if __name__ == '__main__':
 
 ### Skill 描述被截斷
 
-Skill 描述會載入上下文，以便 Claude 知道可用的內容。所有 skill 名稱始終包含在內，但如果您有許多 skills，描述會被縮短以適應字元預算，這可能會去除 Claude 需要匹配您的請求的關鍵字。預算在上下文視窗的 1% 處動態縮放，回退為 8,000 個字元。
+Skill 描述會載入上下文，以便 Claude 知道可用的內容。所有 skill 名稱始終包含在內，但如果您有許多 skills，描述會被縮短以適應字元預算，這可能會去除 Claude 需要匹配您的請求的關鍵字。預算在模型上下文視窗的 1% 處動態縮放。當預算溢出時，您最少叫用的 skills 的描述會首先被捨棄，因此您實際使用的 skills 會保留其完整文字。執行 `/doctor` 以查看預算是否溢出以及哪些 skills 受到影響。
 
-若要提高限制，請設定 `SLASH_COMMAND_TOOL_CHAR_BUDGET` 環境變數。若要為其他 skills 釋放預算，請在 [`skillOverrides`](#override-skill-visibility-from-settings) 中將低優先順序項目設定為 `"name-only"`，以便它們列出而不顯示描述。您也可以在來源處修剪 `description` 和 `when_to_use` 文字：前置關鍵使用案例，因為每個項目的結合文字無論預算如何都限制在 1,536 個字元。
+若要提高預算，請設定 [`skillListingBudgetFraction`](/zh-TW/settings#available-settings) 設定（例如 `0.02` = 2%）或 `SLASH_COMMAND_TOOL_CHAR_BUDGET` 環境變數為固定字元計數。若要為其他 skills 釋放預算，請在 [`skillOverrides`](#override-skill-visibility-from-settings) 中將低優先順序項目設定為 `"name-only"`，以便它們列出而不顯示描述。您也可以在來源處修剪 `description` 和 `when_to_use` 文字：前置關鍵使用案例，因為每個項目的結合文字無論預算如何都限制在 1,536 個字元。此上限可透過 [`maxSkillDescriptionChars`](/zh-TW/settings#available-settings) 進行設定。
 
 ## 相關資源
 

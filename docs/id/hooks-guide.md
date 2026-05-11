@@ -470,14 +470,44 @@ Acara hook aktif pada titik-titik siklus hidup spesifik di Claude Code. Ketika a
 | `ElicitationResult`   | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
 | `SessionEnd`          | When a session terminates                                                                                                                              |
 
-Ketika beberapa hook cocok, masing-masing mengembalikan hasilnya sendiri. Untuk keputusan, Claude Code memilih jawaban yang paling ketat. Hook `PreToolUse` yang mengembalikan `deny` membatalkan panggilan alat tidak peduli apa yang dikembalikan yang lain. Satu hook yang mengembalikan `ask` memaksa prompt izin bahkan jika sisanya mengembalikan `allow`. Teks dari `additionalContext` disimpan dari setiap hook dan diteruskan ke Claude bersama-sama.
-
 Setiap hook memiliki `type` yang menentukan cara menjalankannya. Sebagian besar hooks menggunakan `"type": "command"`, yang menjalankan perintah shell. Empat jenis lain tersedia:
 
 * `"type": "http"`: POST data acara ke URL. Lihat [HTTP hooks](#http-hooks).
 * `"type": "mcp_tool"`: panggil alat pada server MCP yang sudah terhubung. Lihat [MCP tool hooks](/id/hooks#mcp-tool-hook-fields).
 * `"type": "prompt"`: evaluasi LLM single-turn. Lihat [Prompt-based hooks](#prompt-based-hooks).
 * `"type": "agent"`: verifikasi multi-turn dengan akses alat. Agent hooks bersifat eksperimental dan mungkin berubah. Lihat [Agent-based hooks](#agent-based-hooks).
+
+### Gabungkan hasil dari beberapa hooks
+
+Ketika beberapa hooks cocok dengan acara yang sama, setiap perintah hook berjalan hingga selesai sebelum Claude Code menggabungkan hasilnya. Satu hook yang mengembalikan `deny` tidak menghentikan hook sibling dari eksekusi. Jangan andalkan `deny` dari satu hook untuk menekan efek samping di hook lain.
+
+Setelah semua hooks yang cocok selesai, Claude Code menggabungkan output mereka. Untuk keputusan izin `PreToolUse`, jawaban yang paling ketat menang: `deny` mengesampingkan `ask`, yang mengesampingkan `allow`. Teks dari `additionalContext` disimpan dari setiap hook dan diteruskan ke Claude bersama-sama.
+
+Contoh di bawah mendaftarkan dua hooks `PreToolUse` pada `Bash`. Yang pertama menambahkan setiap perintah ke file log dan keluar 0. Yang kedua menjalankan skrip yang keluar 2 untuk menolak ketika perintah berisi `rm -rf`:
+
+```json theme={null}
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r .tool_input.command >> ~/.claude/bash.log"
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-rm-rf.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Ketika Claude mencoba menjalankan `rm -rf /tmp/build`, kedua hooks dieksekusi secara paralel. Hook logging menulis perintah ke `~/.claude/bash.log` dan keluar 0, yang melaporkan tidak ada keputusan. Hook guardrail keluar 2, yang menolak panggilan alat. Deny menang, jadi Claude Code memblokir perintah dan menunjukkan stderr guardrail kepada Claude. Entri log masih ditulis karena hook logging sudah berjalan.
 
 ### Baca input dan kembalikan output
 

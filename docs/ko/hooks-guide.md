@@ -470,14 +470,44 @@ Hook 이벤트는 Claude Code의 라이프사이클의 특정 지점에서 발�
 | `ElicitationResult`   | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
 | `SessionEnd`          | When a session terminates                                                                                                                              |
 
-여러 hooks가 일치하면 각각 자신의 결과를 반환합니다. 결정의 경우 Claude Code는 가장 제한적인 답변을 선택합니다. `PreToolUse` hook이 `deny`를 반환하면 다른 것이 반환하는 것과 관계없이 도구 호출이 취소됩니다. 하나의 hook이 `ask`를 반환하면 나머지가 `allow`를 반환하더라도 권한 프롬프트가 강제됩니다. `additionalContext`의 텍스트는 모든 hook에서 유지되고 Claude와 함께 전달됩니다.
-
 각 hook에는 실행 방식을 결정하는 `type`이 있습니다. 대부분의 hooks는 `"type": "command"`를 사용하여 셸 명령을 실행합니다. 네 가지 다른 유형을 사용할 수 있습니다:
 
 * `"type": "http"`: 이벤트 데이터를 URL에 POST합니다. [HTTP hooks](#http-hooks)를 참조하세요.
 * `"type": "mcp_tool"`: 이미 연결된 MCP 서버에서 도구를 호출합니다. [MCP tool hooks](/ko/hooks#mcp-tool-hook-fields)를 참조하세요.
 * `"type": "prompt"`: 단일 턴 LLM 평가. [프롬프트 기반 hooks](#prompt-based-hooks)를 참조하세요.
 * `"type": "agent"`: 도구 액세스를 통한 다중 턴 검증. 에이전트 hooks는 실험적이며 변경될 수 있습니다. [에이전트 기반 hooks](#agent-based-hooks)를 참조하세요.
+
+### 여러 hooks의 결과 결합
+
+여러 hooks가 동일한 이벤트와 일치하면 모든 hook의 명령이 완료될 때까지 실행된 후 Claude Code가 결과를 병합합니다. 하나의 hook이 `deny`를 반환하는 것이 형제 hooks의 실행을 중지하지 않습니다. 한 hook의 `deny`가 다른 hook의 부작용을 억제하는 것에 의존하지 마세요.
+
+모든 일치하는 hooks가 완료된 후 Claude Code는 출력을 결합합니다. `PreToolUse` 권한 결정의 경우 가장 제한적인 답변이 우선합니다: `deny`는 `ask`를 재정의하고 `ask`는 `allow`를 재정의합니다. `additionalContext`의 텍스트는 모든 hook에서 유지되고 Claude와 함께 전달됩니다.
+
+아래 예제는 `Bash`에 두 개의 `PreToolUse` hooks를 등록합니다. 첫 번째는 모든 명령을 로그 파일에 추가하고 0으로 종료합니다. 두 번째는 명령에 `rm -rf`가 포함되어 있을 때 거부하기 위해 2로 종료하는 스크립트를 실행합니다:
+
+```json theme={null}
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r .tool_input.command >> ~/.claude/bash.log"
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-rm-rf.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Claude가 `rm -rf /tmp/build`를 실행하려고 할 때 두 hooks 모두 병렬로 실행됩니다. 로깅 hook은 명령을 `~/.claude/bash.log`에 쓰고 0으로 종료하여 결정이 없음을 보고합니다. 보안 규칙 hook은 2로 종료하여 도구 호출을 거부합니다. 거부가 우선하므로 Claude Code는 명령을 차단하고 Claude에게 보안 규칙의 stderr를 표시합니다. 로깅 hook이 이미 실행되었기 때문에 로그 항목은 여전히 기록됩니다.
 
 ### 입력 읽기 및 출력 반환
 

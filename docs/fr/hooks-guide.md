@@ -470,14 +470,44 @@ Les événements de hook se déclenchent à des points spécifiques du cycle de 
 | `ElicitationResult`   | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
 | `SessionEnd`          | When a session terminates                                                                                                                              |
 
-Lorsque plusieurs hooks correspondent, chacun retourne son propre résultat. Pour les décisions, Claude Code choisit la réponse la plus restrictive. Un hook `PreToolUse` retournant `deny` annule l'appel d'outil peu importe ce que les autres retournent. Un hook retournant `ask` force l'invite de permission même si le reste retourne `allow`. Le texte de `additionalContext` est conservé de chaque hook et transmis à Claude ensemble.
-
 Chaque hook a un `type` qui détermine comment il s'exécute. La plupart des hooks utilisent `"type": "command"`, qui exécute une commande shell. Quatre autres types sont disponibles :
 
 * `"type": "http"` : POST les données d'événement vers une URL. Consultez [Hooks HTTP](#http-hooks).
 * `"type": "mcp_tool"` : appeler un outil sur un serveur MCP déjà connecté. Consultez [Champs de hooks d'outil MCP](/fr/hooks#mcp-tool-hook-fields).
 * `"type": "prompt"` : évaluation LLM à un seul tour. Consultez [Hooks basés sur des invites](#prompt-based-hooks).
 * `"type": "agent"` : vérification multi-tour avec accès aux outils. Les hooks d'agent sont expérimentaux et peuvent changer. Consultez [Hooks basés sur des agents](#agent-based-hooks).
+
+### Combiner les résultats de plusieurs hooks
+
+Lorsque plusieurs hooks correspondent au même événement, la commande de chaque hook s'exécute jusqu'à son terme avant que Claude Code ne fusionne les résultats. Un hook retournant `deny` n'empêche pas les hooks frères de s'exécuter. Ne comptez pas sur le `deny` d'un hook pour supprimer les effets secondaires dans un autre hook.
+
+Après que tous les hooks correspondants se terminent, Claude Code combine leurs résultats. Pour les décisions de permission `PreToolUse`, la réponse la plus restrictive gagne : `deny` remplace `ask`, qui remplace `allow`. Le texte de `additionalContext` est conservé de chaque hook et transmis à Claude ensemble.
+
+L'exemple ci-dessous enregistre deux hooks `PreToolUse` sur `Bash`. Le premier ajoute chaque commande à un fichier journal et quitte avec le code 0. Le second exécute un script qui quitte avec le code 2 pour refuser lorsque la commande contient `rm -rf` :
+
+```json theme={null}
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r .tool_input.command >> ~/.claude/bash.log"
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-rm-rf.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Lorsque Claude essaie d'exécuter `rm -rf /tmp/build`, les deux hooks s'exécutent en parallèle. Le hook de journalisation écrit la commande dans `~/.claude/bash.log` et quitte avec le code 0, ce qui ne signale aucune décision. Le hook de garde-fou quitte avec le code 2, ce qui refuse l'appel d'outil. Le refus gagne, donc Claude Code bloque la commande et affiche à Claude le stderr du garde-fou. L'entrée du journal est toujours écrite car le hook de journalisation a déjà s'exécuté.
 
 ### Lire l'entrée et retourner la sortie
 

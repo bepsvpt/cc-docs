@@ -744,9 +744,9 @@ if __name__ == '__main__':
 
 ### Skill 描述被截断
 
-Skill 描述被加载到上下文中，以便 Claude 知道什么可用。所有 skill 名称始终包括，但如果你有许多 skills，描述会被缩短以适应字符预算，这可能会删除 Claude 需要匹配你的请求的关键字。预算在上下文窗口的 1% 处动态扩展，回退为 8,000 个字符。
+Skill 描述被加载到上下文中，以便 Claude 知道什么可用。所有 skill 名称始终包括，但如果你有许多 skills，描述会被缩短以适应字符预算，这可能会删除 Claude 需要匹配你的请求的关键字。预算按模型上下文窗口的 1% 进行扩展。当预算溢出时，你调用最少的 skills 的描述会首先被删除，因此你实际使用的 skills 会保留其完整文本。运行 `/doctor` 以查看预算是否溢出以及哪些 skills 受到影响。
 
-要提高限制，设置 `SLASH_COMMAND_TOOL_CHAR_BUDGET` 环境变量。要为其他 skills 释放预算，在 [`skillOverrides`](#override-skill-visibility-from-settings) 中将低优先级条目设置为 `"name-only"`，以便它们列出而不显示描述。你也可以在源处修剪 `description` 和 `when_to_use` 文本：前置关键用例，因为每个条目的组合文本被限制为 1,536 个字符，无论预算如何。
+要提高预算，设置 [`skillListingBudgetFraction`](/zh-CN/settings#available-settings) 设置（例如 `0.02` = 2%）或 `SLASH_COMMAND_TOOL_CHAR_BUDGET` 环境变量为固定字符数。要为其他 skills 释放预算，在 [`skillOverrides`](#override-skill-visibility-from-settings) 中将低优先级条目设置为 `"name-only"`，以便它们列出而不显示描述。你也可以在源处修剪 `description` 和 `when_to_use` 文本：前置关键用例，因为每个条目的组合文本被限制为 1,536 个字符，无论预算如何。该限制可通过 [`maxSkillDescriptionChars`](/zh-CN/settings#available-settings) 进行配置。
 
 ## 相关资源
 

@@ -470,14 +470,44 @@ Hook 事件在 Claude Code 的特定生命週期點觸發。當事件觸發時�
 | `ElicitationResult`   | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
 | `SessionEnd`          | When a session terminates                                                                                                                              |
 
-當多個 hooks 相符時，每個都傳回自己的結果。對於決策，Claude Code 選擇最具限制性的答案。傳回 `deny` 的 `PreToolUse` hook 會取消工具呼叫，無論其他的傳回什麼。一個 hook 傳回 `ask` 會強制權限提示，即使其餘的傳回 `allow`。來自 `additionalContext` 的文字會從每個 hook 保留並一起傳遞給 Claude。
-
 每個 hook 都有一個 `type` 來決定它如何執行。大多數 hooks 使用 `"type": "command"`，它執行 shell 命令。還有四種其他類型可用：
 
 * `"type": "http"`：POST 事件資料到 URL。請參閱 [HTTP hooks](#http-hooks)。
 * `"type": "mcp_tool"`：在已連接的 MCP 伺服器上呼叫工具。請參閱 [MCP tool hooks](/zh-TW/hooks#mcp-tool-hook-fields)。
 * `"type": "prompt"`：單輪 LLM 評估。請參閱[基於提示的 hooks](#prompt-based-hooks)。
 * `"type": "agent"`：具有工具存取的多輪驗證。Agent hooks 是實驗性的，可能會改變。請參閱[基於 Agent 的 hooks](#agent-based-hooks)。
+
+### 合併來自多個 hooks 的結果
+
+當多個 hooks 相符同一事件時，每個 hook 的命令都會執行到完成，然後 Claude Code 合併結果。一個 hook 傳回 `deny` 不會阻止同級 hooks 執行。不要依賴一個 hook 的 `deny` 來抑制另一個 hook 中的副作用。
+
+所有匹配的 hooks 完成後，Claude Code 合併它們的輸出。對於 `PreToolUse` 權限決策，最具限制性的答案獲勝：`deny` 覆蓋 `ask`，`ask` 覆蓋 `allow`。來自 `additionalContext` 的文字會從每個 hook 保留並一起傳遞給 Claude。
+
+下面的範例在 `Bash` 上註冊了兩個 `PreToolUse` hooks。第一個將每個命令附加到日誌檔案並退出 0。第二個執行一個指令碼，當命令包含 `rm -rf` 時退出 2 以拒絕：
+
+```json theme={null}
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r .tool_input.command >> ~/.claude/bash.log"
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-rm-rf.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+當 Claude 嘗試執行 `rm -rf /tmp/build` 時，兩個 hooks 並行執行。日誌記錄 hook 將命令寫入 `~/.claude/bash.log` 並退出 0，這表示沒有決策。防護欄 hook 退出 2，這拒絕了工具呼叫。拒絕獲勝，所以 Claude Code 阻止命令並向 Claude 顯示防護欄的 stderr。日誌項仍然被寫入，因為日誌記錄 hook 已經執行。
 
 ### 讀取輸入並傳回輸出
 
@@ -722,7 +752,7 @@ hook 程序只在 Bash 命令的子命令與 `git *` 相符時生成，或當命
 | `.claude/settings.local.json`                                  | 單個專案                    | 否，gitignored |
 | 受管理的原則設定                                                       | 組織範圍                    | 是，由管理員控制     |
 | [Plugin](/zh-TW/plugins) `hooks/hooks.json`                    | 啟用外掛時                   | 是，與外掛捆綁      |
-| [Skill](/zh-TW/skills) 或[Agent](/zh-TW/sub-agents) frontmatter | 當 skill 或 Agent 處於活動狀態時 | 是，在元件檔案中定義   |
+| [Skill](/zh-TW/skills) 或[agent](/zh-TW/sub-agents) frontmatter | 當 skill 或 agent 處於活動狀態時 | 是，在元件檔案中定義   |
 
 在 Claude Code 中執行 [`/hooks`](/zh-TW/hooks#the-hooks-menu) 以瀏覽按事件分組的所有配置的 hooks。若要一次禁用所有 hooks，請在設定檔中設定 `"disableAllHooks": true`。
 

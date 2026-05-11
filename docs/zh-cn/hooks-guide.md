@@ -470,14 +470,44 @@ Hook 事件在 Claude Code 中的特定生命周期点触发。当事件触发�
 | `ElicitationResult`   | After a user responds to an MCP elicitation, before the response is sent back to the server                                                            |
 | `SessionEnd`          | When a session terminates                                                                                                                              |
 
-当多个 hooks 匹配时，每个都返回自己的结果。对于决策，Claude Code 选择最严格的答案。返回 `deny` 的 `PreToolUse` hook 会取消工具调用，无论其他的返回什么。一个返回 `ask` 的 hook 会强制权限提示，即使其余的返回 `allow`。来自 `additionalContext` 的文本从每个 hook 保留并一起传递给 Claude。
-
 每个 hook 都有一个 `type` 来确定它如何运行。大多数 hooks 使用 `"type": "command"`，它运行 shell 命令。还有四种其他类型可用：
 
 * `"type": "http"`：将事件数据 POST 到 URL。请参阅 [HTTP hooks](#http-hooks)。
 * `"type": "mcp_tool"`：在已连接的 MCP 服务器上调用工具。请参阅 [MCP tool hooks](/zh-CN/hooks#mcp-tool-hook-fields)。
 * `"type": "prompt"`：单轮 LLM 评估。请参阅 [基于提示的 hooks](#prompt-based-hooks)。
 * `"type": "agent"`：具有工具访问权限的多轮验证。Agent hooks 是实验性的，可能会改变。请参阅 [基于代理的 hooks](#agent-based-hooks)。
+
+### 合并来自多个 hooks 的结果
+
+当多个 hooks 匹配同一事件时，每个 hook 的命令都会运行到完成，然后 Claude Code 合并结果。一个 hook 返回 `deny` 不会阻止兄弟 hooks 执行。不要依赖一个 hook 的 `deny` 来抑制另一个 hook 中的副作用。
+
+所有匹配的 hooks 完成后，Claude Code 合并它们的输出。对于 `PreToolUse` 权限决策，最严格的答案获胜：`deny` 覆盖 `ask`，`ask` 覆盖 `allow`。来自 `additionalContext` 的文本从每个 hook 保留并一起传递给 Claude。
+
+下面的示例在 `Bash` 上注册两个 `PreToolUse` hooks。第一个将每个命令附加到日志文件并以 0 退出。第二个运行一个脚本，当命令包含 `rm -rf` 时以 2 退出以拒绝：
+
+```json theme={null}
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r .tool_input.command >> ~/.claude/bash.log"
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-rm-rf.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+当 Claude 尝试运行 `rm -rf /tmp/build` 时，两个 hooks 并行执行。日志 hook 将命令写入 `~/.claude/bash.log` 并以 0 退出，这表示没有决策。防护栏 hook 以 2 退出，这拒绝了工具调用。拒绝获胜，所以 Claude Code 阻止命令并向 Claude 显示防护栏的 stderr。日志条目仍然被写入，因为日志 hook 已经运行。
 
 ### 读取输入并返回输出
 

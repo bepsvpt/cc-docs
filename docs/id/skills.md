@@ -746,9 +746,9 @@ Jika Claude menggunakan skill Anda saat Anda tidak menginginkannya:
 
 ### Deskripsi skill dipotong pendek
 
-Deskripsi skill dimuat ke dalam konteks sehingga Claude tahu apa yang tersedia. Semua nama skill selalu disertakan, tetapi jika Anda memiliki banyak skills, deskripsi diperpendek agar sesuai dengan anggaran karakter, yang dapat menghilangkan kata kunci yang dibutuhkan Claude untuk mencocokkan permintaan Anda. Anggaran diskalakan secara dinamis pada 1% dari jendela konteks, dengan fallback 8.000 karakter.
+Deskripsi skill dimuat ke dalam konteks sehingga Claude tahu apa yang tersedia. Semua nama skill selalu disertakan, tetapi jika Anda memiliki banyak skills, deskripsi diperpendek agar sesuai dengan anggaran karakter, yang dapat menghilangkan kata kunci yang dibutuhkan Claude untuk mencocokkan permintaan Anda. Anggaran diskalakan pada 1% dari jendela konteks model. Ketika meluap, deskripsi untuk skills yang Anda invokasinya paling sedikit dijatuhkan terlebih dahulu, sehingga skills yang benar-benar Anda gunakan tetap mempertahankan teks lengkapnya. Jalankan `/doctor` untuk melihat apakah anggaran meluap dan skills mana yang terpengaruh.
 
-Untuk menaikkan batas, atur variabel lingkungan `SLASH_COMMAND_TOOL_CHAR_BUDGET`. Untuk membebaskan anggaran bagi skill lainnya, atur entri prioritas rendah ke `"name-only"` di [`skillOverrides`](#override-skill-visibility-from-settings) sehingga mereka terdaftar tanpa deskripsi. Anda juga dapat memangkas teks `description` dan `when_to_use` di sumbernya: depankan kasus penggunaan utama, karena teks gabungan setiap entri dibatasi pada 1.536 karakter terlepas dari anggaran.
+Untuk menaikkan anggaran, atur pengaturan [`skillListingBudgetFraction`](/id/settings#available-settings) (misalnya `0.02` = 2%) atau variabel lingkungan `SLASH_COMMAND_TOOL_CHAR_BUDGET` ke jumlah karakter tetap. Untuk membebaskan anggaran bagi skills lainnya, atur entri prioritas rendah ke `"name-only"` di [`skillOverrides`](#override-skill-visibility-from-settings) sehingga mereka terdaftar tanpa deskripsi. Anda juga dapat memangkas teks `description` dan `when_to_use` di sumbernya: depankan kasus penggunaan utama, karena teks gabungan setiap entri dibatasi pada 1.536 karakter terlepas dari anggaran. Batas dapat dikonfigurasi dengan [`maxSkillDescriptionChars`](/id/settings#available-settings).
 
 ## Sumber daya terkait
 

@@ -1,5 +1,132 @@
 # Documentation Changes
 
+## 2026-05-11
+
+36 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Automatisieren Sie Workflows mit Hooks** (`hooks-guide.md`): 32 lines added, 2 removed
+  - New section: "### Ergebnisse aus mehreren Hooks kombinieren"
+- **Claude Code-Einstellungen** (`settings.md`): 2 lines added, 0 removed
+- **Claude mit Skills erweitern** (`skills.md`): 2 lines added, 2 removed
+
+### English
+
+
+**Modified**
+
+- **Automate workflows with hooks** (`hooks-guide.md`): 32 lines added, 2 removed
+  - New section: "### Combine results from multiple hooks"
+- **Claude Code settings** (`settings.md`): 2 lines added, 0 removed
+- **Extend Claude with skills** (`skills.md`): 2 lines added, 2 removed
+
+### Español
+
+
+**Modified**
+
+- **Automatizar flujos de trabajo con hooks** (`hooks-guide.md`): 35 lines added, 5 removed
+  - New section: "### Combina resultados de múltiples hooks"
+- **Configuración de Claude Code** (`settings.md`): 2 lines added, 0 removed
+- **Ampliar Claude con skills** (`skills.md`): 2 lines added, 2 removed
+
+### Français
+
+
+**Modified**
+
+- **Automatiser les workflows avec les hooks** (`hooks-guide.md`): 32 lines added, 2 removed
+  - New section: "### Combiner les résultats de plusieurs hooks"
+- **Paramètres Claude Code** (`settings.md`): 2 lines added, 0 removed
+- **Étendre Claude avec des skills** (`skills.md`): 2 lines added, 2 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Otomatisasi alur kerja dengan hooks** (`hooks-guide.md`): 32 lines added, 2 removed
+  - New section: "### Gabungkan hasil dari beberapa hooks"
+- **Pengaturan Claude Code** (`settings.md`): 2 lines added, 0 removed
+- **Perluas Claude dengan skills** (`skills.md`): 2 lines added, 2 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Automatizzare i flussi di lavoro con hooks** (`hooks-guide.md`): 32 lines added, 2 removed
+  - New section: "### Combinare i risultati da più hooks"
+- **Impostazioni di Claude Code** (`settings.md`): 2 lines added, 0 removed
+- **Estendi Claude con skills** (`skills.md`): 2 lines added, 2 removed
+
+### 日本語
+
+
+**Modified**
+
+- **hooks でワークフローを自動化する** (`hooks-guide.md`): 32 lines added, 2 removed
+  - New section: "### 複数の hooks からの結果を組み合わせる"
+- **Claude Code の設定** (`settings.md`): 2 lines added, 0 removed
+- **スキルで Claude を拡張する** (`skills.md`): 2 lines added, 2 removed
+
+### 한국어
+
+
+**Modified**
+
+- **hooks를 사용하여 워크플로우 자동화** (`hooks-guide.md`): 32 lines added, 2 removed
+  - New section: "### 여러 hooks의 결과 결합"
+- **Claude Code 설정** (`settings.md`): 87 lines added, 85 removed
+- **Claude를 skills로 확장하기** (`skills.md`): 2 lines added, 2 removed
+
+### Português
+
+
+**Modified**
+
+- **Automatizar fluxos de trabalho com hooks** (`hooks-guide.md`): 35 lines added, 5 removed
+  - New section: "### Combinar resultados de múltiplos hooks"
+- **Configurações do Claude Code** (`settings.md`): 2 lines added, 0 removed
+- **Estenda Claude com skills** (`skills.md`): 2 lines added, 2 removed
+
+### Русский
+
+
+**Modified**
+
+- **Автоматизация рабочих процессов с помощью hooks** (`hooks-guide.md`): 49 lines added, 19 removed
+  - New section: "### Объединение результатов из нескольких hooks"
+- **Параметры Claude Code** (`settings.md`): 2 lines added, 0 removed
+- **Расширьте Claude с помощью skills** (`skills.md`): 2 lines added, 2 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **使用 hooks 自动化工作流** (`hooks-guide.md`): 32 lines added, 2 removed
+  - New section: "### 合并来自多个 hooks 的结果"
+- **Claude Code 设置** (`settings.md`): 2 lines added, 0 removed
+- **使用 skills 扩展 Claude** (`skills.md`): 2 lines added, 2 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **使用 hooks 自動化工作流程** (`hooks-guide.md`): 33 lines added, 3 removed
+  - New section: "### 合併來自多個 hooks 的結果"
+- **Claude Code 設定** (`settings.md`): 2 lines added, 0 removed
+- **使用 skills 擴展 Claude** (`skills.md`): 2 lines added, 2 removed
+
+---
+
 ## 2026-05-09
 
 147 pages modified
