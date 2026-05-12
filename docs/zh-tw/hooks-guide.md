@@ -895,7 +895,7 @@ Hook 已配置但從不執行。
   echo '{"tool_name":"Bash","tool_input":{"command":"ls"}}' | ./my-hook.sh
   echo $?  # 檢查退出代碼
   ```
-* 如果您看到「command not found」，使用絕對路徑或 `$CLAUDE_PROJECT_DIR` 來參考指令
+* 如果您看到「command not found」，使用絕對路徑或 `${CLAUDE_PROJECT_DIR}` 來參考指令。為了完全避免 shell 引用，添加 `"args": []` 以切換到 [exec 形式](/zh-TW/hooks#exec-form-and-shell-form)，它直接生成指令而不使用 shell
 * 如果您看到「jq: command not found」，安裝 `jq` 或使用 Python/Node.js 進行 JSON 解析
 * 如果指令根本沒有執行，使其可執行：`chmod +x ./my-hook.sh`
 
@@ -926,7 +926,7 @@ fi
 
 Claude Code 顯示 JSON 解析錯誤，即使您的 hook 指令輸出有效的 JSON。
 
-當 Claude Code 執行 hook 時，它生成一個 shell，該 shell 來源您的設定檔（`~/.zshrc` 或 `~/.bashrc`）。如果您的設定檔包含無條件的 `echo` 陳述式，該輸出會被前置到您的 hook 的 JSON：
+當 Claude Code 執行 shell 形式的命令 hook（沒有 `args` 的）時，它在 macOS 和 Linux 上生成 `sh -c`，或在 Windows 上生成 Git Bash。此 shell 是非互動式的，但 Git Bash 和某些配置（例如 `BASH_ENV` 指向 `~/.bashrc`）仍然會來源您的設定檔。如果該設定檔包含無條件的 `echo` 陳述式，輸出會被前置到您的 hook 的 JSON：
 
 ```text theme={null}
 Shell ready on arm64

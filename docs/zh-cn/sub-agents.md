@@ -11,7 +11,7 @@ Subagents 是处理特定类型任务的专门 AI 助手。当一个辅助任务
 每个 subagent 在自己的 context window 中运行，具有自定义系统提示、特定的工具访问权限和独立的权限。当 Claude 遇到与 subagent 描述相匹配的任务时，它会委托给该 subagent，该 subagent 独立工作并返回结果。要在实践中看到上下文节省，[context window 可视化](/zh-CN/context-window) 演示了一个 subagent 在自己的独立窗口中处理研究的会话。
 
 <Note>
-  如果您需要多个代理并行工作并相互通信，请参阅 [agent teams](/zh-CN/agent-teams) 代替。Subagents 在单个会话中工作；agent teams 跨多个会话进行协调。
+  Subagents 在单个会话中工作。要在并行运行许多独立会话并从一个地方监控它们，请参阅 [background agents](/zh-CN/agent-view)。对于相互通信的会话，请参阅 [agent teams](/zh-CN/agent-teams)。
 </Note>
 
 Subagents 帮助您：
@@ -158,7 +158,7 @@ Subagents 在带有 YAML frontmatter 的 Markdown 文件中定义。您可以 [�
 
 这是创建和管理 subagents 的推荐方式。对于手动创建或自动化，您也可以直接添加 subagent 文件。
 
-要从命令行列出所有配置的 subagents 而不启动交互式会话，请运行 `claude agents`。这显示按来源分组的代理，并指示哪些被更高优先级的定义覆盖。
+要从命令行列出所有配置的 subagents 而不打开 [agent view](/zh-CN/agent-view)，请使用管道输出 `claude agents`。例如，`claude agents | cat` 打印按来源分组的代理，并指示哪些被更高优先级的定义覆盖。
 
 ### 选择 subagent 范围
 
@@ -260,7 +260,7 @@ Frontmatter 定义了 subagent 的元数据和配置。正文成为指导 subage
 
 | Field             | Required | Description                                                                                                                                                                                                        |
 | :---------------- | :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`            | Yes      | 使用小写字母和连字符的唯一标识符                                                                                                                                                                                                   |
+| `name`            | Yes      | 使用小写字母和连字符的唯一标识符。[Hooks](/zh-CN/hooks#subagentstart) 将此值作为 `agent_type` 接收。文件名不必匹配                                                                                                                                 |
 | `description`     | Yes      | Claude 何时应该委托给此 subagent                                                                                                                                                                                           |
 | `tools`           | No       | [Tools](#available-tools) subagent 可以使用。如果省略，继承所有工具。要将 Skills 预加载到上下文中，请使用 `skills` 字段而不是在此处列出 `Skill`                                                                                                             |
 | `disallowedTools` | No       | 要拒绝的工具，从继承或指定的列表中删除                                                                                                                                                                                                |
@@ -666,8 +666,8 @@ Subagent 的系统提示完全替换默认 Claude Code 系统提示，就像 [`-
 
 Subagents 可以在前台（阻塞）或后台（并发）运行：
 
-* **前台 subagents** 阻塞主对话直到完成。权限提示和澄清问题（如 [`AskUserQuestion`](/zh-CN/tools-reference)）会传递给您。
-* **后台 subagents** 在您继续工作时并发运行。启动前，Claude Code 会提示您 subagent 需要的任何工具权限，确保它具有必要的批准。一旦运行，subagent 继承这些权限并自动拒绝任何未预先批准的内容。如果后台 subagent 需要提出澄清问题，该工具调用失败，但 subagent 继续。
+* **前台 subagents** 阻塞主对话直到完成。权限提示会在出现时传递给您。
+* **后台 subagents** 在您继续工作时并发运行。它们使用会话中已授予的权限运行，并自动拒绝任何会提示的工具调用。如果后台 subagent 需要提出澄清问题，该工具调用失败，但 subagent 继续。
 
 如果后台 subagent 由于缺少权限而失败，您可以启动一个新的前台 subagent 来执行相同的任务以使用交互式提示重试。
 
@@ -678,7 +678,7 @@ Claude 根据任务决定是否在前台或后台运行 subagents。您也可以
 
 要禁用所有后台任务功能，请将 `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` 环境变量设置为 `1`。请参阅 [Environment variables](/zh-CN/env-vars)。
 
-当 [fork mode](#fork-the-current-conversation) 启用时，每个 subagent 生成都在后台运行，无论 `background` 字段如何。分叉仍然在您的终端中出现权限提示，而不是预先批准；命名 subagents 遵循上面的预批准流程。
+当 [fork mode](#fork-the-current-conversation) 启用时，每个 subagent 生成都在后台运行，无论 `background` 字段如何。分叉仍然在您的终端中出现权限提示；命名 subagents 自动拒绝任何会提示的内容，如上所述。
 
 ### 常见模式
 
@@ -823,13 +823,13 @@ Subagents 支持使用与主对话相同的逻辑进行自动压缩。默认情�
 
 分叉继承主会话在生成时拥有的一切。命名 subagent 从自己的定义开始。
 
-|              | 分叉         | 命名 subagent                                                            |
-| :----------- | :--------- | :--------------------------------------------------------------------- |
-| 上下文          | 完整的对话历史    | 新鲜上下文，带有您传递的提示                                                         |
-| 系统提示和工具      | 与主会话相同     | 来自 subagent 的 [definition file](#write-subagent-files)                 |
-| 模型           | 与主会话相同     | 来自 subagent 的 `model` 字段                                               |
-| 权限           | 提示在您的终端中出现 | [Pre-approved](#run-subagents-in-foreground-or-background) 在启动前，然后自动拒绝 |
-| Prompt cache | 与主会话共享     | 单独的缓存                                                                  |
+|              | 分叉         | 命名 subagent                                                      |
+| :----------- | :--------- | :--------------------------------------------------------------- |
+| 上下文          | 完整的对话历史    | 新鲜上下文，带有您传递的提示                                                   |
+| 系统提示和工具      | 与主会话相同     | 来自 subagent 的 [definition file](#write-subagent-files)           |
+| 模型           | 与主会话相同     | 来自 subagent 的 `model` 字段                                         |
+| 权限           | 提示在您的终端中出现 | [Auto-denied](#run-subagents-in-foreground-or-background) 在后台运行时 |
+| Prompt cache | 与主会话共享     | 单独的缓存                                                            |
 
 因为分叉的系统提示和工具定义与父级相同，其第一个请求重用父级的 prompt cache。这使得分叉比为需要相同上下文的任务生成新 subagent 更便宜。
 

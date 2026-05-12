@@ -28,6 +28,10 @@ Claude Code는 강력함과 안전성의 균형을 맞추기 위해 계층화된
 
 규칙은 순서대로 평가됩니다: **deny -> ask -> allow**. 첫 번째 일치하는 규칙이 우선이므로 deny 규칙이 항상 우선합니다.
 
+<Note>
+  권한 규칙은 모델이 아닌 Claude Code에 의해 적용됩니다. 프롬프트 또는 `CLAUDE.md`의 지시사항은 Claude가 시도하는 작업을 형성하지만, Claude Code가 허용하는 것을 변경하지는 않습니다. 액세스 권한을 부여하거나 취소하려면 `/permissions`, 여기에 설명된 규칙, [권한 모드](/ko/permission-modes), 또는 [PreToolUse hook](#extend-permissions-with-hooks)을 사용하십시오.
+</Note>
+
 ## 권한 모드
 
 Claude Code는 도구 승인 방식을 제어하는 여러 권한 모드를 지원합니다. [권한 모드](/ko/permission-modes)에서 각 모드를 사용할 시기를 확인합니다. [설정 파일](/ko/settings#settings-files)에서 `defaultMode`를 설정합니다:
@@ -153,7 +157,7 @@ Claude Code는 기본 제공 Bash 명령 집합을 읽기 전용으로 인식하
 
   * **Bash 네트워크 도구 제한**: deny 규칙을 사용하여 `curl`, `wget` 및 유사한 명령을 차단한 다음 허용된 도메인에 대해 `WebFetch(domain:github.com)` 권한으로 WebFetch 도구를 사용합니다
   * **PreToolUse 훅 사용**: Bash 명령의 URL을 검증하고 허용되지 않은 도메인을 차단하는 훅을 구현합니다
-  * CLAUDE.md를 통해 Claude Code에 허용된 curl 패턴에 대해 지시합니다
+  * **CLAUDE.md 지침 추가**: `CLAUDE.md`에서 허용된 curl 패턴을 설명합니다. 이는 Claude가 시도하는 것을 형성하지만 경계를 적용하지 않으므로 위의 옵션 중 하나와 함께 사용합니다
 
   WebFetch만 사용하는 것은 네트워크 액세스를 방지하지 않습니다. Bash가 허용되면 Claude는 여전히 `curl`, `wget` 또는 다른 도구를 사용하여 모든 URL에 도달할 수 있습니다.
 </Warning>
@@ -185,7 +189,7 @@ Claude Code는 PowerShell AST를 구문 분석하고 복합 명령의 각 명령
 `Edit` 규칙은 파일을 편집하는 모든 기본 제공 도구에 적용됩니다. Claude는 Grep 및 Glob과 같이 파일을 읽는 모든 기본 제공 도구에 `Read` 규칙을 적용하기 위해 최선을 다합니다.
 
 <Warning>
-  Read 및 Edit deny 규칙은 Claude의 기본 제공 파일 도구에 적용되며, Bash 서브프로세스에는 적용되지 않습니다. `Read(./.env)` deny 규칙은 Read 도구를 차단하지만 Bash에서 `cat .env`를 방지하지 않습니다. 경로에 대한 모든 프로세스의 액세스를 차단하는 OS 수준 적용을 위해 [샌드박싱을 활성화합니다](/ko/sandboxing).
+  Read 및 Edit deny 규칙은 Claude의 기본 제공 파일 도구 및 Bash에서 Claude Code가 인식하는 `cat`, `head`, `tail` 및 `sed`와 같은 파일 명령에 적용됩니다. 이들은 파일을 간접적으로 읽거나 쓰는 Python 또는 Node 스크립트와 같은 임의의 서브프로세스에는 적용되지 않습니다. 경로에 대한 모든 프로세스의 액세스를 차단하는 OS 수준 적용을 위해 [샌드박싱을 활성화합니다](/ko/sandboxing).
 </Warning>
 
 Read 및 Edit 규칙은 모두 [gitignore](https://git-scm.com/docs/gitignore) 사양을 따르며 4가지 고유한 패턴 유형이 있습니다:
@@ -209,6 +213,13 @@ Windows에서 경로는 일치하기 전에 POSIX 형식으로 정규화됩니�
 * `Read(~/.zshrc)`: 홈 디렉토리의 `.zshrc` 읽기
 * `Edit(//tmp/scratch.txt)`: 절대 경로 `/tmp/scratch.txt` 편집
 * `Read(src/**)`: `<current-directory>/src/`에서 읽기
+
+규칙은 해당 앵커 아래의 파일만 일치하므로 앵커는 deny 규칙이 얼마나 멀리 도달하는지를 결정합니다. 베어 파일명은 gitignore 의미론을 따르고 어느 깊이에서나 일치하므로 `Read(.env)` 및 `Read(**/.env)`는 동등합니다:
+
+| Deny 규칙                         | 차단                         | 차단하지 않음                    |
+| ------------------------------- | -------------------------- | -------------------------- |
+| `Read(.env)` 또는 `Read(**/.env)` | 현재 디렉토리 또는 그 아래의 모든 `.env` | 상위 디렉토리 또는 다른 프로젝트의 `.env` |
+| `Read(//**/.env)`               | 파일 시스템의 어디든 모든 `.env`      | 없음; 규칙은 파일 시스템 루트에 앵커됨     |
 
 <Note>
   gitignore 패턴에서 `*`는 단일 디렉토리의 파일과 일치하고 `**`는 디렉토리 전체에서 재귀적으로 일치합니다. 모든 파일 액세스를 허용하려면 괄호 없이 도구 이름만 사용합니다: `Read`, `Edit` 또는 `Write`.

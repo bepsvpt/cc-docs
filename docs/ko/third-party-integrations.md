@@ -99,6 +99,7 @@ export const ContactSalesCard = ({surface}) => {
       <th>Claude for Teams/Enterprise</th>
       <th>Anthropic Console</th>
       <th>Amazon Bedrock</th>
+      <th>Claude Platform on AWS</th>
       <th>Google Vertex AI</th>
       <th>Microsoft Foundry</th>
     </tr>
@@ -110,6 +111,7 @@ export const ContactSalesCard = ({surface}) => {
       <td>대부분의 조직 (권장)</td>
       <td>개별 개발자</td>
       <td>AWS 네이티브 배포</td>
+      <td>Claude API 기능이 있는 AWS Marketplace 청구</td>
       <td>GCP 네이티브 배포</td>
       <td>Azure 네이티브 배포</td>
     </tr>
@@ -119,6 +121,7 @@ export const ContactSalesCard = ({surface}) => {
       <td><strong>Teams:</strong> \$150/seat (Premium) PAYG 사용 가능<br /><strong>Enterprise:</strong> <a href="https://claude.com/contact-sales?utm_source=claude_code&utm_medium=docs&utm_content=third_party_enterprise">영업팀에 문의</a></td>
       <td>PAYG</td>
       <td>AWS를 통한 PAYG</td>
+      <td>AWS Marketplace를 통한 PAYG</td>
       <td>GCP를 통한 PAYG</td>
       <td>Azure를 통한 PAYG</td>
     </tr>
@@ -128,12 +131,14 @@ export const ContactSalesCard = ({surface}) => {
       <td>지원되는 [국가](https://www.anthropic.com/supported-countries)</td>
       <td>지원되는 [국가](https://www.anthropic.com/supported-countries)</td>
       <td>여러 AWS [지역](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html)</td>
+      <td>여러 AWS 지역</td>
       <td>여러 GCP [지역](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations)</td>
       <td>여러 Azure [지역](https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/)</td>
     </tr>
 
     <tr>
       <td>Prompt caching</td>
+      <td>기본적으로 활성화됨</td>
       <td>기본적으로 활성화됨</td>
       <td>기본적으로 활성화됨</td>
       <td>기본적으로 활성화됨</td>
@@ -146,6 +151,7 @@ export const ContactSalesCard = ({surface}) => {
       <td>Claude.ai SSO 또는 이메일</td>
       <td>API 키</td>
       <td>API 키 또는 AWS 자격증명</td>
+      <td>API 키 또는 AWS 자격증명</td>
       <td>GCP 자격증명</td>
       <td>API 키 또는 Microsoft Entra ID</td>
     </tr>
@@ -154,6 +160,7 @@ export const ContactSalesCard = ({surface}) => {
       <td>비용 추적</td>
       <td>사용량 대시보드</td>
       <td>사용량 대시보드</td>
+      <td>AWS Cost Explorer</td>
       <td>AWS Cost Explorer</td>
       <td>GCP 청구</td>
       <td>Azure Cost Management</td>
@@ -166,12 +173,14 @@ export const ContactSalesCard = ({surface}) => {
       <td>아니오</td>
       <td>아니오</td>
       <td>아니오</td>
+      <td>아니오</td>
     </tr>
 
     <tr>
       <td>엔터프라이즈 기능</td>
       <td>팀 관리, SSO, 사용량 모니터링</td>
       <td>없음</td>
+      <td>IAM 정책, CloudTrail</td>
       <td>IAM 정책, CloudTrail</td>
       <td>IAM 역할, Cloud Audit Logs</td>
       <td>RBAC 정책, Azure Monitor</td>
@@ -184,6 +193,7 @@ export const ContactSalesCard = ({surface}) => {
 * [Claude for Teams 또는 Enterprise](/ko/authentication#claude-for-teams-or-enterprise)
 * [Anthropic Console](/ko/authentication#claude-console-authentication)
 * [Amazon Bedrock](/ko/amazon-bedrock)
+* [Claude Platform on AWS](/ko/claude-platform-on-aws)
 * [Google Vertex AI](/ko/google-vertex-ai)
 * [Microsoft Foundry](/ko/microsoft-foundry)
 
@@ -192,7 +202,7 @@ export const ContactSalesCard = ({surface}) => {
 대부분의 조직은 추가 구성 없이 클라우드 제공자를 직접 사용할 수 있습니다. 그러나 조직에 특정 네트워크 또는 관리 요구사항이 있는 경우 회사 프록시 또는 LLM 게이트웨이를 구성해야 할 수 있습니다. 이는 함께 사용할 수 있는 다양한 구성입니다:
 
 * **회사 프록시**: HTTP/HTTPS 프록시를 통해 트래픽을 라우팅합니다. 조직에서 보안 모니터링, 규정 준수 또는 네트워크 정책 적용을 위해 모든 아웃바운드 트래픽이 프록시 서버를 통과해야 하는 경우 이를 사용하십시오. `HTTPS_PROXY` 또는 `HTTP_PROXY` 환경 변수로 구성합니다. [엔터프라이즈 네트워크 구성](/ko/network-config)에서 자세히 알아봅니다.
-* **LLM 게이트웨이**: Claude Code와 클라우드 제공자 사이에 위치하여 인증 및 라우팅을 처리하는 서비스입니다. 팀 전체에서 중앙 집중식 사용량 추적, 사용자 정의 속도 제한 또는 예산, 또는 중앙 집중식 인증 관리가 필요한 경우 이를 사용하십시오. `ANTHROPIC_BASE_URL`, `ANTHROPIC_BEDROCK_BASE_URL` 또는 `ANTHROPIC_VERTEX_BASE_URL` 환경 변수로 구성합니다. [LLM 게이트웨이 구성](/ko/llm-gateway)에서 자세히 알아봅니다.
+* **LLM 게이트웨이**: Claude Code와 클라우드 제공자 사이에 위치하여 인증 및 라우팅을 처리하는 서비스입니다. 팀 전체에서 중앙 집중식 사용량 추적, 사용자 정의 속도 제한 또는 예산, 또는 중앙 집중식 인증 관리가 필요한 경우 이를 사용하십시오. `ANTHROPIC_BASE_URL`, `ANTHROPIC_BEDROCK_BASE_URL`, `ANTHROPIC_AWS_BASE_URL`, 또는 `ANTHROPIC_VERTEX_BASE_URL` 환경 변수로 구성합니다. [LLM 게이트웨이 구성](/ko/llm-gateway)에서 자세히 알아봅니다.
 
 다음 예제는 셸 또는 셸 프로필(`.bashrc`, `.zshrc`)에서 설정할 환경 변수를 보여줍니다. 다른 구성 방법은 [설정](/ko/settings)을 참조하십시오.
 
@@ -313,7 +323,7 @@ Claude Code가 코드베이스를 이해할 수 있도록 문서에 투자할 �
 
 ### 클라우드 제공자를 위한 모델 버전 고정
 
-[Bedrock](/ko/amazon-bedrock), [Vertex AI](/ko/google-vertex-ai) 또는 [Foundry](/ko/microsoft-foundry)를 통해 배포하는 경우 `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL` 및 `ANTHROPIC_DEFAULT_HAIKU_MODEL`을 사용하여 특정 모델 버전을 고정합니다. 고정하지 않으면 모델 별칭이 최신 버전으로 확인되어 Anthropic이 아직 계정에서 활성화되지 않은 새 모델을 출시할 때 사용자가 손상될 수 있습니다. 각 제공자가 최신 버전을 사용할 수 없을 때 수행하는 작업에 대해서는 [모델 구성](/ko/model-config#pin-models-for-third-party-deployments)을 참조하십시오.
+[Bedrock](/ko/amazon-bedrock), [Vertex AI](/ko/google-vertex-ai), [Foundry](/ko/microsoft-foundry) 또는 [Claude Platform on AWS](/ko/claude-platform-on-aws)를 통해 배포하는 경우 `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL` 및 `ANTHROPIC_DEFAULT_HAIKU_MODEL`을 사용하여 특정 모델 버전을 고정합니다. 고정하지 않으면 모델 별칭이 최신 버전으로 확인되어 Anthropic이 아직 계정에서 활성화되지 않은 새 모델을 출시할 때 사용자가 손상될 수 있습니다. 각 제공자가 최신 버전을 사용할 수 없을 때 수행하는 작업에 대해서는 [모델 구성](/ko/model-config#pin-models-for-third-party-deployments)을 참조하십시오.
 
 ### 보안 정책 구성
 

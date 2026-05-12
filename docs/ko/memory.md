@@ -26,7 +26,7 @@ Claude Code에는 두 가지 상호 보완적인 메모리 시스템이 있습�
 | :-------- | :---------------------- | :------------------------------- |
 | **작성자**   | 사용자                     | Claude                           |
 | **포함 내용** | 지침 및 규칙                 | 학습 및 패턴                          |
-| **범위**    | 프로젝트, 사용자 또는 조직         | 작업 트리당                           |
+| **범위**    | 프로젝트, 사용자 또는 조직         | 저장소당, 작업 트리 전체에서 공유              |
 | **로드 대상** | 모든 세션                   | 모든 세션(처음 200줄 또는 25KB)           |
 | **사용 목적** | 코딩 표준, 워크플로우, 프로젝트 아키텍처 | 빌드 명령, 디버깅 인사이트, Claude가 발견한 선호도 |
 
@@ -269,6 +269,22 @@ ln -s ~/company-standards/security.md .claude/rules/security.md
     MDM, 그룹 정책, Ansible 또는 유사한 도구를 사용하여 개발자 컴퓨터 전체에 파일을 배포합니다. 다른 조직 전체 구성 옵션은 [관리 설정](/ko/permissions#managed-settings)을 참조하세요.
   </Step>
 </Steps>
+
+`claudeMd` 키를 사용하면 별도의 파일을 배포하는 대신 관리 CLAUDE.md 콘텐츠를 `managed-settings.json`에 직접 배치할 수 있습니다.
+
+**범위**: 컴퓨터의 모든 Claude Code 세션, 모든 저장소에서. 저장소별 지침은 대신 프로젝트 CLAUDE.md를 커밋합니다.
+
+**우선순위**: 관리 CLAUDE.md 파일과 동일합니다. 사용자 및 프로젝트 CLAUDE.md 전에 로드됩니다.
+
+**적용되는 위치**: 관리 및 정책 설정만. 사용자, 프로젝트 또는 로컬 설정에서 `claudeMd`를 설정해도 효과가 없습니다.
+
+아래 예제는 관리 설정 파일에 행동 지침을 직접 추가합니다:
+
+```json theme={null}
+{
+  "claudeMd": "Always run `make lint` before committing.\nNever push directly to main."
+}
+```
 
 관리 CLAUDE.md와 [관리 설정](/ko/settings#settings-files)은 다른 목적을 제공합니다. 기술적 강제를 위해 설정을 사용하고 CLAUDE.md를 행동 지침으로 사용합니다:
 

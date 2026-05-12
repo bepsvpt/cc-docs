@@ -39,11 +39,15 @@ A falha ao encaminhar cabeçalhos ou preservar campos do corpo pode resultar em 
 
 **Cabeçalhos de solicitação**
 
-Claude Code inclui os seguintes cabeçalhos em cada solicitação de API:
+Claude Code inclui os seguintes cabeçalhos em solicitações de API:
 
-| Cabeçalho                  | Descrição                                                                                                                                                                             |
-| :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `X-Claude-Code-Session-Id` | Um identificador único para a sessão atual do Claude Code. Proxies podem usar isso para agregar todas as solicitações de API de uma única sessão sem analisar o corpo da solicitação. |
+| Cabeçalho                       | Descrição                                                                                                                                                                                                                                                                                                                   |
+| :------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `X-Claude-Code-Session-Id`      | Um identificador único para a sessão atual do Claude Code. Proxies podem usar isso para agregar todas as solicitações de API de uma única sessão sem analisar o corpo da solicitação.                                                                                                                                       |
+| `X-Claude-Code-Agent-Id`        | Identificador do subagente ou colega de trabalho que emitiu a solicitação. Seu proxy pode usar isso para atribuir o custo da API a subagentes paralelos individuais dentro de uma sessão, sem analisar o corpo da solicitação. Presente apenas para solicitações feitas por um subagente ou colega de trabalho em processo. |
+| `X-Claude-Code-Parent-Agent-Id` | Identificador do agente que gerou o agente que faz a solicitação. Use isso com `X-Claude-Code-Agent-Id` para atribuir custos de API entre agentes aninhados em seu proxy. Presente apenas quando o agente solicitante foi ele próprio gerado por outro agente.                                                              |
+
+Ambos os cabeçalhos de ID de agente são identificadores efêmeros por geração, não IDs de usuário ou dispositivo persistentes.
 
 Claude Code também adiciona um bloco de atribuição curto ao prompt do sistema contendo a versão do cliente e uma impressão digital derivada da conversa. A API Anthropic remove este bloco antes do processamento, portanto não afeta o cache de prompt de primeira parte. Se seu gateway implementa seu próprio cache de prompt com chave no corpo completo da solicitação, defina [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/pt/env-vars) para omiti-lo.
 
@@ -184,6 +188,17 @@ export ANTHROPIC_VERTEX_PROJECT_ID=your-gcp-project-id
 export CLAUDE_CODE_SKIP_VERTEX_AUTH=1
 export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=us-east5
+```
+
+##### Claude Platform on AWS através de um gateway
+
+Rotear para um gateway que encaminha para o endpoint [Claude Platform on AWS](/pt/claude-platform-on-aws):
+
+```bash theme={null}
+export ANTHROPIC_AWS_BASE_URL=https://litellm-server:4000/anthropic-aws
+export ANTHROPIC_AWS_WORKSPACE_ID=wrkspc_01ABCDEFGHIJKLMN
+export CLAUDE_CODE_SKIP_ANTHROPIC_AWS_AUTH=1
+export CLAUDE_CODE_USE_ANTHROPIC_AWS=1
 ```
 
 Para informações mais detalhadas, consulte a [documentação do LiteLLM](https://docs.litellm.ai/).

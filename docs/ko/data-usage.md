@@ -67,7 +67,7 @@ Anthropic은 계정 유형 및 선호도에 따라 Claude Code 데이터를 보�
 
 아래 다이어그램은 설치 및 정상 작동 중에 Claude Code가 외부 서비스에 어떻게 연결되는지 보여줍니다. 실선은 필수 연결을 나타내고, 점선은 선택적 또는 사용자가 시작한 데이터 흐름을 나타냅니다.
 
-<img src="https://mintcdn.com/claude-code/RcOyXc06Ja8cuvMZ/images/claude-code-data-flow.svg?fit=max&auto=format&n=RcOyXc06Ja8cuvMZ&q=85&s=b5be40abf333defe984993af89546c19" alt="Claude Code의 외부 연결을 보여주는 다이어그램: 설치/업데이트는 배포 서버에 연결되고, 사용자 요청은 Console auth, public-api, 그리고 선택적으로 Statsig, Sentry, 버그 보고를 포함한 Anthropic 서비스에 연결됩니다" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
+<img src="https://mintcdn.com/claude-code/RcOyXc06Ja8cuvMZ/images/claude-code-data-flow.svg?fit=max&auto=format&n=RcOyXc06Ja8cuvMZ&q=85&s=b5be40abf333defe984993af89546c19" alt="Claude Code의 외부 연결을 보여주는 다이어그램: 설치/업데이트는 배포 서버에 연결되고, 사용자 요청은 Console auth, public-api, 그리고 선택적으로 metrics, Sentry, 버그 보고를 포함한 Anthropic 서비스에 연결됩니다" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
 
 Claude Code는 로컬에서 실행됩니다. LLM과 상호작용하기 위해 Claude Code는 네트워크를 통해 데이터를 전송합니다. 이 데이터에는 모든 사용자 프롬프트 및 모델 출력이 포함되며, TLS 1.2+ 이상을 통해 전송 중에 암호화됩니다. Claude Code는 대부분의 인기 있는 VPN 및 LLM 프록시와 호환됩니다.
 
@@ -95,7 +95,7 @@ Claude Code는 Anthropic의 API를 기반으로 구축되었습니다. API 로�
 
 ## 원격 측정 서비스
 
-Claude Code는 사용자의 머신에서 Statsig 서비스에 연결하여 지연 시간, 안정성 및 사용 패턴과 같은 운영 메트릭을 기록합니다. 이 로깅에는 코드 또는 파일 경로가 포함되지 않습니다. 데이터는 TLS를 사용하여 전송 중에 암호화되고 256비트 AES 암호화를 사용하여 저장 시에 암호화됩니다. [Statsig 보안 문서](https://www.statsig.com/trust/security)에서 자세히 알아보세요. Statsig 원격 측정을 거부하려면 `DISABLE_TELEMETRY` 환경 변수를 설정합니다.
+Claude Code는 사용자의 머신에서 Anthropic에 연결하여 지연 시간, 안정성 및 사용 패턴과 같은 운영 메트릭을 기록합니다. 이 로깅에는 코드 또는 파일 경로가 포함되지 않습니다. 데이터는 전송 중에 암호화되고 저장 시에 암호화됩니다. 원격 측정을 거부하려면 `DISABLE_TELEMETRY` 환경 변수를 설정합니다.
 
 Claude Code는 사용자의 머신에서 Sentry에 연결하여 운영 오류 로깅을 수행합니다. 데이터는 TLS를 사용하여 전송 중에 암호화되고 256비트 AES 암호화를 사용하여 저장 시에 암호화됩니다. [Sentry 보안 문서](https://sentry.io/security/)에서 자세히 알아보세요. 오류 로깅을 거부하려면 `DISABLE_ERROR_REPORTING` 환경 변수를 설정합니다.
 
@@ -103,19 +103,19 @@ Claude Code는 사용자의 머신에서 Sentry에 연결하여 운영 오류 �
 
 ## API 제공자별 기본 동작
 
-기본적으로 Bedrock, Vertex 또는 Foundry를 사용할 때 오류 보고, 원격 측정 및 버그 보고가 비활성화됩니다. 세션 품질 설문조사 및 WebFetch 도메인 안전 검사는 예외이며 제공자와 관계없이 실행됩니다. `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`을 설정하여 설문조사를 포함한 모든 필수가 아닌 트래픽을 한 번에 거부할 수 있습니다. 이 변수는 WebFetch 검사에 영향을 주지 않으며, WebFetch 검사는 자체 거부 옵션이 있습니다. 다음은 전체 기본 동작입니다:
+기본적으로 Bedrock, Vertex, Foundry 또는 AWS의 Claude Platform을 사용할 때 오류 보고, 원격 측정 및 버그 보고가 비활성화됩니다. 세션 품질 설문조사 및 WebFetch 도메인 안전 검사는 예외이며 제공자와 관계없이 실행됩니다. `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`을 설정하여 설문조사를 포함한 모든 필수가 아닌 트래픽을 한 번에 거부할 수 있습니다. 이 변수는 WebFetch 검사에 영향을 주지 않으며, WebFetch 검사는 자체 거부 옵션이 있습니다. 다음은 전체 기본 동작입니다:
 
-| 서비스                             | Claude API                                                                     | Vertex API                                                                     | Bedrock API                                                                    | Foundry API                                                                    |
-| ------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
-| **Statsig (메트릭)**               | 기본 켜짐.<br />`DISABLE_TELEMETRY=1`로 비활성화합니다.                                    | 기본 꺼짐.<br />`CLAUDE_CODE_USE_VERTEX`는 1이어야 합니다.                                | 기본 꺼짐.<br />`CLAUDE_CODE_USE_BEDROCK`은 1이어야 합니다.                               | 기본 꺼짐.<br />`CLAUDE_CODE_USE_FOUNDRY`는 1이어야 합니다.                               |
-| **Sentry (오류)**                 | 기본 켜짐.<br />`DISABLE_ERROR_REPORTING=1`로 비활성화합니다.                              | 기본 꺼짐.<br />`CLAUDE_CODE_USE_VERTEX`는 1이어야 합니다.                                | 기본 꺼짐.<br />`CLAUDE_CODE_USE_BEDROCK`은 1이어야 합니다.                               | 기본 꺼짐.<br />`CLAUDE_CODE_USE_FOUNDRY`는 1이어야 합니다.                               |
-| **Claude API (`/feedback` 보고)** | 기본 켜짐.<br />`DISABLE_FEEDBACK_COMMAND=1`로 비활성화합니다.                             | 기본 꺼짐.<br />`CLAUDE_CODE_USE_VERTEX`는 1이어야 합니다.                                | 기본 꺼짐.<br />`CLAUDE_CODE_USE_BEDROCK`은 1이어야 합니다.                               | 기본 꺼짐.<br />`CLAUDE_CODE_USE_FOUNDRY`는 1이어야 합니다.                               |
-| **세션 품질 설문조사**                  | 기본 켜짐.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`로 비활성화합니다.                  | 기본 켜짐.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`로 비활성화합니다.                  | 기본 켜짐.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`로 비활성화합니다.                  | 기본 켜짐.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`로 비활성화합니다.                  |
-| **WebFetch 도메인 안전 검사**          | 기본 켜짐.<br />[settings](/ko/settings)에서 `skipWebFetchPreflight: true`로 비활성화합니다. | 기본 켜짐.<br />[settings](/ko/settings)에서 `skipWebFetchPreflight: true`로 비활성화합니다. | 기본 켜짐.<br />[settings](/ko/settings)에서 `skipWebFetchPreflight: true`로 비활성화합니다. | 기본 켜짐.<br />[settings](/ko/settings)에서 `skipWebFetchPreflight: true`로 비활성화합니다. |
+| 서비스                             | Claude API                                                                     | Vertex API                                                                     | Bedrock API                                                                    | Foundry API                                                                    | AWS의 Claude Platform                                                           |
+| ------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| **Anthropic (메트릭)**             | 기본 켜짐.<br />`DISABLE_TELEMETRY=1`로 비활성화합니다.                                    | 기본 꺼짐.<br />`CLAUDE_CODE_USE_VERTEX`는 1이어야 합니다.                                | 기본 꺼짐.<br />`CLAUDE_CODE_USE_BEDROCK`은 1이어야 합니다.                               | 기본 꺼짐.<br />`CLAUDE_CODE_USE_FOUNDRY`는 1이어야 합니다.                               | 기본 꺼짐.<br />`CLAUDE_CODE_USE_ANTHROPIC_AWS`는 1이어야 합니다.                         |
+| **Sentry (오류)**                 | 기본 켜짐.<br />`DISABLE_ERROR_REPORTING=1`로 비활성화합니다.                              | 기본 꺼짐.<br />`CLAUDE_CODE_USE_VERTEX`는 1이어야 합니다.                                | 기본 꺼짐.<br />`CLAUDE_CODE_USE_BEDROCK`은 1이어야 합니다.                               | 기본 꺼짐.<br />`CLAUDE_CODE_USE_FOUNDRY`는 1이어야 합니다.                               | 기본 꺼짐.<br />`CLAUDE_CODE_USE_ANTHROPIC_AWS`는 1이어야 합니다.                         |
+| **Claude API (`/feedback` 보고)** | 기본 켜짐.<br />`DISABLE_FEEDBACK_COMMAND=1`로 비활성화합니다.                             | 기본 꺼짐.<br />`CLAUDE_CODE_USE_VERTEX`는 1이어야 합니다.                                | 기본 꺼짐.<br />`CLAUDE_CODE_USE_BEDROCK`은 1이어야 합니다.                               | 기본 꺼짐.<br />`CLAUDE_CODE_USE_FOUNDRY`는 1이어야 합니다.                               | 기본 꺼짐.<br />`CLAUDE_CODE_USE_ANTHROPIC_AWS`는 1이어야 합니다.                         |
+| **세션 품질 설문조사**                  | 기본 켜짐.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`로 비활성화합니다.                  | 기본 켜짐.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`로 비활성화합니다.                  | 기본 켜짐.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`로 비활성화합니다.                  | 기본 켜짐.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`로 비활성화합니다.                  | 기본 켜짐.<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`로 비활성화합니다.                  |
+| **WebFetch 도메인 안전 검사**          | 기본 켜짐.<br />[settings](/ko/settings)에서 `skipWebFetchPreflight: true`로 비활성화합니다. | 기본 켜짐.<br />[settings](/ko/settings)에서 `skipWebFetchPreflight: true`로 비활성화합니다. | 기본 켜짐.<br />[settings](/ko/settings)에서 `skipWebFetchPreflight: true`로 비활성화합니다. | 기본 켜짐.<br />[settings](/ko/settings)에서 `skipWebFetchPreflight: true`로 비활성화합니다. | 기본 켜짐.<br />[settings](/ko/settings)에서 `skipWebFetchPreflight: true`로 비활성화합니다. |
 
 모든 환경 변수는 `settings.json`에 체크인할 수 있습니다([settings reference](/ko/settings) 참조).
 
-v2.1.126부터 호스트 플랫폼이 `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`를 설정하면, Statsig 메트릭은 Vertex, Bedrock 및 Foundry에서 기본적으로 켜지며 표준 `DISABLE_TELEMETRY` 거부 옵션을 따릅니다. Sentry 오류 보고 및 `/feedback` 보고는 해당 제공자에서 기본적으로 꺼진 상태로 유지됩니다.
+v2.1.126부터 호스트 플랫폼이 `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`를 설정하면, Vertex, Bedrock 및 Foundry에서 메트릭은 기본적으로 켜지며 표준 `DISABLE_TELEMETRY` 거부 옵션을 따릅니다. Sentry 오류 보고 및 `/feedback` 보고는 해당 제공자에서 기본적으로 꺼진 상태로 유지됩니다.
 
 ### WebFetch 도메인 안전 검사
 

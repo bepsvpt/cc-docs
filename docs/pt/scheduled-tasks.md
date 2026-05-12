@@ -10,7 +10,7 @@
   Tarefas agendadas requerem Claude Code v2.1.72 ou posterior. Verifique sua versão com `claude --version`.
 </Note>
 
-Tarefas agendadas permitem que Claude execute novamente um prompt automaticamente em um intervalo. Use-as para pesquisar uma implantação, cuidar de um PR, verificar uma compilação de longa duração ou lembrar-se de fazer algo mais tarde na sessão. Para reagir a eventos conforme eles acontecem em vez de pesquisar, consulte [Channels](/pt/channels): seu CI pode enviar a falha para a sessão diretamente.
+Tarefas agendadas permitem que Claude execute novamente um prompt automaticamente em um intervalo. Use-as para pesquisar uma implantação, cuidar de um PR, verificar uma compilação de longa duração ou lembrar-se de fazer algo mais tarde na sessão. Para reagir a eventos conforme eles acontecem em vez de pesquisar, consulte [Channels](/pt/channels): seu CI pode enviar a falha para a sessão diretamente. Para manter a sessão funcionando turno após turno até que uma condição seja atendida em vez de em um intervalo, consulte [`/goal`](/pt/goal).
 
 As tarefas têm escopo de sessão: elas vivem na conversa atual e param quando você inicia uma nova. Retomar com `--resume` ou `--continue` traz de volta qualquer tarefa que não tenha [expirado](#seven-day-expiry): uma tarefa recorrente criada nos últimos 7 dias, ou uma única cujo tempo agendado ainda não passou. Para agendamento que sobreviva independentemente de qualquer sessão, use [Routines](/pt/routines), [tarefas agendadas do Desktop](/pt/desktop-scheduled-tasks) ou [GitHub Actions](/pt/github-actions).
 
@@ -122,6 +122,8 @@ Edições em `loop.md` entram em vigor na próxima iteração, portanto você po
 
 Para parar um `/loop` enquanto ele está aguardando a próxima iteração, pressione `Esc`. Isso limpa o despertar pendente para que o loop não dispare novamente. As tarefas que você agendou [pedindo a Claude diretamente](#manage-scheduled-tasks) não são afetadas por `Esc` e permanecem no lugar até que você as delete.
 
+Em [modo de ritmo próprio](#let-claude-choose-the-interval), Claude também pode encerrar o loop por conta própria ao não agendar o próximo despertar uma vez que a tarefa está comprovadamente completa. Loops em um intervalo fixo continuam em execução até que você os pare ou [sete dias se passem](#seven-day-expiry).
+
 ## Defina um lembrete único
 
 Para lembretes únicos, descreva o que você deseja em linguagem natural em vez de usar `/loop`. Claude agenda uma tarefa de disparo único que se deleta após ser executada.
@@ -166,9 +168,9 @@ Todos os horários são interpretados em seu fuso horário local. Uma expressão
 
 ### Jitter
 
-Para evitar que cada sessão atinja a API no mesmo momento de tempo real, o agendador adiciona um pequeno deslocamento determinístico aos tempos de disparo:
+Para evitar que cada sessão atinja a API no mesmo momento de tempo real, o agendador adiciona um deslocamento determinístico aos tempos de disparo:
 
-* Tarefas recorrentes disparam até 10% de seu período atrasadas, limitadas a 15 minutos. Um trabalho por hora pode disparar em qualquer lugar de `:00` a `:06`.
+* Tarefas recorrentes disparam até 30 minutos após o horário agendado (ou até metade do intervalo, para tarefas que são executadas com mais frequência que por hora). Um trabalho por hora agendado para `:00` pode disparar em qualquer lugar até `:30`.
 * Tarefas únicas agendadas para o topo ou fundo da hora disparam até 90 segundos mais cedo.
 
 O deslocamento é derivado do ID da tarefa, portanto a mesma tarefa sempre obtém o mesmo deslocamento. Se o tempo exato for importante, escolha um minuto que não seja `:00` ou `:30`, por exemplo `3 9 * * *` em vez de `0 9 * * *`, e o jitter único não será aplicado.

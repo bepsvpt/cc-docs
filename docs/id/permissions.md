@@ -28,6 +28,10 @@ Anda dapat melihat dan mengelola izin alat Claude Code dengan `/permissions`. UI
 
 Aturan dievaluasi secara berurutan: **deny -> ask -> allow**. Aturan pertama yang cocok menang, jadi aturan deny selalu memiliki prioritas.
 
+<Note>
+  Aturan izin ditegakkan oleh Claude Code, bukan oleh model. Instruksi dalam prompt Anda atau `CLAUDE.md` membentuk apa yang Claude coba lakukan, tetapi mereka tidak mengubah apa yang Claude Code izinkan. Untuk memberikan atau mencabut akses, gunakan `/permissions`, aturan yang dijelaskan di sini, [mode izin](/id/permission-modes), atau [hook PreToolUse](#extend-permissions-with-hooks).
+</Note>
+
 ## Mode izin
 
 Claude Code mendukung beberapa mode izin yang mengontrol bagaimana alat disetujui. Lihat [Permission modes](/id/permission-modes) untuk mengetahui kapan menggunakan masing-masing. Atur `defaultMode` dalam [file pengaturan](/id/settings#settings-files) Anda:
@@ -153,7 +157,7 @@ Pola glob yang tidak dikutip diizinkan untuk perintah yang setiap flagnya hanya 
 
   * **Batasi alat jaringan Bash**: gunakan aturan deny untuk memblokir `curl`, `wget`, dan perintah serupa, kemudian gunakan alat WebFetch dengan izin `WebFetch(domain:github.com)` untuk domain yang diizinkan
   * **Gunakan hook PreToolUse**: implementasikan hook yang memvalidasi URL dalam perintah Bash dan memblokir domain yang tidak diizinkan
-  * Menginstruksikan Claude Code tentang pola curl yang diizinkan Anda melalui CLAUDE.md
+  * **Tambahkan panduan CLAUDE.md**: jelaskan pola curl yang diizinkan Anda di `CLAUDE.md`. Ini membentuk apa yang Claude coba tetapi tidak memberlakukan batas, jadi pasangkan dengan salah satu opsi di atas
 
   Perhatikan bahwa menggunakan WebFetch saja tidak mencegah akses jaringan. Jika Bash diizinkan, Claude masih dapat menggunakan `curl`, `wget`, atau alat lain untuk menjangkau URL apa pun.
 </Warning>
@@ -185,7 +189,7 @@ Claude Code mengurai AST PowerShell dan memeriksa setiap perintah dalam perintah
 Aturan `Edit` berlaku untuk semua alat bawaan yang mengedit file. Claude membuat upaya terbaik untuk menerapkan aturan `Read` ke semua alat bawaan yang membaca file seperti Grep dan Glob.
 
 <Warning>
-  Aturan deny Read dan Edit berlaku untuk alat file bawaan Claude, bukan untuk subproses Bash. Aturan deny `Read(./.env)` memblokir alat Read tetapi tidak mencegah `cat .env` di Bash. Untuk penegakan tingkat OS yang memblokir semua proses dari mengakses jalur, [aktifkan sandbox](/id/sandboxing).
+  Aturan deny Read dan Edit berlaku untuk alat file bawaan Claude dan untuk perintah file yang Claude Code kenali di Bash, seperti `cat`, `head`, `tail`, dan `sed`. Mereka tidak berlaku untuk subproses arbitrer yang membaca atau menulis file secara tidak langsung, seperti skrip Python atau Node yang membuka file itu sendiri. Untuk penegakan tingkat OS yang memblokir semua proses dari mengakses jalur, [aktifkan sandbox](/id/sandboxing).
 </Warning>
 
 Aturan Read dan Edit keduanya mengikuti spesifikasi [gitignore](https://git-scm.com/docs/gitignore) dengan empat jenis pola yang berbeda:

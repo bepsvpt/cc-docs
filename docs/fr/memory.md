@@ -272,6 +272,22 @@ Les organisations peuvent déployer un CLAUDE.md géré centralement qui s'appli
   </Step>
 </Steps>
 
+La clé `claudeMd` vous permet de placer le contenu CLAUDE.md géré directement dans `managed-settings.json` au lieu de déployer un fichier séparé.
+
+**Portée** : chaque session Claude Code sur la machine, dans chaque référentiel. Pour des conseils spécifiques au référentiel, validez plutôt un CLAUDE.md de projet.
+
+**Précédence** : identique à un fichier CLAUDE.md géré. Se charge avant CLAUDE.md utilisateur et projet.
+
+**Où c'est respecté** : paramètres gérés et politiques uniquement. Définir `claudeMd` dans les paramètres utilisateur, projet ou locaux n'a aucun effet.
+
+L'exemple ci-dessous ajoute des instructions comportementales directement dans un fichier de paramètres gérés :
+
+```json theme={null}
+{
+  "claudeMd": "Exécutez toujours `make lint` avant de valider.\nNe poussez jamais directement vers main."
+}
+```
+
 Un CLAUDE.md géré et les [paramètres gérés](/fr/settings#settings-files) servent des objectifs différents. Utilisez les paramètres pour l'application technique et CLAUDE.md pour les conseils comportementaux :
 
 | Préoccupation                                                    | Configurer dans                                            |

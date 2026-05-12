@@ -10,7 +10,7 @@
   Las tareas programadas requieren Claude Code v2.1.72 o posterior. Verifique su versión con `claude --version`.
 </Note>
 
-Las tareas programadas permiten que Claude vuelva a ejecutar un prompt automáticamente en un intervalo. Úselas para sondear una implementación, supervisar un PR, verificar una compilación de larga duración o recordarse a sí mismo que debe hacer algo más adelante en la sesión. Para reaccionar a eventos a medida que ocurren en lugar de sondear, consulte [Channels](/es/channels): su CI puede insertar el error directamente en la sesión.
+Las tareas programadas permiten que Claude vuelva a ejecutar un prompt automáticamente en un intervalo. Úselas para sondear una implementación, supervisar un PR, verificar una compilación de larga duración o recordarse a sí mismo que debe hacer algo más adelante en la sesión. Para reaccionar a eventos a medida que ocurren en lugar de sondear, consulte [Channels](/es/channels): su CI puede insertar el error directamente en la sesión. Para mantener la sesión funcionando turno tras turno hasta que se cumpla una condición en lugar de en un intervalo, consulte [`/goal`](/es/goal).
 
 Las tareas tienen alcance de sesión: viven en la conversación actual y se detienen cuando inicia una nueva. Reanudar con `--resume` o `--continue` trae de vuelta cualquier tarea que no haya [expirado](#seven-day-expiry): una tarea recurrente creada en los últimos 7 días, o una única cuyo tiempo programado aún no ha pasado. Para la programación que sobrevive independientemente de cualquier sesión, utilice [Routines](/es/routines), [tareas programadas de Desktop](/es/desktop-scheduled-tasks) o [GitHub Actions](/es/github-actions).
 
@@ -122,6 +122,8 @@ Las ediciones a `loop.md` tienen efecto en la siguiente iteración, por lo que p
 
 Para detener un `/loop` mientras espera la siguiente iteración, presione `Esc`. Esto borra el despertar pendiente para que el bucle no se ejecute nuevamente. Las tareas que programó [pidiendo a Claude directamente](#manage-scheduled-tasks) no se ven afectadas por `Esc` y permanecen en su lugar hasta que las elimine.
 
+En [modo de ritmo propio](#let-claude-choose-the-interval), Claude también puede terminar el bucle por su cuenta al no programar el próximo despertar una vez que la tarea se pueda demostrar que está completa. Los bucles en un intervalo fijo siguen ejecutándose hasta que los detenga o [transcurran siete días](#seven-day-expiry).
+
 ## Establecer un recordatorio único
 
 Para recordatorios únicos, describa lo que desea en lenguaje natural en lugar de usar `/loop`. Claude programa una tarea de un solo disparo que se elimina a sí misma después de ejecutarse.
@@ -166,9 +168,9 @@ Todos los tiempos se interpretan en su zona horaria local. Una expresión cron c
 
 ### Jitter
 
-Para evitar que cada sesión golpee la API en el mismo momento de reloj de pared, el programador agrega un pequeño desplazamiento determinista a los tiempos de disparo:
+Para evitar que cada sesión golpee la API en el mismo momento de reloj de pared, el programador agrega un desplazamiento determinista a los tiempos de disparo:
 
-* Las tareas recurrentes se ejecutan hasta un 10% de su período tarde, limitado a 15 minutos. Un trabajo por hora podría ejecutarse en cualquier momento desde `:00` hasta `:06`.
+* Las tareas recurrentes se ejecutan hasta 30 minutos después de la hora programada (o hasta la mitad del intervalo, para tareas que se ejecutan más frecuentemente que cada hora). Un trabajo por hora programado para `:00` puede ejecutarse en cualquier momento hasta `:30`.
 * Las tareas únicas programadas para la parte superior o inferior de la hora se ejecutan hasta 90 segundos antes.
 
 El desplazamiento se deriva del ID de la tarea, por lo que la misma tarea siempre obtiene el mismo desplazamiento. Si el tiempo exacto es importante, elija un minuto que no sea `:00` o `:30`, por ejemplo `3 9 * * *` en lugar de `0 9 * * *`, y el jitter único no se aplicará.

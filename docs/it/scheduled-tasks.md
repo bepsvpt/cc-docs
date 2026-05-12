@@ -10,7 +10,7 @@
   Le attività pianificate richiedono Claude Code v2.1.72 o versione successiva. Controllare la versione con `claude --version`.
 </Note>
 
-Le attività pianificate consentono a Claude di rieseguire automaticamente un prompt a intervalli regolari. Utilizzarle per eseguire il polling di una distribuzione, monitorare una PR, controllare una compilazione a lunga esecuzione o ricordarsi di fare qualcosa più tardi nella sessione. Per reagire agli eventi man mano che si verificano invece di eseguire il polling, vedere [Channels](/it/channels): il vostro CI può inviare il fallimento direttamente nella sessione.
+Le attività pianificate consentono a Claude di rieseguire automaticamente un prompt a intervalli regolari. Utilizzarle per eseguire il polling di una distribuzione, monitorare una PR, controllare una compilazione a lunga esecuzione o ricordarsi di fare qualcosa più tardi nella sessione. Per reagire agli eventi man mano che si verificano invece di eseguire il polling, vedere [Channels](/it/channels): il vostro CI può inviare il fallimento direttamente nella sessione. Per mantenere la sessione in funzione turno dopo turno fino al raggiungimento di una condizione piuttosto che a intervalli, vedere [`/goal`](/it/goal).
 
 Le attività hanno ambito di sessione: vivono nella conversazione corrente e si interrompono quando si avvia una nuova. La ripresa con `--resume` o `--continue` ripristina qualsiasi attività che non sia [scaduta](#seven-day-expiry): un'attività ricorrente creata negli ultimi 7 giorni, oppure una singola la cui ora pianificata non è ancora passata. Per la pianificazione che sopravvive indipendentemente da qualsiasi sessione, utilizzare [Routines](/it/routines), [Attività pianificate Desktop](/it/desktop-scheduled-tasks) o [GitHub Actions](/it/github-actions).
 
@@ -122,6 +122,8 @@ Le modifiche a `loop.md` hanno effetto alla successiva iterazione, quindi potete
 
 Per interrompere un `/loop` mentre è in attesa della successiva iterazione, premete `Esc`. Questo cancella il risveglio in sospeso in modo che il ciclo non si attivi di nuovo. Le attività pianificate [chiedendo direttamente a Claude](#manage-scheduled-tasks) non sono interessate da `Esc` e rimangono in posizione fino a quando non le eliminate.
 
+In [modalità autonoma](#let-claude-choose-the-interval), Claude può anche terminare il ciclo da solo non pianificando il successivo risveglio una volta che l'attività è provabilmente completata. I cicli su un intervallo fisso continuano a funzionare fino a quando non li interrompete o [trascorrono sette giorni](#seven-day-expiry).
+
 ## Impostare un promemoria una tantum
 
 Per promemoria una tantum, descrivete quello che volete in linguaggio naturale invece di utilizzare `/loop`. Claude pianifica un'attività a fuoco singolo che si elimina dopo l'esecuzione.
@@ -166,9 +168,9 @@ Tutti i tempi vengono interpretati nel vostro fuso orario locale. Un'espressione
 
 ### Jitter
 
-Per evitare che ogni sessione colpisca l'API nello stesso momento del muro, lo scheduler aggiunge un piccolo offset deterministico ai tempi di attivazione:
+Per evitare che ogni sessione colpisca l'API nello stesso momento, lo scheduler aggiunge un offset deterministico ai tempi di attivazione:
 
-* Le attività ricorrenti si attivano fino al 10% del loro periodo in ritardo, limitato a 15 minuti. Un processo orario potrebbe attivarsi da `:00` a `:06`.
+* Le attività ricorrenti si attivano fino a 30 minuti dopo l'ora pianificata (o fino a metà dell'intervallo, per le attività che vengono eseguite più frequentemente di ogni ora). Un processo orario pianificato per `:00` potrebbe attivarsi in qualsiasi momento fino a `:30`.
 * Le attività una tantum pianificate per l'inizio o la fine dell'ora si attivano fino a 90 secondi prima.
 
 L'offset è derivato dall'ID dell'attività, quindi la stessa attività ottiene sempre lo stesso offset. Se il timing esatto è importante, scegliete un minuto che non sia `:00` o `:30`, ad esempio `3 9 * * *` invece di `0 9 * * *`, e il jitter una tantum non si applicherà.

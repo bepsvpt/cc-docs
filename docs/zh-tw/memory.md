@@ -272,6 +272,22 @@ ln -s ~/company-standards/security.md .claude/rules/security.md
   </Step>
 </Steps>
 
+`claudeMd` 金鑰讓您將受管理的 CLAUDE.md 內容直接放入 `managed-settings.json` 中，而不是部署單獨的檔案。
+
+**範圍**：機器上的每個 Claude Code 工作階段，在每個儲存庫中。對於儲存庫特定的指導，請改為提交專案 CLAUDE.md。
+
+**優先級**：與受管理的 CLAUDE.md 檔案相同。在使用者和專案 CLAUDE.md 之前載入。
+
+**在何處被遵守**：僅受管理和原則設定。在使用者、專案或本地設定中設定 `claudeMd` 無效。
+
+下面的示例直接在受管理的設定檔案中新增行為指令：
+
+```json theme={null}
+{
+  "claudeMd": "Always run `make lint` before committing.\nNever push directly to main."
+}
+```
+
 受管理的 CLAUDE.md 和 [受管理的設定](/zh-TW/settings#settings-files) 有不同的用途。使用設定進行技術強制執行，使用 CLAUDE.md 進行行為指導：
 
 | 關注              | 配置在                                           |

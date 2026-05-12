@@ -279,18 +279,18 @@ review my changes and suggest improvements
 
 <AccordionGroup>
   <Accordion title="Будьте конкретны в своих запросах">
-    Вместо: "fix the bug"
+    Вместо: "исправить ошибку"
 
-    Попробуйте: "fix the login bug where users see a blank screen after entering wrong credentials"
+    Попробуйте: "исправить ошибку входа, когда пользователи видят пустой экран после ввода неправильных учетных данных"
   </Accordion>
 
   <Accordion title="Используйте пошаговые инструкции">
     Разбейте сложные задачи на этапы:
 
     ```text theme={null}
-    1. create a new database table for user profiles
-    2. create an API endpoint to get and update user profiles
-    3. build a webpage that allows users to see and edit their information
+    1. создать новую таблицу базы данных для профилей пользователей
+    2. создать конечную точку API для получения и обновления профилей пользователей
+    3. создать веб-страницу, которая позволяет пользователям просматривать и редактировать свою информацию
     ```
   </Accordion>
 
@@ -298,19 +298,19 @@ review my changes and suggest improvements
     Перед внесением изменений позвольте Claude понять ваш код:
 
     ```text theme={null}
-    analyze the database schema
+    проанализировать схему базы данных
     ```
 
     ```text theme={null}
-    build a dashboard showing products that are most frequently returned by our UK customers
+    создать панель управления, показывающую продукты, которые чаще всего возвращаются нашими клиентами из Великобритании
     ```
   </Accordion>
 
   <Accordion title="Сэкономьте время с помощью ярлыков">
-    * Нажмите `?` для просмотра всех доступных сочетаний клавиш
+    * Введите `/` для просмотра всех команд и skills
     * Используйте Tab для завершения команды
     * Нажмите ↑ для истории команд
-    * Введите `/` для просмотра всех команд и skills
+    * Нажмите `Shift+Tab` для переключения режимов разрешений
   </Accordion>
 </AccordionGroup>
 

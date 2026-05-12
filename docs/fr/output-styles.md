@@ -14,7 +14,9 @@ Pour les instructions concernant votre projet, les conventions ou votre base de 
 
 Le style de sortie **Default** de Claude Code est l'invite système existante, conçue pour vous aider à accomplir efficacement les tâches d'ingénierie logicielle.
 
-Il existe deux styles de sortie intégrés supplémentaires axés sur vous enseigner la base de code et le fonctionnement de Claude :
+Il existe trois styles de sortie intégrés supplémentaires :
+
+* **Proactive** : Claude s'exécute immédiatement, fait des hypothèses raisonnables au lieu de s'arrêter pour les décisions courantes, et préfère l'action à la planification. Cela applique les mêmes conseils que le [mode auto](/fr/permission-modes#eliminate-prompts-with-auto-mode) sans modifier votre mode de permission, vous voyez donc toujours les invites de permission avant l'exécution des outils.
 
 * **Explanatory** : Fournit des « Insights » éducatifs entre les tâches d'ingénierie logicielle pour vous aider à les accomplir. Vous aide à comprendre les choix d'implémentation et les modèles de base de code.
 

@@ -171,6 +171,8 @@ Agent SDK 및 `claude -p` 세션에서 `TRACEPARENT`가 환경에 설정되면 `
 | `gen_ai.system`                  | 항상 `anthropic`. OpenTelemetry GenAI 의미론적 규칙                                                                |        |
 | `gen_ai.request.model`           | `model`과 동일한 값. OpenTelemetry GenAI 의미론적 규칙                                                                |        |
 | `query_source`                   | 요청을 발급한 하위 시스템 (예: `repl_main_thread` 또는 하위 에이전트 이름)                                                       |        |
+| `agent_id`                       | 요청을 발급한 하위 에이전트 또는 팀원의 식별자. 주 세션에는 없음                                                                      |        |
+| `parent_agent_id`                | 이 에이전트를 생성한 에이전트의 식별자. 주 세션 및 직접 생성된 에이전트에는 없음                                                             |        |
 | `speed`                          | `fast` 또는 `normal`                                                                                         |        |
 | `llm_request.context`            | 부모 스팬에 따라 `interaction`, `tool` 또는 `standalone`                                                            |        |
 | `duration_ms`                    | 재시도를 포함한 벽시계 지속 시간                                                                                         |        |
@@ -421,7 +423,7 @@ Claude Code는 다음 메트릭을 내보냅니다:
 
 #### 풀 요청 카운터
 
-Claude Code를 통해 풀 요청을 생성할 때 증가합니다.
+Claude Code를 통해 셸 명령 또는 MCP 도구를 통해 풀 요청 또는 병합 요청을 생성할 때 증가합니다.
 
 **속성**:
 
@@ -446,6 +448,10 @@ Claude Code를 통해 git 커밋을 생성할 때 증가합니다.
 * `query_source`: 요청을 발급한 하위 시스템의 범주. `"main"`, `"subagent"` 또는 `"auxiliary"` 중 하나
 * `speed`: 요청이 빠른 모드를 사용했을 때 `"fast"`. 그 외에는 없음
 * `effort`: 요청에 적용된 [노력 수준](/ko/model-config#adjust-effort-level): `"low"`, `"medium"`, `"high"`, `"xhigh"` 또는 `"max"`. 모델이 노력을 지원하지 않을 때는 없음
+* `agent.name`: 요청을 발급한 하위 에이전트 유형. 기본 제공 에이전트 이름 및 공식 마켓플레이스 플러그인의 에이전트는 그대로 나타납니다. 다른 사용자 정의 에이전트 이름은 `"custom"`으로 대체됩니다. 요청이 명명된 하위 에이전트 유형에서 발급되지 않았을 때는 없음
+* `skill.name`: 요청에 대해 활성화된 스킬 (Skill 도구, `/` 명령으로 설정되거나 생성된 하위 에이전트에 의해 상속됨). 기본 제공, 번들, 사용자 정의 및 공식 마켓플레이스 플러그인 스킬 이름은 그대로 나타납니다. 타사 플러그인 스킬 이름은 `"third-party"`로 대체됩니다. 활성 스킬이 없을 때는 없음
+* `plugin.name`: 활성 스킬 또는 하위 에이전트가 플러그인에서 제공될 때 소유 플러그인. 공식 마켓플레이스 플러그인 이름은 그대로 나타납니다. 타사 플러그인 이름은 `"third-party"`로 대체됩니다. 스킬 및 하위 에이전트 모두 소유 플러그인이 없을 때는 없음
+* `marketplace.name`: 소유 플러그인이 설치된 마켓플레이스. 공식 마켓플레이스 플러그인에만 내보내집니다. 그 외에는 없음
 
 #### 토큰 카운터
 
@@ -459,6 +465,7 @@ Claude Code를 통해 git 커밋을 생성할 때 증가합니다.
 * `query_source`: 요청을 발급한 하위 시스템의 범주. `"main"`, `"subagent"` 또는 `"auxiliary"` 중 하나
 * `speed`: 요청이 빠른 모드를 사용했을 때 `"fast"`. 그 외에는 없음
 * `effort`: 요청에 적용된 [노력 수준](/ko/model-config#adjust-effort-level). [비용 카운터](#cost-counter)의 세부 정보를 참조하세요.
+* `agent.name`, `skill.name`, `plugin.name`, `marketplace.name`: 요청에 대한 스킬, 플러그인 및 에이전트 속성. [비용 카운터](#cost-counter)의 정의 및 수정 동작을 참조하세요.
 
 #### 코드 편집 도구 결정 카운터
 
@@ -647,10 +654,10 @@ Claude에 대한 API 요청이 실패할 때 기록됩니다.
 * `tool_use_id`: 이 도구 호출의 고유 식별자. 훅에 전달된 `tool_use_id`와 일치하여 OTel 이벤트와 훅 캡처 데이터 간의 상관관계를 허용합니다.
 * `decision`: `"accept"` 또는 `"reject"`
 * `source`: 결정 출처:
-  * `"config"`: 프로젝트 설정, 엔터프라이즈 관리 정책, `--allowedTools` 또는 `--disallowedTools` 플래그, 활성 권한 모드 또는 도구가 본질적으로 안전하기 때문에 프롬프트 없이 자동으로 결정됨.
+  * `"config"`: 프로젝트 설정, 사용자의 개인 설정의 허용 규칙, 엔터프라이즈 관리 정책, `--allowedTools` 또는 `--disallowedTools` 플래그, 활성 권한 모드, 같은 대화형 CLI 세션의 이전 프롬프트에서의 세션 범위 부여 또는 도구가 본질적으로 안전하기 때문에 프롬프트 없이 자동으로 결정됨. 이벤트는 이러한 출처 중 어느 것이 일치했는지 나타내지 않습니다.
   * `"hook"`: `PreToolUse` 또는 `PermissionRequest` 훅이 결정을 반환함.
-  * `"user_permanent"`: 사용자가 프롬프트될 때 "항상 허용"을 선택하여 개인 설정에 규칙을 저장했을 때 내보내집니다. 또한 해당 저장된 규칙과 일치하는 이후 호출에 대해서도 내보내집니다. 수락으로 처리됨.
-  * `"user_temporary"`: 사용자가 프롬프트될 때 "예" 또는 "이 세션에만"을 선택했지만 규칙을 저장하지 않았을 때 내보내집니다. 또한 해당 세션 범위 허용과 일치하는 같은 세션의 이후 호출에 대해서도 내보내집니다. 수락으로 처리됨.
+  * `"user_permanent"`: 사용자가 권한 프롬프트에서 "예, 그리고 ... 다시 묻지 마세요"를 선택하여 개인 설정에 허용 규칙을 저장했을 때 내보내집니다. 대화형 CLI에서는 해당 선택 자체에 대해서만 내보내집니다. 나중에 저장된 규칙과 일치하는 호출은 대신 `"config"`을 내보냅니다. Agent SDK 또는 비대화형 `-p` 세션에서는 초기 선택과 나중의 규칙 일치 모두 `"user_permanent"`를 내보냅니다. 수락으로 처리됨.
+  * `"user_temporary"`: 사용자가 권한 프롬프트에서 "예"를 선택했거나 파일 편집 또는 읽기 프롬프트에서 "이 세션 중" 옵션 중 하나를 선택했을 때 내보내집니다. 대화형 CLI에서는 선택 자체에 대해서만 내보내집니다. 나중에 해당 세션 범위 부여와 일치하는 호출은 대신 `"config"`을 내보냅니다. Agent SDK 또는 비대화형 `-p` 세션에서는 선택과 나중의 일치 모두 `"user_temporary"`를 내보냅니다. 수락으로 처리됨.
   * `"user_abort"`: 사용자가 답변 없이 권한 프롬프트를 닫았을 때 내보내집니다. 거부로 처리됨.
   * `"user_reject"`: 사용자가 프롬프트될 때 "아니오"를 선택했거나 호출이 개인 설정의 거부 규칙과 일치했을 때 내보내집니다. 거부로 처리됨.
 
@@ -741,6 +748,30 @@ Claude Code가 예상치 못한 내부 오류를 포착할 때 기록됩니다. 
 * `plugin.version`: 마켓플레이스 항목에 선언된 경우 플러그인 버전. 타사 마켓플레이스의 경우 `OTEL_LOG_TOOL_DETAILS=1`일 때만 포함됩니다
 * `marketplace.name`: 플러그인이 설치된 마켓플레이스. 타사 마켓플레이스의 경우 `OTEL_LOG_TOOL_DETAILS=1`일 때만 포함됩니다
 
+#### 플러그인 로드됨 이벤트
+
+세션 시작 시 활성화된 플러그인당 한 번 기록됩니다. 이 이벤트를 사용하여 플릿 전체에서 활성화된 플러그인을 인벤토리화합니다. 설치 작업 자체를 기록하는 `plugin_installed`를 보완합니다.
+
+**이벤트 이름**: `claude_code.plugin_loaded`
+
+**속성**:
+
+* 모든 [표준 속성](#standard-attributes)
+* `event.name`: `"plugin_loaded"`
+* `event.timestamp`: ISO 8601 타임스탬프
+* `event.sequence`: 세션 내 이벤트 순서 지정을 위한 단조 증가 카운터
+* `plugin.name`: 플러그인의 이름. 공식 마켓플레이스 및 기본 제공 번들 외부의 플러그인의 경우 `OTEL_LOG_TOOL_DETAILS=1`이 아니면 값은 `"third-party"`입니다
+* `marketplace.name`: 플러그인이 설치된 마켓플레이스 (알려진 경우). `plugin.name`과 동일한 조건에서 `"third-party"`로 수정됩니다
+* `plugin.version`: 플러그인 매니페스트의 버전. 이름이 수정되지 않고 매니페스트가 버전을 선언할 때만 포함됩니다
+* `plugin.scope`: 플러그인의 출처 범주: `"official"`, `"org"`, `"user-local"` 또는 `"default-bundle"`
+* `enabled_via`: 플러그인이 활성화된 방식: `"default-enable"`, `"org-policy"`, `"seed-mount"` 또는 `"user-install"`
+* `plugin_id_hash`: 플러그인 이름 및 마켓플레이스의 결정론적 해시 (구성된 내보내기로만 전송됨). 플릿 전체에서 로드된 서로 다른 타사 플러그인 수를 세는 것을 허용합니다 (이름 기록 없이)
+* `has_hooks`: 플러그인이 훅을 제공하는지 여부
+* `has_mcp`: 플러그인이 MCP 서버를 제공하는지 여부
+* `skill_path_count`: 플러그인이 선언하는 스킬 디렉토리 수
+* `command_path_count`: 플러그인이 선언하는 명령 디렉토리 수
+* `agent_path_count`: 플러그인이 선언하는 에이전트 디렉토리 수
+
 #### 스킬 활성화됨 이벤트
 
 스킬이 호출될 때 기록됩니다. Claude가 Skill 도구를 통해 호출하든 `/` 명령으로 실행하든 상관없습니다.
@@ -792,6 +823,25 @@ API 요청이 두 번 이상 시도 후 실패할 때 한 번 기록됩니다. �
 * `total_attempts`: 수행된 총 시도 횟수
 * `total_retry_duration_ms`: 모든 시도에 걸친 총 벽시계 시간
 * `speed`: `"fast"` 또는 `"normal"`
+
+#### 훅 등록됨 이벤트
+
+세션 시작 시 구성된 훅당 한 번 기록됩니다. 이 이벤트를 사용하여 플릿 전체에서 활성화된 훅을 인벤토리화합니다. 실행별 `hook_execution_start` 및 `hook_execution_complete` 이벤트를 보완합니다.
+
+**이벤트 이름**: `claude_code.hook_registered`
+
+**속성**:
+
+* 모든 [표준 속성](#standard-attributes)
+* `event.name`: `"hook_registered"`
+* `event.timestamp`: ISO 8601 타임스탬프
+* `event.sequence`: 세션 내 이벤트 순서 지정을 위한 단조 증가 카운터
+* `hook_event`: 훅 이벤트 유형 (예: `"PreToolUse"` 또는 `"PostToolUse"`)
+* `hook_type`: 훅 구현 유형: `"command"`, `"prompt"`, `"mcp_tool"`, `"http"` 또는 `"agent"`
+* `hook_source`: 훅이 정의된 위치: `"userSettings"`, `"projectSettings"`, `"localSettings"`, `"flagSettings"`, `"policySettings"` 또는 `"pluginHook"`
+* `hook_matcher` (`OTEL_LOG_TOOL_DETAILS=1`일 때): 설정된 경우 훅 구성의 매처 문자열
+* `plugin.name` (`hook_source`가 `"pluginHook"`일 때): 기여하는 플러그인의 이름. 공식 마켓플레이스 및 기본 제공 번들 외부의 플러그인의 경우 `OTEL_LOG_TOOL_DETAILS=1`이 아니면 값은 `"third-party"`입니다
+* `plugin_id_hash` (`hook_source`가 `"pluginHook"`일 때): 플러그인 이름 및 마켓플레이스의 결정론적 해시 (구성된 내보내기로만 전송됨). 이름을 기록하지 않고 기여하는 서로 다른 플러그인을 세는 것을 허용합니다
 
 #### 훅 실행 시작 이벤트
 
@@ -861,12 +911,12 @@ API 요청이 두 번 이상 시도 후 실패할 때 한 번 기록됩니다. �
 
 ### 사용 모니터링
 
-| 메트릭                                                           | 분석 기회                             |
-| ------------------------------------------------------------- | --------------------------------- |
-| `claude_code.token.usage`                                     | `type` (입력/출력), 사용자, 팀 또는 모델별로 분류 |
-| `claude_code.session.count`                                   | 시간 경과에 따른 채택 및 참여 추적              |
-| `claude_code.lines_of_code.count`                             | 코드 추가/제거를 추적하여 생산성 측정             |
-| `claude_code.commit.count` & `claude_code.pull_request.count` | 개발 워크플로우에 미치는 영향 이해               |
+| 메트릭                                                           | 분석 기회                                                                        |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `claude_code.token.usage`                                     | `type` (입력/출력), 사용자, 팀, 모델, `skill.name`, `plugin.name` 또는 `agent.name`별로 분류 |
+| `claude_code.session.count`                                   | 시간 경과에 따른 채택 및 참여 추적                                                         |
+| `claude_code.lines_of_code.count`                             | 코드 추가/제거를 추적하여 생산성 측정                                                        |
+| `claude_code.commit.count` & `claude_code.pull_request.count` | 개발 워크플로우에 미치는 영향 이해                                                          |
 
 ### 비용 모니터링
 
@@ -874,6 +924,7 @@ API 요청이 두 번 이상 시도 후 실패할 때 한 번 기록됩니다. �
 
 * 팀 또는 개인 전체의 사용 추세 추적
 * 최적화를 위한 높은 사용 세션 식별
+* `skill.name`, `plugin.name` 및 `agent.name` 속성을 통해 특정 스킬, 플러그인 또는 서브에이전트 유형에 지출 귀속
 
 <Note>
   비용 메트릭은 근사값입니다. 공식 청구 데이터는 API 제공자 (Claude Console, Amazon Bedrock 또는 Google Cloud Vertex)를 참조하세요.

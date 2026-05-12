@@ -172,7 +172,7 @@ Claude Code 是一个由 AI 驱动的编码助手，可帮助你构建功能、�
   <Accordion title="运行代理团队并构建自定义代理" icon="users">
     生成[多个 Claude Code 代理](/zh-CN/sub-agents)，同时处理任务的不同部分。主导代理协调工作、分配子任务并合并结果。
 
-    对于完全自定义的工作流，[Agent SDK](/zh-CN/agent-sdk/overview) 让你构建由 Claude Code 的工具和功能驱动的自己的代理，完全控制编排、工具访问和权限。
+    要在并行中运行多个完整会话并从一个屏幕观看它们，请使用[后台代理](/zh-CN/agent-view)。对于完全自定义的工作流，[Agent SDK](/zh-CN/agent-sdk/overview) 让你构建由 Claude Code 的工具和功能驱动的自己的代理，完全控制编排、工具访问和权限。
   </Accordion>
 
   <Accordion title="使用 CLI 进行管道、脚本和自动化" icon="terminal">

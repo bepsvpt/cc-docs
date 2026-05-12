@@ -34,18 +34,22 @@ La puerta de enlace debe exponer a los clientes al menos uno de los siguientes f
 El incumplimiento de reenvío de encabezados o la preservación de campos del cuerpo puede resultar en funcionalidad reducida o incapacidad de usar características de Claude Code.
 
 <Note>
-  Claude Code determina qué características habilitar en función del formato de API. Al usar el formato Anthropic Messages con Bedrock o Vertex, es posible que necesites establecer la variable de entorno `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`.
+  Claude Code determina qué características habilitar en función del formato de API. Al usar el formato Anthropic Messages con Bedrock o Vertex, es posible que necesite establecer la variable de entorno `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`.
 </Note>
 
 **Encabezados de solicitud**
 
-Claude Code incluye los siguientes encabezados en cada solicitud de API:
+Claude Code incluye los siguientes encabezados en solicitudes de API:
 
-| Encabezado                 | Descripción                                                                                                                                                                                    |
-| :------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `X-Claude-Code-Session-Id` | Un identificador único para la sesión actual de Claude Code. Los proxies pueden usar esto para agregar todas las solicitudes de API de una sola sesión sin analizar el cuerpo de la solicitud. |
+| Encabezado                      | Descripción                                                                                                                                                                                                                                                                                                                      |
+| :------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `X-Claude-Code-Session-Id`      | Un identificador único para la sesión actual de Claude Code. Los proxies pueden usar esto para agregar todas las solicitudes de API de una sola sesión sin analizar el cuerpo de la solicitud.                                                                                                                                   |
+| `X-Claude-Code-Agent-Id`        | Identificador del subagente o compañero de equipo que emitió la solicitud. Su proxy puede usar esto para atribuir el costo de API a subagentes paralelos individuales dentro de una sesión, sin analizar el cuerpo de la solicitud. Presente solo para solicitudes realizadas por un subagente o compañero de equipo en proceso. |
+| `X-Claude-Code-Parent-Agent-Id` | Identificador del agente que generó el agente que realiza la solicitud. Use esto con `X-Claude-Code-Agent-Id` para atribuir costos de API en agentes anidados en su proxy. Presente solo cuando el agente solicitante fue generado por otro agente.                                                                              |
 
-Claude Code también antepone un bloque de atribución corto al mensaje del sistema que contiene la versión del cliente y una huella digital derivada de la conversación. La API de Anthropic elimina este bloque antes de procesarlo, por lo que no afecta el almacenamiento en caché de solicitudes de primer nivel. Si tu puerta de enlace implementa su propio caché de solicitudes con clave en el cuerpo de la solicitud completa, establece [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/es/env-vars) para omitirlo.
+Ambos encabezados de ID de agente son identificadores efímeros por generación, no identificadores persistentes de usuario o dispositivo.
+
+Claude Code también antepone un bloque de atribución corto al mensaje del sistema que contiene la versión del cliente y una huella digital derivada de la conversación. La API de Anthropic elimina este bloque antes de procesarlo, por lo que no afecta el almacenamiento en caché de solicitudes de primer nivel. Si su puerta de enlace implementa su propio caché de solicitudes con clave en el cuerpo de la solicitud completa, establezca [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/es/env-vars) para omitirlo.
 
 ## Configuración
 
@@ -184,6 +188,17 @@ export ANTHROPIC_VERTEX_PROJECT_ID=your-gcp-project-id
 export CLAUDE_CODE_SKIP_VERTEX_AUTH=1
 export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=us-east5
+```
+
+##### Plataforma Claude en AWS a través de una puerta de enlace
+
+Enruta a una puerta de enlace que reenvía al punto final de [Plataforma Claude en AWS](/es/claude-platform-on-aws):
+
+```bash theme={null}
+export ANTHROPIC_AWS_BASE_URL=https://litellm-server:4000/anthropic-aws
+export ANTHROPIC_AWS_WORKSPACE_ID=wrkspc_01ABCDEFGHIJKLMN
+export CLAUDE_CODE_SKIP_ANTHROPIC_AWS_AUTH=1
+export CLAUDE_CODE_USE_ANTHROPIC_AWS=1
 ```
 
 Para obtener información más detallada, consulta la [documentación de LiteLLM](https://docs.litellm.ai/).

@@ -41,9 +41,13 @@ gateway 必須向客戶端公開以下至少一種 API 格式：
 
 Claude Code 在每個 API 請求上包含以下標頭：
 
-| 標頭                         | 描述                                                               |
-| :------------------------- | :--------------------------------------------------------------- |
-| `X-Claude-Code-Session-Id` | 當前 Claude Code 會話的唯一識別符。代理可以使用此識別符來聚合來自單個會話的所有 API 請求，而無需解析請求正文。 |
+| 標頭                              | 描述                                                                                             |
+| :------------------------------ | :--------------------------------------------------------------------------------------------- |
+| `X-Claude-Code-Session-Id`      | 當前 Claude Code 會話的唯一識別符。代理可以使用此識別符來聚合來自單個會話的所有 API 請求，而無需解析請求正文。                               |
+| `X-Claude-Code-Agent-Id`        | 發出請求的子代理或隊友的識別符。您的代理可以使用此識別符將 API 成本歸屬於會話內的個別並行子代理，而無需解析請求正文。僅針對由進程內子代理或隊友發出的請求出現。             |
+| `X-Claude-Code-Parent-Agent-Id` | 生成發出請求的代理的代理的識別符。將此與 `X-Claude-Code-Agent-Id` 一起使用，以在您的代理中跨嵌套代理歸屬 API 成本。僅當請求代理本身由另一個代理生成時才出現。 |
+
+兩個代理 ID 標頭都是每次生成的臨時識別符，而不是持久的用戶或設備 ID。
 
 Claude Code 還在系統提示前面添加了一個簡短的歸屬塊，其中包含客戶端版本和從對話派生的指紋。Anthropic API 在處理前會刪除此塊，因此不會影響第一方提示快取。如果您的 gateway 實現了自己的提示快取，其密鑰基於完整請求正文，請設置 [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/zh-TW/env-vars) 以省略它。
 
@@ -186,7 +190,18 @@ export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=us-east5
 ```
 
-有關更多詳細信息，請參閱 [LiteLLM 文檔](https://docs.litellm.ai/)。
+##### 通過網關的 AWS 上的 Claude Platform
+
+路由到轉發至 [AWS 上的 Claude Platform](/zh-TW/claude-platform-on-aws) 端點的網關：
+
+```bash theme={null}
+export ANTHROPIC_AWS_BASE_URL=https://litellm-server:4000/anthropic-aws
+export ANTHROPIC_AWS_WORKSPACE_ID=wrkspc_01ABCDEFGHIJKLMN
+export CLAUDE_CODE_SKIP_ANTHROPIC_AWS_AUTH=1
+export CLAUDE_CODE_USE_ANTHROPIC_AWS=1
+```
+
+如需更詳細的信息，請參閱 [LiteLLM 文檔](https://docs.litellm.ai/)。
 
 ## 其他資源
 

@@ -287,6 +287,10 @@ claude mcp add --transport sse private-api https://api.company.com/sse \
 
 Stdio 서버는 컴퓨터에서 로컬 프로세스로 실행됩니다. 시스템에 직접 액세스하거나 사용자 정의 스크립트가 필요한 도구에 이상적입니다.
 
+Claude Code는 생성된 서버의 환경에서 `CLAUDE_PROJECT_DIR`을 프로젝트 루트로 설정하므로 서버는 작업 디렉터리에 의존하지 않고 프로젝트 상대 경로를 확인할 수 있습니다. 이는 hooks가 `CLAUDE_PROJECT_DIR` 변수에서 받는 것과 동일한 디렉터리입니다. 서버 프로세스 내에서 읽으세요. 예를 들어 Node에서는 `process.env.CLAUDE_PROJECT_DIR` 또는 Python에서는 `os.environ["CLAUDE_PROJECT_DIR"]`입니다. 서버는 또한 MCP `roots/list` 요청을 호출할 수 있으며, 이는 Claude Code가 시작된 디렉터리를 반환합니다.
+
+이 변수는 Claude Code 자체의 환경이 아닌 서버의 환경에 설정되므로 프로젝트 또는 사용자 범위의 `.mcp.json` `command` 또는 `args`에서 `${VAR}` 확장을 통해 참조하려면 `${CLAUDE_PROJECT_DIR:-.}`와 같은 기본값이 필요합니다. 플러그인 제공 MCP 구성은 `${CLAUDE_PROJECT_DIR}`을 직접 대체하며 기본값이 필요하지 않습니다.
+
 ```bash theme={null}
 # 기본 구문
 claude mcp add [options] <name> -- <command> [args...]
@@ -404,7 +408,7 @@ MCP 서버는 또한 메시지를 세션에 직접 푸시할 수 있으므로 Cl
 **플러그인 MCP 기능**:
 
 * **자동 라이프사이클**: 세션 시작 시 활성화된 플러그인의 서버가 자동으로 연결됩니다. 세션 중에 플러그인을 활성화하거나 비활성화하면 `/reload-plugins`를 실행하여 MCP 서버를 연결하거나 연결 해제합니다
-* **환경 변수**: 번들된 플러그인 파일에 `${CLAUDE_PLUGIN_ROOT}` 사용 및 플러그인 업데이트를 유지하는 [지속적인 상태](/ko/plugins-reference#persistent-data-directory)에 `${CLAUDE_PLUGIN_DATA}` 사용
+* **환경 변수**: 번들된 플러그인 파일에 `${CLAUDE_PLUGIN_ROOT}` 사용, 플러그인 업데이트를 유지하는 [지속적인 상태](/ko/plugins-reference#persistent-data-directory)에 `${CLAUDE_PLUGIN_DATA}` 사용, 그리고 안정적인 프로젝트 루트에 `${CLAUDE_PROJECT_DIR}` 사용
 * **사용자 환경 액세스**: 수동으로 구성된 서버와 동일한 환경 변수에 액세스
 * **여러 전송 유형**: stdio, SSE 및 HTTP 전송 지원 (전송 지원은 서버에 따라 다를 수 있음)
 
@@ -644,6 +648,8 @@ claude mcp add --transport stdio db -- npx -y @bytebase/dbhub \
 
 많은 클라우드 기반 MCP 서버는 인증이 필요합니다. Claude Code는 보안 연결을 위해 OAuth 2.0을 지원합니다.
 
+Claude Code는 서버가 `401 Unauthorized`로 응답하고 인증 서버를 가리키는 `WWW-Authenticate` 헤더를 포함할 때 원격 서버를 인증이 필요한 것으로 표시합니다. 해당 응답을 반환하는 모든 사용자 정의 서버는 다른 원격 서버와 동일한 `/mcp` 인증 흐름을 받습니다.
+
 <Steps>
   <Step title="인증이 필요한 서버 추가">
     예를 들어:
@@ -689,7 +695,7 @@ claude mcp add --transport http \
 
 ### 사전 구성된 OAuth 자격 증명 사용
 
-일부 MCP 서버는 자동 OAuth 설정을 지원하지 않습니다. "Incompatible auth server: does not support dynamic client registration"과 같은 오류가 표시되면 서버에 사전 구성된 자격 증명이 필요합니다. Claude Code는 또한 동적 클라이언트 등록 대신 클라이언트 ID 메타데이터 문서 (CIMD)를 사용하는 서버를 지원하며 자동으로 검색합니다. 자동 검색이 실패하면 먼저 서버의 개발자 포털을 통해 OAuth 앱을 등록한 다음 서버를 추가할 때 자격 증명을 제공합니다.
+일부 MCP 서버는 동적 클라이언트 등록을 통한 자동 OAuth 설정을 지원하지 않습니다. "Incompatible auth server: does not support dynamic client registration"과 같은 오류가 표시되면 서버에 사전 구성된 자격 증명이 필요합니다. Claude Code는 또한 동적 클라이언트 등록 대신 클라이언트 ID 메타데이터 문서 (CIMD)를 사용하는 서버를 지원하며 자동으로 검색합니다. 자동 검색이 실패하면 먼저 서버의 개발자 포털을 통해 OAuth 앱을 등록한 다음 서버를 추가할 때 자격 증명을 제공합니다.
 
 <Steps>
   <Step title="서버로 OAuth 앱 등록">

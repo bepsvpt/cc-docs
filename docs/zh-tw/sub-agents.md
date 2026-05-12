@@ -11,7 +11,7 @@ Subagents 是專門的 AI 助手，用於處理特定類型的任務。當側面
 每個 subagent 在自己的 context window 中執行，具有自訂系統提示、特定工具存取和獨立權限。當 Claude 遇到與 subagent 描述相符的任務時，它會委派給該 subagent，該 subagent 獨立工作並返回結果。若要在實踐中查看上下文節省，[context window visualization](/zh-TW/context-window) 會逐步說明一個 subagent 在自己的獨立視窗中處理研究的工作階段。
 
 <Note>
-  如果您需要多個代理並行工作並相互通訊，請改為參閱 [agent teams](/zh-TW/agent-teams)。Subagents 在單一工作階段內工作；agent teams 跨越多個獨立工作階段進行協調。
+  Subagents 在單一工作階段內工作。若要執行許多獨立工作階段並行並從一個地方監控它們，請參閱 [background agents](/zh-TW/agent-view)。對於相互通訊的工作階段，請參閱 [agent teams](/zh-TW/agent-teams)。
 </Note>
 
 Subagents 可以幫助您：
@@ -158,7 +158,7 @@ Subagents 在 Markdown 檔案中定義，具有 YAML frontmatter。您可以 [�
 
 這是建立和管理 subagents 的建議方式。對於手動建立或自動化，您也可以直接新增 subagent 檔案。
 
-若要從命令行列出所有配置的 subagents 而不啟動互動式工作階段，請執行 `claude agents`。這會按來源分組顯示代理，並指示哪些被更高優先級的定義覆蓋。
+若要從命令行列出所有配置的 subagents 而不開啟 [agent view](/zh-TW/agent-view)，請使用管道輸出 `claude agents`。例如，`claude agents | cat` 會按來源分組列印代理，並指示哪些被更高優先級的定義覆蓋。
 
 ### 選擇 subagent 範圍
 
@@ -260,7 +260,7 @@ Frontmatter 定義 subagent 的中繼資料和配置。主體成為指導 subage
 
 | Field             | Required | Description                                                                                                                                                                                                      |
 | :---------------- | :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`            | Yes      | 使用小寫字母和連字號的唯一識別碼                                                                                                                                                                                                 |
+| `name`            | Yes      | 使用小寫字母和連字號的唯一識別碼。[Hooks](/zh-TW/hooks#subagentstart) 將此值作為 `agent_type` 接收。檔案名稱不必相符                                                                                                                              |
 | `description`     | Yes      | Claude 何時應委派給此 subagent                                                                                                                                                                                          |
 | `tools`           | No       | [Tools](#available-tools) subagent 可以使用。如果省略，繼承所有工具。若要將 Skills 預載入上下文，請使用 `skills` 欄位而不是在此列出 `Skill`                                                                                                             |
 | `disallowedTools` | No       | 要拒絕的工具，從繼承或指定的清單中移除                                                                                                                                                                                              |
@@ -613,7 +613,7 @@ Frontmatter 中的 `Stop` hooks 會自動轉換為 `SubagentStop` 事件。
 
 ### 理解自動委派
 
-Claude 根據您請求中的任務描述、subagent 配置中的 `description` 欄位和目前上下文自動委派任務。為了鼓勵主動委派，在 subagent 的 description 欄位中包括"use proactively"之類的短語。
+Claude 根據您請求中的任務描述、subagent 配置中的 `description` 欄位和目前上下文自動委派任務。為了鼓勵主動委派，在 subagent 的 description 欄位中包括「use proactively」之類的短語。
 
 ### 明確呼叫 subagents
 
@@ -666,19 +666,19 @@ Subagent 的系統提示完全替換預設 Claude Code 系統提示，就像 [`-
 
 Subagents 可以在前景（阻止）或背景（並行）中執行：
 
-* **前景 subagents** 阻止主要對話直到完成。權限提示和澄清問題（如 [`AskUserQuestion`](/zh-TW/tools-reference)）會傳遞給您。
-* **背景 subagents** 在您繼續工作時並行執行。啟動前，Claude Code 會提示輸入 subagent 需要的任何工具權限，確保它具有必要的批准。執行後，subagent 繼承這些權限並自動拒絕任何未預先批准的內容。如果背景 subagent 需要提出澄清問題，該工具呼叫失敗，但 subagent 繼續。
+* **前景 subagents** 阻止主要對話直到完成。權限提示會在出現時傳遞給您。
+* **背景 subagents** 在您繼續工作時並行執行。它們使用工作階段中已授予的權限執行，並自動拒絕任何否則會提示的工具呼叫。如果背景 subagent 需要提出澄清問題，該工具呼叫失敗，但 subagent 繼續。
 
 如果背景 subagent 因權限遺失而失敗，您可以啟動一個新的前景 subagent 執行相同任務以使用互動式提示重試。
 
 Claude 根據任務決定是否在前景或背景中執行 subagents。您也可以：
 
-* 要求 Claude "run this in the background"
+* 要求 Claude「run this in the background」
 * 按 **Ctrl+B** 將執行中的任務放在背景中
 
 若要禁用所有背景任務功能，請將 `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` 環境變數設定為 `1`。請參閱 [Environment variables](/zh-TW/env-vars)。
 
-當 [fork mode](#fork-the-current-conversation) 啟用時，每個 subagent 產生都在背景中執行，無論 `background` 欄位如何。Forks 仍然在您的終端中出現權限提示，而不是預先批准；命名 subagents 遵循上述預先批准流程。
+當 [fork mode](#fork-the-current-conversation) 啟用時，每個 subagent 產生都在背景中執行，無論 `background` 欄位如何。Forks 仍然在您的終端中出現權限提示；命名 subagents 自動拒絕任何會提示的內容，如上所述。
 
 ### 常見模式
 
@@ -823,13 +823,13 @@ Fork 出現在提示下方的面板中，並在您繼續工作時在背景中執
 
 Fork 繼承主工作階段在產生時擁有的所有內容。命名 subagent 從自己的定義開始。
 
-|              | Fork       | 命名 subagent                                                            |
-| :----------- | :--------- | :--------------------------------------------------------------------- |
-| Context      | 完整對話歷史記錄   | 新鮮上下文，帶有您傳遞的提示                                                         |
-| 系統提示和工具      | 與主工作階段相同   | 來自 subagent 的 [definition file](#write-subagent-files)                 |
-| Model        | 與主工作階段相同   | 來自 subagent 的 `model` 欄位                                               |
-| Permissions  | 提示出現在您的終端中 | [Pre-approved](#run-subagents-in-foreground-or-background) 在啟動前，然後自動拒絕 |
-| Prompt cache | 與主工作階段共享   | 單獨的快取                                                                  |
+|              | Fork       | 命名 subagent                                                       |
+| :----------- | :--------- | :---------------------------------------------------------------- |
+| Context      | 完整對話歷史記錄   | 新鮮上下文，帶有您傳遞的提示                                                    |
+| 系統提示和工具      | 與主工作階段相同   | 來自 subagent 的 [definition file](#write-subagent-files)            |
+| Model        | 與主工作階段相同   | 來自 subagent 的 `model` 欄位                                          |
+| Permissions  | 提示出現在您的終端中 | [Auto-denied](#run-subagents-in-foreground-or-background) 在背景中執行時 |
+| Prompt cache | 與主工作階段共享   | 單獨的快取                                                             |
 
 因為 fork 的系統提示和工具定義與父級相同，其第一個請求重複使用父級的提示快取。這使得 forking 比為需要相同上下文的任務產生新 subagent 更便宜。
 

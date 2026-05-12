@@ -39,11 +39,15 @@ Das Nichtweiterleiten von Headern oder das Nichtbeibehalten von Body-Feldern kan
 
 **Request-Header**
 
-Claude Code enthält die folgenden Header bei jeder API-Anfrage:
+Claude Code enthält die folgenden Header bei API-Anfragen:
 
-| Header                     | Beschreibung                                                                                                                                                                                           |
-| :------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `X-Claude-Code-Session-Id` | Ein eindeutiger Bezeichner für die aktuelle Claude Code-Sitzung. Proxies können dies verwenden, um alle API-Anfragen aus einer einzelnen Sitzung zu aggregieren, ohne den Request-Body zu analysieren. |
+| Header                          | Beschreibung                                                                                                                                                                                                                                                                                                                         |
+| :------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `X-Claude-Code-Session-Id`      | Ein eindeutiger Bezeichner für die aktuelle Claude Code-Sitzung. Proxies können dies verwenden, um alle API-Anfragen aus einer einzelnen Sitzung zu aggregieren, ohne den Request-Body zu analysieren.                                                                                                                               |
+| `X-Claude-Code-Agent-Id`        | Bezeichner des Subagenten oder Teamkollegen, der die Anfrage gestellt hat. Ihr Proxy kann dies verwenden, um API-Kosten einzelnen parallelen Subagenten innerhalb einer Sitzung zuzuordnen, ohne den Request-Body zu analysieren. Nur für Anfragen vorhanden, die von einem In-Process-Subagenten oder Teamkollegen gestellt werden. |
+| `X-Claude-Code-Parent-Agent-Id` | Bezeichner des Agenten, der den Agent spawnte, der die Anfrage stellt. Verwenden Sie dies zusammen mit `X-Claude-Code-Agent-Id`, um API-Kosten über verschachtelte Agenten in Ihrem Proxy zuzuordnen. Nur vorhanden, wenn der anfragende Agent selbst von einem anderen Agenten gespawnt wurde.                                      |
+
+Beide Agent-ID-Header sind ephemere Pro-Spawn-Bezeichner, keine persistenten Benutzer- oder Geräte-IDs.
 
 Claude Code stellt auch einen kurzen Attributionsblock dem System-Prompt voran, der die Client-Version und einen Fingerabdruck aus dem Gespräch enthält. Die Anthropic API entfernt diesen Block vor der Verarbeitung, sodass er sich nicht auf First-Party-Prompt-Caching auswirkt. Wenn Ihr Gateway seinen eigenen Prompt-Cache mit dem vollständigen Request-Body als Schlüssel implementiert, setzen Sie [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/de/env-vars), um ihn auszulassen.
 
@@ -184,6 +188,17 @@ export ANTHROPIC_VERTEX_PROJECT_ID=your-gcp-project-id
 export CLAUDE_CODE_SKIP_VERTEX_AUTH=1
 export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=us-east5
+```
+
+##### Claude Platform auf AWS über ein Gateway
+
+Weiterleitung an ein Gateway, das zum [Claude Platform auf AWS](/de/claude-platform-on-aws) Endpoint weiterleitet:
+
+```bash theme={null}
+export ANTHROPIC_AWS_BASE_URL=https://litellm-server:4000/anthropic-aws
+export ANTHROPIC_AWS_WORKSPACE_ID=wrkspc_01ABCDEFGHIJKLMN
+export CLAUDE_CODE_SKIP_ANTHROPIC_AWS_AUTH=1
+export CLAUDE_CODE_USE_ANTHROPIC_AWS=1
 ```
 
 Weitere detaillierte Informationen finden Sie in der [LiteLLM-Dokumentation](https://docs.litellm.ai/).

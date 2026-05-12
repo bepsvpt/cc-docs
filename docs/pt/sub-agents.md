@@ -11,7 +11,7 @@ Subagentes são assistentes de IA especializados que lidam com tipos específico
 Cada subagente é executado em sua própria janela de contexto com um prompt de sistema personalizado, acesso a ferramentas específicas e permissões independentes. Quando Claude encontra uma tarefa que corresponde à descrição de um subagente, ele delega para esse subagente, que funciona independentemente e retorna resultados. Para ver a economia de contexto na prática, a [visualização da janela de contexto](/pt/context-window) apresenta uma sessão onde um subagente lida com pesquisa em sua própria janela separada.
 
 <Note>
-  Se você precisa de múltiplos agentes trabalhando em paralelo e se comunicando entre si, consulte [equipes de agentes](/pt/agent-teams) em vez disso. Subagentes funcionam dentro de uma única sessão; equipes de agentes coordenam entre sessões separadas.
+  Subagentes funcionam dentro de uma única sessão. Para executar muitas sessões independentes em paralelo e monitorá-las de um único lugar, consulte [agentes em segundo plano](/pt/agent-view). Para sessões que se comunicam entre si, consulte [equipes de agentes](/pt/agent-teams).
 </Note>
 
 Subagentes ajudam você a:
@@ -158,7 +158,7 @@ O comando `/agents` abre uma interface com abas para gerenciar subagentes. A aba
 
 Esta é a forma recomendada de criar e gerenciar subagentes. Para criação manual ou automação, você também pode adicionar arquivos de subagente diretamente.
 
-Para listar todos os subagentes configurados da linha de comando sem iniciar uma sessão interativa, execute `claude agents`. Isso mostra agentes agrupados por fonte e indica quais são substituídos por definições de prioridade mais alta.
+Para listar todos os subagentes configurados da linha de comando sem abrir a [visualização de agente](/pt/agent-view), redirecione a saída de `claude agents`. Por exemplo, `claude agents | cat` imprime agentes agrupados por fonte e indica quais são substituídos por definições de prioridade mais alta.
 
 ### Escolher o escopo do subagente
 
@@ -260,7 +260,7 @@ Os seguintes campos podem ser usados no frontmatter YAML. Apenas `name` e `descr
 
 | Field             | Required | Description                                                                                                                                                                                                                                                                                                                                                                     |
 | :---------------- | :------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `name`            | Yes      | Identificador único usando letras minúsculas e hífens                                                                                                                                                                                                                                                                                                                           |
+| `name`            | Yes      | Identificador único usando letras minúsculas e hífens. [Hooks](/pt/hooks#subagentstart) recebem este valor como `agent_type`. O nome do arquivo não precisa corresponder                                                                                                                                                                                                        |
 | `description`     | Yes      | Quando Claude deve delegar para este subagente                                                                                                                                                                                                                                                                                                                                  |
 | `tools`           | No       | [Ferramentas](#available-tools) que o subagente pode usar. Herda todas as ferramentas se omitido. Para pré-carregar Skills no contexto, use o campo `skills` em vez de listar `Skill` aqui                                                                                                                                                                                      |
 | `disallowedTools` | No       | Ferramentas a negar, removidas da lista herdada ou especificada                                                                                                                                                                                                                                                                                                                 |
@@ -666,8 +666,8 @@ O flag CLI sobrescreve a configuração se ambos estiverem presentes.
 
 Subagentes podem ser executados em foreground (bloqueante) ou background (concorrente):
 
-* **Subagentes em foreground** bloqueiam a conversa principal até completar. Prompts de permissão e perguntas de esclarecimento (como [`AskUserQuestion`](/pt/tools-reference)) são passados para você.
-* **Subagentes em background** são executados concorrentemente enquanto você continua trabalhando. Antes de iniciar, Claude Code solicita quaisquer permissões de ferramentas que o subagente precisará, garantindo que ele tenha as aprovações necessárias antecipadamente. Uma vez em execução, o subagente herda essas permissões e auto-nega qualquer coisa não pré-aprovada. Se um subagente em background precisa fazer perguntas de esclarecimento, essa chamada de ferramenta falha mas o subagente continua.
+* **Subagentes em foreground** bloqueiam a conversa principal até completar. Prompts de permissão são passados para você conforme surgem.
+* **Subagentes em background** são executados concorrentemente enquanto você continua trabalhando. Eles são executados com as permissões já concedidas na sessão e auto-negam qualquer chamada de ferramenta que de outra forma solicitaria. Se um subagente em background precisa fazer perguntas de esclarecimento, essa chamada de ferramenta falha mas o subagente continua.
 
 Se um subagente em background falha devido a permissões ausentes, você pode iniciar um novo subagente em foreground com a mesma tarefa para tentar novamente com prompts interativos.
 
@@ -678,7 +678,7 @@ Claude decide se deve executar subagentes em foreground ou background baseado na
 
 Para desabilitar toda a funcionalidade de tarefa em background, defina a variável de ambiente `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` para `1`. Veja [Variáveis de ambiente](/pt/env-vars).
 
-Quando [fork mode](#fork-the-current-conversation) está habilitado, cada spawn de subagente é executado em background independentemente do campo `background`. Forks ainda exibem prompts de permissão em seu terminal conforme ocorrem em vez de pré-aprovar; subagentes nomeados seguem o fluxo de pré-aprovação acima.
+Quando [fork mode](#fork-the-current-conversation) está habilitado, cada spawn de subagente é executado em background independentemente do campo `background`. Forks ainda exibem prompts de permissão em seu terminal conforme ocorrem; subagentes nomeados auto-negam qualquer coisa que solicitaria, conforme descrito acima.
 
 ### Padrões comuns
 
@@ -823,13 +823,13 @@ Bifurcações em execução aparecem em um painel abaixo da entrada de prompt, c
 
 Uma bifurcação herda tudo que a sessão principal tem no momento em que é gerada. Um subagente nomeado começa a partir de sua própria definição.
 
-|                         | Bifurcação                           | Subagente nomeado                                                                                    |
-| :---------------------- | :----------------------------------- | :--------------------------------------------------------------------------------------------------- |
-| Context                 | Histórico de conversa completo       | Contexto fresco com o prompt que você passa                                                          |
-| System prompt and tools | Mesmo que a sessão principal         | Da [definição file](#write-subagent-files) do subagente                                              |
-| Model                   | Mesmo que a sessão principal         | Do campo `model` do subagente                                                                        |
-| Permissions             | Prompts aparecem em seu terminal     | [Pré-aprovados](#run-subagents-in-foreground-or-background) antes do lançamento, depois auto-negados |
-| Prompt cache            | Compartilhado com a sessão principal | Cache separado                                                                                       |
+|                         | Bifurcação                           | Subagente nomeado                                                                           |
+| :---------------------- | :----------------------------------- | :------------------------------------------------------------------------------------------ |
+| Context                 | Histórico de conversa completo       | Contexto fresco com o prompt que você passa                                                 |
+| System prompt and tools | Mesmo que a sessão principal         | Da [definição file](#write-subagent-files) do subagente                                     |
+| Model                   | Mesmo que a sessão principal         | Do campo `model` do subagente                                                               |
+| Permissions             | Prompts aparecem em seu terminal     | [Auto-negados](#run-subagents-in-foreground-or-background) quando em execução em background |
+| Prompt cache            | Compartilhado com a sessão principal | Cache separado                                                                              |
 
 Porque o prompt de sistema de uma bifurcação e as definições de ferramentas são idênticas ao pai, sua primeira solicitação reutiliza o cache de prompt do pai. Isso torna bifurcação mais barata do que gerar um subagente fresco para tarefas que precisam do mesmo contexto.
 

@@ -99,6 +99,7 @@ Si su organización tiene requisitos de infraestructura específicos, compare la
       <th>Claude for Teams/Enterprise</th>
       <th>Anthropic Console</th>
       <th>Amazon Bedrock</th>
+      <th>Claude Platform on AWS</th>
       <th>Google Vertex AI</th>
       <th>Microsoft Foundry</th>
     </tr>
@@ -110,6 +111,7 @@ Si su organización tiene requisitos de infraestructura específicos, compare la
       <td>La mayoría de las organizaciones (recomendado)</td>
       <td>Desarrolladores individuales</td>
       <td>Implementaciones nativas de AWS</td>
+      <td>Facturación de AWS Marketplace con características de API de Claude</td>
       <td>Implementaciones nativas de GCP</td>
       <td>Implementaciones nativas de Azure</td>
     </tr>
@@ -119,6 +121,7 @@ Si su organización tiene requisitos de infraestructura específicos, compare la
       <td><strong>Teams:</strong> \$150/puesto (Premium) con PAYG disponible<br /><strong>Enterprise:</strong> <a href="https://claude.com/contact-sales?utm_source=claude_code&utm_medium=docs&utm_content=third_party_enterprise">Contactar ventas</a></td>
       <td>PAYG</td>
       <td>PAYG a través de AWS</td>
+      <td>PAYG a través de AWS Marketplace</td>
       <td>PAYG a través de GCP</td>
       <td>PAYG a través de Azure</td>
     </tr>
@@ -128,12 +131,14 @@ Si su organización tiene requisitos de infraestructura específicos, compare la
       <td>[Países](https://www.anthropic.com/supported-countries) admitidos</td>
       <td>[Países](https://www.anthropic.com/supported-countries) admitidos</td>
       <td>Múltiples [regiones](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html) de AWS</td>
+      <td>Múltiples regiones de AWS</td>
       <td>Múltiples [regiones](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations) de GCP</td>
       <td>Múltiples [regiones](https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/) de Azure</td>
     </tr>
 
     <tr>
       <td>Prompt caching</td>
+      <td>Habilitado de forma predeterminada</td>
       <td>Habilitado de forma predeterminada</td>
       <td>Habilitado de forma predeterminada</td>
       <td>Habilitado de forma predeterminada</td>
@@ -146,6 +151,7 @@ Si su organización tiene requisitos de infraestructura específicos, compare la
       <td>Claude.ai SSO o correo electrónico</td>
       <td>Clave API</td>
       <td>Clave API o credenciales de AWS</td>
+      <td>Clave API o credenciales de AWS</td>
       <td>Credenciales de GCP</td>
       <td>Clave API o Microsoft Entra ID</td>
     </tr>
@@ -154,6 +160,7 @@ Si su organización tiene requisitos de infraestructura específicos, compare la
       <td>Seguimiento de costos</td>
       <td>Panel de uso</td>
       <td>Panel de uso</td>
+      <td>AWS Cost Explorer</td>
       <td>AWS Cost Explorer</td>
       <td>Facturación de GCP</td>
       <td>Gestión de costos de Azure</td>
@@ -166,12 +173,14 @@ Si su organización tiene requisitos de infraestructura específicos, compare la
       <td>No</td>
       <td>No</td>
       <td>No</td>
+      <td>No</td>
     </tr>
 
     <tr>
       <td>Características empresariales</td>
       <td>Gestión de equipos, SSO, monitoreo de uso</td>
       <td>Ninguno</td>
+      <td>Políticas de IAM, CloudTrail</td>
       <td>Políticas de IAM, CloudTrail</td>
       <td>Roles de IAM, registros de auditoría en la nube</td>
       <td>Políticas RBAC, Azure Monitor</td>
@@ -184,6 +193,7 @@ Seleccione una opción de implementación para ver las instrucciones de configur
 * [Claude for Teams o Enterprise](/es/authentication#claude-for-teams-or-enterprise)
 * [Anthropic Console](/es/authentication#claude-console-authentication)
 * [Amazon Bedrock](/es/amazon-bedrock)
+* [Claude Platform on AWS](/es/claude-platform-on-aws)
 * [Google Vertex AI](/es/google-vertex-ai)
 * [Microsoft Foundry](/es/microsoft-foundry)
 
@@ -192,7 +202,7 @@ Seleccione una opción de implementación para ver las instrucciones de configur
 La mayoría de las organizaciones pueden usar un proveedor de nube directamente sin configuración adicional. Sin embargo, es posible que deba configurar un proxy corporativo o una puerta de enlace LLM si su organización tiene requisitos específicos de red o gestión. Estas son configuraciones diferentes que se pueden usar juntas:
 
 * **Proxy corporativo**: Enruta el tráfico a través de un proxy HTTP/HTTPS. Úselo si su organización requiere que todo el tráfico saliente pase a través de un servidor proxy para monitoreo de seguridad, cumplimiento o aplicación de políticas de red. Configure con las variables de entorno `HTTPS_PROXY` o `HTTP_PROXY`. Obtenga más información en [Configuración de red empresarial](/es/network-config).
-* **LLM Gateway**: Un servicio que se sitúa entre Claude Code y el proveedor de nube para manejar la autenticación y el enrutamiento. Úselo si necesita seguimiento de uso centralizado entre equipos, limitación de velocidad personalizada o presupuestos, o gestión de autenticación centralizada. Configure con las variables de entorno `ANTHROPIC_BASE_URL`, `ANTHROPIC_BEDROCK_BASE_URL`, o `ANTHROPIC_VERTEX_BASE_URL`. Obtenga más información en [Configuración de puerta de enlace LLM](/es/llm-gateway).
+* **LLM Gateway**: Un servicio que se sitúa entre Claude Code y el proveedor de nube para manejar la autenticación y el enrutamiento. Úselo si necesita seguimiento de uso centralizado entre equipos, limitación de velocidad personalizada o presupuestos, o gestión de autenticación centralizada. Configure con las variables de entorno `ANTHROPIC_BASE_URL`, `ANTHROPIC_BEDROCK_BASE_URL`, `ANTHROPIC_AWS_BASE_URL`, o `ANTHROPIC_VERTEX_BASE_URL`. Obtenga más información en [Configuración de puerta de enlace LLM](/es/llm-gateway).
 
 Los siguientes ejemplos muestran las variables de entorno a establecer en su shell o perfil de shell (`.bashrc`, `.zshrc`). Consulte [Configuración](/es/settings) para otros métodos de configuración.
 
@@ -313,7 +323,7 @@ Anime a los nuevos usuarios a probar Claude Code para preguntas sobre la base de
 
 ### Fijar versiones de modelo para proveedores de nube
 
-Si implementa a través de [Bedrock](/es/amazon-bedrock), [Vertex AI](/es/google-vertex-ai), o [Foundry](/es/microsoft-foundry), fije versiones de modelo específicas usando `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, y `ANTHROPIC_DEFAULT_HAIKU_MODEL`. Sin fijar, los alias de modelo se resuelven a la versión más reciente, lo que puede no estar habilitado en su cuenta cuando Anthropic lanza una actualización. Fijar le permite controlar cuándo sus usuarios se mueven a un nuevo modelo. Consulte [Configuración de modelo](/es/model-config#pin-models-for-third-party-deployments) para ver qué hace cada proveedor cuando la versión más reciente no está disponible.
+Si implementa a través de [Bedrock](/es/amazon-bedrock), [Vertex AI](/es/google-vertex-ai), [Foundry](/es/microsoft-foundry), o [Claude Platform on AWS](/es/claude-platform-on-aws), fije versiones de modelo específicas usando `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, y `ANTHROPIC_DEFAULT_HAIKU_MODEL`. Sin fijar, los alias de modelo se resuelven a la versión más reciente, lo que puede no estar habilitado en su cuenta cuando Anthropic lanza una actualización. Fijar le permite controlar cuándo sus usuarios se mueven a un nuevo modelo. Consulte [Configuración de modelo](/es/model-config#pin-models-for-third-party-deployments) para ver qué hace cada proveedor cuando la versión más reciente no está disponible.
 
 ### Configurar políticas de seguridad
 

@@ -289,6 +289,10 @@ claude mcp add --transport sse private-api https://api.company.com/sse \
 
 Stdio servers 在您的機器上作為本機程序執行。它們非常適合需要直接系統存取或自訂指令碼的工具。
 
+Claude Code 在生成的 server 環境中設定 `CLAUDE_PROJECT_DIR`，以指向專案根目錄，因此您的 server 可以解析專案相對路徑，而無需依賴工作目錄。這與 hooks 在其 `CLAUDE_PROJECT_DIR` 變數中接收的目錄相同。從您的 server 程序內部讀取它，例如 Node 中的 `process.env.CLAUDE_PROJECT_DIR` 或 Python 中的 `os.environ["CLAUDE_PROJECT_DIR"]`。您的 server 也可以呼叫 MCP `roots/list` 請求，該請求會傳回啟動 Claude Code 的目錄。
+
+此變數在 server 的環境中設定，而不是在 Claude Code 自己的環境中，因此在專案或使用者範圍的 `.mcp.json` `command` 或 `args` 中透過 `${VAR}` 擴展參考它需要預設值，例如 `${CLAUDE_PROJECT_DIR:-.}`。Plugin 提供的 MCP 配置直接替換 `${CLAUDE_PROJECT_DIR}`，不需要預設值。
+
 ```bash theme={null}
 # 基本語法
 claude mcp add [options] <name> -- <command> [args...]
@@ -406,7 +410,7 @@ MCP server 也可以直接將訊息推送到您的 session 中，以便 Claude �
 **Plugin MCP 功能**：
 
 * **自動生命週期**：在 session 啟動時，已啟用 plugins 的 servers 會自動連接。如果您在 session 期間啟用或停用 plugin，請執行 `/reload-plugins` 以連接或斷開其 MCP servers
-* **環境變數**：使用 `${CLAUDE_PLUGIN_ROOT}` 表示 plugin 根目錄中的捆綁 plugin 檔案，以及 `${CLAUDE_PLUGIN_DATA}` 表示 [persistent state](/zh-TW/plugins-reference#persistent-data-directory) 在 plugin 更新後仍然存在
+* **環境變數**：使用 `${CLAUDE_PLUGIN_ROOT}` 表示 plugin 根目錄中的捆綁 plugin 檔案，以及 `${CLAUDE_PLUGIN_DATA}` 表示 [persistent state](/zh-TW/plugins-reference#persistent-data-directory) 在 plugin 更新後仍然存在，以及 `${CLAUDE_PROJECT_DIR}` 表示穩定的專案根目錄
 * **使用者環境存取**：存取與手動配置的 servers 相同的環境變數
 * **多種傳輸類型**：支援 stdio、SSE 和 HTTP 傳輸 (傳輸支援可能因 server 而異)
 
@@ -646,6 +650,8 @@ claude mcp add --transport stdio db -- npx -y @bytebase/dbhub \
 
 許多雲端 MCP servers 需要驗證。Claude Code 支援 OAuth 2.0 以進行安全連接。
 
+Claude Code 會在 server 以 `401 Unauthorized` 和指向其授權 server 的 `WWW-Authenticate` 標頭回應時，將遠端 server 標記為需要驗證。任何傳回該回應的自訂 server 都會獲得與任何其他遠端 server 相同的 `/mcp` 驗證流程。
+
 <Steps>
   <Step title="新增需要驗證的 server">
     例如：
@@ -691,7 +697,7 @@ claude mcp add --transport http \
 
 ### 使用預先配置的 OAuth 認證
 
-某些 MCP servers 不支援自動 OAuth 設定。如果您看到類似「Incompatible auth server: does not support dynamic client registration」的錯誤，server 需要預先配置的認證。Claude Code 也支援使用 Client ID Metadata Document (CIMD) 而不是 Dynamic Client Registration 的 servers，並自動探索這些。如果自動探索失敗，請先透過 server 的開發人員入口網站註冊 OAuth 應用程式，然後在新增 server 時提供認證。
+某些 MCP servers 不支援透過 Dynamic Client Registration 進行自動 OAuth 設定。如果您看到類似「Incompatible auth server: does not support dynamic client registration」的錯誤，server 需要預先配置的認證。Claude Code 也支援使用 Client ID Metadata Document (CIMD) 而不是 Dynamic Client Registration 的 servers，並自動探索這些。如果自動探索失敗，請先透過 server 的開發人員入口網站註冊 OAuth 應用程式，然後在新增 server 時提供認證。
 
 <Steps>
   <Step title="使用 server 註冊 OAuth 應用程式">

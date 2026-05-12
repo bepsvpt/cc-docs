@@ -36,7 +36,7 @@ Les alias de modèle offrent un moyen pratique de sélectionner les paramètres 
 | **`opus[1m]`**   | Utilise Opus avec une [fenêtre de contexte de 1 million de tokens](https://platform.claude.com/docs/fr/build-with-claude/context-windows#1m-token-context-window) pour les sessions longues   |
 | **`opusplan`**   | Mode spécial qui utilise `opus` pendant le mode plan, puis bascule vers `sonnet` pour l'exécution                                                                                             |
 
-Sur l'API Anthropic, `opus` se résout en Opus 4.7 et `sonnet` se résout en Sonnet 4.6. Sur Bedrock, Vertex et Foundry, `opus` se résout en Opus 4.6 et `sonnet` se résout en Sonnet 4.5 ; les modèles plus récents sont disponibles sur ces fournisseurs en sélectionnant le nom de modèle complet explicitement ou en définissant `ANTHROPIC_DEFAULT_OPUS_MODEL` ou `ANTHROPIC_DEFAULT_SONNET_MODEL`.
+Sur l'API Anthropic et [Claude Platform on AWS](/fr/claude-platform-on-aws), `opus` se résout en Opus 4.7 et `sonnet` se résout en Sonnet 4.6. Sur Bedrock, Vertex et Foundry, `opus` se résout en Opus 4.6 et `sonnet` se résout en Sonnet 4.5 ; les modèles plus récents sont disponibles sur ces fournisseurs en sélectionnant le nom de modèle complet explicitement ou en définissant `ANTHROPIC_DEFAULT_OPUS_MODEL` ou `ANTHROPIC_DEFAULT_SONNET_MODEL`.
 
 Les alias pointent vers la version recommandée pour votre fournisseur et se mettent à jour au fil du temps. Pour épingler une version spécifique, utilisez le nom de modèle complet (par exemple, `claude-opus-4-7`) ou définissez la variable d'environnement correspondante comme `ANTHROPIC_DEFAULT_OPUS_MODEL`.
 
@@ -54,6 +54,8 @@ Vous pouvez configurer votre modèle de plusieurs façons, énumérées par ordr
 4. **Paramètres** - Configurez de manière permanente dans votre fichier de paramètres en utilisant le champ `model`.
 
 Votre sélection `/model` est enregistrée dans les paramètres utilisateur et persiste entre les redémarrages. À partir de la v2.1.117, si le fichier `.claude/settings.json` du projet épingle un modèle différent, Claude Code écrit également votre choix dans `.claude/settings.local.json` afin qu'il continue à s'appliquer dans ce projet après un redémarrage. Les paramètres gérés ont la priorité et se réappliquent au prochain lancement.
+
+L'indicateur `--model` et la variable d'environnement `ANTHROPIC_MODEL` s'appliquent uniquement à la session que vous lancez avec eux et ne sont pas enregistrés. Pour exécuter différents modèles dans différents terminaux en même temps, lancez chacun avec son propre indicateur `--model` plutôt que de basculer avec `/model`.
 
 Lorsque le modèle actif au démarrage provient des paramètres du projet ou gérés plutôt que de votre propre sélection, l'en-tête de démarrage indique quel fichier de paramètres l'a défini. Exécutez `/model` pour remplacer la sélection pour la session actuelle.
 
@@ -294,7 +296,7 @@ Remarque : `ANTHROPIC_SMALL_FAST_MODEL` est déprécié au profit de `ANTHROPIC_
 
 ### Épingler les modèles pour les déploiements tiers
 
-Lors du déploiement de Claude Code via [Bedrock](/fr/amazon-bedrock), [Vertex AI](/fr/google-vertex-ai) ou [Foundry](/fr/microsoft-foundry), épinglez les versions de modèle avant de les déployer auprès des utilisateurs.
+Lors du déploiement de Claude Code via [Bedrock](/fr/amazon-bedrock), [Vertex AI](/fr/google-vertex-ai), [Foundry](/fr/microsoft-foundry) ou [Claude Platform on AWS](/fr/claude-platform-on-aws), épinglez les versions de modèle avant de les déployer auprès des utilisateurs.
 
 Sans épinglage, Claude Code utilise les alias de modèle (`sonnet`, `opus`, `haiku`) qui se résolvent à la dernière version. Lorsqu'Anthropic publie un nouveau modèle qui n'est pas encore activé dans le compte d'un utilisateur, les utilisateurs de Bedrock et Vertex AI voient un avis et reviennent à la version précédente pour cette session, tandis que les utilisateurs de Foundry voient des erreurs car Foundry n'a pas de vérification de démarrage équivalente.
 

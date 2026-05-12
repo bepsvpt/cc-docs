@@ -307,10 +307,10 @@ Weitere Informationen finden Sie unter [Best Practices](/de/best-practices) und 
   </Accordion>
 
   <Accordion title="Sparen Sie Zeit mit Verknüpfungen">
-    * Drücken Sie `?`, um alle verfügbaren Tastaturkürzel anzuzeigen
+    * Geben Sie `/` ein, um alle Befehle und Skills anzuzeigen
     * Verwenden Sie Tab für Befehlsvervollständigung
     * Drücken Sie ↑ für Befehlsverlauf
-    * Geben Sie `/` ein, um alle Befehle und skills anzuzeigen
+    * Drücken Sie `Shift+Tab`, um zwischen Berechtigungsmodi zu wechseln
   </Accordion>
 </AccordionGroup>
 

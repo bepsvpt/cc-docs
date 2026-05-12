@@ -272,6 +272,22 @@ ln -s ~/company-standards/security.md .claude/rules/security.md
   </Step>
 </Steps>
 
+`claudeMd` 键让你将托管 CLAUDE.md 内容直接放入 `managed-settings.json` 中，而不是部署单独的文件。
+
+**范围**：机器上的每个 Claude Code 会话，在每个存储库中。对于存储库特定的指导，改为提交项目 CLAUDE.md。
+
+**优先级**：与托管 CLAUDE.md 文件相同。在用户和项目 CLAUDE.md 之前加载。
+
+**在哪里被遵守**：仅托管和策略设置。在用户、项目或本地设置中设置 `claudeMd` 无效。
+
+下面的示例直接在托管设置文件中添加行为指令：
+
+```json theme={null}
+{
+  "claudeMd": "Always run `make lint` before committing.\nNever push directly to main."
+}
+```
+
 托管 CLAUDE.md 和 [托管设置](/zh-CN/settings#settings-files) 服务于不同的目的。使用设置进行技术强制，使用 CLAUDE.md 进行行为指导：
 
 | 关注点             | 配置在                                         |

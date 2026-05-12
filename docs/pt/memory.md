@@ -26,7 +26,7 @@ Claude Code tem dois sistemas de memória complementares. Ambos são carregados 
 | :--------------- | :----------------------------------------------------------------- | :------------------------------------------------------------------------------ |
 | **Quem escreve** | Você                                                               | Claude                                                                          |
 | **O que contém** | Instruções e regras                                                | Aprendizados e padrões                                                          |
-| **Escopo**       | Projeto, usuário ou organização                                    | Por worktree                                                                    |
+| **Escopo**       | Projeto, usuário ou organização                                    | Por repositório, compartilhado entre worktrees                                  |
 | **Carregado em** | Cada sessão                                                        | Cada sessão (primeiras 200 linhas ou 25KB)                                      |
 | **Usar para**    | Padrões de codificação, fluxos de trabalho, arquitetura do projeto | Comandos de compilação, insights de depuração, preferências que Claude descobre |
 
@@ -271,6 +271,22 @@ As organizações podem implantar um CLAUDE.md gerenciado centralmente que se ap
     Use MDM, Group Policy, Ansible ou ferramentas similares para distribuir o arquivo entre máquinas de desenvolvedores. Veja [configurações gerenciadas](/pt/permissions#managed-settings) para outras opções de configuração em toda a organização.
   </Step>
 </Steps>
+
+A chave `claudeMd` permite que você coloque conteúdo CLAUDE.md gerenciado diretamente dentro de `managed-settings.json` em vez de implantar um arquivo separado.
+
+**Escopo**: cada sessão de Claude Code na máquina, em cada repositório. Para orientação específica do repositório, confirme um CLAUDE.md de projeto em vez disso.
+
+**Precedência**: igual a um arquivo CLAUDE.md gerenciado. Carrega antes de CLAUDE.md de usuário e projeto.
+
+**Onde é honrado**: apenas configurações gerenciadas e de política. Definir `claudeMd` em configurações de usuário, projeto ou local não tem efeito.
+
+O exemplo abaixo adiciona instruções comportamentais diretamente em um arquivo de configurações gerenciadas:
+
+```json theme={null}
+{
+  "claudeMd": "Always run `make lint` before committing.\nNever push directly to main."
+}
+```
 
 Um CLAUDE.md gerenciado e [configurações gerenciadas](/pt/settings#settings-files) servem a propósitos diferentes. Use configurações para imposição técnica e CLAUDE.md para orientação comportamental:
 

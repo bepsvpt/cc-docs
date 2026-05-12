@@ -14,7 +14,9 @@ Per le istruzioni relative al vostro progetto, alle convenzioni o al codebase, u
 
 Lo **Default** output style di Claude Code è il prompt di sistema esistente, progettato per aiutarvi a completare i compiti di ingegneria del software in modo efficiente.
 
-Ci sono due output styles integrati aggiuntivi focalizzati sull'insegnamento del codebase e su come Claude opera:
+Ci sono tre output styles integrati aggiuntivi:
+
+* **Proactive**: Claude esegue immediatamente, fa ipotesi ragionevoli invece di fermarsi per decisioni di routine, e preferisce l'azione alla pianificazione. Questo applica la stessa guida della [modalità auto](/it/permission-modes#eliminate-prompts-with-auto-mode) senza cambiare la vostra modalità di permesso, quindi vedete comunque i prompt di permesso prima che gli strumenti vengano eseguiti.
 
 * **Explanatory**: Fornisce "Insights" educativi tra l'aiuto nel completamento dei compiti di ingegneria del software. Aiuta a comprendere le scelte di implementazione e i pattern del codebase.
 

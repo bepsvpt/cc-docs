@@ -10,13 +10,19 @@ Output styles mengubah cara Claude merespons, bukan apa yang Claude ketahui. Mer
 
 Untuk instruksi tentang proyek, konvensi, atau codebase Anda, gunakan [CLAUDE.md](/id/memory) sebagai gantinya.
 
-## Built-in output styles
+## Gaya output bawaan
 
-Output style **Default** Claude Code adalah system prompt yang ada, dirancang
+Gaya output **Default** Claude Code adalah system prompt yang ada, dirancang
 untuk membantu Anda menyelesaikan tugas-tugas rekayasa perangkat lunak secara efisien.
 
-Ada dua built-in output styles tambahan yang berfokus pada pengajaran Anda tentang
-codebase dan cara Claude beroperasi:
+Ada tiga gaya output bawaan tambahan:
+
+* **Proactive**: Claude dieksekusi segera, membuat asumsi yang masuk akal
+  alih-alih berhenti untuk keputusan rutin, dan lebih memilih tindakan daripada perencanaan.
+  Ini menerapkan panduan yang sama seperti
+  [mode otomatis](/id/permission-modes#eliminate-prompts-with-auto-mode) tanpa
+  mengubah mode izin Anda, jadi Anda masih melihat prompt izin sebelum
+  alat dijalankan.
 
 * **Explanatory**: Menyediakan "Insights" edukatif di antara membantu Anda
   menyelesaikan tugas-tugas rekayasa perangkat lunak. Membantu Anda memahami

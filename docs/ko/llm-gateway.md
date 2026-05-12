@@ -41,9 +41,13 @@ Gateway는 클라이언트에 다음 API 형식 중 최소 하나를 노출해�
 
 Claude Code는 모든 API 요청에 다음 헤더를 포함합니다:
 
-| 헤더                         | 설명                                                                                         |
-| :------------------------- | :----------------------------------------------------------------------------------------- |
-| `X-Claude-Code-Session-Id` | 현재 Claude Code 세션의 고유 식별자입니다. 프록시는 이를 사용하여 요청 본문을 구문 분석하지 않고 단일 세션의 모든 API 요청을 집계할 수 있습니다. |
+| 헤더                              | 설명                                                                                                                                            |
+| :------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+| `X-Claude-Code-Session-Id`      | 현재 Claude Code 세션의 고유 식별자입니다. 프록시는 이를 사용하여 요청 본문을 구문 분석하지 않고 단일 세션의 모든 API 요청을 집계할 수 있습니다.                                                    |
+| `X-Claude-Code-Agent-Id`        | 요청을 발급한 서브에이전트 또는 팀원의 식별자입니다. 프록시는 이를 사용하여 요청 본문을 구문 분석하지 않고 세션 내 개별 병렬 서브에이전트에 API 비용을 할당할 수 있습니다. 프로세스 내 서브에이전트 또는 팀원이 발급한 요청에만 표시됩니다.      |
+| `X-Claude-Code-Parent-Agent-Id` | 요청을 하는 에이전트를 생성한 에이전트의 식별자입니다. 프록시에서 중첩된 에이전트 전체에 API 비용을 할당하려면 `X-Claude-Code-Agent-Id`와 함께 이를 사용합니다. 요청하는 에이전트가 다른 에이전트에 의해 생성된 경우에만 표시됩니다. |
+
+두 에이전트 ID 헤더는 지속적인 사용자 또는 디바이스 ID가 아닌 생성당 임시 식별자입니다.
 
 Claude Code는 또한 클라이언트 버전과 대화에서 파생된 지문을 포함하는 짧은 속성 블록을 시스템 프롬프트 앞에 추가합니다. Anthropic API는 처리 전에 이 블록을 제거하므로 자사 프롬프트 캐싱에 영향을 주지 않습니다. Gateway가 전체 요청 본문을 기반으로 키가 지정된 자체 프롬프트 캐시를 구현하는 경우 [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/ko/env-vars)을 설정하여 이를 생략합니다.
 
@@ -184,6 +188,17 @@ export ANTHROPIC_VERTEX_PROJECT_ID=your-gcp-project-id
 export CLAUDE_CODE_SKIP_VERTEX_AUTH=1
 export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=us-east5
+```
+
+##### AWS를 통한 Claude Platform 게이트웨이
+
+[Claude Platform on AWS](/ko/claude-platform-on-aws) 엔드포인트로 전달하는 게이트웨이로 라우팅:
+
+```bash theme={null}
+export ANTHROPIC_AWS_BASE_URL=https://litellm-server:4000/anthropic-aws
+export ANTHROPIC_AWS_WORKSPACE_ID=wrkspc_01ABCDEFGHIJKLMN
+export CLAUDE_CODE_SKIP_ANTHROPIC_AWS_AUTH=1
+export CLAUDE_CODE_USE_ANTHROPIC_AWS=1
 ```
 
 더 자세한 정보는 [LiteLLM 문서](https://docs.litellm.ai/)를 참조하십시오.

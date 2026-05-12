@@ -18,7 +18,7 @@ Hooks disparam em pontos específicos durante uma sessão do Claude Code. Quando
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/ZIW26Z9pnpsXLhbS/images/hooks-lifecycle.svg?fit=max&auto=format&n=ZIW26Z9pnpsXLhbS&q=85&s=ee23691324deb6501df09bfdae560b64" alt="Diagrama do ciclo de vida do hook mostrando Setup opcional alimentando SessionStart, depois um loop por turno contendo UserPromptSubmit, UserPromptExpansion para slash commands, o loop agentic aninhado (PreToolUse, PermissionRequest, PostToolUse, PostToolUseFailure, PostToolBatch, SubagentStart/Stop, TaskCreated, TaskCompleted) e Stop ou StopFailure, seguido por TeammateIdle, PreCompact, PostCompact e SessionEnd, com Elicitation e ElicitationResult aninhados dentro da execução de ferramenta MCP, PermissionDenied como um ramo lateral de PermissionRequest para negações em modo automático, e WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged e FileChanged como eventos assíncronos independentes" width="520" height="1228" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/ZIW26Z9pnpsXLhbS/images/hooks-lifecycle.svg?fit=max&auto=format&n=ZIW26Z9pnpsXLhbS&q=85&s=ee23691324deb6501df09bfdae560b64" alt="Diagrama do ciclo de vida do hook mostrando Setup opcional alimentando SessionStart, depois um loop por turno contendo UserPromptSubmit, UserPromptExpansion para slash commands, o loop agentic aninhado (PreToolUse, PermissionRequest, PostToolUse, PostToolUseFailure, PostToolBatch, SubagentStart/Stop, TaskCreated, TaskCompleted), e Stop ou StopFailure, seguido por TeammateIdle, PreCompact, PostCompact e SessionEnd, com Elicitation e ElicitationResult aninhados dentro da execução de ferramenta MCP, PermissionDenied como um ramo lateral de PermissionRequest para negações em modo automático, e WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged e FileChanged como eventos assíncronos independentes" width="520" height="1228" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
@@ -70,7 +70,8 @@ Para ver como essas peças se encaixam, considere este hook `PreToolUse` que blo
           {
             "type": "command",
             "if": "Bash(rm *)",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-rm.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-rm.sh",
+            "args": []
           }
         ]
       }
@@ -306,12 +307,52 @@ O campo `if` contém exatamente uma regra de permissão. Não há sintaxe `&&`, 
 
 Além dos [campos comuns](#common-fields), hooks de comando aceitam esses campos:
 
-| Campo         | Obrigatório | Descrição                                                                                                                                                                                                                                                      |
-| :------------ | :---------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `command`     | sim         | Comando shell a executar                                                                                                                                                                                                                                       |
-| `async`       | não         | Se `true`, executa em background sem bloquear. Consulte [Executar hooks em background](#run-hooks-in-the-background)                                                                                                                                           |
-| `asyncRewake` | não         | Se `true`, executa em background e acorda Claude na saída do código 2. Implica `async`. O stderr do hook, ou stdout se stderr estiver vazio, é mostrado ao Claude como um lembrete do sistema para que possa reagir a uma falha de background de longa duração |
-| `shell`       | não         | Shell a usar para este hook. Aceita `"bash"` (padrão) ou `"powershell"`. Definir `"powershell"` executa o comando via PowerShell no Windows. Não requer `CLAUDE_CODE_USE_POWERSHELL_TOOL` já que hooks geram PowerShell diretamente                            |
+| Campo         | Obrigatório | Descrição                                                                                                                                                                                                                                                              |
+| :------------ | :---------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `command`     | sim         | Comando shell a executar. Com `args`, o executável a gerar diretamente. Consulte [Forma exec e forma shell](#exec-form-and-shell-form)                                                                                                                                 |
+| `args`        | não         | Lista de argumentos. Quando presente, `command` é resolvido como um executável e gerado diretamente com `args` como o vetor de argumentos, sem shell envolvido. Consulte [Forma exec e forma shell](#exec-form-and-shell-form)                                         |
+| `async`       | não         | Se `true`, executa em background sem bloquear. Consulte [Executar hooks em background](#run-hooks-in-the-background)                                                                                                                                                   |
+| `asyncRewake` | não         | Se `true`, executa em background e acorda Claude na saída do código 2. Implica `async`. O stderr do hook, ou stdout se stderr estiver vazio, é mostrado ao Claude como um lembrete do sistema para que possa reagir a uma falha de background de longa duração         |
+| `shell`       | não         | Shell a usar para este hook. Aceita `"bash"` (padrão) ou `"powershell"`. Definir `"powershell"` executa o comando via PowerShell no Windows. Não requer `CLAUDE_CODE_USE_POWERSHELL_TOOL` já que hooks geram PowerShell diretamente. Ignorado quando `args` é definido |
+
+<a id="exec-form-and-shell-form" />
+
+##### Forma exec e forma shell
+
+Um hook de comando executa como forma exec quando `args` é definido, e forma shell quando `args` é omitido. Defina `args` sempre que o hook referenciar um [placeholder de caminho](#reference-scripts-by-path), já que cada elemento é passado como um argumento sem aspas. Omita `args` quando você precisar de recursos de shell como pipes ou `&&`, ou quando nenhuma preocupação se aplica.
+
+**Forma exec** executa quando `args` está presente. Claude Code resolve `command` como um executável em `PATH` e o gera diretamente com `args` como o vetor de argumentos. Não há shell, então cada elemento `args` é um argumento exatamente como escrito, e placeholders de caminho como `${CLAUDE_PLUGIN_ROOT}` são substituídos em `command` e em cada elemento `args` como strings simples. Caracteres especiais como apóstrofos, `$` e backticks passam verbatim porque não há shell para interpretá-los. Nenhuma tokenização de shell acontece em nenhuma plataforma.
+
+**Forma shell** executa quando `args` está ausente. A string `command` é passada para um shell: `sh -c` em macOS e Linux, Git Bash no Windows, ou PowerShell quando Git Bash não está instalado. Defina o campo `shell` para escolher explicitamente. O shell tokeniza a string, expande variáveis e interpreta pipes, `&&`, redirecionamentos e globs.
+
+<Note>
+  No Windows, a forma exec requer que `command` seja resolvido para um executável real como `.exe`. Os shims `.cmd` e `.bat` que npm, npx, eslint e outras ferramentas instalam em `node_modules/.bin` não são executáveis e não podem ser gerados sem um shell. Para executá-los em forma exec, invoque o script subjacente com `node` diretamente, por exemplo `"command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/node_modules/eslint/bin/eslint.js"]`. O padrão `node` mais caminho-de-script funciona em todas as plataformas porque `node.exe` é um binário real. Para executar um shim `.cmd` ou `.bat` por nome, use forma shell.
+</Note>
+
+Este exemplo executa um script Node agrupado com um plugin. A forma exec passa o caminho do script resolvido como um argumento sem aspas:
+
+```json theme={null}
+{
+  "type": "command",
+  "command": "node",
+  "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/format.js", "--fix"]
+}
+```
+
+A forma shell equivalente precisa de aspas para lidar com caminhos com espaços ou caracteres especiais:
+
+```json theme={null}
+{
+  "type": "command",
+  "command": "node \"${CLAUDE_PLUGIN_ROOT}\"/scripts/format.js --fix"
+}
+```
+
+Ambas as formas suportam os mesmos [placeholders de caminho](#reference-scripts-by-path), e ambas os exportam como as variáveis de ambiente `CLAUDE_PROJECT_DIR`, `CLAUDE_PLUGIN_ROOT` e `CLAUDE_PLUGIN_DATA` no processo gerado, então um script pode ler `process.env.CLAUDE_PLUGIN_ROOT` independentemente de como foi lançado. Hooks de plugin adicionalmente substituem valores `${user_config.*}`; consulte [Configuração de usuário](/pt/plugins-reference#user-configuration).
+
+<Note>
+  Em forma exec, `command` é apenas o nome ou caminho do executável. Se `command` é um nome simples sem separador de caminho e contém espaço em branco junto com `args`, Claude Code registra um aviso porque o spawn falhará: não há executável nomeado `node script.js`. Mova os tokens extras para `args`. Caminhos absolutos com espaços, como `C:\Program Files\nodejs\node.exe`, são um executável válido único e não disparam o aviso.
+</Note>
 
 #### Campos de hook HTTP
 
@@ -397,19 +438,21 @@ Além dos [campos comuns](#common-fields), hooks de prompt e agente aceitam esse
 | `prompt` | sim         | Texto do prompt a enviar para o modelo. Use `$ARGUMENTS` como placeholder para a entrada JSON do hook |
 | `model`  | não         | Modelo a usar para avaliação. Padrão para um modelo rápido                                            |
 
-Todos os hooks correspondentes executam em paralelo, e manipuladores idênticos são automaticamente desduplicados. Hooks de comando são desduplicados por string de comando, e hooks HTTP são desduplicados por URL. Manipuladores executam no diretório atual com o ambiente do Claude Code. A variável de ambiente `$CLAUDE_CODE_REMOTE` é definida como `"true"` em ambientes web remotos e não é definida na CLI local.
+Todos os hooks correspondentes executam em paralelo, e manipuladores idênticos são automaticamente desduplicados. Hooks de comando são desduplicados por string de comando e `args`, e hooks HTTP são desduplicados por URL. Manipuladores executam no diretório atual com o ambiente do Claude Code. A variável de ambiente `$CLAUDE_CODE_REMOTE` é definida como `"true"` em ambientes web remotos e não é definida na CLI local.
 
 ### Referenciar scripts por caminho
 
-Use variáveis de ambiente para referenciar scripts de hook relativos à raiz do projeto ou plugin, independentemente do diretório de trabalho quando o hook executa:
+Use esses placeholders para referenciar scripts de hook relativos à raiz do projeto ou plugin, independentemente do diretório de trabalho quando o hook executa:
 
-* `$CLAUDE_PROJECT_DIR`: a raiz do projeto. Envolva em aspas para lidar com caminhos com espaços.
-* `${CLAUDE_PLUGIN_ROOT}`: o diretório raiz do plugin, para scripts agrupados com um [plugin](/pt/plugins). Muda em cada atualização de plugin.
+* `${CLAUDE_PROJECT_DIR}`: a raiz do projeto.
+* `${CLAUDE_PLUGIN_ROOT}`: o diretório de instalação do plugin, para scripts agrupados com um [plugin](/pt/plugins). Muda em cada atualização de plugin.
 * `${CLAUDE_PLUGIN_DATA}`: o [diretório de dados persistentes](/pt/plugins-reference#persistent-data-directory) do plugin, para dependências e estado que devem sobreviver a atualizações de plugin.
+
+Prefira [forma exec](#exec-form-and-shell-form) para qualquer hook que referencie um placeholder de caminho. A forma exec passa cada elemento `args` como um argumento sem tokenização de shell, então caminhos com espaços ou caracteres especiais não precisam de aspas. Em forma shell, envolva cada placeholder em aspas duplas.
 
 <Tabs>
   <Tab title="Scripts de projeto">
-    Este exemplo usa `$CLAUDE_PROJECT_DIR` para executar um verificador de estilo do diretório `.claude/hooks/` do projeto após qualquer chamada de ferramenta `Write` ou `Edit`:
+    Este exemplo usa `${CLAUDE_PROJECT_DIR}` para executar um verificador de estilo do diretório `.claude/hooks/` do projeto após qualquer chamada de ferramenta `Write` ou `Edit`:
 
     ```json theme={null}
     {
@@ -420,7 +463,8 @@ Use variáveis de ambiente para referenciar scripts de hook relativos à raiz do
             "hooks": [
               {
                 "type": "command",
-                "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check-style.sh"
+                "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/check-style.sh",
+                "args": []
               }
             ]
           }
@@ -446,6 +490,7 @@ Use variáveis de ambiente para referenciar scripts de hook relativos à raiz do
               {
                 "type": "command",
                 "command": "${CLAUDE_PLUGIN_ROOT}/scripts/format.sh",
+                "args": [],
                 "timeout": 30
               }
             ]
@@ -528,10 +573,12 @@ Eventos de hook recebem esses campos como JSON, além de campos específicos do 
 
 Ao executar com `--agent` ou dentro de um subagente, dois campos adicionais são incluídos:
 
-| Campo        | Descrição                                                                                                                                                                                                                                    |
-| :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `agent_id`   | Identificador único para o subagente. Presente apenas quando o hook dispara dentro de uma chamada de subagente. Use isso para distinguir chamadas de hook de subagente de chamadas de thread principal.                                      |
-| `agent_type` | Nome do agente (por exemplo, `"Explore"` ou `"security-reviewer"`). Presente quando a sessão usa `--agent` ou o hook dispara dentro de um subagente. Para subagentes, o tipo do subagente tem precedência sobre o valor `--agent` da sessão. |
+| Campo        | Descrição                                                                                                                                                                                                                                                                                                                                                             |
+| :----------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `agent_id`   | Identificador único para o subagente. Presente apenas quando o hook dispara dentro de uma chamada de subagente. Use isso para distinguir chamadas de hook de subagente de chamadas de thread principal.                                                                                                                                                               |
+| `agent_type` | Nome do agente (por exemplo, `"Explore"` ou `"security-reviewer"`). Presente quando a sessão usa `--agent` ou o hook dispara dentro de um subagente. Para subagentes, o tipo do subagente tem precedência sobre o valor `--agent` da sessão. Para [subagentes personalizados](/pt/sub-agents), este é o campo `name` do frontmatter do agente, não o nome do arquivo. |
+
+Apenas hooks [`SessionStart`](#sessionstart) recebem um campo `model`. Não há variável de ambiente `$CLAUDE_MODEL`. Um processo de hook herda o ambiente pai, então pode ler `$ANTHROPIC_MODEL` se você defini-lo em seu shell, mas esse valor não muda quando você alterna modelos com `/model` durante uma sessão.
 
 Por exemplo, um hook `PreToolUse` para um comando Bash recebe isso em stdin:
 
@@ -1153,6 +1200,18 @@ Faz ao usuário uma a quatro perguntas de múltipla escolha.
 | `questions` | array  | `[{"question": "Which framework?", "header": "Framework", "options": [{"label": "React"}], "multiSelect": false}]` | Perguntas a apresentar, cada uma com uma string `question`, `header` curto, array `options` e flag `multiSelect` opcional                                                                                            |
 | `answers`   | object | `{"Which framework?": "React"}`                                                                                    | Opcional. Mapeia texto de pergunta para rótulo de opção selecionada. Respostas multi-select juntam rótulos com vírgulas. Claude não define este campo; forneça-o via `updatedInput` para responder programaticamente |
 
+##### ExitPlanMode
+
+Apresenta um plano e pede ao usuário para aprová-lo antes do Claude sair do [modo de plano](/pt/permission-modes#analyze-before-you-edit-with-plan-mode). Claude escreve o plano em um arquivo no disco antes de chamar a ferramenta, então o `tool_input` literal do modelo apenas carrega `allowedPrompts`. Claude Code injeta o conteúdo do plano e o caminho do arquivo antes de passar a entrada para hooks.
+
+| Campo            | Tipo   | Exemplo                                     | Descrição                                                                                                                                                               |
+| :--------------- | :----- | :------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plan`           | string | `"## Refactor auth\n1. Extract..."`         | Conteúdo do plano em Markdown. Injetado do arquivo de plano no disco                                                                                                    |
+| `planFilePath`   | string | `"/Users/.../plans/refactor-auth.md"`       | Caminho para o arquivo de plano. Injetado                                                                                                                               |
+| `allowedPrompts` | array  | `[{"tool": "Bash", "prompt": "run tests"}]` | Opcional. Permissões baseadas em prompt que Claude está solicitando para implementar o plano, cada uma com um nome `tool` e um `prompt` descrevendo a categoria de ação |
+
+Em `PostToolUse`, `tool_response` é um objeto com campos `plan` e `filePath` contendo o plano aprovado, mais flags de status interno. Leia `tool_response.plan` para o conteúdo do plano em vez de re-ler o arquivo do disco.
+
 #### Controle de decisão de PreToolUse
 
 Hooks `PreToolUse` podem controlar se uma chamada de ferramenta prossegue. Diferentemente de outros hooks que usam um campo `decision` de nível superior, PreToolUse retorna sua decisão dentro de um objeto `hookSpecificOutput`. Isso oferece controle mais rico: quatro resultados (permitir, negar, pedir ou adiar) além da capacidade de modificar entrada de ferramenta antes da execução.
@@ -1596,7 +1655,7 @@ Hooks Notification não podem bloquear ou modificar notificações. Eles são de
 
 ### SubagentStart
 
-Executa quando um subagente do Claude Code é gerado via ferramenta Agent. Suporta matchers para filtrar por nome de tipo de agente (agentes integrados como `general-purpose`, `Explore`, `Plan` ou nomes de agentes personalizados de `.claude/agents/`).
+Executa quando um subagente do Claude Code é gerado via ferramenta Agent. Suporta matchers para filtrar por nome de tipo de agente. Para agentes integrados, este é o nome do agente como `general-purpose`, `Explore` ou `Plan`. Para [subagentes personalizados](/pt/sub-agents), este é o campo `name` do frontmatter do agente, não o nome do arquivo.
 
 #### Entrada de SubagentStart
 
@@ -1651,7 +1710,7 @@ Além dos [campos de entrada comuns](#common-input-fields), hooks SubagentStop r
 }
 ```
 
-Hooks SubagentStop usam o mesmo formato de controle de decisão que [hooks Stop](#stop-decision-control).
+Hooks SubagentStop usam o mesmo formato de controle de decisão que [hooks Stop](#stop-decision-control). Eles não suportam `additionalContext`. Retornar `decision: "block"` com uma `reason` mantém o subagente em execução e entrega `reason` ao subagente como sua próxima instrução. Para injetar contexto na sessão pai após um subagente retornar, use um hook [`PostToolUse`](#posttooluse) na ferramenta `Agent` em vez disso.
 
 ### TaskCreated
 
@@ -1767,6 +1826,10 @@ exit 0
 ### Stop
 
 Executa quando o agente Claude Code principal terminou de responder. Não executa se a parada ocorreu devido a uma interrupção do usuário. Erros de API disparam [StopFailure](#stopfailure) em vez disso.
+
+<Tip>
+  O comando [`/goal`](/pt/goal) é um atalho integrado para um hook Stop baseado em prompt com escopo de sessão. Use-o quando você quiser que Claude continue trabalhando até que uma condição se mantenha sem escrever configuração de hook.
+</Tip>
 
 #### Entrada de Stop
 
@@ -1901,7 +1964,8 @@ Este exemplo registra todas as mudanças de configuração para auditoria de seg
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/audit-config-change.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/audit-config-change.sh",
+            "args": []
           }
         ]
       }
@@ -2389,12 +2453,13 @@ Este hook `Stop` pede ao LLM para avaliar se todas as tarefas estão completas a
 }
 ```
 
-| Campo     | Obrigatório | Descrição                                                                                                                                                                    |
-| :-------- | :---------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`    | sim         | Deve ser `"prompt"`                                                                                                                                                          |
-| `prompt`  | sim         | O texto do prompt a enviar para o LLM. Use `$ARGUMENTS` como placeholder para a entrada JSON do hook. Se `$ARGUMENTS` não estiver presente, entrada JSON é anexada ao prompt |
-| `model`   | não         | Modelo a usar para avaliação. Padrão para um modelo rápido                                                                                                                   |
-| `timeout` | não         | Timeout em segundos. Padrão: 30                                                                                                                                              |
+| Campo             | Obrigatório | Descrição                                                                                                                                                                                                                                                                        |
+| :---------------- | :---------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`            | sim         | Deve ser `"prompt"`                                                                                                                                                                                                                                                              |
+| `prompt`          | sim         | O texto do prompt a enviar para o LLM. Use `$ARGUMENTS` como placeholder para a entrada JSON do hook. Se `$ARGUMENTS` não estiver presente, entrada JSON é anexada ao prompt                                                                                                     |
+| `model`           | não         | Modelo a usar para avaliação. Padrão para um modelo rápido                                                                                                                                                                                                                       |
+| `timeout`         | não         | Timeout em segundos. Padrão: 30                                                                                                                                                                                                                                                  |
+| `continueOnBlock` | não         | Quando o prompt retorna `ok: false`, alimenta a razão de volta para Claude e continua o turno em vez de parar. Padrão: `false`. Implementado como `continue: true` na `decision: "block"` resultante. Veja [Esquema de resposta](#response-schema) para comportamento por evento |
 
 ### Esquema de resposta
 
@@ -2407,16 +2472,17 @@ O LLM deve responder com JSON contendo:
 }
 ```
 
-| Campo    | Descrição                                                                         |
-| :------- | :-------------------------------------------------------------------------------- |
-| `ok`     | `true` permite a ação, `false` a bloqueia. Veja o comportamento por evento abaixo |
-| `reason` | Obrigatório quando `ok` é `false`. Explicação para a decisão                      |
+| Campo    | Descrição                                                                                            |
+| :------- | :--------------------------------------------------------------------------------------------------- |
+| `ok`     | `true` para permitir. `false` produz uma `decision: "block"`. Veja o comportamento por evento abaixo |
+| `reason` | Obrigatório quando `ok` é `false`. Usado como a razão do bloqueio                                    |
 
 O que acontece em `ok: false` depende do evento:
 
-* `Stop` e `SubagentStop`: a razão é retornada a Claude como sua próxima instrução e o turno continua
+* `Stop` e `SubagentStop`: a razão é alimentada de volta para Claude como sua próxima instrução e o turno continua
 * `PreToolUse`: a chamada de ferramenta é negada e a razão é retornada a Claude como o erro da ferramenta, equivalente a um hook de comando com `permissionDecision: "deny"`
-* `PostToolUse`, `PostToolBatch`, `UserPromptSubmit` e `UserPromptExpansion`: o turno termina e a razão aparece no chat como uma linha de aviso, equivalente a retornar `"continue": false` de um hook de comando
+* `PostToolUse`: por padrão o turno termina e a razão aparece no chat como uma linha de aviso. Defina `continueOnBlock: true` para alimentar a razão de volta para Claude e continuar o turno em vez disso
+* `PostToolBatch`, `UserPromptSubmit` e `UserPromptExpansion`: o turno termina e a razão aparece como uma linha de aviso. Esses eventos terminam o turno em `decision: "block"` independentemente de `continue`
 * `PostToolUseFailure`, `TaskCreated` e `TaskCompleted`: a razão é retornada a Claude como um erro de ferramenta, similar a `PreToolUse`
 * `PermissionRequest`: `ok: false` não tem efeito. Para negar uma aprovação de um hook, use um [hook de comando](#command-hook-fields) retornando `hookSpecificOutput.decision.behavior: "deny"`
 
@@ -2575,7 +2641,8 @@ Então adicione esta configuração a `.claude/settings.json` na raiz do seu pro
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/run-tests-async.sh",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/run-tests-async.sh",
+            "args": [],
             "async": true,
             "timeout": 300
           }
@@ -2612,7 +2679,7 @@ Mantenha essas práticas em mente ao escrever hooks:
 * **Valide e sanitize entradas**: nunca confie em dados de entrada cegamente
 * **Sempre cite variáveis shell**: use `"$VAR"` não `$VAR`
 * **Bloqueie traversal de caminho**: verifique `..` em caminhos de arquivo
-* **Use caminhos absolutos**: especifique caminhos completos para scripts, usando `"$CLAUDE_PROJECT_DIR"` para a raiz do projeto
+* **Use caminhos absolutos**: especifique caminhos completos para scripts. Na forma exec, use `${CLAUDE_PROJECT_DIR}` e o caminho não precisa de aspas. Na forma shell, envolva-o em aspas duplas
 * **Pule arquivos sensíveis**: evite `.env`, `.git/`, chaves, etc.
 
 ## Ferramenta Windows PowerShell

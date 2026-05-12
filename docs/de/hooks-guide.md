@@ -864,10 +864,10 @@ Für vollständige Konfigurationsoptionen und Response-Handling siehe [HTTP-Hook
 
 ### Einschränkungen
 
-* Command-Hooks kommunizieren nur über stdout, stderr und Exit-Codes. Sie können `/`-Befehle oder Tool-Aufrufe nicht direkt auslösen. Text, der über `additionalContext` zurückgegeben wird, wird als Systemerinnerung injiziert, die Claude als Klartext liest. HTTP-Hooks kommunizieren stattdessen über den Response-Body.
+* Command-Hooks kommunizieren nur über stdout, stderr und Exit-Codes. Sie können `/`-Befehle oder Tool-Aufrufe nicht auslösen. Text, der über `additionalContext` zurückgegeben wird, wird als Systemerinnerung injiziert, die Claude als Klartext liest. HTTP-Hooks kommunizieren stattdessen über den Response-Body.
 * Hook-Timeout beträgt standardmäßig 10 Minuten, konfigurierbar pro Hook mit dem Feld `timeout` (in Sekunden).
 * `PostToolUse`-Hooks können Aktionen nicht rückgängig machen, da das Tool bereits ausgeführt wurde.
-* `PermissionRequest`-Hooks werden nicht im [nicht-interaktiven Modus](/de/headless) (`-p`) ausgelöst. Verwenden Sie stattdessen `PreToolUse`-Hooks für automatisierte Berechtigungsentscheidungen.
+* `PermissionRequest`-Hooks werden nicht im [nicht-interaktiven Modus](/de/headless) (`-p`) ausgelöst. Verwenden Sie `PreToolUse`-Hooks für automatisierte Berechtigungsentscheidungen.
 * `Stop`-Hooks werden ausgelöst, wenn Claude antwortet, nicht nur bei Aufgabenabschluss. Sie werden nicht bei Benutzerunterbrechungen ausgelöst. API-Fehler lösen stattdessen [StopFailure](/de/hooks#stopfailure) aus.
 * Wenn mehrere PreToolUse-Hooks [`updatedInput`](/de/hooks#pretooluse) zurückgeben, um die Argumente eines Tools umzuschreiben, gewinnt der letzte, der fertig wird. Da Hooks parallel ausgeführt werden, ist die Reihenfolge nicht deterministisch. Vermeiden Sie, dass mehr als ein Hook die Eingabe desselben Tools ändert.
 
@@ -895,7 +895,7 @@ Sie sehen eine Meldung wie "PreToolUse hook error: ..." im Transkript.
   echo '{"tool_name":"Bash","tool_input":{"command":"ls"}}' | ./my-hook.sh
   echo $?  # Überprüfen Sie den Exit-Code
   ```
-* Wenn Sie "command not found" sehen, verwenden Sie absolute Pfade oder `$CLAUDE_PROJECT_DIR`, um Skripte zu referenzieren
+* Wenn Sie "command not found" sehen, verwenden Sie absolute Pfade oder `${CLAUDE_PROJECT_DIR}`, um Skripte zu referenzieren. Um Shell-Quoting vollständig zu vermeiden, fügen Sie `"args": []` hinzu, um zur [exec-Form](/de/hooks#exec-form-and-shell-form) zu wechseln, die das Skript direkt ohne eine Shell spawnt
 * Wenn Sie "jq: command not found" sehen, installieren Sie `jq` oder verwenden Sie Python/Node.js zum Parsen von JSON
 * Wenn das Skript überhaupt nicht ausgeführt wird, machen Sie es ausführbar: `chmod +x ./my-hook.sh`
 
@@ -926,7 +926,7 @@ fi
 
 Claude Code zeigt einen JSON-Parsing-Fehler an, obwohl Ihr Hook-Skript gültiges JSON ausgibt.
 
-Wenn Claude Code einen Hook ausführt, spawnt es eine Shell, die Ihr Profil sourced (`~/.zshrc` oder `~/.bashrc`). Wenn Ihr Profil bedingungslose `echo`-Anweisungen enthält, wird diese Ausgabe Ihrem Hook-JSON vorangestellt:
+Wenn Claude Code einen Shell-Form-Command-Hook ausführt (einen ohne `args`), spawnt es `sh -c` auf macOS und Linux oder Git Bash auf Windows standardmäßig. Diese Shell ist nicht-interaktiv, aber Git Bash und einige Konfigurationen (wie `BASH_ENV`, das auf `~/.bashrc` zeigt) sourced trotzdem Ihr Profil. Wenn dieses Profil bedingungslose `echo`-Anweisungen enthält, wird die Ausgabe Ihrem Hook-JSON vorangestellt:
 
 ```text theme={null}
 Shell ready on arm64

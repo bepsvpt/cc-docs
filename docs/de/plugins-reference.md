@@ -97,7 +97,7 @@ Plugins können Event-Handler bereitstellen, die automatisch auf Claude Code Eve
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/format-code.sh"
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/format-code.sh"
           }
         ]
       }
@@ -289,7 +289,7 @@ Die folgende `monitors/monitors.json` überwacht einen Deployment-Status-Endpunk
 [
   {
     "name": "deploy-status",
-    "command": "${CLAUDE_PLUGIN_ROOT}/scripts/poll-deploy.sh ${user_config.api_endpoint}",
+    "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/poll-deploy.sh ${user_config.api_endpoint}",
     "description": "Deployment status changes"
   },
   {
@@ -317,7 +317,7 @@ Um Monitore inline zu deklarieren, setzen Sie `experimental.monitors` in `plugin
 | :----- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `when` | Steuert, wann der Monitor startet. `"always"` startet ihn beim Session-Start und beim Plugin-Reload und ist der Standard. `"on-skill-invoke:<skill-name>"` startet ihn beim ersten Mal, wenn der benannte Skill in diesem Plugin versendet wird |
 
-Der `command` Wert unterstützt die gleichen [Variablenersetzungen](#environment-variables) wie MCP- und LSP-Server-Konfigurationen: `${CLAUDE_PLUGIN_ROOT}`, `${CLAUDE_PLUGIN_DATA}`, `${user_config.*}` und alle `${ENV_VAR}` aus der Umgebung. Stellen Sie dem Befehl `cd "${CLAUDE_PLUGIN_ROOT}" && ` voran, wenn das Skript aus dem Plugin-eigenen Verzeichnis ausgeführt werden muss.
+Der `command` Wert unterstützt die gleichen [Variablenersetzungen](#environment-variables) wie MCP- und LSP-Server-Konfigurationen: `${CLAUDE_PLUGIN_ROOT}`, `${CLAUDE_PLUGIN_DATA}`, `${CLAUDE_PROJECT_DIR}`, `${user_config.*}` und alle `${ENV_VAR}` aus der Umgebung. Stellen Sie dem Befehl `cd "${CLAUDE_PLUGIN_ROOT}" && ` voran, wenn das Skript aus dem Plugin-eigenen Verzeichnis ausgeführt werden muss.
 
 Das Deaktivieren eines Plugins während einer Session stoppt nicht die Monitore, die bereits laufen. Sie stoppen, wenn die Session endet.
 
@@ -540,13 +540,15 @@ Für alle Pfadfelder:
 
 ### Umgebungsvariablen
 
-Claude Code bietet zwei Variablen zum Referenzieren von Plugin-Pfaden. Beide werden überall dort inline ersetzt, wo sie in Skill-Inhalten, Agent-Inhalten, Hook-Befehlen, Monitor-Befehlen und MCP- oder LSP-Server-Konfigurationen erscheinen. Beide werden auch als Umgebungsvariablen an Hook-Prozesse und MCP- oder LSP-Server-Subprozesse exportiert.
+Claude Code bietet drei Variablen zum Referenzieren von Pfaden. Alle werden überall dort inline ersetzt, wo sie in Skill-Inhalten, Agent-Inhalten, Hook-Befehlen, Monitor-Befehlen und MCP- oder LSP-Server-Konfigurationen erscheinen. Alle werden auch als Umgebungsvariablen an Hook-Prozesse und MCP- oder LSP-Server-Subprozesse exportiert.
 
-**`${CLAUDE_PLUGIN_ROOT}`**: Der absolute Pfad zum Installationsverzeichnis Ihres Plugins. Verwenden Sie dies, um auf Skripte, Binärdateien und Konfigurationsdateien zu verweisen, die mit dem Plugin gebündelt sind. Dieser Pfad ändert sich, wenn das Plugin aktualisiert wird. Das Verzeichnis der vorherigen Version bleibt etwa sieben Tage nach einem Update auf der Festplatte, bevor es bereinigt wird, aber behandeln Sie es als kurzlebig und schreiben Sie keinen Status hier.
+**`${CLAUDE_PLUGIN_ROOT}`**: Der absolute Pfad zum Installationsverzeichnis Ihres Plugins. Verwenden Sie dies, um auf Skripte, Binärdateien und Konfigurationsdateien zu verweisen, die mit dem Plugin gebündelt sind. In Hook-Befehlen verwenden Sie [Exec-Form](/de/hooks#exec-form-and-shell-form) mit `args`, damit der Pfad als ein Argument ohne Anführungszeichen übergeben wird. In Shell-Form-Hooks und Monitor-Befehlen wickeln Sie ihn in doppelte Anführungszeichen ein, wie in `"${CLAUDE_PLUGIN_ROOT}"`. Dieser Pfad ändert sich, wenn das Plugin aktualisiert wird. Das Verzeichnis der vorherigen Version bleibt etwa sieben Tage nach einem Update auf der Festplatte, bevor es bereinigt wird, aber behandeln Sie es als kurzlebig und schreiben Sie keinen Status hier.
 
 Wenn ein Plugin während einer Sitzung aktualisiert wird, verwenden Hook-Befehle, Monitore, MCP-Server und LSP-Server weiterhin den Pfad der vorherigen Version. Führen Sie `/reload-plugins` aus, um Hooks, MCP-Server und LSP-Server auf den neuen Pfad umzuschalten; Monitore erfordern einen Neustart der Sitzung.
 
 **`${CLAUDE_PLUGIN_DATA}`**: Ein persistentes Verzeichnis für Plugin-Status, das Updates überlebt. Verwenden Sie dies für installierte Abhängigkeiten wie `node_modules` oder Python-Umgebungen, generierte Code, Caches und alle anderen Dateien, die über Plugin-Versionen hinweg bestehen bleiben sollten. Das Verzeichnis wird automatisch erstellt, wenn diese Variable zum ersten Mal referenziert wird.
+
+**`${CLAUDE_PROJECT_DIR}`**: Das Projekt-Root-Verzeichnis. Dies ist das gleiche Verzeichnis, das Hooks in ihrer `CLAUDE_PROJECT_DIR` Variable erhalten. Verwenden Sie dies, um auf projektlokale Skripte oder Konfigurationsdateien zu verweisen. Wickeln Sie es in Anführungszeichen ein, um Pfade mit Leerzeichen zu handhaben, beispielsweise `"${CLAUDE_PROJECT_DIR}/scripts/server.sh"`. MCP-Server können auch die MCP `roots/list` Anfrage aufrufen, die das Verzeichnis zurückgibt, aus dem Claude Code gestartet wurde.
 
 ```json theme={null}
 {
@@ -556,7 +558,7 @@ Wenn ein Plugin während einer Sitzung aktualisiert wird, verwenden Hook-Befehle
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/process.sh"
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/process.sh"
           }
         ]
       }
@@ -629,12 +631,20 @@ Claudes Glob- und Grep-Tools überspringen verwaiste Versionsverzeichnisse währ
 
 Installierte Plugins können nicht auf Dateien außerhalb ihres Verzeichnisses verweisen. Pfade, die außerhalb des Plugin-Root traversieren (wie `../shared-utils`), funktionieren nach der Installation nicht, da diese externen Dateien nicht in den Cache kopiert werden.
 
-### Arbeiten mit externen Abhängigkeiten
+### Dateien innerhalb eines Marktplatzes mit Symlinks freigeben
 
-Wenn Ihr Plugin auf Dateien außerhalb seines Verzeichnisses zugreifen muss, können Sie symbolische Links zu externen Dateien in Ihrem Plugin-Verzeichnis erstellen. Symlinks werden im Cache beibehalten, anstatt dereferenziert zu werden, und sie werden zur Laufzeit zu ihrem Ziel aufgelöst. Der folgende Befehl erstellt einen Link von innerhalb Ihres Plugin-Verzeichnisses zu einem gemeinsamen Utilities-Speicherort:
+Wenn Ihr Plugin Dateien mit anderen Teilen desselben Marktplatzes freigeben muss, können Sie symbolische Links in Ihrem Plugin-Verzeichnis erstellen. Wie ein Symlink behandelt wird, wenn das Plugin in den Cache kopiert wird, hängt davon ab, wo sein Ziel aufgelöst wird:
+
+* **Innerhalb des eigenen Verzeichnisses des Plugins:** Der Symlink wird als relativer Symlink im Cache beibehalten, sodass er zur Laufzeit weiterhin zum kopierten Ziel aufgelöst wird.
+* **Anderswo innerhalb desselben Marktplatzes:** Der Symlink wird dereferenziert. Der Inhalt des Ziels wird stattdessen in den Cache kopiert. Dies ermöglicht es einem Meta-Plugin, sein `skills/`-Verzeichnis mit Skills zu verknüpfen, die von anderen Plugins im Marktplatz definiert werden.
+* **Außerhalb des Marktplatzes:** Der Symlink wird aus Sicherheitsgründen übersprungen. Dies verhindert, dass Plugins beliebige Host-Dateien wie Systempfade in den Cache ziehen.
+
+Für Plugins, die mit `--plugin-dir` installiert oder aus einem lokalen Pfad installiert werden, werden nur Symlinks beibehalten, die sich innerhalb des eigenen Verzeichnisses des Plugins auflösen. Alle anderen werden übersprungen.
+
+Der folgende Befehl erstellt einen Link von innerhalb eines Marktplatz-Plugins zu einem gemeinsamen Skill, der von einem Geschwister-Plugin definiert wird. Verwenden Sie unter Windows `mklink /D` von einer erhöhten Eingabeaufforderung oder aktivieren Sie den Entwicklermodus:
 
 ```bash theme={null}
-ln -s /path/to/shared-utils ./shared-utils
+ln -s ../../shared-plugin/skills/foo ./skills/foo
 ```
 
 Dies bietet Flexibilität bei Beibehaltung der Sicherheitsvorteile des Caching-Systems.
@@ -874,6 +884,56 @@ claude plugin list [options]
 | `--json`      | Ausgabe als JSON                                                     |          |
 | `--available` | Verfügbare Plugins von Marktplätzen einschließen. Erfordert `--json` |          |
 | `-h, --help`  | Hilfe für Befehl anzeigen                                            |          |
+
+### plugin details
+
+Zeigen Sie das Komponenten-Inventar eines Plugins und die geschätzten Token-Kosten an. Die Ausgabe listet alle Komponenten auf, die das Plugin bereitstellt, gruppiert als Skills (Fähigkeiten und Befehle), Agents, Hooks und MCP-Server, zusammen mit einer Schätzung, wie viele Token es jeder Sitzung hinzufügt.
+
+```bash theme={null}
+claude plugin details <name>
+```
+
+**Argumente:**
+
+* `<name>`: Plugin-Name oder `plugin-name@marketplace-name`
+
+**Optionen:**
+
+| Option       | Beschreibung              | Standard |
+| :----------- | :------------------------ | :------- |
+| `-h, --help` | Hilfe für Befehl anzeigen |          |
+
+Die Ausgabe zeigt zwei Kostenzahlen für jede Komponente:
+
+* **Always-on:** Token, die jeder Sitzung durch den Auflistungstext des Plugins hinzugefügt werden, wie Skill-Beschreibungen, Agent-Beschreibungen und Befehlsnamen, unabhängig davon, ob eine Komponente ausgelöst wird.
+* **On-invoke:** Token, die eine Komponente kostet, wenn sie ausgelöst wird. Wird pro Komponente angezeigt, nicht als Plugin-Gesamtsumme, da eine typische Sitzung nur eine Teilmenge von Komponenten aufruft.
+
+Dieses Beispiel zeigt, wie die Ausgabe für ein Plugin mit zwei Skills aussieht:
+
+```
+security-guidance 1.2.0
+  Real-time security analysis for Claude Code sessions
+  Source: security-guidance@claude-code-marketplace
+
+Component inventory
+  Skills (2)  scan-dependencies, review-changes
+  Agents (0)
+  Hooks (1)  (harness-only — no model context cost)
+  MCP servers (0)
+
+Projected token cost
+  Always-on:   ~180 tok   added to every session
+
+Per-component (rounded)
+  component            always-on  on-invoke
+  scan-dependencies        ~100      ~2400
+  review-changes            ~80      ~1800
+
+  On-invoke cost is paid each time a skill or agent fires.
+  Token counts are estimates and may differ from actual usage.
+```
+
+Die Always-on-Gesamtsumme wird über die `count_tokens` API für Ihr aktives Modell berechnet. Pro-Komponenten-Zahlen werden proportional von dieser Gesamtsumme skaliert. Wenn die API nicht erreichbar ist, greift der Befehl auf eine zeichenbasierte Schätzung zurück.
 
 ### plugin tag
 

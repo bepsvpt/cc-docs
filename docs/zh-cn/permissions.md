@@ -28,6 +28,10 @@ Claude Code 使用分层权限系统来平衡功能和安全性：
 
 规则按顺序评估：**deny -> ask -> allow**。第一个匹配的规则获胜，因此 deny 规则始终优先。
 
+<Note>
+  权限规则由 Claude Code 强制执行，而不是由模型强制执行。您的提示或 `CLAUDE.md` 中的说明会影响 Claude 尝试执行的操作，但它们不会改变 Claude Code 允许的操作。要授予或撤销访问权限，请使用 `/permissions`、此处描述的规则、[权限模式](/zh-CN/permission-modes) 或 [PreToolUse hook](#extend-permissions-with-hooks)。
+</Note>
+
 ## 权限模式
 
 Claude Code 支持多种权限模式来控制工具的批准方式。请参阅[权限模式](/zh-CN/permission-modes)了解何时使用每种模式。在您的[设置文件](/zh-CN/settings#settings-files)中设置 `defaultMode`：
@@ -153,7 +157,7 @@ Claude Code 将一组内置 Bash 命令识别为只读，并在每种模式下�
 
   * **限制 Bash 网络工具**：使用 deny 规则阻止 `curl`、`wget` 和类似命令，然后对允许的域使用带有 `WebFetch(domain:github.com)` 权限的 WebFetch 工具
   * **使用 PreToolUse hooks**：实现一个 hook 来验证 Bash 命令中的 URL 并阻止不允许的域
-  * 通过 CLAUDE.md 指示 Claude Code 关于您允许的 curl 模式
+  * **添加 CLAUDE.md 指导**：在 `CLAUDE.md` 中描述您允许的 curl 模式。这会影响 Claude 尝试的内容，但不会强制执行边界，因此请将其与上述选项之一配对
 
   请注意，仅使用 WebFetch 不会阻止网络访问。如果允许 Bash，Claude 仍然可以使用 `curl`、`wget` 或其他工具来访问任何 URL。
 </Warning>
@@ -185,7 +189,7 @@ Claude Code 解析 PowerShell AST 并独立检查复合命令中的每个命令�
 `Edit` 规则适用于所有编辑文件的内置工具。Claude 尽力将 `Read` 规则应用于所有读取文件的内置工具，如 Grep 和 Glob。
 
 <Warning>
-  Read 和 Edit deny 规则适用于 Claude 的内置文件工具，不适用于 Bash 子进程。`Read(./.env)` deny 规则阻止 Read 工具，但不会阻止 Bash 中的 `cat .env`。为了获得阻止所有进程访问路径的 OS 级别强制执行，请[启用沙箱](/zh-CN/sandboxing)。
+  Read 和 Edit deny 规则适用于 Claude 的内置文件工具和 Claude Code 在 Bash 中识别的文件命令，如 `cat`、`head`、`tail` 和 `sed`。它们不适用于间接读取或写入文件的任意子进程，如打开文件本身的 Python 或 Node 脚本。为了获得阻止所有进程访问路径的 OS 级别强制执行，请[启用沙箱](/zh-CN/sandboxing)。
 </Warning>
 
 Read 和 Edit 规则都遵循 [gitignore](https://git-scm.com/docs/gitignore) 规范，具有四种不同的模式类型：

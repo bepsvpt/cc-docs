@@ -14,7 +14,9 @@ Für Anweisungen zu Ihrem Projekt, Konventionen oder Ihrer Codebasis verwenden S
 
 Der **Standard**-Ausgabestil von Claude Code ist die vorhandene Systemaufforderung, die Ihnen helfen soll, Softwareentwicklungsaufgaben effizient zu bewältigen.
 
-Es gibt zwei zusätzliche integrierte Ausgabestile, die sich auf das Unterrichten der Codebasis und der Funktionsweise von Claude konzentrieren:
+Es gibt drei zusätzliche integrierte Ausgabestile:
+
+* **Proaktiv**: Claude führt sofort aus, trifft vernünftige Annahmen statt bei Routineentscheidungen zu pausieren, und bevorzugt Handeln gegenüber Planung. Dies wendet die gleiche Anleitung wie [Auto-Modus](/de/permission-modes#eliminate-prompts-with-auto-mode) an, ohne Ihren Berechtigungsmodus zu ändern, sodass Sie vor der Ausführung von Tools weiterhin Berechtigungsaufforderungen sehen.
 
 * **Explanatory**: Bietet pädagogische „Insights" zwischen der Unterstützung bei Softwareentwicklungsaufgaben. Hilft Ihnen, Implementierungsentscheidungen und Codebase-Muster zu verstehen.
 

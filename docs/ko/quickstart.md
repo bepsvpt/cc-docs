@@ -307,10 +307,10 @@ Claude와 함께 작업하는 여러 가지 방법이 있습니다:
   </Accordion>
 
   <Accordion title="바로가기로 시간 절약">
-    * `?`를 눌러 사용 가능한 모든 키보드 바로가기 보기
+    * `/`를 입력하여 모든 명령 및 skills 보기
     * Tab을 사용하여 명령 완성
     * ↑를 눌러 명령 기록 보기
-    * `/`를 입력하여 모든 명령 및 skills 보기
+    * `Shift+Tab`을 눌러 권한 모드 순환
   </Accordion>
 </AccordionGroup>
 

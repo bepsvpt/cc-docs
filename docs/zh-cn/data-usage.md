@@ -67,7 +67,7 @@ Anthropic 根据您的账户类型和偏好保留 Claude Code 数据。
 
 下面的图表显示了 Claude Code 在安装和正常操作期间如何连接到外部服务。实线表示必需的连接，而虚线表示可选或用户启动的数据流。
 
-<img src="https://mintcdn.com/claude-code/RcOyXc06Ja8cuvMZ/images/claude-code-data-flow.svg?fit=max&auto=format&n=RcOyXc06Ja8cuvMZ&q=85&s=b5be40abf333defe984993af89546c19" alt="显示 Claude Code 外部连接的图表：安装/更新连接到分发服务器，用户请求连接到 Anthropic 服务，包括 Console 身份验证、public-api，以及可选的 Statsig、Sentry 和错误报告" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
+<img src="https://mintcdn.com/claude-code/RcOyXc06Ja8cuvMZ/images/claude-code-data-flow.svg?fit=max&auto=format&n=RcOyXc06Ja8cuvMZ&q=85&s=b5be40abf333defe984993af89546c19" alt="显示 Claude Code 外部连接的图表：安装/更新连接到分发服务器，用户请求连接到 Anthropic 服务，包括 Console 身份验证、public-api，以及可选的指标、Sentry 和错误报告" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
 
 Claude Code 在本地运行。为了与 LLM 交互，Claude Code 通过网络发送数据。此数据包括所有用户提示和模型输出，通过 TLS 1.2+ 在传输中加密。Claude Code 与大多数流行的 VPN 和 LLM 代理兼容。
 
@@ -95,27 +95,27 @@ Claude Code 基于 Anthropic 的 API 构建。有关 API 安全控制的详情�
 
 ## 遥测服务
 
-Claude Code 从用户的机器连接到 Statsig 服务，以记录操作指标，例如延迟、可靠性和使用模式。此日志记录不包括任何代码或文件路径。数据使用 TLS 在传输中加密，使用 256 位 AES 加密在静止时加密。在 [Statsig 安全文档](https://www.statsig.com/trust/security)中了解更多。要选择退出 Statsig 遥测，请设置 `DISABLE_TELEMETRY` 环境变量。
+Claude Code 从用户的机器连接到 Anthropic 以记录操作指标，例如延迟、可靠性和使用模式。此日志记录不包括任何代码或文件路径。数据在传输中加密，静止时也加密。要选择退出遥测，请设置 `DISABLE_TELEMETRY` 环境变量。
 
-Claude Code 从用户的机器连接到 Sentry 以进行操作错误日志记录。数据使用 TLS 在传输中加密，使用 256 位 AES 加密在静止时加密。在 [Sentry 安全文档](https://sentry.io/security/)中了解更多。要选择退出错误日志记录，请设置 `DISABLE_ERROR_REPORTING` 环境变量。
+Claude Code 从用户的机器连接到 Sentry 以进行操作错误日志记录。数据使用 TLS 在传输中加密，使用 256 位 AES 加密在静止时加密。在 [Sentry 安全文档](https://sentry.io/security/) 中了解更多。要选择退出错误日志记录，请设置 `DISABLE_ERROR_REPORTING` 环境变量。
 
 当用户运行 `/feedback` 命令时，他们的完整对话历史记录（包括代码）的副本被发送到 Anthropic。数据在传输中使用 TLS 加密。可选地，在公共存储库中创建 GitHub 问题。要选择退出，请设置 `DISABLE_FEEDBACK_COMMAND` 环境变量为 `1`。
 
 ## 按 API 提供商的默认行为
 
-默认情况下，当使用 Bedrock、Vertex 或 Foundry 时，错误报告、遥测和错误报告被禁用。会话质量调查和 WebFetch 域安全检查是例外，无论提供商如何都会运行。您可以通过设置 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 一次选择退出所有非必需的流量，包括调查。此变量不影响 WebFetch 检查，它有自己的选择退出选项。以下是完整的默认行为：
+默认情况下，当使用 Bedrock、Vertex、Foundry 或 Claude Platform on AWS 时，错误报告、遥测和错误报告被禁用。会话质量调查和 WebFetch 域安全检查是例外，无论提供商如何都会运行。您可以通过设置 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 一次选择退出所有非必需的流量，包括调查。此变量不影响 WebFetch 检查，它有自己的选择退出选项。以下是完整的默认行为：
 
-| 服务                             | Claude API                                                                 | Vertex API                                                                 | Bedrock API                                                                | Foundry API                                                                |
-| ------------------------------ | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| **Statsig（指标）**                | 默认开启。<br />`DISABLE_TELEMETRY=1` 禁用。                                       | 默认关闭。<br />`CLAUDE_CODE_USE_VERTEX` 必须为 1。                                 | 默认关闭。<br />`CLAUDE_CODE_USE_BEDROCK` 必须为 1。                                | 默认关闭。<br />`CLAUDE_CODE_USE_FOUNDRY` 必须为 1。                                |
-| **Sentry（错误）**                 | 默认开启。<br />`DISABLE_ERROR_REPORTING=1` 禁用。                                 | 默认关闭。<br />`CLAUDE_CODE_USE_VERTEX` 必须为 1。                                 | 默认关闭。<br />`CLAUDE_CODE_USE_BEDROCK` 必须为 1。                                | 默认关闭。<br />`CLAUDE_CODE_USE_FOUNDRY` 必须为 1。                                |
-| **Claude API（`/feedback` 报告）** | 默认开启。<br />`DISABLE_FEEDBACK_COMMAND=1` 禁用。                                | 默认关闭。<br />`CLAUDE_CODE_USE_VERTEX` 必须为 1。                                 | 默认关闭。<br />`CLAUDE_CODE_USE_BEDROCK` 必须为 1。                                | 默认关闭。<br />`CLAUDE_CODE_USE_FOUNDRY` 必须为 1。                                |
-| **会话质量调查**                     | 默认开启。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 禁用。                     | 默认开启。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 禁用。                     | 默认开启。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 禁用。                     | 默认开启。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 禁用。                     |
-| **WebFetch 域安全检查**             | 默认开启。<br />[settings](/zh-CN/settings) 中 `skipWebFetchPreflight: true` 禁用。 | 默认开启。<br />[settings](/zh-CN/settings) 中 `skipWebFetchPreflight: true` 禁用。 | 默认开启。<br />[settings](/zh-CN/settings) 中 `skipWebFetchPreflight: true` 禁用。 | 默认开启。<br />[settings](/zh-CN/settings) 中 `skipWebFetchPreflight: true` 禁用。 |
+| 服务                             | Claude API                                                                 | Vertex API                                                                 | Bedrock API                                                                | Foundry API                                                                | Claude Platform on AWS                                                     |
+| ------------------------------ | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| **Anthropic（指标）**              | 默认开启。<br />`DISABLE_TELEMETRY=1` 禁用。                                       | 默认关闭。<br />`CLAUDE_CODE_USE_VERTEX` 必须为 1。                                 | 默认关闭。<br />`CLAUDE_CODE_USE_BEDROCK` 必须为 1。                                | 默认关闭。<br />`CLAUDE_CODE_USE_FOUNDRY` 必须为 1。                                | 默认关闭。<br />`CLAUDE_CODE_USE_ANTHROPIC_AWS` 必须为 1。                          |
+| **Sentry（错误）**                 | 默认开启。<br />`DISABLE_ERROR_REPORTING=1` 禁用。                                 | 默认关闭。<br />`CLAUDE_CODE_USE_VERTEX` 必须为 1。                                 | 默认关闭。<br />`CLAUDE_CODE_USE_BEDROCK` 必须为 1。                                | 默认关闭。<br />`CLAUDE_CODE_USE_FOUNDRY` 必须为 1。                                | 默认关闭。<br />`CLAUDE_CODE_USE_ANTHROPIC_AWS` 必须为 1。                          |
+| **Claude API（`/feedback` 报告）** | 默认开启。<br />`DISABLE_FEEDBACK_COMMAND=1` 禁用。                                | 默认关闭。<br />`CLAUDE_CODE_USE_VERTEX` 必须为 1。                                 | 默认关闭。<br />`CLAUDE_CODE_USE_BEDROCK` 必须为 1。                                | 默认关闭。<br />`CLAUDE_CODE_USE_FOUNDRY` 必须为 1。                                | 默认关闭。<br />`CLAUDE_CODE_USE_ANTHROPIC_AWS` 必须为 1。                          |
+| **会话质量调查**                     | 默认开启。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 禁用。                     | 默认开启。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 禁用。                     | 默认开启。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 禁用。                     | 默认开启。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 禁用。                     | 默认开启。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 禁用。                     |
+| **WebFetch 域安全检查**             | 默认开启。<br />[settings](/zh-CN/settings) 中 `skipWebFetchPreflight: true` 禁用。 | 默认开启。<br />[settings](/zh-CN/settings) 中 `skipWebFetchPreflight: true` 禁用。 | 默认开启。<br />[settings](/zh-CN/settings) 中 `skipWebFetchPreflight: true` 禁用。 | 默认开启。<br />[settings](/zh-CN/settings) 中 `skipWebFetchPreflight: true` 禁用。 | 默认开启。<br />[settings](/zh-CN/settings) 中 `skipWebFetchPreflight: true` 禁用。 |
 
 所有环境变量都可以检查到 `settings.json`（请参阅 [settings 参考](/zh-CN/settings)）。
 
-从 v2.1.126 开始，当主机平台设置 `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST` 时，Statsig 指标对于 Vertex、Bedrock 和 Foundry 默认开启，并遵循标准的 `DISABLE_TELEMETRY` 选择退出。Sentry 错误报告和 `/feedback` 报告在这些提供商上仍然默认关闭。
+从 v2.1.126 开始，当主机平台设置 `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST` 时，Vertex、Bedrock 和 Foundry 的指标默认开启，并遵循标准的 `DISABLE_TELEMETRY` 选择退出。Sentry 错误报告和 `/feedback` 报告在这些提供商上仍然默认关闭。
 
 ### WebFetch 域安全检查
 

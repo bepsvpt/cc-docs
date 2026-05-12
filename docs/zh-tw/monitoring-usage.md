@@ -171,6 +171,8 @@ claude_code.interaction
 | `gen_ai.system`                  | 始終為 `anthropic`。OpenTelemetry GenAI 語義慣例                                                            |       |
 | `gen_ai.request.model`           | 與 `model` 相同的值。OpenTelemetry GenAI 語義慣例                                                             |       |
 | `query_source`                   | 發出請求的子系統，例如 `repl_main_thread` 或子代理名稱                                                               |       |
+| `agent_id`                       | 發出請求的子代理或隊友的識別碼。在主工作階段上不存在                                                                          |       |
+| `parent_agent_id`                | 產生此代理的代理的識別碼。對於主工作階段和直接從其產生的代理不存在                                                                   |       |
 | `speed`                          | `fast` 或 `normal`                                                                                   |       |
 | `llm_request.context`            | `interaction`、`tool` 或 `standalone`，取決於父跨度                                                          |       |
 | `duration_ms`                    | 包括重試的牆上時間持續時間                                                                                       |       |
@@ -421,7 +423,7 @@ Claude Code 匯出以下指標：
 
 #### 提取請求計數器
 
-透過 Claude Code 建立提取請求時遞增。
+透過 Claude Code 建立提取請求或合併請求時遞增。
 
 **屬性**：
 
@@ -446,6 +448,10 @@ Claude Code 匯出以下指標：
 * `query_source`：發出請求的子系統的類別。`"main"`、`"subagent"` 或 `"auxiliary"` 之一
 * `speed`：當請求使用快速模式時為 `"fast"`。否則不存在
 * `effort`：應用於請求的[努力等級](/zh-TW/model-config#adjust-effort-level)：`"low"`、`"medium"`、`"high"`、`"xhigh"` 或 `"max"`。當模型不支援努力時不存在。
+* `agent.name`：發出請求的子代理類型。內建代理名稱和官方市場 plugin 的代理按原樣出現。其他使用者定義的代理名稱被替換為 `"custom"`。當請求不是由命名的子代理類型發出時不存在。
+* `skill.name`：對請求有效的 Skill，由 Skill 工具、`/` 命令設定或由衍生的子代理繼承。內建、捆綁、使用者定義和官方市場 plugin skill 名稱按原樣出現。第三方 plugin skill 名稱被替換為 `"third-party"`。當沒有 skill 有效時不存在。
+* `plugin.name`：當活躍 skill 或子代理由 plugin 提供時的擁有 plugin。官方市場 plugin 名稱按原樣出現。第三方 plugin 名稱被替換為 `"third-party"`。當 skill 和子代理都沒有擁有 plugin 時不存在。
+* `marketplace.name`：擁有 plugin 的安裝市場。僅針對官方市場 plugin 發出。否則不存在。
 
 #### 權杖計數器
 
@@ -459,6 +465,7 @@ Claude Code 匯出以下指標：
 * `query_source`：發出請求的子系統的類別。`"main"`、`"subagent"` 或 `"auxiliary"` 之一
 * `speed`：當請求使用快速模式時為 `"fast"`。否則不存在
 * `effort`：應用於請求的[努力等級](/zh-TW/model-config#adjust-effort-level)。詳見[成本計數器](#cost-counter)。
+* `agent.name`、`skill.name`、`plugin.name`、`marketplace.name`：請求的 Skill、plugin 和代理歸屬。詳見[成本計數器](#cost-counter)以了解定義和編輯行為。
 
 #### 程式碼編輯工具決定計數器
 
@@ -647,10 +654,10 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * `tool_use_id`：此工具叫用的唯一識別碼。符合傳遞給 hooks 的 `tool_use_id`，允許 OTel 事件和 hook 擷取資料之間的關聯。
 * `decision`：`"accept"` 或 `"reject"`
 * `source`：決定來源：
-  * `"config"`：根據專案設定、企業受管原則、`--allowedTools` 或 `--disallowedTools` 旗標、活躍權限模式或因為工具本身是安全的，自動決定而不提示。
+  * `"config"`：根據專案設定、使用者個人設定中的允許規則、企業受管原則、`--allowedTools` 或 `--disallowedTools` 旗標、活躍權限模式、來自同一互動 CLI 工作階段中較早提示的工作階段範圍授予或因為工具本身是安全的，自動決定而不提示。該事件不指示這些來源中的哪一個相符。
   * `"hook"`：`PreToolUse` 或 `PermissionRequest` hook 傳回了決定。
-  * `"user_permanent"`：當使用者在提示時選擇「始終允許」時發出，將規則儲存到其個人設定。也針對符合該儲存規則的後續呼叫發出。視為接受。
-  * `"user_temporary"`：當使用者在提示時選擇「是」或「是，此工作階段」時發出，不儲存規則。也針對同一工作階段中符合該工作階段範圍允許的後續呼叫發出。視為接受。
+  * `"user_permanent"`：當使用者在權限提示時選擇「是，且不再詢問...」時發出，將允許規則儲存到其個人設定。在互動 CLI 中，僅針對該選擇本身發出；稍後符合儲存規則的呼叫發出 `"config"` 代替。在 Agent SDK 或非互動 `-p` 工作階段中，初始選擇和稍後的規則相符都發出 `"user_permanent"`。視為接受。
+  * `"user_temporary"`：當使用者在權限提示時選擇「是」或在檔案編輯或讀取提示時選擇「...在此工作階段期間」選項之一時發出。在互動 CLI 中，僅針對選擇本身發出；稍後由該工作階段範圍授予允許的呼叫發出 `"config"` 代替。在 Agent SDK 或非互動 `-p` 工作階段中，選擇和稍後的相符都發出 `"user_temporary"`。視為接受。
   * `"user_abort"`：當使用者關閉權限提示而不回答時發出。視為拒絕。
   * `"user_reject"`：當使用者選擇「否」時發出，或呼叫符合其個人設定中的拒絕規則。視為拒絕。
 
@@ -741,6 +748,30 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * `plugin.version`：Plugin 版本（如果在市場條目中宣告）。對於第三方市場，僅當 `OTEL_LOG_TOOL_DETAILS=1` 時才包含
 * `marketplace.name`：安裝 plugin 的市場。對於第三方市場，僅當 `OTEL_LOG_TOOL_DETAILS=1` 時才包含
 
+#### Plugin 已載入事件
+
+在工作階段開始時為每個啟用的 plugin 記錄一次。使用此事件來清點您的整個環境中哪些 plugin 是活躍的，作為記錄安裝動作本身的 `plugin_installed` 的補充。
+
+**事件名稱**：`claude_code.plugin_loaded`
+
+**屬性**：
+
+* 所有[標準屬性](#standard-attributes)
+* `event.name`：`"plugin_loaded"`
+* `event.timestamp`：ISO 8601 時間戳
+* `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
+* `plugin.name`：plugin 的名稱。對於官方市場和內建捆綁之外的 plugin，除非 `OTEL_LOG_TOOL_DETAILS=1`，否則值為 `"third-party"`
+* `marketplace.name`：plugin 的安裝市場（如果已知）。在與 `plugin.name` 相同的條件下編輯為 `"third-party"`
+* `plugin.version`：來自 plugin 清單的版本。僅當名稱未被編輯且清單宣告版本時才包含
+* `plugin.scope`：plugin 的來源類別：`"official"`、`"org"`、`"user-local"` 或 `"default-bundle"`
+* `enabled_via`：plugin 如何被啟用的方式：`"default-enable"`、`"org-policy"`、`"seed-mount"` 或 `"user-install"`
+* `plugin_id_hash`：plugin 名稱和市場的確定性雜湊，僅傳送到您配置的匯出器。讓您計算整個環境中載入了多少個不同的第三方 plugin，而無需記錄其名稱
+* `has_hooks`：plugin 是否貢獻 hooks
+* `has_mcp`：plugin 是否貢獻 MCP 伺服器
+* `skill_path_count`：plugin 宣告的 skill 目錄數
+* `command_path_count`：plugin 宣告的命令目錄數
+* `agent_path_count`：plugin 宣告的代理目錄數
+
 #### Skill 已啟動事件
 
 當叫用 skill 時記錄，無論 Claude 是透過 Skill 工具呼叫它，還是您將其作為 `/` 命令執行。
@@ -792,6 +823,25 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * `total_attempts`：進行的嘗試總次數
 * `total_retry_duration_ms`：所有嘗試的總牆上時間
 * `speed`：`"fast"` 或 `"normal"`
+
+#### Hook 已註冊事件
+
+在工作階段開始時為每個配置的 hook 記錄一次。使用此事件來清點您的整個環境中哪些 hook 是活躍的，作為每次執行 `hook_execution_start` 和 `hook_execution_complete` 事件的補充。
+
+**事件名稱**：`claude_code.hook_registered`
+
+**屬性**：
+
+* 所有[標準屬性](#standard-attributes)
+* `event.name`：`"hook_registered"`
+* `event.timestamp`：ISO 8601 時間戳
+* `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
+* `hook_event`：hook 事件類型，例如 `"PreToolUse"` 或 `"PostToolUse"`
+* `hook_type`：hook 實作類型：`"command"`、`"prompt"`、`"mcp_tool"`、`"http"` 或 `"agent"`
+* `hook_source`：hook 的定義位置：`"userSettings"`、`"projectSettings"`、`"localSettings"`、`"flagSettings"`、`"policySettings"` 或 `"pluginHook"`
+* `hook_matcher`（當 `OTEL_LOG_TOOL_DETAILS=1` 時）：hook 配置中的匹配器字串（如果已設定）
+* `plugin.name`（當 `hook_source` 是 `"pluginHook"` 時）：貢獻 plugin 的名稱。對於官方市場和內建捆綁之外的 plugin，除非 `OTEL_LOG_TOOL_DETAILS=1`，否則值為 `"third-party"`
+* `plugin_id_hash`（當 `hook_source` 是 `"pluginHook"` 時）：plugin 名稱和市場的確定性雜湊，僅傳送到您配置的匯出器。讓您計算不同的貢獻 plugin，而無需記錄其名稱
 
 #### Hook 執行開始事件
 
@@ -861,12 +911,12 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 
 ### 使用情況監控
 
-| 指標                                                            | 分析機會                          |
-| ------------------------------------------------------------- | ----------------------------- |
-| `claude_code.token.usage`                                     | 按 `type`（輸入/輸出）、使用者、團隊或模型進行細分 |
-| `claude_code.session.count`                                   | 追蹤一段時間內的採用和參與度                |
-| `claude_code.lines_of_code.count`                             | 透過追蹤程式碼新增/移除來衡量生產力            |
-| `claude_code.commit.count` & `claude_code.pull_request.count` | 了解對開發工作流程的影響                  |
+| 指標                                                            | 分析機會                                                                     |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `claude_code.token.usage`                                     | 按 `type`（輸入/輸出）、使用者、團隊、模型、`skill.name`、`plugin.name` 或 `agent.name` 進行細分 |
+| `claude_code.session.count`                                   | 追蹤一段時間內的採用和參與度                                                           |
+| `claude_code.lines_of_code.count`                             | 透過追蹤程式碼新增/移除來衡量生產力                                                       |
+| `claude_code.commit.count` & `claude_code.pull_request.count` | 了解對開發工作流程的影響                                                             |
 
 ### 成本監控
 
@@ -874,6 +924,7 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 
 * 追蹤跨團隊或個人的使用趨勢
 * 識別高使用量工作階段以進行最佳化
+* 透過 `skill.name`、`plugin.name` 和 `agent.name` 屬性將支出歸因於特定技能、外掛程式或子代理類型
 
 <Note>
   成本指標是近似值。如需官方帳單資料，請參閱您的 API 提供者（Claude Console、Amazon Bedrock 或 Google Cloud Vertex）。

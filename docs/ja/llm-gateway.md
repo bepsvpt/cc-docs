@@ -41,9 +41,13 @@ gatewayは、クライアントに対して以下のAPI形式の少なくとも1
 
 Claude Codeは、すべてのAPI リクエストに以下のヘッダーを含めます：
 
-| ヘッダー                       | 説明                                                                                        |
-| :------------------------- | :---------------------------------------------------------------------------------------- |
-| `X-Claude-Code-Session-Id` | 現在のClaude Codeセッションの一意の識別子。プロキシはこれを使用して、リクエストボディを解析することなく、単一セッションからのすべてのAPI リクエストを集約できます。 |
+| ヘッダー                            | 説明                                                                                                                                                    |
+| :------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `X-Claude-Code-Session-Id`      | 現在のClaude Codeセッションの一意の識別子。プロキシはこれを使用して、リクエストボディを解析することなく、単一セッションからのすべてのAPI リクエストを集約できます。                                                             |
+| `X-Claude-Code-Agent-Id`        | リクエストを発行したサブエージェントまたはチームメイトの識別子。プロキシはこれを使用して、リクエストボディを解析することなく、セッション内の個別の並列サブエージェントにAPI コストを属性付けできます。インプロセスサブエージェントまたはチームメイトによって発行されたリクエストの場合のみ存在します。 |
+| `X-Claude-Code-Parent-Agent-Id` | リクエストを行うエージェントを生成したエージェントの識別子。これを `X-Claude-Code-Agent-Id` と共に使用して、プロキシ内のネストされたエージェント全体にAPI コストを属性付けします。リクエストするエージェント自体が別のエージェントによって生成された場合のみ存在します。   |
+
+両方のエージェントIDヘッダーは、永続的なユーザーまたはデバイスIDではなく、スポーン単位の一時的な識別子です。
 
 Claude Codeはまた、クライアントバージョンと会話から派生したフィンガープリントを含む短い帰属ブロックをシステムプロンプトの前に付加します。Anthropic APIはこのブロックを処理前に削除するため、ファーストパーティプロンプトキャッシングには影響しません。gatewayが完全なリクエストボディをキーとしたプロンプトキャッシュを実装している場合は、[`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/ja/env-vars)を設定して、それを省略してください。
 
@@ -70,30 +74,30 @@ Claude Codeはまた、クライアントバージョンと会話から派生し
   * 影響を受けたシステムのすべての認証情報をローテーションしてください
   * [BerriAI/litellm#24518](https://github.com/BerriAI/litellm/issues/24518)の修復手順に従ってください
 
-  LiteLLMはサードパーティのプロキシサービスです。Anthropicは、LiteLLMのセキュリティまたは機能を推奨、保守、または監査していません。このガイドは情報提供目的で提供されており、古くなる可能性があります。自己判断で使用してください。
+  LiteLLM はサードパーティのプロキシサービスです。Anthropic は、LiteLLM のセキュリティまたは機能を推奨、保守、または監査していません。このガイドは情報提供目的で提供されており、古くなる可能性があります。自己判断で使用してください。
 </Warning>
 
 ### 前提条件
 
-* Claude Codeが最新バージョンに更新されている
-* LiteLLM Proxy Serverがデプロイされてアクセス可能
-* 選択したプロバイダーを通じてClaudeモデルへのアクセス
+* Claude Code が最新バージョンに更新されている
+* LiteLLM Proxy Server がデプロイされてアクセス可能
+* 選択したプロバイダーを通じて Claude モデルへのアクセス
 
-### 基本的なLiteLLMセットアップ
+### 基本的な LiteLLM セットアップ
 
-**Claude Codeを設定する**：
+**Claude Code を設定する**：
 
 #### 認証方法
 
-##### 静的APIキー
+##### 静的 API キー
 
-固定APIキーを使用した最も簡単な方法：
+固定 API キーを使用した最も簡単な方法：
 
 ```bash theme={null}
 # 環境で設定
 export ANTHROPIC_AUTH_TOKEN=sk-litellm-static-key
 
-# またはClaude Code設定で
+# または Claude Code 設定で
 {
   "env": {
     "ANTHROPIC_AUTH_TOKEN": "sk-litellm-static-key"
@@ -103,27 +107,27 @@ export ANTHROPIC_AUTH_TOKEN=sk-litellm-static-key
 
 この値は `Authorization` ヘッダーとして送信されます。
 
-##### ヘルパーを使用した動的APIキー
+##### ヘルパーを使用した動的 API キー
 
 キーのローテーションまたはユーザーごとの認証の場合：
 
-1. APIキーヘルパースクリプトを作成します：
+1. API キーヘルパースクリプトを作成します：
 
 ```bash theme={null}
 #!/bin/bash
 # ~/bin/get-litellm-key.sh
 
-# 例：vaultからキーを取得
+# 例：vault からキーを取得
 vault kv get -field=api_key secret/litellm/claude-code
 
-# 例：JWTトークンを生成
+# 例：JWT トークンを生成
 jwt encode \
   --secret="${JWT_SECRET}" \
   --exp="+1h" \
   '{"user":"'${USER}'","team":"engineering"}'
 ```
 
-2. ヘルパーを使用するようにClaude Code設定を構成します：
+2. ヘルパーを使用するように Claude Code 設定を構成します：
 
 ```json theme={null}
 {
@@ -134,7 +138,7 @@ jwt encode \
 3. トークンリフレッシュ間隔を設定します：
 
 ```bash theme={null}
-# 1時間ごとにリフレッシュ（3600000 ms）
+# 1 時間ごとにリフレッシュ（3600000 ms）
 export CLAUDE_CODE_API_KEY_HELPER_TTL_MS=3600000
 ```
 
@@ -142,7 +146,7 @@ export CLAUDE_CODE_API_KEY_HELPER_TTL_MS=3600000
 
 #### 統合エンドポイント（推奨）
 
-LiteLLMの[Anthropic形式エンドポイント](https://docs.litellm.ai/docs/anthropic_unified)を使用：
+LiteLLM の[Anthropic 形式エンドポイント](https://docs.litellm.ai/docs/anthropic_unified)を使用：
 
 ```bash theme={null}
 export ANTHROPIC_BASE_URL=https://litellm-server:4000
@@ -156,7 +160,7 @@ export ANTHROPIC_BASE_URL=https://litellm-server:4000
 
 #### プロバイダー固有のパススルーエンドポイント（代替）
 
-##### LiteLLMを通じたClaude API
+##### LiteLLM を通じた Claude API
 
 [パススルーエンドポイント](https://docs.litellm.ai/docs/pass_through/anthropic_completion)を使用：
 
@@ -164,7 +168,7 @@ export ANTHROPIC_BASE_URL=https://litellm-server:4000
 export ANTHROPIC_BASE_URL=https://litellm-server:4000/anthropic
 ```
 
-##### LiteLLMを通じたAmazon Bedrock
+##### LiteLLM を通じた Amazon Bedrock
 
 [パススルーエンドポイント](https://docs.litellm.ai/docs/pass_through/bedrock)を使用：
 
@@ -174,7 +178,7 @@ export CLAUDE_CODE_SKIP_BEDROCK_AUTH=1
 export CLAUDE_CODE_USE_BEDROCK=1
 ```
 
-##### LiteLLMを通じたGoogle Vertex AI
+##### LiteLLM を通じた Google Vertex AI
 
 [パススルーエンドポイント](https://docs.litellm.ai/docs/pass_through/vertex_ai)を使用：
 
@@ -186,7 +190,18 @@ export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=us-east5
 ```
 
-詳細については、[LiteLLMドキュメント](https://docs.litellm.ai/)を参照してください。
+##### AWS を通じた Claude Platform
+
+[Claude Platform on AWS](/ja/claude-platform-on-aws) エンドポイントに転送するゲートウェイにルーティング：
+
+```bash theme={null}
+export ANTHROPIC_AWS_BASE_URL=https://litellm-server:4000/anthropic-aws
+export ANTHROPIC_AWS_WORKSPACE_ID=wrkspc_01ABCDEFGHIJKLMN
+export CLAUDE_CODE_SKIP_ANTHROPIC_AWS_AUTH=1
+export CLAUDE_CODE_USE_ANTHROPIC_AWS=1
+```
+
+詳細については、[LiteLLM ドキュメント](https://docs.litellm.ai/)を参照してください。
 
 ## 追加リソース
 

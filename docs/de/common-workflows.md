@@ -6,11 +6,24 @@
 
 > Schritt-für-Schritt-Anleitungen zum Erkunden von Codebases, Beheben von Fehlern, Refaktorierung, Testen und anderen alltäglichen Aufgaben mit Claude Code.
 
-Diese Seite behandelt praktische Workflows für die alltägliche Entwicklung: Erkunden unbekannter Code, Debugging, Refaktorierung, Schreiben von Tests, Erstellen von PRs und Verwalten von Sitzungen. Jeder Abschnitt enthält Beispiel-Prompts, die Sie an Ihre eigenen Projekte anpassen können. Für übergeordnete Muster und Tipps siehe [Best Practices](/de/best-practices).
+Diese Seite sammelt kurze Rezepte für die alltägliche Entwicklung. Für übergeordnete Anleitungen zum Prompting und zur Kontextverwaltung siehe [Best Practices](/de/best-practices).
 
-## Neue Codebases verstehen
+Diese Seite behandelt:
 
-### Schnelle Codebase-Übersicht erhalten
+* [Prompt-Rezepte](#prompt-recipes) zum Erkunden von Code, Beheben von Fehlern, Refaktorierung, Testen, PRs und Dokumentation
+* [Vorherige Gespräche fortsetzen](#resume-previous-conversations), damit eine Aufgabe mehrere Sitzungen umfassen kann
+* [Parallele Sitzungen mit Worktrees ausführen](#run-parallel-sessions-with-worktrees), damit gleichzeitige Änderungen nicht kollidieren
+* [Vor dem Bearbeiten planen](#plan-before-editing), um Änderungen zu überprüfen, bevor sie die Festplatte berühren
+* [Forschung an Subagents delegieren](#delegate-research-to-subagents), um Ihren Hauptkontext sauber zu halten
+* [Claude in Skripte pipen](#pipe-claude-into-scripts) für CI und Batch-Verarbeitung
+
+## Prompt-Rezepte
+
+Dies sind Prompt-Muster für alltägliche Aufgaben wie das Erkunden unbekannter Code, Debugging, Refaktorierung, Schreiben von Tests und Erstellen von PRs. Jedes funktioniert auf jeder Claude Code-Oberfläche; passen Sie die Formulierung an Ihr Projekt an.
+
+### Neue Codebases verstehen
+
+#### Schnelle Codebase-Übersicht erhalten
 
 Angenommen, Sie sind gerade einem neuen Projekt beigetreten und müssen dessen Struktur schnell verstehen.
 
@@ -56,7 +69,7 @@ Angenommen, Sie sind gerade einem neuen Projekt beigetreten und müssen dessen S
   * Fordern Sie ein Glossar projektspezifischer Begriffe an
 </Tip>
 
-### Relevanten Code finden
+#### Relevanten Code finden
 
 Angenommen, Sie müssen Code finden, der sich auf eine bestimmte Funktion oder Funktionalität bezieht.
 
@@ -90,7 +103,7 @@ Angenommen, Sie müssen Code finden, der sich auf eine bestimmte Funktion oder F
 
 ***
 
-## Fehler effizient beheben
+### Fehler effizient beheben
 
 Angenommen, Sie sind auf eine Fehlermeldung gestoßen und müssen deren Quelle finden und beheben.
 
@@ -124,7 +137,7 @@ Angenommen, Sie sind auf eine Fehlermeldung gestoßen und müssen deren Quelle f
 
 ***
 
-## Code refaktorieren
+### Code refaktorieren
 
 Angenommen, Sie müssen alten Code aktualisieren, um moderne Muster und Praktiken zu verwenden.
 
@@ -164,140 +177,7 @@ Angenommen, Sie müssen alten Code aktualisieren, um moderne Muster und Praktike
 
 ***
 
-## Spezialisierte Subagents verwenden
-
-Angenommen, Sie möchten spezialisierte KI-Subagents verwenden, um bestimmte Aufgaben effektiver zu bewältigen.
-
-<Steps>
-  <Step title="Verfügbare Subagents anzeigen">
-    ```text theme={null}
-    /agents
-    ```
-
-    Dies zeigt alle verfügbaren Subagents und ermöglicht es Ihnen, neue zu erstellen.
-  </Step>
-
-  <Step title="Subagents automatisch verwenden">
-    Claude Code delegiert automatisch geeignete Aufgaben an spezialisierte Subagents:
-
-    ```text theme={null}
-    review my recent code changes for security issues
-    ```
-
-    ```text theme={null}
-    run all tests and fix any failures
-    ```
-  </Step>
-
-  <Step title="Fordern Sie explizit spezifische Subagents an">
-    ```text theme={null}
-    use the code-reviewer subagent to check the auth module
-    ```
-
-    ```text theme={null}
-    have the debugger subagent investigate why users can't log in
-    ```
-  </Step>
-
-  <Step title="Erstellen Sie benutzerdefinierte Subagents für Ihren Workflow">
-    ```text theme={null}
-    /agents
-    ```
-
-    Wählen Sie dann 'Create New subagent" und folgen Sie den Aufforderungen, um Folgendes zu definieren:
-
-    * Eine eindeutige Kennung, die den Zweck des Subagent beschreibt (z. B. `code-reviewer`, `api-designer`).
-    * Wann Claude diesen Agent verwenden sollte
-    * Welche Tools er verwenden kann
-    * Ein System-Prompt, der die Rolle und das Verhalten des Agents beschreibt
-  </Step>
-</Steps>
-
-<Tip>
-  Tipps:
-
-  * Erstellen Sie projektspezifische Subagents in `.claude/agents/` zum Teilen im Team
-  * Verwenden Sie beschreibende `description`-Felder, um automatische Delegation zu ermöglichen
-  * Begrenzen Sie den Tool-Zugriff auf das, was jeder Subagent tatsächlich benötigt
-  * Überprüfen Sie die [Subagents-Dokumentation](/de/sub-agents) für detaillierte Beispiele
-</Tip>
-
-***
-
-## Plan Mode für sichere Code-Analyse verwenden
-
-Plan Mode weist Claude an, einen Plan zu erstellen, indem die Codebase mit schreibgeschützten Operationen analysiert wird. Dies ist perfekt zum Erkunden von Codebases, Planen komplexer Änderungen oder sicheren Überprüfen von Code. Im Plan Mode verwendet Claude [`AskUserQuestion`](/de/tools-reference), um Anforderungen zu sammeln und Ihre Ziele zu klären, bevor ein Plan vorgeschlagen wird.
-
-### Wann Plan Mode verwendet werden sollte
-
-* **Multi-Schritt-Implementierung**: Wenn Ihre Funktion Änderungen an vielen Dateien erfordert
-* **Code-Exploration**: Wenn Sie die Codebase gründlich erforschen möchten, bevor Sie etwas ändern
-* **Interaktive Entwicklung**: Wenn Sie die Richtung mit Claude iterieren möchten
-
-### Wie Plan Mode verwendet wird
-
-**Aktivieren Sie Plan Mode während einer Sitzung**
-
-Sie können während einer Sitzung mit **Shift+Tab** in Plan Mode wechseln, um durch Berechtigungsmodi zu zyklisieren.
-
-Wenn Sie sich im Normal Mode befinden, wechselt **Shift+Tab** zunächst in Auto-Accept Mode, angezeigt durch `⏵⏵ accept edits on` am unteren Rand des Terminals. Ein nachfolgendes **Shift+Tab** wechselt in Plan Mode, angezeigt durch `⏸ plan mode on`.
-
-**Starten Sie eine neue Sitzung im Plan Mode**
-
-Um eine neue Sitzung im Plan Mode zu starten, verwenden Sie das Flag `--permission-mode plan`:
-
-```bash theme={null}
-claude --permission-mode plan
-```
-
-**Führen Sie „Headless"-Abfragen im Plan Mode aus**
-
-Sie können auch eine Abfrage im Plan Mode direkt mit `-p` ausführen (d. h. im ["Headless-Modus"](/de/headless)):
-
-```bash theme={null}
-claude --permission-mode plan -p "Analyze the authentication system and suggest improvements"
-```
-
-### Beispiel: Planen einer komplexen Refaktorierung
-
-```bash theme={null}
-claude --permission-mode plan
-```
-
-```text theme={null}
-I need to refactor our authentication system to use OAuth2. Create a detailed migration plan.
-```
-
-Claude analysiert die aktuelle Implementierung und erstellt einen umfassenden Plan. Verfeinern Sie mit Folgefragen:
-
-```text theme={null}
-What about backward compatibility?
-```
-
-```text theme={null}
-How should we handle database migration?
-```
-
-<Tip>Drücken Sie `Ctrl+G`, um den Plan in Ihrem Standard-Texteditor zu öffnen, wo Sie ihn direkt bearbeiten können, bevor Claude fortfährt.</Tip>
-
-Wenn Sie einen Plan akzeptieren, benennt Claude die Sitzung automatisch basierend auf dem Plan-Inhalt. Der Name wird in der Prompt-Leiste und in der Sitzungsauswahl angezeigt. Wenn Sie bereits einen Namen mit `--name` oder `/rename` festgelegt haben, wird das Akzeptieren eines Plans diesen nicht überschreiben.
-
-### Konfigurieren Sie Plan Mode als Standard
-
-```json theme={null}
-// .claude/settings.json
-{
-  "permissions": {
-    "defaultMode": "plan"
-  }
-}
-```
-
-Weitere Konfigurationsoptionen finden Sie in der [Einstellungsdokumentation](/de/settings#available-settings).
-
-***
-
-## Mit Tests arbeiten
+### Mit Tests arbeiten
 
 Angenommen, Sie müssen Tests für nicht abgedeckten Code hinzufügen.
 
@@ -333,9 +213,9 @@ Für umfassende Abdeckung bitten Sie Claude, Grenzfälle zu identifizieren, die 
 
 ***
 
-## Pull Requests erstellen
+### Pull Requests erstellen
 
-Sie können Pull Requests erstellen, indem Sie Claude direkt fragen („create a pr for my changes"), oder Claude Schritt für Schritt führen:
+Sie können Pull Requests erstellen, indem Sie Claude direkt fragen ('create a pr for my changes"), oder Claude Schritt für Schritt führen:
 
 <Steps>
   <Step title="Fassen Sie Ihre Änderungen zusammen">
@@ -357,13 +237,13 @@ Sie können Pull Requests erstellen, indem Sie Claude direkt fragen („create a
   </Step>
 </Steps>
 
-Wenn Sie einen PR mit `gh pr create` erstellen, wird die Sitzung automatisch mit diesem PR verknüpft. Sie können sie später mit `claude --from-pr <number>` fortsetzen.
+Wenn Sie einen PR mit `gh pr create` erstellen, wird die Sitzung automatisch mit diesem PR verknüpft. Um später zu ihr zurückzukehren, führen Sie `claude --from-pr <number>` aus oder fügen Sie die PR-URL in die [`/resume` Auswahl](/de/sessions#use-the-session-picker) ein.
 
 <Tip>
   Überprüfen Sie den von Claude generierten PR vor dem Einreichen und bitten Sie Claude, potenzielle Risiken oder Überlegungen hervorzuheben.
 </Tip>
 
-## Dokumentation verwalten
+### Dokumentation verwalten
 
 Angenommen, Sie müssen Dokumentation für Ihren Code hinzufügen oder aktualisieren.
 
@@ -403,7 +283,7 @@ Angenommen, Sie müssen Dokumentation für Ihren Code hinzufügen oder aktualisi
 
 ***
 
-## Mit Notizen und Nicht-Code-Ordnern arbeiten
+### Mit Notizen und Nicht-Code-Ordnern arbeiten
 
 Claude Code funktioniert in jedem Verzeichnis. Führen Sie es in einem Notiz-Vault, einem Dokumentationsordner oder einer beliebigen Sammlung von Markdown-Dateien aus, um Inhalte auf die gleiche Weise zu suchen, zu bearbeiten und zu reorganisieren wie Code.
 
@@ -411,7 +291,7 @@ Das Verzeichnis `.claude/` und `CLAUDE.md` befinden sich neben den Konfiguration
 
 ***
 
-## Mit Bildern arbeiten
+### Mit Bildern arbeiten
 
 Angenommen, Sie müssen mit Bildern in Ihrer Codebase arbeiten und möchten Claudes Hilfe bei der Analyse von Bildinhalten.
 
@@ -471,9 +351,9 @@ Angenommen, Sie müssen mit Bildern in Ihrer Codebase arbeiten und möchten Clau
 
 ***
 
-## Dateien und Verzeichnisse referenzieren
+### Dateien und Verzeichnisse referenzieren
 
-Verwenden Sie @, um schnell Dateien oder Verzeichnisse einzubeziehen, ohne auf Claude zu warten, um sie zu lesen.
+Verwenden Sie @ um schnell Dateien oder Verzeichnisse einzubeziehen, ohne auf Claude zu warten, um sie zu lesen.
 
 <Steps>
   <Step title="Referenzieren Sie eine einzelne Datei">
@@ -497,7 +377,7 @@ Verwenden Sie @, um schnell Dateien oder Verzeichnisse einzubeziehen, ohne auf C
     Show me the data from @github:repos/owner/repo/issues
     ```
 
-    Dies ruft Daten von verbundenen MCP-Servern im Format @server:resource ab. Weitere Details finden Sie unter [MCP-Ressourcen](/de/mcp#use-mcp-resources).
+    Dies ruft Daten von verbundenen MCP-Servern im Format @server:resource ab. Siehe [MCP-Ressourcen](/de/mcp#use-mcp-resources) für Details.
   </Step>
 </Steps>
 
@@ -512,441 +392,7 @@ Verwenden Sie @, um schnell Dateien oder Verzeichnisse einzubeziehen, ohne auf C
 
 ***
 
-## Verwenden Sie erweitertes Denken (Thinking Mode)
-
-[Erweitertes Denken](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) ist standardmäßig aktiviert und gibt Claude Platz, um komplexe Probleme Schritt für Schritt zu durchdenken, bevor er antwortet. Dieses Denken ist im ausführlichen Modus sichtbar, den Sie mit `Ctrl+O` umschalten können. Während des erweiterten Denkens zeigt der Spinner Inline-Fortschrittshinweise wie „still thinking" und „almost done thinking" an, um zu zeigen, dass Claude aktiv arbeitet.
-
-Darüber hinaus verwenden [Modelle, die Effort unterstützen](/de/model-config#adjust-effort-level), adaptives Denken: Anstelle eines festen Thinking-Token-Budgets entscheidet das Modell dynamisch, ob und wie viel es denken soll, basierend auf Ihrer Effort-Level-Einstellung und der anstehenden Aufgabe. Adaptives Denken ermöglicht es Claude, schneller auf Routine-Prompts zu reagieren und tieferes Denken für Schritte zu reservieren, die davon profitieren.
-
-Erweitertes Denken ist besonders wertvoll für komplexe architektonische Entscheidungen, schwierige Fehler, mehrstufige Implementierungsplanung und Bewertung von Kompromissen zwischen verschiedenen Ansätzen.
-
-<Note>
-  Phrasen wie „think", „think hard" und „think more" werden als reguläre Prompt-Anweisungen interpretiert und weisen keine Thinking-Tokens zu.
-</Note>
-
-### Konfigurieren Sie Thinking Mode
-
-Thinking ist standardmäßig aktiviert, aber Sie können es anpassen oder deaktivieren.
-
-| Bereich                        | Wie man konfiguriert                                                                                            | Details                                                                                                                                                                                                             |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Effort Level**               | Führen Sie `/effort` aus, passen Sie in `/model` an, oder setzen Sie [`CLAUDE_CODE_EFFORT_LEVEL`](/de/env-vars) | Steuern Sie die Thinking-Tiefe auf [unterstützten Modellen](/de/model-config#adjust-effort-level)                                                                                                                   |
-| **`ultrathink` Schlüsselwort** | Fügen Sie „ultrathink" irgendwo in Ihrem Prompt ein                                                             | Fügt eine In-Context-Anweisung hinzu, die das Modell anweist, mehr auf diesem Turn zu denken. Ändert nicht die Effort-Ebene selbst; siehe [Effort Level anpassen](/de/model-config#adjust-effort-level) dafür       |
-| **Toggle-Verknüpfung**         | Drücken Sie `Option+T` (macOS) oder `Alt+T` (Windows/Linux)                                                     | Schalten Sie Thinking für die aktuelle Sitzung ein/aus (alle Modelle). Kann [Terminal-Konfiguration](/de/terminal-config) erfordern, um Option-Tasten-Verknüpfungen zu aktivieren                                   |
-| **Globaler Standard**          | Verwenden Sie `/config`, um Thinking Mode umzuschalten                                                          | Setzt Ihren Standard über alle Projekte (alle Modelle).<br />Gespeichert als `alwaysThinkingEnabled` in `~/.claude/settings.json`                                                                                   |
-| **Token-Budget begrenzen**     | Setzen Sie die Umgebungsvariable [`MAX_THINKING_TOKENS`](/de/env-vars)                                          | Begrenzen Sie das Thinking-Budget auf eine bestimmte Anzahl von Tokens. Auf Modellen mit adaptivem Denken gilt nur `0`, es sei denn, adaptives Denken ist deaktiviert. Beispiel: `export MAX_THINKING_TOKENS=10000` |
-
-Um Claudes Thinking-Prozess anzuzeigen, drücken Sie `Ctrl+O`, um den ausführlichen Modus umzuschalten und das interne Denken als grauer kursiver Text angezeigt zu sehen.
-
-### Wie erweitertes Denken funktioniert
-
-Erweitertes Denken steuert, wie viel internes Denken Claude vor der Antwort durchführt. Mehr Denken bietet mehr Platz, um Lösungen zu erkunden, Grenzfälle zu analysieren und Fehler selbst zu korrigieren.
-
-Auf [Modellen, die Effort unterstützen](/de/model-config#adjust-effort-level), verwendet Thinking adaptives Denken: Das Modell weist Thinking-Tokens dynamisch basierend auf dem Effort Level zu, den Sie auswählen. Dies ist die empfohlene Methode, um den Kompromiss zwischen Geschwindigkeit und Reasoning-Tiefe zu optimieren. Wenn Sie möchten, dass Claude mehr oder weniger denkt, als Ihr Effort Level sonst erzeugen würde, können Sie dies auch direkt in Ihrem Prompt oder in `CLAUDE.md` sagen.
-
-Bei älteren Modellen verwendet Thinking ein festes Token-Budget, das aus Ihrer Output-Zuteilung gezogen wird. Das Budget variiert je nach Modell; siehe [`MAX_THINKING_TOKENS`](/de/env-vars) für Obergrenzen pro Modell. Sie können das Budget mit dieser Umgebungsvariable begrenzen oder Thinking vollständig über `/config` oder den `Option+T`/`Alt+T`-Toggle deaktivieren.
-
-Auf Modellen mit adaptivem Denken gilt `MAX_THINKING_TOKENS` nur, wenn es auf `0` gesetzt ist, um Thinking zu deaktivieren, oder wenn `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` das Modell auf das feste Budget zurückversetzt. `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` gilt nur für Opus 4.6 und Sonnet 4.6. Opus 4.7 verwendet immer adaptives Denken und unterstützt kein festes Thinking-Budget. Siehe [Umgebungsvariablen](/de/env-vars).
-
-<Warning>
-  Ihnen werden alle verwendeten Thinking-Tokens berechnet, auch wenn Thinking-Zusammenfassungen redigiert werden. Im interaktiven Modus wird Thinking standardmäßig als zusammengefasster Stub angezeigt. Setzen Sie `showThinkingSummaries: true` in `settings.json`, um vollständige Zusammenfassungen anzuzeigen.
-</Warning>
-
-***
-
-## Vorherige Gespräche fortsetzen
-
-Wenn Sie Claude Code starten, können Sie eine vorherige Sitzung fortsetzen:
-
-* `claude --continue` setzt das neueste Gespräch im aktuellen Verzeichnis fort
-* `claude --resume` öffnet eine Gesprächsauswahl oder setzt nach Name fort
-* `claude --from-pr 123` setzt Sitzungen fort, die mit einem bestimmten Pull Request verknüpft sind
-
-Verwenden Sie innerhalb einer aktiven Sitzung `/resume`, um zu einem anderen Gespräch zu wechseln.
-
-Wenn die ausgewählte Sitzung alt und groß genug ist, dass das erneute Lesen einen wesentlichen Teil Ihrer Nutzungslimits verbrauchen würde, bieten `--resume`, `--continue` und `/resume` an, statt des vollständigen Transkripts von einer Zusammenfassung aus fortzufahren. Diese Eingabeaufforderung ist nicht auf Amazon Bedrock, Google Cloud Vertex AI oder Microsoft Foundry verfügbar.
-
-Sitzungen werden pro Projektverzeichnis gespeichert. Standardmäßig zeigt die `/resume`-Auswahl interaktive Sitzungen aus dem aktuellen Worktree mit Tastaturkürzeln, um die Liste auf andere Worktrees oder Projekte zu erweitern, zu suchen, in der Vorschau anzuzeigen und umzubenennen. Siehe [Verwenden Sie die Sitzungsauswahl](#use-the-session-picker) unten für die vollständige Tastaturkürzel-Referenz.
-
-Wenn Sie eine Sitzung aus einem anderen Worktree desselben Repositorys auswählen, setzt Claude Code sie direkt fort, ohne dass Sie zuerst das Verzeichnis wechseln müssen. Wenn Sie eine Sitzung aus einem nicht verwandten Projekt auswählen, wird ein `cd`- und Resume-Befehl stattdessen in Ihre Zwischenablage kopiert.
-
-Das Fortsetzen nach Name wird über das aktuelle Repository und seine Worktrees aufgelöst. Sowohl `claude --resume <name>` als auch `/resume <name>` suchen nach einer genauen Übereinstimmung und setzen sie direkt fort, auch wenn die Sitzung in einem anderen Worktree lebt.
-
-Wenn der Name mehrdeutig ist, öffnet `claude --resume <name>` die Auswahl mit dem Namen als vorgefülltem Suchbegriff. `/resume <name>` aus einer aktiven Sitzung meldet stattdessen einen Fehler, also führen Sie `/resume` ohne Argument aus, um die Auswahl zu öffnen und auszuwählen.
-
-Sitzungen, die von `claude -p` oder SDK-Aufrufen erstellt wurden, werden nicht in der Auswahl angezeigt, aber Sie können eine trotzdem fortsetzen, indem Sie ihre Sitzungs-ID direkt an `claude --resume <session-id>` übergeben.
-
-### Benennen Sie Ihre Sitzungen
-
-Geben Sie Sitzungen beschreibende Namen, um sie später zu finden. Dies ist eine Best Practice, wenn Sie an mehreren Aufgaben oder Funktionen arbeiten.
-
-<Steps>
-  <Step title="Benennen Sie die Sitzung">
-    Benennen Sie eine Sitzung beim Start mit `-n`:
-
-    ```bash theme={null}
-    claude -n auth-refactor
-    ```
-
-    Oder verwenden Sie `/rename` während einer Sitzung, was auch den Namen in der Prompt-Leiste anzeigt:
-
-    ```text theme={null}
-    /rename auth-refactor
-    ```
-
-    Sie können jede Sitzung auch aus der Auswahl umbenennen: Führen Sie `/resume` aus, navigieren Sie zu einer Sitzung, und drücken Sie `Ctrl+R`.
-  </Step>
-
-  <Step title="Später nach Name fortsetzen">
-    Aus der Befehlszeile:
-
-    ```bash theme={null}
-    claude --resume auth-refactor
-    ```
-
-    Oder innerhalb einer aktiven Sitzung:
-
-    ```text theme={null}
-    /resume auth-refactor
-    ```
-  </Step>
-</Steps>
-
-### Verwenden Sie die Sitzungsauswahl
-
-Der Befehl `/resume` (oder `claude --resume` ohne Argumente) öffnet eine interaktive Sitzungsauswahl mit diesen Funktionen:
-
-**Tastaturkürzel in der Auswahl:**
-
-| Verknüpfung                                              | Aktion                                                                                                                                                                                |
-| :------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `↑` / `↓`                                                | Navigieren Sie zwischen Sitzungen                                                                                                                                                     |
-| `→` / `←`                                                | Erweitern oder reduzieren Sie gruppierte Sitzungen                                                                                                                                    |
-| `Enter`                                                  | Wählen Sie die hervorgehobene Sitzung aus und setzen Sie sie fort                                                                                                                     |
-| `Space`                                                  | Zeigen Sie eine Vorschau des Sitzungsinhalts an. `Ctrl+V` funktioniert auch auf Terminals, die es nicht als Einfügen erfassen                                                         |
-| `Ctrl+R`                                                 | Benennen Sie die hervorgehobene Sitzung um                                                                                                                                            |
-| `/` oder ein beliebiges druckbares Zeichen außer `Space` | Geben Sie den Suchmodus ein und filtern Sie Sitzungen                                                                                                                                 |
-| `Ctrl+A`                                                 | Zeigen Sie Sitzungen aus allen Projekten auf diesem Computer an. Drücken Sie erneut, um zum aktuellen Repository zurückzukehren                                                       |
-| `Ctrl+W`                                                 | Zeigen Sie Sitzungen aus allen Worktrees des aktuellen Repositorys an. Drücken Sie erneut, um zum aktuellen Worktree zurückzukehren. Wird nur in Multi-Worktree-Repositorys angezeigt |
-| `Ctrl+B`                                                 | Filtern Sie zu Sitzungen aus Ihrem aktuellen Git-Branch. Drücken Sie erneut, um Sitzungen aus allen Branches anzuzeigen                                                               |
-| `Esc`                                                    | Beenden Sie die Auswahl oder den Suchmodus                                                                                                                                            |
-
-**Sitzungsorganisation:**
-
-Die Auswahl zeigt Sitzungen mit hilfreichen Metadaten an:
-
-* Sitzungsname, falls festgelegt, ansonsten die Gesprächszusammenfassung oder der erste Benutzer-Prompt
-* Verstrichene Zeit seit letzter Aktivität
-* Nachrichtenanzahl
-* Git-Branch (falls zutreffend)
-* Projektpfad, angezeigt nach Erweiterung auf alle Projekte mit `Ctrl+A`
-
-Verzweigte Sitzungen (erstellt mit `/branch`, `/rewind` oder `--fork-session`) werden unter ihrer Root-Sitzung gruppiert, was es einfacher macht, verwandte Gespräche zu finden.
-
-<Tip>
-  Tipps:
-
-  * **Benennen Sie Sitzungen früh**: Verwenden Sie `/rename`, wenn Sie mit einer bestimmten Aufgabe beginnen – es ist viel einfacher, „payment-integration" später zu finden als „explain this function"
-  * Verwenden Sie `--continue` für schnellen Zugriff auf Ihr letztes Gespräch im aktuellen Verzeichnis
-  * Verwenden Sie `--resume session-name`, wenn Sie wissen, welche Sitzung Sie benötigen
-  * Verwenden Sie `--resume` (ohne Namen), wenn Sie durchsuchen und auswählen müssen
-  * Verwenden Sie für Skripte `claude --continue --print "prompt"`, um im nicht-interaktiven Modus fortzufahren
-  * Drücken Sie `Space` in der Auswahl, um eine Sitzung vor dem Fortsetzen in der Vorschau anzuzeigen
-  * Die fortgesetzte Konversation beginnt mit demselben Modell und der gleichen Konfiguration wie das Original
-
-  Wie es funktioniert:
-
-  1. **Gesprächsspeicherung**: Alle Gespräche werden automatisch lokal mit ihrer vollständigen Nachrichtenhistorie gespeichert
-  2. **Nachricht-Deserialisierung**: Beim Fortsetzen wird die gesamte Nachrichtenhistorie wiederhergestellt, um den Kontext zu bewahren
-  3. **Tool-Status**: Die Tool-Nutzung und Ergebnisse aus dem vorherigen Gespräch werden beibehalten
-  4. **Kontext-Wiederherstellung**: Das Gespräch wird mit allen vorherigen Kontexten intakt fortgesetzt
-</Tip>
-
-***
-
-## Führen Sie parallele Claude Code-Sitzungen mit Git Worktrees aus
-
-Wenn Sie an mehreren Aufgaben gleichzeitig arbeiten, benötigt jede Claude-Sitzung ihre eigene Kopie der Codebase, damit Änderungen nicht kollidieren. Git Worktrees lösen dies, indem sie separate Arbeitsverzeichnisse erstellen, die jeweils ihre eigenen Dateien und Branches haben, während sie die gleiche Repository-Historie und Remote-Verbindungen teilen. Dies bedeutet, dass Sie Claude an einer Funktion in einem Worktree arbeiten lassen können, während Sie einen Fehler in einem anderen beheben, ohne dass eine Sitzung die andere beeinträchtigt.
-
-Verwenden Sie das Flag `--worktree` (`-w`), um einen isolierten Worktree zu erstellen und Claude darin zu starten. Der Wert, den Sie übergeben, wird zum Worktree-Verzeichnisnamen und Branch-Namen:
-
-```bash theme={null}
-# Starten Sie Claude in einem Worktree namens „feature-auth"
-# Erstellt .claude/worktrees/feature-auth/ mit einem neuen Branch
-claude --worktree feature-auth
-
-# Starten Sie eine weitere Sitzung in einem separaten Worktree
-claude --worktree bugfix-123
-```
-
-Wenn Sie den Namen weglassen, generiert Claude automatisch einen zufälligen:
-
-```bash theme={null}
-# Generiert automatisch einen Namen wie „bright-running-fox"
-claude --worktree
-```
-
-Worktrees werden unter `<repo>/.claude/worktrees/<name>` erstellt und verzweigen sich vom Standard-Remote-Branch, auf den `origin/HEAD` zeigt. Der Worktree-Branch wird `worktree-<name>` genannt.
-
-Der Basis-Branch ist nicht über ein Claude Code-Flag oder eine Einstellung konfigurierbar. `origin/HEAD` ist eine Referenz, die in Ihrem lokalen `.git`-Verzeichnis gespeichert ist und die Git einmal beim Klonen gesetzt hat. Wenn sich der Standard-Branch des Repositorys später auf GitHub oder GitLab ändert, zeigt Ihre lokale `origin/HEAD` weiterhin auf den alten, und Worktrees verzweigen sich von dort. Um Ihre lokale Referenz mit dem, was der Remote derzeit als Standard betrachtet, neu zu synchronisieren:
-
-```bash theme={null}
-git remote set-head origin -a
-```
-
-Dies ist ein Standard-Git-Befehl, der nur Ihr lokales `.git`-Verzeichnis aktualisiert. Nichts auf dem Remote-Server ändert sich. Wenn Sie möchten, dass Worktrees sich von einem bestimmten Branch aus verzweigen, anstatt vom Standard des Remote, setzen Sie ihn explizit mit `git remote set-head origin your-branch-name`.
-
-Für vollständige Kontrolle über die Erstellung von Worktrees, einschließlich der Auswahl einer anderen Basis pro Aufruf, konfigurieren Sie einen [WorktreeCreate Hook](/de/hooks#worktreecreate). Der Hook ersetzt Claudes Standard-`git worktree`-Logik vollständig, sodass Sie von jedem Ref abrufen und verzweigen können, den Sie benötigen.
-
-Sie können auch Claude während einer Sitzung bitten, „in einem Worktree zu arbeiten" oder „einen Worktree zu starten", und er erstellt automatisch einen.
-
-### Subagent Worktrees
-
-Subagents können auch Worktree-Isolation verwenden, um parallel ohne Konflikte zu arbeiten. Bitten Sie Claude, „Worktrees für Ihre Agents zu verwenden" oder konfigurieren Sie es in einem [benutzerdefinierten Subagent](/de/sub-agents#supported-frontmatter-fields), indem Sie `isolation: worktree` zum Frontmatter des Agents hinzufügen. Jeder Subagent erhält seinen eigenen Worktree, der automatisch bereinigt wird, wenn der Subagent ohne Änderungen beendet wird.
-
-### Worktree-Bereinigung
-
-Wenn Sie eine Worktree-Sitzung beenden, handhabt Claude die Bereinigung basierend darauf, ob Sie Änderungen vorgenommen haben:
-
-* **Keine Änderungen**: Der Worktree und sein Branch werden automatisch entfernt
-* **Änderungen oder Commits vorhanden**: Claude fragt Sie, ob Sie den Worktree behalten oder entfernen möchten. Das Behalten bewahrt das Verzeichnis und den Branch, damit Sie später zurückkehren können. Das Entfernen löscht das Worktree-Verzeichnis und seinen Branch und verwirft alle nicht committeten Änderungen und Commits
-
-Subagent-Worktrees, die durch einen Absturz oder einen unterbrochenen parallelen Lauf verwaist sind, werden beim Start automatisch entfernt, sobald sie älter als Ihre [`cleanupPeriodDays`](/de/settings#available-settings)-Einstellung sind, vorausgesetzt, sie haben keine nicht committeten Änderungen, keine nicht verfolgten Dateien und keine nicht gepushten Commits. Worktrees, die Sie mit `--worktree` erstellen, werden durch diese Bereinigung nie entfernt.
-
-Um Worktrees außerhalb einer Claude-Sitzung zu bereinigen, verwenden Sie [manuelle Worktree-Verwaltung](#manage-worktrees-manually).
-
-<Tip>
-  Fügen Sie `.claude/worktrees/` zu Ihrer `.gitignore` hinzu, um zu verhindern, dass Worktree-Inhalte als nicht verfolgte Dateien in Ihrem Haupt-Repository angezeigt werden.
-</Tip>
-
-### Kopieren Sie gitignorierte Dateien zu Worktrees
-
-Git Worktrees sind frische Checkouts, daher enthalten sie keine nicht verfolgten Dateien wie `.env` oder `.env.local` aus Ihrem Haupt-Repository. Um diese Dateien automatisch zu kopieren, wenn Claude einen Worktree erstellt, fügen Sie eine `.worktreeinclude`-Datei zu Ihrem Projektroot hinzu.
-
-Die Datei verwendet `.gitignore`-Syntax, um aufzulisten, welche Dateien kopiert werden sollen. Nur Dateien, die einem Muster entsprechen und auch gitignoriert sind, werden kopiert, daher werden verfolgte Dateien niemals dupliziert.
-
-```text .worktreeinclude theme={null}
-.env
-.env.local
-config/secrets.json
-```
-
-Dies gilt für Worktrees, die mit `--worktree`, Subagent-Worktrees und parallele Sitzungen in der [Desktop-App](/de/desktop#work-in-parallel-with-sessions) erstellt werden.
-
-### Verwalten Sie Worktrees manuell
-
-Für mehr Kontrolle über den Worktree-Speicherort und die Branch-Konfiguration erstellen Sie Worktrees direkt mit Git. Dies ist nützlich, wenn Sie einen bestimmten vorhandenen Branch auschecken oder den Worktree außerhalb des Repositorys platzieren müssen.
-
-```bash theme={null}
-# Erstellen Sie einen Worktree mit einem neuen Branch
-git worktree add ../project-feature-a -b feature-a
-
-# Erstellen Sie einen Worktree mit einem vorhandenen Branch
-git worktree add ../project-bugfix bugfix-123
-
-# Starten Sie Claude im Worktree
-cd ../project-feature-a && claude
-
-# Bereinigen Sie, wenn Sie fertig sind
-git worktree list
-git worktree remove ../project-feature-a
-```
-
-Weitere Informationen finden Sie in der [offiziellen Git Worktree-Dokumentation](https://git-scm.com/docs/git-worktree).
-
-<Tip>
-  Denken Sie daran, Ihre Entwicklungsumgebung in jedem neuen Worktree gemäß der Einrichtung Ihres Projekts zu initialisieren. Je nach Ihrem Stack kann dies die Ausführung der Abhängigkeitsinstallation (`npm install`, `yarn`), das Einrichten virtueller Umgebungen oder das Befolgen des Standard-Setup-Prozesses Ihres Projekts umfassen.
-</Tip>
-
-### Nicht-Git-Versionskontrolle
-
-Worktree-Isolation funktioniert standardmäßig mit Git. Für andere Versionskontrollsysteme wie SVN, Perforce oder Mercurial konfigurieren Sie [WorktreeCreate und WorktreeRemove Hooks](/de/hooks#worktreecreate), um benutzerdefinierte Worktree-Erstellungs- und Bereinigungslogik bereitzustellen. Wenn konfiguriert, ersetzen diese Hooks das Standard-Git-Verhalten, wenn Sie `--worktree` verwenden, daher wird [`.worktreeinclude`](#copy-gitignored-files-to-worktrees) nicht verarbeitet. Kopieren Sie alle lokalen Konfigurationsdateien stattdessen in Ihrem Hook-Skript.
-
-Für automatisierte Koordination paralleler Sitzungen mit gemeinsamen Aufgaben und Messaging siehe [Agent Teams](/de/agent-teams).
-
-***
-
-## Erhalten Sie Benachrichtigungen, wenn Claude Ihre Aufmerksamkeit benötigt
-
-Wenn Sie eine lange laufende Aufgabe starten und zu einem anderen Fenster wechseln, können Sie Desktop-Benachrichtigungen einrichten, damit Sie wissen, wenn Claude fertig ist oder Ihre Eingabe benötigt. Dies verwendet das `Notification` [Hook-Ereignis](/de/hooks-guide#get-notified-when-claude-needs-input), das immer dann ausgelöst wird, wenn Claude auf Berechtigung wartet, untätig ist und bereit für einen neuen Prompt ist, oder die Authentifizierung abgeschlossen ist.
-
-<Steps>
-  <Step title="Fügen Sie den Hook zu Ihren Einstellungen hinzu">
-    Öffnen Sie `~/.claude/settings.json` und fügen Sie einen `Notification` Hook hinzu, der den nativen Benachrichtigungsbefehl Ihrer Plattform aufruft:
-
-    <Tabs>
-      <Tab title="macOS">
-        ```json theme={null}
-        {
-          "hooks": {
-            "Notification": [
-              {
-                "matcher": "",
-                "hooks": [
-                  {
-                    "type": "command",
-                    "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'"
-                  }
-                ]
-              }
-            ]
-          }
-        }
-        ```
-      </Tab>
-
-      <Tab title="Linux">
-        ```json theme={null}
-        {
-          "hooks": {
-            "Notification": [
-              {
-                "matcher": "",
-                "hooks": [
-                  {
-                    "type": "command",
-                    "command": "notify-send 'Claude Code' 'Claude Code needs your attention'"
-                  }
-                ]
-              }
-            ]
-          }
-        }
-        ```
-      </Tab>
-
-      <Tab title="Windows">
-        ```json theme={null}
-        {
-          "hooks": {
-            "Notification": [
-              {
-                "matcher": "",
-                "hooks": [
-                  {
-                    "type": "command",
-                    "command": "powershell.exe -Command \"[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); [System.Windows.Forms.MessageBox]::Show('Claude Code needs your attention', 'Claude Code')\""
-                  }
-                ]
-              }
-            ]
-          }
-        }
-        ```
-      </Tab>
-    </Tabs>
-
-    Wenn Ihre Einstellungsdatei bereits einen `hooks`-Schlüssel hat, führen Sie den `Notification`-Eintrag darin zusammen, anstatt ihn zu überschreiben. Sie können Claude auch bitten, den Hook für Sie zu schreiben, indem Sie beschreiben, was Sie in der CLI möchten.
-  </Step>
-
-  <Step title="Grenzen Sie den Matcher optional ein">
-    Standardmäßig wird der Hook bei allen Benachrichtigungstypen ausgelöst. Um nur für bestimmte Ereignisse ausgelöst zu werden, setzen Sie das Feld `matcher` auf einen dieser Werte:
-
-    | Matcher                | Wird ausgelöst, wenn                                            |
-    | :--------------------- | :-------------------------------------------------------------- |
-    | `permission_prompt`    | Claude benötigt Ihre Genehmigung für eine Tool-Nutzung          |
-    | `idle_prompt`          | Claude ist fertig und wartet auf Ihren nächsten Prompt          |
-    | `auth_success`         | Die Authentifizierung ist abgeschlossen                         |
-    | `elicitation_dialog`   | Ein MCP-Server öffnet ein Elicitierungsformular                 |
-    | `elicitation_complete` | Ein MCP-Elicitierungsformular wird eingereicht oder verworfen   |
-    | `elicitation_response` | Eine MCP-Elicitierungsantwort wird an den Server zurückgesendet |
-  </Step>
-
-  <Step title="Überprüfen Sie den Hook">
-    Geben Sie `/hooks` ein und wählen Sie `Notification` aus, um zu bestätigen, dass der Hook angezeigt wird. Wenn Sie ihn auswählen, wird der Befehl angezeigt, der ausgeführt wird. Um ihn end-to-end zu testen, bitten Sie Claude, einen Befehl auszuführen, der Berechtigung erfordert, und wechseln Sie weg vom Terminal, oder bitten Sie Claude, direkt eine Benachrichtigung auszulösen.
-  </Step>
-</Steps>
-
-Für das vollständige Ereignisschema und die Benachrichtigungstypen siehe die [Benachrichtigungsreferenz](/de/hooks#notification).
-
-***
-
-## Verwenden Sie Claude als Unix-ähnliches Dienstprogramm
-
-### Fügen Sie Claude zu Ihrem Überprüfungsprozess hinzu
-
-Angenommen, Sie möchten Claude Code als Linter oder Code-Reviewer verwenden.
-
-**Fügen Sie Claude zu Ihrem Build-Skript hinzu:**
-
-```json theme={null}
-// package.json
-{
-    ...
-    "scripts": {
-        ...
-        "lint:claude": "claude -p 'you are a linter. please look at the changes vs. main and report any issues related to typos. report the filename and line number on one line, and a description of the issue on the second line. do not return any other text.'"
-    }
-}
-```
-
-<Tip>
-  Tipps:
-
-  * Verwenden Sie Claude für automatisierte Code-Überprüfung in Ihrer CI/CD-Pipeline
-  * Passen Sie den Prompt an, um auf spezifische Probleme zu überprüfen, die für Ihr Projekt relevant sind
-  * Erwägen Sie, mehrere Skripte für verschiedene Arten von Überprüfungen zu erstellen
-</Tip>
-
-### Pipe in, Pipe out
-
-Angenommen, Sie möchten Daten in Claude pipen und Daten in einem strukturierten Format zurückbekommen.
-
-**Pipen Sie Daten durch Claude:**
-
-```bash theme={null}
-cat build-error.txt | claude -p 'concisely explain the root cause of this build error' > output.txt
-```
-
-<Tip>
-  Tipps:
-
-  * Verwenden Sie Pipes, um Claude in vorhandene Shell-Skripte zu integrieren
-  * Kombinieren Sie mit anderen Unix-Tools für leistungsstarke Workflows
-  * Erwägen Sie die Verwendung von `--output-format` für strukturierte Ausgabe
-</Tip>
-
-### Steuern Sie das Ausgabeformat
-
-Angenommen, Sie benötigen Claudes Ausgabe in einem bestimmten Format, besonders wenn Sie Claude Code in Skripte oder andere Tools integrieren.
-
-<Steps>
-  <Step title="Verwenden Sie Textformat (Standard)">
-    ```bash theme={null}
-    cat data.txt | claude -p 'summarize this data' --output-format text > summary.txt
-    ```
-
-    Dies gibt nur Claudes einfache Textantwort aus (Standardverhalten).
-  </Step>
-
-  <Step title="Verwenden Sie JSON-Format">
-    ```bash theme={null}
-    cat code.py | claude -p 'analyze this code for bugs' --output-format json > analysis.json
-    ```
-
-    Dies gibt ein JSON-Array von Nachrichten mit Metadaten einschließlich Kosten und Dauer aus.
-  </Step>
-
-  <Step title="Verwenden Sie Streaming-JSON-Format">
-    ```bash theme={null}
-    cat log.txt | claude -p 'parse this log file for errors' --output-format stream-json
-    ```
-
-    Dies gibt eine Reihe von JSON-Objekten in Echtzeit aus, während Claude die Anfrage verarbeitet. Jede Nachricht ist ein gültiges JSON-Objekt, aber die gesamte Ausgabe ist kein gültiges JSON, wenn es verkettet wird.
-  </Step>
-</Steps>
-
-<Tip>
-  Tipps:
-
-  * Verwenden Sie `--output-format text` für einfache Integrationen, bei denen Sie nur Claudes Antwort benötigen
-  * Verwenden Sie `--output-format json`, wenn Sie das vollständige Gesprächsprotokoll benötigen
-  * Verwenden Sie `--output-format stream-json` für Echtzeit-Ausgabe jedes Gesprächsturn
-</Tip>
-
-***
-
-## Führen Sie Claude nach einem Zeitplan aus
+### Claude nach einem Zeitplan ausführen
 
 Angenommen, Sie möchten Claude automatisch eine Aufgabe auf wiederkehrender Basis ausführen, z. B. offene PRs jeden Morgen überprüfen, Abhängigkeiten wöchentlich prüfen oder über Nacht auf CI-Fehler überprüfen.
 
@@ -960,16 +406,16 @@ Wählen Sie eine Planungsoption basierend darauf, wo Sie die Aufgabe ausführen 
 | [`/loop`](/de/scheduled-tasks)                           | Die aktuelle CLI-Sitzung               | Schnelle Abfragen während eine Sitzung offen ist. Aufgaben werden abgebrochen, wenn Sie beenden.                                                                                                                                                                                |
 
 <Tip>
-  Wenn Sie Prompts für geplante Aufgaben schreiben, seien Sie explizit darüber, wie Erfolg aussieht und was mit Ergebnissen zu tun ist. Die Aufgabe wird autonom ausgeführt, daher kann sie keine Klärungsfragen stellen. Beispiel: 'Überprüfen Sie offene PRs mit dem Label `needs-review`, hinterlassen Sie Inline-Kommentare zu Problemen und posten Sie eine Zusammenfassung im `#eng-reviews` Slack-Kanal."
+  Wenn Sie Prompts für geplante Aufgaben schreiben, seien Sie explizit darüber, wie Erfolg aussieht und was mit Ergebnissen zu tun ist. Die Aufgabe wird autonom ausgeführt, daher kann sie keine Klärungsfragen stellen. Beispiel: „Überprüfen Sie offene PRs mit dem Label `needs-review`, hinterlassen Sie Inline-Kommentare zu Problemen und posten Sie eine Zusammenfassung im `#eng-reviews` Slack-Kanal."
 </Tip>
 
 ***
 
-## Fragen Sie Claude nach seinen Fähigkeiten
+### Fragen Sie Claude nach seinen Fähigkeiten
 
 Claude hat integrierten Zugriff auf seine Dokumentation und kann Fragen zu seinen eigenen Funktionen und Einschränkungen beantworten.
 
-### Beispielfragen
+#### Beispielfragen
 
 ```text theme={null}
 can Claude Code create pull requests?
@@ -1009,6 +455,56 @@ what are the limitations of Claude Code?
 
 ***
 
+## Vorherige Gespräche fortsetzen
+
+Wenn eine Aufgabe mehrere Sitzungen umfasst, setzen Sie dort fort, wo Sie aufgehört haben, anstatt den Kontext erneut zu erklären. Claude Code speichert jedes Gespräch lokal.
+
+```bash theme={null}
+claude --continue
+```
+
+Dies setzt die neueste Sitzung im aktuellen Verzeichnis fort; wenn es noch keine gibt, wird `No conversation found to continue` gedruckt und das Programm beendet. Verwenden Sie `claude --resume`, um aus einer Liste auszuwählen, oder `/resume` innerhalb einer laufenden Sitzung. Siehe [Sitzungen verwalten](/de/sessions) für Benennung, Verzweigung und die vollständige Auswahl-Referenz.
+
+## Parallele Sitzungen mit Worktrees ausführen
+
+Arbeiten Sie an einer Funktion in einem Terminal, während Claude einen Fehler in einem anderen behebt, ohne dass die Änderungen kollidieren. Jeder Worktree ist ein separater Checkout auf seinem eigenen Branch.
+
+```bash theme={null}
+claude --worktree feature-auth
+```
+
+Führen Sie denselben Befehl mit einem anderen Namen in einem zweiten Terminal aus, um eine isolierte parallele Sitzung zu starten. Siehe [Worktrees](/de/worktrees) für Bereinigung, `.worktreeinclude` und Unterstützung für nicht-Git-VCS. Um parallele Sitzungen von einem Bildschirm aus zu überwachen, anstatt separate Terminals zu verwenden, siehe [Background Agents](/de/agent-view).
+
+## Vor dem Bearbeiten planen
+
+Für Änderungen, die Sie überprüfen möchten, bevor sie die Festplatte berühren, wechseln Sie in den Plan Mode. Claude liest Dateien und schlägt einen Plan vor, macht aber keine Änderungen, bis Sie zustimmen.
+
+```bash theme={null}
+claude --permission-mode plan
+```
+
+Sie können auch `Shift+Tab` während einer Sitzung drücken, um in den Plan Mode zu wechseln. Siehe [Plan Mode](/de/permission-modes#analyze-before-you-edit-with-plan-mode) für den Genehmigungsfluss und das Bearbeiten des Plans in Ihrem Text-Editor.
+
+## Forschung an Subagents delegieren
+
+Das Erkunden einer großen Codebase füllt Ihren Kontext mit Dateilesevorgängen. Delegieren Sie die Erkundung, damit nur die Ergebnisse zurückkommen.
+
+```text theme={null}
+use a subagent to investigate how our auth system handles token refresh
+```
+
+Der Subagent liest Dateien in seinem eigenen Kontextfenster und meldet eine Zusammenfassung. Siehe [Subagents](/de/sub-agents) für die Definition benutzerdefinierter Agents mit ihren eigenen Tools und Prompts.
+
+## Claude in Skripte pipen
+
+Führen Sie Claude nicht-interaktiv für CI, Pre-Commit-Hooks oder Batch-Verarbeitung aus. Stdin und Stdout funktionieren wie jedes Unix-Tool.
+
+```bash theme={null}
+git log --oneline -20 | claude -p "summarize these recent commits"
+```
+
+Siehe [Non-Interactive Mode](/de/headless) für Ausgabeformate, Berechtigungsflags und Fan-Out-Muster.
+
 ## Nächste Schritte
 
 <CardGroup cols={2}>
@@ -1016,15 +512,15 @@ what are the limitations of Claude Code?
     Muster zum Herausholen des Besten aus Claude Code
   </Card>
 
-  <Card title="Wie Claude Code funktioniert" icon="gear" href="/de/how-claude-code-works">
-    Verstehen Sie die agentic Loop und Kontextverwaltung
+  <Card title="Sitzungen verwalten" icon="rotate-left" href="/de/sessions">
+    Fortsetzen, Benennen und Verzweigen von Gesprächen
   </Card>
 
-  <Card title="Erweitern Sie Claude Code" icon="puzzle-piece" href="/de/features-overview">
+  <Card title="Worktrees" icon="code-branch" href="/de/worktrees">
+    Führen Sie isolierte parallele Sitzungen aus
+  </Card>
+
+  <Card title="Claude Code erweitern" icon="puzzle-piece" href="/de/features-overview">
     Fügen Sie Skills, Hooks, MCP, Subagents und Plugins hinzu
-  </Card>
-
-  <Card title="Referenzimplementierung" icon="code" href="https://github.com/anthropics/claude-code/tree/main/.devcontainer">
-    Klonen Sie die Referenzimplementierung des Development Containers
   </Card>
 </CardGroup>

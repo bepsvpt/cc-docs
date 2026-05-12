@@ -11,7 +11,7 @@ Subagenten sind spezialisierte KI-Assistenten, die bestimmte Arten von Aufgaben 
 Jeder Subagent läuft in seinem eigenen Kontextfenster mit einem benutzerdefinierten Systemprompt, spezifischem Werkzeugzugriff und unabhängigen Berechtigungen. Wenn Claude auf eine Aufgabe trifft, die der Beschreibung eines Subagenten entspricht, delegiert es an diesen Subagenten, der unabhängig arbeitet und Ergebnisse zurückgibt. Um die Kontexteinsparungen in der Praxis zu sehen, zeigt die [Kontextfenster-Visualisierung](/de/context-window) eine Sitzung, in der ein Subagent Recherchen in seinem eigenen separaten Fenster durchführt.
 
 <Note>
-  Wenn Sie mehrere Agenten benötigen, die parallel arbeiten und miteinander kommunizieren, siehe stattdessen [Agent-Teams](/de/agent-teams). Subagenten arbeiten innerhalb einer einzelnen Sitzung; Agent-Teams koordinieren über separate Sitzungen hinweg.
+  Subagenten arbeiten innerhalb einer einzelnen Sitzung. Um viele unabhängige Sitzungen parallel auszuführen und sie von einem Ort aus zu überwachen, siehe [Hintergrund-Agenten](/de/agent-view). Für Sitzungen, die miteinander kommunizieren, siehe [Agent-Teams](/de/agent-teams).
 </Note>
 
 Subagenten helfen Ihnen:
@@ -158,7 +158,7 @@ Der `/agents`-Befehl öffnet eine Schnittstelle mit Registerkarten zur Verwaltun
 
 Dies ist die empfohlene Methode zum Erstellen und Verwalten von Subagenten. Für manuelle Erstellung oder Automatisierung können Sie auch Subagenten-Dateien direkt hinzufügen.
 
-Um alle konfigurierten Subagenten von der Befehlszeile aus ohne Starten einer interaktiven Sitzung aufzulisten, führen Sie `claude agents` aus. Dies zeigt Agenten gruppiert nach Quelle und gibt an, welche durch höherrangige Definitionen überschrieben werden.
+Um alle konfigurierten Subagenten von der Befehlszeile aus ohne Öffnen der [Agent-Ansicht](/de/agent-view) aufzulisten, leiten Sie die Ausgabe von `claude agents` weiter. Zum Beispiel druckt `claude agents | cat` Agenten gruppiert nach Quelle und gibt an, welche durch höherrangige Definitionen überschrieben werden.
 
 ### Wählen Sie den Subagenten-Umfang
 
@@ -260,7 +260,7 @@ Die folgenden Felder können im YAML-Frontmatter verwendet werden. Nur `name` un
 
 | Feld              | Erforderlich | Beschreibung                                                                                                                                                                                                                                                                                                                                                                                      |
 | :---------------- | :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `name`            | Ja           | Eindeutige Kennung mit Kleinbuchstaben und Bindestrichen                                                                                                                                                                                                                                                                                                                                          |
+| `name`            | Ja           | Eindeutige Kennung mit Kleinbuchstaben und Bindestrichen. [Hooks](/de/hooks#subagentstart) erhalten diesen Wert als `agent_type`. Der Dateiname muss nicht übereinstimmen                                                                                                                                                                                                                         |
 | `description`     | Ja           | Wann Claude an diesen Subagenten delegieren sollte                                                                                                                                                                                                                                                                                                                                                |
 | `tools`           | Nein         | [Werkzeuge](#available-tools), die der Subagent verwenden kann. Erbt alle Werkzeuge, wenn weggelassen. Um Skills in den Kontext zu laden, verwenden Sie das `skills`-Feld statt `Skill` hier aufzulisten                                                                                                                                                                                          |
 | `disallowedTools` | Nein         | Werkzeuge zum Verweigern, entfernt aus geerbter oder angegebener Liste                                                                                                                                                                                                                                                                                                                            |
@@ -666,8 +666,8 @@ Das CLI-Flag überschreibt die Einstellung, wenn beide vorhanden sind.
 
 Subagenten können im Vordergrund (blockierend) oder Hintergrund (gleichzeitig) ausgeführt werden:
 
-* **Vordergrund-Subagenten** blockieren die Hauptkonversation bis zur Fertigstellung. Berechtigungsaufforderungen und Klarstellungsfragen (wie [`AskUserQuestion`](/de/tools-reference)) werden an Sie weitergeleitet.
-* **Hintergrund-Subagenten** laufen gleichzeitig, während Sie weiterarbeiten. Vor dem Start fordert Claude Code alle Werkzeugberechtigungen an, die der Subagent benötigt, um sicherzustellen, dass er die erforderlichen Genehmigungen hat. Nach dem Start erbt der Subagent diese Berechtigungen und lehnt automatisch alles ab, was nicht vorab genehmigt wurde. Wenn ein Hintergrund-Subagent Klarstellungsfragen stellen muss, schlägt dieser Werkzeugaufruf fehl, aber der Subagent setzt fort.
+* **Vordergrund-Subagenten** blockieren die Hauptkonversation bis zur Fertigstellung. Berechtigungsaufforderungen werden an Sie weitergeleitet, wenn sie auftreten.
+* **Hintergrund-Subagenten** laufen gleichzeitig, während Sie weiterarbeiten. Sie laufen mit den Berechtigungen, die bereits in der Sitzung gewährt wurden, und lehnen automatisch jeden Werkzeugaufruf ab, der sonst eine Aufforderung auslösen würde. Wenn ein Hintergrund-Subagent Klarstellungsfragen stellen muss, schlägt dieser Werkzeugaufruf fehl, aber der Subagent setzt fort.
 
 Wenn ein Hintergrund-Subagent aufgrund fehlender Berechtigungen fehlschlägt, können Sie einen neuen Vordergrund-Subagenten mit derselben Aufgabe starten, um es mit interaktiven Aufforderungen erneut zu versuchen.
 
@@ -678,7 +678,7 @@ Claude entscheidet, ob Subagenten im Vordergrund oder Hintergrund ausgeführt we
 
 Um alle Hintergrund-Aufgaben-Funktionalität zu deaktivieren, setzen Sie die Umgebungsvariable `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` auf `1`. Siehe [Umgebungsvariablen](/de/env-vars).
 
-Wenn der Fork-Modus aktiviert ist, wird jeder Subagenten-Spawn im Hintergrund ausgeführt, unabhängig vom `background`-Feld. Forks zeigen weiterhin Berechtigungsaufforderungen in Ihrem Terminal an, wenn sie auftreten, anstatt vorab zu genehmigen; benannte Subagenten folgen dem Vorab-Genehmigungsfluss oben.
+Wenn der Fork-Modus aktiviert ist, wird jeder Subagenten-Spawn im Hintergrund ausgeführt, unabhängig vom `background`-Feld. Forks zeigen weiterhin Berechtigungsaufforderungen in Ihrem Terminal an, wenn sie auftreten; benannte Subagenten lehnen automatisch alles ab, was eine Aufforderung auslösen würde, wie oben beschrieben.
 
 ### Häufige Muster
 
@@ -823,13 +823,13 @@ Laufende Forks erscheinen in einem Panel unter der Eingabeaufforderung, mit eine
 
 Ein Fork erbt alles, was die Hauptsitzung zum Zeitpunkt des Spawnens hat. Ein benannter Subagent startet von seiner eigenen Definition.
 
-|                            | Fork                                        | Benannter Subagent                                                                                      |
-| :------------------------- | :------------------------------------------ | :------------------------------------------------------------------------------------------------------ |
-| Kontext                    | Vollständige Konversationshistorie          | Frischer Kontext mit dem Prompt, den Sie übergeben                                                      |
-| Systemprompt und Werkzeuge | Gleich wie Hauptsitzung                     | Aus der [Definitionsdatei](#write-subagent-files) des Subagenten                                        |
-| Modell                     | Gleich wie Hauptsitzung                     | Aus dem `model`-Feld des Subagenten                                                                     |
-| Berechtigungen             | Aufforderungen erscheinen in Ihrem Terminal | [Vorab genehmigt](#run-subagents-in-foreground-or-background) vor dem Start, dann automatisch abgelehnt |
-| Prompt-Cache               | Mit Hauptsitzung geteilt                    | Separater Cache                                                                                         |
+|                            | Fork                                        | Benannter Subagent                                                                                |
+| :------------------------- | :------------------------------------------ | :------------------------------------------------------------------------------------------------ |
+| Kontext                    | Vollständige Konversationshistorie          | Frischer Kontext mit dem Prompt, den Sie übergeben                                                |
+| Systemprompt und Werkzeuge | Gleich wie Hauptsitzung                     | Aus der [Definitionsdatei](#write-subagent-files) des Subagenten                                  |
+| Modell                     | Gleich wie Hauptsitzung                     | Aus dem `model`-Feld des Subagenten                                                               |
+| Berechtigungen             | Aufforderungen erscheinen in Ihrem Terminal | [Automatisch abgelehnt](#run-subagents-in-foreground-or-background) bei Ausführung im Hintergrund |
+| Prompt-Cache               | Mit Hauptsitzung geteilt                    | Separater Cache                                                                                   |
 
 Da der Systemprompt und die Werkzeugdefinitionen eines Forks identisch mit dem übergeordneten Element sind, wird seine erste Anfrage den Prompt-Cache des übergeordneten Elements wiederverwenden. Dies macht das Forking billiger als das Spawnen eines frischen Subagenten für Aufgaben, die denselben Kontext benötigen.
 

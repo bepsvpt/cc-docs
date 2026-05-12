@@ -279,18 +279,18 @@ Para mais, veja [melhores práticas](/pt/best-practices) e [fluxos de trabalho c
 
 <AccordionGroup>
   <Accordion title="Seja específico com seus pedidos">
-    Em vez de: "fix the bug"
+    Em vez de: "corrigir o bug"
 
-    Tente: "fix the login bug where users see a blank screen after entering wrong credentials"
+    Tente: "corrigir o bug de login onde os usuários veem uma tela em branco após inserir credenciais incorretas"
   </Accordion>
 
   <Accordion title="Use instruções passo a passo">
     Divida tarefas complexas em etapas:
 
     ```text theme={null}
-    1. create a new database table for user profiles
-    2. create an API endpoint to get and update user profiles
-    3. build a webpage that allows users to see and edit their information
+    1. criar uma nova tabela de banco de dados para perfis de usuário
+    2. criar um endpoint de API para obter e atualizar perfis de usuário
+    3. construir uma página da web que permite aos usuários ver e editar suas informações
     ```
   </Accordion>
 
@@ -298,19 +298,19 @@ Para mais, veja [melhores práticas](/pt/best-practices) e [fluxos de trabalho c
     Antes de fazer alterações, deixe Claude entender seu código:
 
     ```text theme={null}
-    analyze the database schema
+    analisar o esquema do banco de dados
     ```
 
     ```text theme={null}
-    build a dashboard showing products that are most frequently returned by our UK customers
+    construir um painel mostrando produtos que são devolvidos com mais frequência por nossos clientes do Reino Unido
     ```
   </Accordion>
 
   <Accordion title="Economize tempo com atalhos">
-    * Pressione `?` para ver todos os atalhos de teclado disponíveis
+    * Digite `/` para ver todos os comandos e skills
     * Use Tab para conclusão de comando
     * Pressione ↑ para histórico de comando
-    * Digite `/` para ver todos os comandos e skills
+    * Pressione `Shift+Tab` para alternar modos de permissão
   </Accordion>
 </AccordionGroup>
 

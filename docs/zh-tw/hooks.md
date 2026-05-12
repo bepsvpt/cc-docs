@@ -70,7 +70,8 @@ Hooks 在 Claude Code 工作階段期間的特定時間點觸發。當事件觸�
           {
             "type": "command",
             "if": "Bash(rm *)",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-rm.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-rm.sh",
+            "args": []
           }
         ]
       }
@@ -306,12 +307,52 @@ MCP 工具遵循命名模式 `mcp__<server>__<tool>`，例如：
 
 除了 [通用欄位](#common-fields) 外，命令 hooks 還接受這些欄位：
 
-| 欄位            | 必需 | 描述                                                                                                                                                              |
-| :------------ | :- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `command`     | 是  | 要執行的 shell 命令                                                                                                                                                   |
-| `async`       | 否  | 如果為 `true`，在背景執行而不阻止。請參閱 [在背景執行 hooks](#run-hooks-in-the-background)                                                                                            |
-| `asyncRewake` | 否  | 如果為 `true`，在背景執行並在退出代碼 2 時喚醒 Claude。暗示 `async`。Hook 的 stderr，或如果 stderr 為空則為 stdout，作為系統提醒顯示給 Claude，以便它可以對長時間執行的背景失敗做出反應                                       |
-| `shell`       | 否  | 用於此 hook 的 shell。接受 `"bash"`（預設）或 `"powershell"`。設定 `"powershell"` 在 Windows 上通過 PowerShell 執行命令。不需要 `CLAUDE_CODE_USE_POWERSHELL_TOOL`，因為 hooks 直接生成 PowerShell |
+| 欄位            | 必需 | 描述                                                                                                                                                                             |
+| :------------ | :- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `command`     | 是  | 要執行的 shell 命令。使用 `args` 時，要直接生成的可執行檔。請參閱 [Exec 形式和 shell 形式](#exec-form-and-shell-form)                                                                                        |
+| `args`        | 否  | 參數清單。存在時，`command` 被解析為可執行檔並直接使用 `args` 作為參數向量生成，不涉及 shell。請參閱 [Exec 形式和 shell 形式](#exec-form-and-shell-form)                                                                  |
+| `async`       | 否  | 如果為 `true`，在背景執行而不阻止。請參閱 [在背景執行 hooks](#run-hooks-in-the-background)                                                                                                           |
+| `asyncRewake` | 否  | 如果為 `true`，在背景執行並在退出代碼 2 時喚醒 Claude。暗示 `async`。Hook 的 stderr，或如果 stderr 為空則為 stdout，作為系統提醒顯示給 Claude，以便它可以對長時間執行的背景失敗做出反應                                                      |
+| `shell`       | 否  | 用於此 hook 的 shell。接受 `"bash"`（預設）或 `"powershell"`。設定 `"powershell"` 在 Windows 上通過 PowerShell 執行命令。不需要 `CLAUDE_CODE_USE_POWERSHELL_TOOL`，因為 hooks 直接生成 PowerShell。設定 `args` 時被忽略 |
+
+<a id="exec-form-and-shell-form" />
+
+##### Exec 形式和 shell 形式
+
+當設定 `args` 時，命令 hook 以 exec 形式執行，當省略 `args` 時以 shell 形式執行。每當 hook 參考 [路徑佔位符](#reference-scripts-by-path) 時設定 `args`，因為每個元素作為一個參數傳遞，不進行引用。當您需要 shell 功能（如管道或 `&&`）時，或當兩個問題都不適用時，省略 `args`。
+
+**Exec 形式**在設定 `args` 時執行。Claude Code 在 `PATH` 上解析 `command` 作為可執行檔並直接使用 `args` 作為參數向量生成它。沒有 shell，因此每個 `args` 元素恰好是一個參數，完全按照編寫的方式，路徑佔位符如 `${CLAUDE_PLUGIN_ROOT}` 被替換為 `command` 和每個 `args` 元素中的純字串。特殊字元如撇號、`$` 和反引號逐字傳遞，因為沒有 shell 來解釋它們。任何平台上都不會發生 shell 標記化。
+
+**Shell 形式**在省略 `args` 時執行。`command` 字串被傳遞到 shell：macOS 和 Linux 上的 `sh -c`、Windows 上的 Git Bash，或未安裝 Git Bash 時的 PowerShell。設定 `shell` 欄位以明確選擇。Shell 標記化字串、展開變數並解釋管道、`&&`、重定向和 glob。
+
+<Note>
+  在 Windows 上，exec 形式需要 `command` 解析為真實可執行檔，如 `.exe`。npm、npx、eslint 和其他工具在 `node_modules/.bin` 中安裝的 `.cmd` 和 `.bat` 填充程式不是可執行檔，無法在沒有 shell 的情況下生成。要在 exec 形式中執行它們，直接使用 `node` 呼叫底層指令碼，例如 `"command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/node_modules/eslint/bin/eslint.js"]`。`node` 加上指令碼路徑模式在每個平台上都有效，因為 `node.exe` 是真實二進位檔。要按名稱執行 `.cmd` 或 `.bat` 填充程式，請使用 shell 形式。
+</Note>
+
+此範例執行與外掛程式一起打包的 Node 指令碼。Exec 形式將解析的指令碼路徑作為一個參數傳遞，不進行引用：
+
+```json theme={null}
+{
+  "type": "command",
+  "command": "node",
+  "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/format.js", "--fix"]
+}
+```
+
+等效的 shell 形式需要引用以處理包含空格或特殊字元的路徑：
+
+```json theme={null}
+{
+  "type": "command",
+  "command": "node \"${CLAUDE_PLUGIN_ROOT}\"/scripts/format.js --fix"
+}
+```
+
+兩種形式都支援相同的 [路徑佔位符](#reference-scripts-by-path)，並且都將它們作為環境變數 `CLAUDE_PROJECT_DIR`、`CLAUDE_PLUGIN_ROOT` 和 `CLAUDE_PLUGIN_DATA` 匯出到生成的程序，因此指令碼可以讀取 `process.env.CLAUDE_PLUGIN_ROOT`，無論它是如何啟動的。外掛程式 hooks 另外替換 `${user_config.*}` 值；請參閱 [使用者配置](/zh-TW/plugins-reference#user-configuration)。
+
+<Note>
+  在 exec 形式中，`command` 僅是可執行檔名稱或路徑。如果 `command` 是沒有路徑分隔符的裸名稱，並且與 `args` 一起包含空格，Claude Code 會記錄警告，因為生成將失敗：沒有名為 `node script.js` 的可執行檔。將額外的令牌移到 `args` 中。包含空格的絕對路徑，如 `C:\Program Files\nodejs\node.exe`，是單個有效的可執行檔，不會觸發警告。
+</Note>
 
 #### HTTP hook 欄位
 
@@ -397,19 +438,21 @@ MCP 工具 hooks 在 Claude Code 連接到您的 MCP 伺服器後在每個 hook 
 | `prompt` | 是  | 要發送到模型的提示文字。使用 `$ARGUMENTS` 作為 hook 輸入 JSON 的佔位符 |
 | `model`  | 否  | 用於評估的模型。預設為快速模型                                  |
 
-所有匹配的 hooks 並行執行，相同的處理程式會自動去重。命令 hooks 按命令字串去重，HTTP hooks 按 URL 去重。處理程式在目前目錄中執行，使用 Claude Code 的環境。在遠端網路環境中，`$CLAUDE_CODE_REMOTE` 環境變數設定為 `"true"`，在本機 CLI 中未設定。
+所有匹配的 hooks 並行執行，相同的處理程式會自動去重。命令 hooks 按命令字串和 `args` 去重，HTTP hooks 按 URL 去重。處理程式在目前目錄中執行，使用 Claude Code 的環境。在遠端網路環境中，`$CLAUDE_CODE_REMOTE` 環境變數設定為 `"true"`，在本機 CLI 中未設定。
 
 ### 按路徑參考指令碼
 
-使用環境變數按相對於專案或外掛程式根目錄的路徑參考 hook 指令碼，無論 hook 執行時的工作目錄如何：
+使用這些佔位符按相對於專案或外掛程式根目錄的路徑參考 hook 指令碼，無論 hook 執行時的工作目錄如何：
 
-* `$CLAUDE_PROJECT_DIR`：專案根目錄。用引號括起來以處理包含空格的路徑。
+* `${CLAUDE_PROJECT_DIR}`：專案根目錄。
 * `${CLAUDE_PLUGIN_ROOT}`：外掛程式的安裝目錄，用於與 [plugin](/zh-TW/plugins) 一起打包的指令碼。在每次外掛程式更新時變更。
 * `${CLAUDE_PLUGIN_DATA}`：外掛程式的 [持久資料目錄](/zh-TW/plugins-reference#persistent-data-directory)，用於應該在外掛程式更新後保留的依賴項和狀態。
 
+對於任何參考路徑佔位符的 hook，優先使用 [exec 形式](#exec-form-and-shell-form)。Exec 形式將每個 `args` 元素作為一個參數傳遞，不進行 shell 標記化，因此包含空格或特殊字元的路徑不需要引用。在 shell 形式中，用雙引號括起每個佔位符。
+
 <Tabs>
   <Tab title="專案指令碼">
-    此範例使用 `$CLAUDE_PROJECT_DIR` 在任何 `Write` 或 `Edit` 工具呼叫後從專案的 `.claude/hooks/` 目錄執行樣式檢查器：
+    此範例使用 `${CLAUDE_PROJECT_DIR}` 在任何 `Write` 或 `Edit` 工具呼叫後從專案的 `.claude/hooks/` 目錄執行樣式檢查器：
 
     ```json theme={null}
     {
@@ -420,7 +463,8 @@ MCP 工具 hooks 在 Claude Code 連接到您的 MCP 伺服器後在每個 hook 
             "hooks": [
               {
                 "type": "command",
-                "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check-style.sh"
+                "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/check-style.sh",
+                "args": []
               }
             ]
           }
@@ -446,6 +490,7 @@ MCP 工具 hooks 在 Claude Code 連接到您的 MCP 伺服器後在每個 hook 
               {
                 "type": "command",
                 "command": "${CLAUDE_PLUGIN_ROOT}/scripts/format.sh",
+                "args": [],
                 "timeout": 30
               }
             ]
@@ -528,10 +573,12 @@ hooks:
 
 使用 `--agent` 執行或在 subagent 內執行時，包括兩個額外欄位：
 
-| 欄位           | 描述                                                                                                                                     |
-| :----------- | :------------------------------------------------------------------------------------------------------------------------------------- |
-| `agent_id`   | Subagent 的唯一識別碼。僅當 hook 在 subagent 呼叫內觸發時出現。使用此項來區分 subagent hook 呼叫與主執行緒呼叫。                                                           |
-| `agent_type` | 代理名稱（例如 `"Explore"` 或 `"security-reviewer"`）。當工作階段使用 `--agent` 或 hook 在 subagent 內觸發時出現。對於 subagents，subagent 的類型優先於工作階段的 `--agent` 值。 |
+| 欄位           | 描述                                                                                                                                                                                                                |
+| :----------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `agent_id`   | Subagent 的唯一識別碼。僅當 hook 在 subagent 呼叫內觸發時出現。使用此項來區分 subagent hook 呼叫與主執行緒呼叫。                                                                                                                                      |
+| `agent_type` | 代理名稱（例如 `"Explore"` 或 `"security-reviewer"`）。當工作階段使用 `--agent` 或 hook 在 subagent 內觸發時出現。對於 subagents，subagent 的類型優先於工作階段的 `--agent` 值。對於 [自訂 subagents](/zh-TW/sub-agents)，這是代理 frontmatter 中的 `name` 欄位，而不是檔案名稱。 |
+
+只有 [`SessionStart`](#sessionstart) hooks 接收 `model` 欄位。沒有 `$CLAUDE_MODEL` 環境變數。Hook 程序繼承父環境，因此如果您在 shell 中設定它，它可以讀取 `$ANTHROPIC_MODEL`，但當您在工作階段期間使用 `/model` 切換模型時，該值不會改變。
 
 例如，Bash 命令的 `PreToolUse` hook 在 stdin 上接收此內容：
 
@@ -1153,6 +1200,18 @@ InstructionsLoaded hooks 沒有決定控制。它們無法阻止或修改指令�
 | `questions` | 陣列 | `[{"question": "Which framework?", "header": "Framework", "options": [{"label": "React"}], "multiSelect": false}]` | 要呈現的問題，每個都有 `question` 字串、簡短 `header`、`options` 陣列和可選的 `multiSelect` 標誌    |
 | `answers`   | 物件 | `{"Which framework?": "React"}`                                                                                    | 可選。將問題文字對應到選定的選項標籤。多選答案用逗號連接標籤。Claude 不設定此欄位；通過 `updatedInput` 提供它以以程式方式回答 |
 
+##### ExitPlanMode
+
+呈現一個計劃並要求使用者在 Claude 離開 [plan mode](/zh-TW/permission-modes#analyze-before-you-edit-with-plan-mode) 之前批准它。Claude 在呼叫工具之前將計劃寫入磁碟上的檔案，因此模型的字面 `tool_input` 僅攜帶 `allowedPrompts`。Claude Code 在將輸入傳遞給 hooks 之前注入計劃內容和檔案路徑。
+
+| 欄位               | 類型 | 範例                                          | 描述                                                       |
+| :--------------- | :- | :------------------------------------------ | :------------------------------------------------------- |
+| `plan`           | 字串 | `"## Refactor auth\n1. Extract..."`         | Markdown 中的計劃內容。從磁碟上的計劃檔案注入                              |
+| `planFilePath`   | 字串 | `"/Users/.../plans/refactor-auth.md"`       | 計劃檔案的路徑。注入                                               |
+| `allowedPrompts` | 陣列 | `[{"tool": "Bash", "prompt": "run tests"}]` | 可選。Claude 要求實施計劃的基於提示的權限，每個都有 `tool` 名稱和描述操作類別的 `prompt` |
+
+在 `PostToolUse` 中，`tool_response` 是一個物件，其中包含 `plan` 和 `filePath` 欄位，保存批准的計劃，加上內部狀態標誌。讀取 `tool_response.plan` 以獲取計劃內容，而不是從磁碟重新讀取檔案。
+
 #### PreToolUse 決定控制
 
 `PreToolUse` hooks 可以控制工具呼叫是否進行。與使用頂層 `decision` 欄位的其他 hooks 不同，PreToolUse 在 `hookSpecificOutput` 物件內返回其決定。這提供了更豐富的控制：四個結果（允許、拒絕、詢問或延遲）加上在執行前修改工具輸入的能力。
@@ -1599,7 +1658,7 @@ Notification hooks 無法阻止或修改通知。它們用於副作用，例如�
 
 ### SubagentStart
 
-當通過 Agent 工具生成 Claude Code subagent 時執行。支援匹配器以按代理類型名稱篩選（內建代理，如 `general-purpose`、`Explore`、`Plan` 或來自 `.claude/agents/` 的自訂代理名稱）。
+當通過 Agent 工具生成 Claude Code subagent 時執行。支援匹配器以按代理類型名稱篩選。對於內建代理，這是代理名稱，如 `general-purpose`、`Explore` 或 `Plan`。對於 [自訂 subagents](/zh-TW/sub-agents)，這是代理 frontmatter 中的 `name` 欄位，而不是檔案名稱。
 
 #### SubagentStart 輸入
 
@@ -1654,7 +1713,7 @@ SubagentStart hooks 無法阻止 subagent 建立，但它們可以將上下文�
 }
 ```
 
-SubagentStop hooks 使用與 [Stop hooks](#stop-decision-control) 相同的決定控制格式。
+SubagentStop hooks 使用與 [Stop hooks](#stop-decision-control) 相同的決定控制格式。它們不支援 `additionalContext`。返回 `decision: "block"` 與 `reason` 會保持 subagent 執行並將 `reason` 作為其下一個指令傳遞給 subagent。要在 subagent 返回後將上下文注入到父工作階段，請改用 `Agent` 工具上的 [`PostToolUse`](#posttooluse) hook。
 
 ### TaskCreated
 
@@ -1770,6 +1829,10 @@ exit 0
 ### Stop
 
 當主 Claude Code 代理完成回應時執行。如果停止是由於使用者中斷，則不執行。API 錯誤會觸發 [StopFailure](#stopfailure)。
+
+<Tip>
+  [`/goal`](/zh-TW/goal) 命令是工作階段範圍提示型 Stop hook 的內建快捷方式。當您想要 Claude 繼續工作直到條件成立而不編寫 hook 配置時，請使用它。
+</Tip>
 
 #### Stop 輸入
 
@@ -1904,7 +1967,8 @@ ConfigChange hooks 針對設定檔、受管理的原則設定和 skill 檔案的
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/audit-config-change.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/audit-config-change.sh",
+            "args": []
           }
         ]
       }
@@ -2392,12 +2456,13 @@ CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
 }
 ```
 
-| 欄位        | 必需 | 描述                                                                                     |
-| :-------- | :- | :------------------------------------------------------------------------------------- |
-| `type`    | 是  | 必須為 `"prompt"`                                                                         |
-| `prompt`  | 是  | 要發送到 LLM 的提示文字。使用 `$ARGUMENTS` 作為 hook 輸入 JSON 的佔位符。如果 `$ARGUMENTS` 不存在，輸入 JSON 會附加到提示 |
-| `model`   | 否  | 用於評估的模型。預設為快速模型                                                                        |
-| `timeout` | 否  | 逾時（秒）。預設值：30                                                                           |
+| 欄位                | 必需 | 描述                                                                                                                                           |
+| :---------------- | :- | :------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`            | 是  | 必須為 `"prompt"`                                                                                                                               |
+| `prompt`          | 是  | 要發送到 LLM 的提示文字。使用 `$ARGUMENTS` 作為 hook 輸入 JSON 的佔位符。如果 `$ARGUMENTS` 不存在，輸入 JSON 會附加到提示                                                       |
+| `model`           | 否  | 用於評估的模型。預設為快速模型                                                                                                                              |
+| `timeout`         | 否  | 逾時（秒）。預設值：30                                                                                                                                 |
+| `continueOnBlock` | 否  | 當提示返回 `ok: false` 時，將原因反饋給 Claude 並繼續轉換而不是停止。預設值：`false`。在結果 `decision: "block"` 上實現為 `continue: true`。請參閱[回應架構](#response-schema)以了解每個事件的行為 |
 
 ### 回應架構
 
@@ -2410,16 +2475,17 @@ LLM 必須以包含以下內容的 JSON 回應：
 }
 ```
 
-| 欄位       | 描述                                   |
-| :------- | :----------------------------------- |
-| `ok`     | `true` 允許操作，`false` 防止它。請參閱下面的每個事件行為 |
-| `reason` | 當 `ok` 為 `false` 時必需。決定的解釋           |
+| 欄位       | 描述                                                      |
+| :------- | :------------------------------------------------------ |
+| `ok`     | `true` 允許操作。`false` 產生 `decision: "block"`。請參閱下面的每個事件行為 |
+| `reason` | 當 `ok` 為 `false` 時必需。用作阻止原因                             |
 
 `ok: false` 時發生的情況取決於事件：
 
 * `Stop` 和 `SubagentStop`：原因被反饋給 Claude 作為其下一個指令，轉換繼續
 * `PreToolUse`：工具呼叫被拒絕，原因作為工具錯誤返回給 Claude，相當於命令 hook 的 `permissionDecision: "deny"`
-* `PostToolUse`、`PostToolBatch`、`UserPromptSubmit` 和 `UserPromptExpansion`：轉換結束，原因在聊天中顯示為警告行，相當於從命令 hook 返回 `"continue": false`
+* `PostToolUse`：預設情況下轉換結束，原因在聊天中顯示為警告行。設定 `continueOnBlock: true` 以將原因反饋給 Claude 並繼續轉換
+* `PostToolBatch`、`UserPromptSubmit` 和 `UserPromptExpansion`：轉換結束，原因顯示為警告行。這些事件在 `decision: "block"` 上結束轉換，無論 `continue` 如何
 * `PostToolUseFailure`、`TaskCreated` 和 `TaskCompleted`：原因作為工具錯誤返回給 Claude，類似於 `PreToolUse`
 * `PermissionRequest`：`ok: false` 沒有效果。要從 hook 拒絕批准，請使用[命令 hook](#command-hook-fields)返回 `hookSpecificOutput.decision.behavior: "deny"`
 
@@ -2578,7 +2644,8 @@ fi
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/run-tests-async.sh",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/run-tests-async.sh",
+            "args": [],
             "async": true,
             "timeout": 300
           }
@@ -2615,7 +2682,7 @@ fi
 * **驗證和清理輸入**：永遠不要盲目信任輸入資料
 * **始終引用 shell 變數**：使用 `"$VAR"` 而不是 `$VAR`
 * **阻止路徑遍歷**：檢查檔案路徑中的 `..`
-* **使用絕對路徑**：為指令碼指定完整路徑，使用 `"$CLAUDE_PROJECT_DIR"` 作為專案根目錄
+* **使用絕對路徑**：為指令碼指定完整路徑。在 exec 形式中，使用 `${CLAUDE_PROJECT_DIR}` 且路徑不需要引用。在 shell 形式中，將其包裝在雙引號中
 * **跳過敏感檔案**：避免 `.env`、`.git/`、金鑰等
 
 ## Windows PowerShell 工具

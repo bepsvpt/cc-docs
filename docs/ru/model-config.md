@@ -36,7 +36,7 @@
 | **`opus[1m]`**   | Использует Opus с [контекстным окном в 1 миллион токенов](https://platform.claude.com/docs/ru/build-with-claude/context-windows#1m-token-context-window) для длительных сеансов    |
 | **`opusplan`**   | Специальный режим, который использует `opus` во время режима плана, а затем переключается на `sonnet` для выполнения                                                               |
 
-На Anthropic API `opus` разрешается в Opus 4.7, а `sonnet` разрешается в Sonnet 4.6. На Bedrock, Vertex и Foundry `opus` разрешается в Opus 4.6, а `sonnet` разрешается в Sonnet 4.5; более новые модели доступны на этих поставщиках путем явного выбора полного имени модели или установки `ANTHROPIC_DEFAULT_OPUS_MODEL` или `ANTHROPIC_DEFAULT_SONNET_MODEL`.
+На Anthropic API и [Claude Platform on AWS](/ru/claude-platform-on-aws) `opus` разрешается в Opus 4.7, а `sonnet` разрешается в Sonnet 4.6. На Bedrock, Vertex и Foundry `opus` разрешается в Opus 4.6, а `sonnet` разрешается в Sonnet 4.5; более новые модели доступны на этих поставщиках путем явного выбора полного имени модели или установки `ANTHROPIC_DEFAULT_OPUS_MODEL` или `ANTHROPIC_DEFAULT_SONNET_MODEL`.
 
 Псевдонимы указывают на рекомендуемую версию для вашего поставщика и обновляются со временем. Чтобы закрепить определенную версию, используйте полное имя модели (например, `claude-opus-4-7`) или установите соответствующую переменную окружения, такую как `ANTHROPIC_DEFAULT_OPUS_MODEL`.
 
@@ -294,7 +294,7 @@ Claude Code пропускает валидацию для идентифика�
 
 ### Закрепление моделей для развертываний третьих сторон
 
-При развертывании Claude Code через [Bedrock](/ru/amazon-bedrock), [Vertex AI](/ru/google-vertex-ai) или [Foundry](/ru/microsoft-foundry) закрепите версии моделей перед развертыванием для пользователей.
+При развертывании Claude Code через [Bedrock](/ru/amazon-bedrock), [Vertex AI](/ru/google-vertex-ai), [Foundry](/ru/microsoft-foundry) или [Claude Platform on AWS](/ru/claude-platform-on-aws) закрепите версии моделей перед развертыванием для пользователей.
 
 Без закрепления Claude Code использует псевдонимы моделей (`sonnet`, `opus`, `haiku`), которые разрешаются в последнюю версию. Когда Anthropic выпускает новую модель, которая еще не включена в учетную запись пользователя, пользователи Bedrock и Vertex AI видят уведомление и возвращаются к предыдущей версии для этого сеанса, в то время как пользователи Foundry видят ошибки, потому что Foundry не имеет эквивалентной проверки при запуске.
 

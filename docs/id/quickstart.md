@@ -307,10 +307,10 @@ Untuk informasi lebih lanjut, lihat [praktik terbaik](/id/best-practices) dan [a
   </Accordion>
 
   <Accordion title="Hemat waktu dengan pintasan keyboard">
-    * Tekan `?` untuk melihat semua pintasan keyboard yang tersedia
+    * Tekan `/` untuk melihat semua perintah dan skills
     * Gunakan Tab untuk penyelesaian perintah
     * Tekan ↑ untuk riwayat perintah
-    * Ketik `/` untuk melihat semua perintah dan skills
+    * Tekan `Shift+Tab` untuk mengubah mode izin
   </Accordion>
 </AccordionGroup>
 

@@ -289,6 +289,10 @@ claude mcp add --transport sse private-api https://api.company.com/sse \
 
 Server stdio berjalan sebagai proses lokal di mesin Anda. Mereka ideal untuk alat yang memerlukan akses sistem langsung atau skrip khusus.
 
+Claude Code menetapkan `CLAUDE_PROJECT_DIR` di lingkungan server yang dihasilkan ke akar proyek, sehingga server Anda dapat menyelesaikan jalur relatif proyek tanpa bergantung pada direktori kerja. Ini adalah direktori yang sama yang diterima hooks dalam variabel `CLAUDE_PROJECT_DIR` mereka. Bacalah dari dalam proses server Anda, misalnya `process.env.CLAUDE_PROJECT_DIR` di Node atau `os.environ["CLAUDE_PROJECT_DIR"]` di Python. Server Anda juga dapat memanggil permintaan MCP `roots/list`, yang mengembalikan direktori tempat Claude Code diluncurkan.
+
+Variabel ini ditetapkan di lingkungan server, bukan di lingkungan Claude Code itu sendiri, jadi mereferensikannya melalui ekspansi `${VAR}` dalam `.mcp.json` yang bersifat proyek atau pengguna `command` atau `args` memerlukan default seperti `${CLAUDE_PROJECT_DIR:-.}`. Konfigurasi MCP yang disediakan plugin mengganti `${CLAUDE_PROJECT_DIR}` secara langsung dan tidak memerlukan default.
+
 ```bash theme={null}
 # Sintaks dasar
 claude mcp add [options] <name> -- <command> [args...]
@@ -406,7 +410,7 @@ Atau inline dalam `plugin.json`:
 **Fitur MCP plugin**:
 
 * **Siklus hidup otomatis**: Pada startup sesi, server untuk plugin yang diaktifkan terhubung secara otomatis. Jika Anda mengaktifkan atau menonaktifkan plugin selama sesi, jalankan `/reload-plugins` untuk menghubungkan atau memutuskan server MCP-nya
-* **Variabel lingkungan**: gunakan `${CLAUDE_PLUGIN_ROOT}` untuk file plugin bundel dan `${CLAUDE_PLUGIN_DATA}` untuk [status persisten](/id/plugins-reference#persistent-data-directory) yang bertahan pembaruan plugin
+* **Variabel lingkungan**: gunakan `${CLAUDE_PLUGIN_ROOT}` untuk file plugin bundel, `${CLAUDE_PLUGIN_DATA}` untuk [status persisten](/id/plugins-reference#persistent-data-directory) yang bertahan pembaruan plugin, dan `${CLAUDE_PROJECT_DIR}` untuk akar proyek yang stabil
 * **Akses lingkungan pengguna**: Akses ke variabel lingkungan yang sama seperti server yang dikonfigurasi secara manual
 * **Jenis transport berganda**: Dukungan transport stdio, SSE, dan HTTP (dukungan transport dapat bervariasi menurut server)
 
@@ -645,6 +649,8 @@ Find customers who haven't made a purchase in 90 days
 ## Autentikasi dengan server MCP jarak jauh
 
 Banyak server MCP berbasis cloud memerlukan autentikasi. Claude Code mendukung OAuth 2.0 untuk koneksi yang aman.
+
+Claude Code menandai server jarak jauh sebagai memerlukan autentikasi ketika server merespons dengan `401 Unauthorized` dan header `WWW-Authenticate` yang menunjuk ke server otorisasinya. Server kustom apa pun yang mengembalikan respons tersebut mendapatkan alur autentikasi `/mcp` yang sama seperti server jarak jauh lainnya.
 
 <Steps>
   <Step title="Tambahkan server yang memerlukan autentikasi">

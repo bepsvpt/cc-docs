@@ -36,7 +36,7 @@
 | **`opus[1m]`**   | 使用 Opus 搭配[100 萬個 token 的 context window](https://platform.claude.com/docs/zh-TW/build-with-claude/context-windows#1m-token-context-window)進行長時間會話   |
 | **`opusplan`**   | 特殊模式，在 Plan Mode 期間使用 `opus`，然後在執行時切換到 `sonnet`                                                                                                      |
 
-在 Anthropic API 上，`opus` 解析為 Opus 4.7，`sonnet` 解析為 Sonnet 4.6。在 Bedrock、Vertex 和 Foundry 上，`opus` 解析為 Opus 4.6，`sonnet` 解析為 Sonnet 4.5；透過明確選擇完整模型名稱或設定 `ANTHROPIC_DEFAULT_OPUS_MODEL` 或 `ANTHROPIC_DEFAULT_SONNET_MODEL`，這些提供者上可以使用更新的模型。
+在 Anthropic API 和 [AWS 上的 Claude Platform](/zh-TW/claude-platform-on-aws) 上，`opus` 解析為 Opus 4.7，`sonnet` 解析為 Sonnet 4.6。在 Bedrock、Vertex 和 Foundry 上，`opus` 解析為 Opus 4.6，`sonnet` 解析為 Sonnet 4.5；透過明確選擇完整模型名稱或設定 `ANTHROPIC_DEFAULT_OPUS_MODEL` 或 `ANTHROPIC_DEFAULT_SONNET_MODEL`，這些提供者上可以使用更新的模型。
 
 別名指向您提供者的推薦版本，並隨著時間推移而更新。若要固定到特定版本，請使用完整模型名稱（例如 `claude-opus-4-7`）或設定相應的環境變數，如 `ANTHROPIC_DEFAULT_OPUS_MODEL`。
 
@@ -294,7 +294,7 @@ Claude Code 會跳過在 `ANTHROPIC_CUSTOM_MODEL_OPTION` 中設定的模型 ID �
 
 ### 為第三方部署固定模型
 
-透過 [Bedrock](/zh-TW/amazon-bedrock)、[Vertex AI](/zh-TW/google-vertex-ai) 或 [Foundry](/zh-TW/microsoft-foundry) 部署 Claude Code 時，在向使用者推出前固定模型版本。
+透過 [Bedrock](/zh-TW/amazon-bedrock)、[Vertex AI](/zh-TW/google-vertex-ai)、[Foundry](/zh-TW/microsoft-foundry) 或 [Claude Platform on AWS](/zh-TW/claude-platform-on-aws) 部署 Claude Code 時，在向使用者推出前固定模型版本。
 
 不固定模型時，Claude Code 使用模型別名（`sonnet`、`opus`、`haiku`），這些別名會解析為最新版本。當 Anthropic 發佈新模型時，帳戶未啟用新版本的使用者會看到通知並回退到該會話的先前版本，而 Foundry 使用者會看到錯誤，因為 Foundry 沒有等效的啟動檢查。
 

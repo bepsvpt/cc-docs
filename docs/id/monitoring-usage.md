@@ -165,30 +165,32 @@ Setiap span membawa [atribut standar](#standard-attributes) ditambah atribut `sp
 
 **`claude_code.llm_request`**
 
-| Atribut                          | Deskripsi                                                                                                               | Gated by |
-| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | -------- |
-| `model`                          | Pengidentifikasi model                                                                                                  |          |
-| `gen_ai.system`                  | Selalu `anthropic`. Konvensi semantik GenAI OpenTelemetry                                                               |          |
-| `gen_ai.request.model`           | Nilai yang sama dengan `model`. Konvensi semantik GenAI OpenTelemetry                                                   |          |
-| `query_source`                   | Subsistem yang mengeluarkan permintaan, seperti `repl_main_thread` atau nama subagent                                   |          |
-| `speed`                          | `fast` atau `normal`                                                                                                    |          |
-| `llm_request.context`            | `interaction`, `tool`, atau `standalone` tergantung pada span induk                                                     |          |
-| `duration_ms`                    | Durasi wall-clock termasuk retry                                                                                        |          |
-| `ttft_ms`                        | Waktu ke token pertama dalam milidetik                                                                                  |          |
-| `input_tokens`                   | Jumlah token input dari blok penggunaan API                                                                             |          |
-| `output_tokens`                  | Jumlah token output                                                                                                     |          |
-| `cache_read_tokens`              | Token yang dibaca dari prompt cache                                                                                     |          |
-| `cache_creation_tokens`          | Token yang ditulis ke prompt cache                                                                                      |          |
-| `request_id`                     | ID permintaan API Anthropic dari header respons `request-id`                                                            |          |
-| `gen_ai.response.id`             | Nilai yang sama dengan `request_id`. Konvensi semantik GenAI OpenTelemetry                                              |          |
-| `client_request_id`              | `x-client-request-id` yang dihasilkan klien dari upaya terakhir                                                         |          |
-| `attempt`                        | Total upaya yang dilakukan untuk permintaan ini                                                                         |          |
-| `success`                        | `true` atau `false`                                                                                                     |          |
-| `status_code`                    | Kode status HTTP saat permintaan gagal                                                                                  |          |
-| `error`                          | Pesan kesalahan saat permintaan gagal                                                                                   |          |
-| `response.has_tool_call`         | `true` saat respons berisi blok tool-use                                                                                |          |
-| `stop_reason`                    | API response `stop_reason`, seperti `end_turn`, `tool_use`, `max_tokens`, `stop_sequence`, `pause_turn`, atau `refusal` |          |
-| `gen_ai.response.finish_reasons` | Nilai yang sama dengan `stop_reason`, dibungkus dalam array string. Konvensi semantik GenAI OpenTelemetry               |          |
+| Atribut                          | Deskripsi                                                                                                                    | Gated by |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | -------- |
+| `model`                          | Pengidentifikasi model                                                                                                       |          |
+| `gen_ai.system`                  | Selalu `anthropic`. Konvensi semantik GenAI OpenTelemetry                                                                    |          |
+| `gen_ai.request.model`           | Nilai yang sama dengan `model`. Konvensi semantik GenAI OpenTelemetry                                                        |          |
+| `query_source`                   | Subsistem yang mengeluarkan permintaan, seperti `repl_main_thread` atau nama subagent                                        |          |
+| `agent_id`                       | Pengidentifikasi subagent atau rekan kerja yang mengeluarkan permintaan. Tidak ada pada sesi utama                           |          |
+| `parent_agent_id`                | Pengidentifikasi agen yang menghasilkan yang ini. Tidak ada untuk sesi utama dan untuk agen yang dihasilkan langsung darinya |          |
+| `speed`                          | `fast` atau `normal`                                                                                                         |          |
+| `llm_request.context`            | `interaction`, `tool`, atau `standalone` tergantung pada span induk                                                          |          |
+| `duration_ms`                    | Durasi wall-clock termasuk retry                                                                                             |          |
+| `ttft_ms`                        | Waktu ke token pertama dalam milidetik                                                                                       |          |
+| `input_tokens`                   | Jumlah token input dari blok penggunaan API                                                                                  |          |
+| `output_tokens`                  | Jumlah token output                                                                                                          |          |
+| `cache_read_tokens`              | Token yang dibaca dari prompt cache                                                                                          |          |
+| `cache_creation_tokens`          | Token yang ditulis ke prompt cache                                                                                           |          |
+| `request_id`                     | ID permintaan API Anthropic dari header respons `request-id`                                                                 |          |
+| `gen_ai.response.id`             | Nilai yang sama dengan `request_id`. Konvensi semantik GenAI OpenTelemetry                                                   |          |
+| `client_request_id`              | `x-client-request-id` yang dihasilkan klien dari upaya terakhir                                                              |          |
+| `attempt`                        | Total upaya yang dilakukan untuk permintaan ini                                                                              |          |
+| `success`                        | `true` atau `false`                                                                                                          |          |
+| `status_code`                    | Kode status HTTP saat permintaan gagal                                                                                       |          |
+| `error`                          | Pesan kesalahan saat permintaan gagal                                                                                        |          |
+| `response.has_tool_call`         | `true` saat respons berisi blok tool-use                                                                                     |          |
+| `stop_reason`                    | API response `stop_reason`, seperti `end_turn`, `tool_use`, `max_tokens`, `stop_sequence`, `pause_turn`, atau `refusal`      |          |
+| `gen_ai.response.finish_reasons` | Nilai yang sama dengan `stop_reason`, dibungkus dalam array string. Konvensi semantik GenAI OpenTelemetry                    |          |
 
 Setiap upaya retry juga dicatat sebagai acara span `gen_ai.request.attempt` dengan atribut `attempt` dan `client_request_id`.
 
@@ -446,6 +448,10 @@ Ditingkatkan setelah setiap permintaan API.
 * `query_source`: Kategori subsistem yang mengeluarkan permintaan. Salah satu dari `"main"`, `"subagent"`, atau `"auxiliary"`
 * `speed`: `"fast"` saat permintaan menggunakan mode cepat. Tidak ada sebaliknya
 * `effort`: [Tingkat effort](/id/model-config#adjust-effort-level) yang diterapkan pada permintaan: `"low"`, `"medium"`, `"high"`, `"xhigh"`, atau `"max"`. Tidak ada saat model tidak mendukung effort.
+* `agent.name`: Jenis subagent yang mengeluarkan permintaan. Nama agen built-in dan agen dari plugin marketplace resmi muncul verbatim. Nama agen yang ditentukan pengguna lainnya diganti dengan `"custom"`. Tidak ada saat permintaan tidak dikeluarkan oleh jenis subagent bernama.
+* `skill.name`: Skill aktif untuk permintaan, diatur oleh alat Skill, perintah `/`, atau diwarisi oleh subagent yang dihasilkan. Nama skill built-in, bundled, yang ditentukan pengguna, dan plugin marketplace resmi muncul verbatim. Nama skill plugin pihak ketiga diganti dengan `"third-party"`. Tidak ada saat tidak ada skill yang aktif.
+* `plugin.name`: Plugin pemilik saat skill atau subagent aktif disediakan oleh plugin. Nama plugin marketplace resmi muncul verbatim. Nama plugin pihak ketiga diganti dengan `"third-party"`. Tidak ada saat skill atau subagent tidak memiliki plugin pemilik.
+* `marketplace.name`: Marketplace tempat plugin pemilik diinstal. Hanya dipancarkan untuk plugin marketplace resmi. Tidak ada sebaliknya.
 
 #### Penghitung token
 
@@ -459,6 +465,7 @@ Ditingkatkan setelah setiap permintaan API.
 * `query_source`: Kategori subsistem yang mengeluarkan permintaan. Salah satu dari `"main"`, `"subagent"`, atau `"auxiliary"`
 * `speed`: `"fast"` saat permintaan menggunakan mode cepat. Tidak ada sebaliknya
 * `effort`: [Tingkat effort](/id/model-config#adjust-effort-level) yang diterapkan pada permintaan. Lihat [Penghitung biaya](#cost-counter) untuk detail.
+* `agent.name`, `skill.name`, `plugin.name`, `marketplace.name`: Atribusi skill, plugin, dan agen untuk permintaan. Lihat [Penghitung biaya](#cost-counter) untuk definisi dan perilaku redaksi.
 
 #### Penghitung keputusan alat pengeditan kode
 
@@ -647,10 +654,10 @@ Dicatat saat keputusan izin alat dibuat (terima/tolak).
 * `tool_use_id`: Pengidentifikasi unik untuk invokasi alat ini. Cocok dengan `tool_use_id` yang diteruskan ke hooks, memungkinkan korelasi antara acara OTel dan data yang ditangkap hook.
 * `decision`: Baik `"accept"` atau `"reject"`
 * `source`: Sumber keputusan:
-  * `"config"`: Diputuskan secara otomatis tanpa diminta, berdasarkan pengaturan proyek, kebijakan terkelola perusahaan, flag `--allowedTools` atau `--disallowedTools`, mode izin aktif, atau karena alat itu aman secara inheren.
+  * `"config"`: Diputuskan secara otomatis tanpa diminta, berdasarkan pengaturan proyek, kebijakan terkelola perusahaan, flag `--allowedTools` atau `--disallowedTools`, mode izin aktif, atau karena alat itu aman secara inheren. Acara tidak menunjukkan sumber mana yang cocok.
   * `"hook"`: Hook `PreToolUse` atau `PermissionRequest` mengembalikan keputusan.
-  * `"user_permanent"`: Dipancarkan saat pengguna memilih "Selalu izinkan" saat diminta, menyimpan aturan ke pengaturan pribadi mereka. Juga dipancarkan untuk panggilan nanti yang cocok dengan aturan tersimpan itu. Diperlakukan sebagai penerimaan.
-  * `"user_temporary"`: Dipancarkan saat pengguna memilih "Ya" atau "Ya, untuk sesi ini" saat diminta, tanpa menyimpan aturan. Juga dipancarkan untuk panggilan nanti dalam sesi yang sama yang cocok dengan izin berskop sesi itu. Diperlakukan sebagai penerimaan.
+  * `"user_permanent"`: Dipancarkan saat pengguna memilih "Ya, dan jangan tanya lagi untuk ..." saat diminta, yang menyimpan aturan izin ke pengaturan pribadi mereka. Dalam CLI interaktif ini dipancarkan hanya untuk pilihan itu sendiri; panggilan nanti yang cocok dengan aturan tersimpan memancarkan `"config"` sebagai gantinya. Dalam sesi Agent SDK atau non-interaktif `-p`, baik pilihan awal maupun kecocokan aturan nanti memancarkan `"user_permanent"`. Diperlakukan sebagai penerimaan.
+  * `"user_temporary"`: Dipancarkan saat pengguna memilih "Ya" saat diminta untuk persetujuan satu kali, atau memilih salah satu opsi "... selama sesi ini" pada prompt pengeditan atau pembacaan file. Dalam CLI interaktif ini dipancarkan hanya untuk pilihan itu sendiri; panggilan nanti yang diizinkan oleh hibah berskop sesi itu memancarkan `"config"` sebagai gantinya. Dalam sesi Agent SDK atau non-interaktif `-p`, baik pilihan maupun kecocokan nanti memancarkan `"user_temporary"`. Diperlakukan sebagai penerimaan.
   * `"user_abort"`: Dipancarkan saat pengguna menutup prompt izin tanpa menjawab. Diperlakukan sebagai penolakan.
   * `"user_reject"`: Dipancarkan saat pengguna memilih "Tidak" saat diminta, atau panggilan cocok dengan aturan penolakan dalam pengaturan pribadi mereka. Diperlakukan sebagai penolakan.
 
@@ -741,6 +748,30 @@ Dicatat saat plugin selesai menginstal, dari perintah CLI `claude plugin install
 * `plugin.version`: Versi plugin saat dideklarasikan dalam entri marketplace. Untuk marketplace pihak ketiga ini disertakan hanya saat `OTEL_LOG_TOOL_DETAILS=1`
 * `marketplace.name`: Marketplace plugin diinstal dari. Untuk marketplace pihak ketiga ini disertakan hanya saat `OTEL_LOG_TOOL_DETAILS=1`
 
+#### Acara plugin dimuat
+
+Dicatat sekali per plugin yang diaktifkan saat startup sesi. Gunakan acara ini untuk menginventarisasi plugin mana yang aktif di seluruh armada Anda, sebagai pelengkap `plugin_installed` yang mencatat tindakan instalasi itu sendiri.
+
+**Nama Acara**: `claude_code.plugin_loaded`
+
+**Atribut**:
+
+* Semua [atribut standar](#standard-attributes)
+* `event.name`: `"plugin_loaded"`
+* `event.timestamp`: Stempel waktu ISO 8601
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
+* `plugin.name`: nama plugin. Untuk plugin di luar marketplace resmi dan bundel built-in nilainya adalah `"third-party"` kecuali `OTEL_LOG_TOOL_DETAILS=1`
+* `marketplace.name`: marketplace tempat plugin diinstal, saat diketahui. Diredaksi menjadi `"third-party"` di bawah kondisi yang sama dengan `plugin.name`
+* `plugin.version`: versi dari manifest plugin. Disertakan hanya saat nama tidak diredaksi dan manifest mendeklarasikan versi
+* `plugin.scope`: kategori provenance untuk plugin: `"official"`, `"org"`, `"user-local"`, atau `"default-bundle"`
+* `enabled_via`: bagaimana plugin menjadi diaktifkan: `"default-enable"`, `"org-policy"`, `"seed-mount"`, atau `"user-install"`
+* `plugin_id_hash`: hash deterministik dari nama plugin dan marketplace, dikirim hanya ke pengekspor yang dikonfigurasi. Memungkinkan Anda menghitung berapa banyak plugin pihak ketiga yang berbeda dimuat di seluruh armada Anda tanpa merekam nama mereka
+* `has_hooks`: apakah plugin berkontribusi hooks
+* `has_mcp`: apakah plugin berkontribusi server MCP
+* `skill_path_count`: jumlah direktori skill yang dideklarasikan plugin
+* `command_path_count`: jumlah direktori perintah yang dideklarasikan plugin
+* `agent_path_count`: jumlah direktori agen yang dideklarasikan plugin
+
 #### Acara skill diaktifkan
 
 Dicatat saat skill dipanggil, baik Claude memanggilnya melalui alat Skill atau Anda menjalankannya sebagai perintah `/`.
@@ -792,6 +823,25 @@ Dicatat sekali saat permintaan API gagal setelah lebih dari satu upaya. Dipancar
 * `total_attempts`: Jumlah total upaya yang dilakukan
 * `total_retry_duration_ms`: Total waktu wall-clock di semua upaya
 * `speed`: `"fast"` atau `"normal"`
+
+#### Acara hook terdaftar
+
+Dicatat sekali per hook yang dikonfigurasi saat startup sesi. Gunakan acara ini untuk menginventarisasi hook mana yang aktif di seluruh armada Anda, sebagai pelengkap acara `hook_execution_start` dan `hook_execution_complete` per eksekusi.
+
+**Nama Acara**: `claude_code.hook_registered`
+
+**Atribut**:
+
+* Semua [atribut standar](#standard-attributes)
+* `event.name`: `"hook_registered"`
+* `event.timestamp`: Stempel waktu ISO 8601
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
+* `hook_event`: jenis acara hook, seperti `"PreToolUse"` atau `"PostToolUse"`
+* `hook_type`: jenis implementasi hook: `"command"`, `"prompt"`, `"mcp_tool"`, `"http"`, atau `"agent"`
+* `hook_source`: tempat hook didefinisikan: `"userSettings"`, `"projectSettings"`, `"localSettings"`, `"flagSettings"`, `"policySettings"`, atau `"pluginHook"`
+* `hook_matcher` (saat `OTEL_LOG_TOOL_DETAILS=1`): string matcher dari konfigurasi hook, saat satu diatur
+* `plugin.name` (saat `hook_source` adalah `"pluginHook"`): nama plugin yang berkontribusi. Untuk plugin di luar marketplace resmi dan bundel built-in nilainya adalah `"third-party"` kecuali `OTEL_LOG_TOOL_DETAILS=1`
+* `plugin_id_hash` (saat `hook_source` adalah `"pluginHook"`): hash deterministik dari nama plugin dan marketplace, dikirim hanya ke pengekspor yang dikonfigurasi. Memungkinkan Anda menghitung plugin yang berkontribusi berbeda tanpa merekam nama mereka
 
 #### Acara mulai eksekusi hook
 
@@ -861,12 +911,12 @@ Metrik dan acara yang diekspor mendukung berbagai analisis:
 
 ### Pemantauan penggunaan
 
-| Metrik                                                        | Peluang Analisis                                                      |
-| ------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `claude_code.token.usage`                                     | Pecahkan berdasarkan `type` (input/output), pengguna, tim, atau model |
-| `claude_code.session.count`                                   | Lacak adopsi dan keterlibatan dari waktu ke waktu                     |
-| `claude_code.lines_of_code.count`                             | Ukur produktivitas dengan melacak penambahan/penghapusan kode         |
-| `claude_code.commit.count` & `claude_code.pull_request.count` | Pahami dampak pada alur kerja pengembangan                            |
+| Metrik                                                        | Peluang Analisis                                                                                                 |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `claude_code.token.usage`                                     | Pecahkan berdasarkan `type` (input/output), pengguna, tim, model, `skill.name`, `plugin.name`, atau `agent.name` |
+| `claude_code.session.count`                                   | Lacak adopsi dan keterlibatan dari waktu ke waktu                                                                |
+| `claude_code.lines_of_code.count`                             | Ukur produktivitas dengan melacak penambahan/penghapusan kode                                                    |
+| `claude_code.commit.count` & `claude_code.pull_request.count` | Pahami dampak pada alur kerja pengembangan                                                                       |
 
 ### Pemantauan biaya
 
@@ -874,6 +924,7 @@ Metrik `claude_code.cost.usage` membantu dengan:
 
 * Melacak tren penggunaan di seluruh tim atau individu
 * Mengidentifikasi sesi penggunaan tinggi untuk optimasi
+* Atribusi pengeluaran ke skill, plugin, atau jenis subagent tertentu melalui atribut `skill.name`, `plugin.name`, dan `agent.name`
 
 <Note>
   Metrik biaya adalah perkiraan. Untuk data penagihan resmi, lihat penyedia API Anda (Claude Console, Amazon Bedrock, atau Google Cloud Vertex).

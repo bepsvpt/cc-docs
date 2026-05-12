@@ -895,7 +895,7 @@ Hook は設定されていますが、実行されません。
   echo '{"tool_name":"Bash","tool_input":{"command":"ls"}}' | ./my-hook.sh
   echo $?  # 終了コードを確認
   ```
-* 「command not found」が表示される場合は、絶対パスを使用するか、スクリプトを参照するために `$CLAUDE_PROJECT_DIR` を使用します
+* 「command not found」が表示される場合は、絶対パスを使用するか、スクリプトを参照するために `${CLAUDE_PROJECT_DIR}` を使用します。シェルクォーティングを完全に回避するには、`"args": []` を追加して [exec form](/ja/hooks#exec-form-and-shell-form) に切り替えます。これはシェルなしでスクリプトを直接生成します
 * 「jq: command not found」が表示される場合は、`jq` をインストールするか、JSON 解析に Python/Node.js を使用します
 * スクリプトがまったく実行されていない場合は、実行可能にします：`chmod +x ./my-hook.sh`
 
@@ -909,7 +909,7 @@ Hook は設定されていますが、実行されません。
 
 ### Stop hook が永遠に実行される
 
-Claude は無限ループで作業を続けます。停止する代わりに。
+Claude は無限ループで作業を続け、停止する代わりに。
 
 Stop hook スクリプトは、それが既にトリガーされたかどうかをチェックする必要があります。JSON 入力から `stop_hook_active` フィールドを解析し、`true` の場合は早期に終了します：
 
@@ -926,7 +926,7 @@ fi
 
 Claude Code は hook スクリプトが有効な JSON を出力しているにもかかわらず、JSON 解析エラーを表示します。
 
-Claude Code が hook を実行するとき、プロファイル（`~/.zshrc` または `~/.bashrc`）をソースするシェルを生成します。プロファイルに無条件の `echo` ステートメントが含まれている場合、その出力は hook の JSON に前置されます：
+Claude Code がシェル形式のコマンド hook（`args` なし）を実行する場合、デフォルトで macOS と Linux では `sh -c` を、Windows では Git Bash を生成します。このシェルは非インタラクティブですが、Git Bash と一部の設定（`BASH_ENV` が `~/.bashrc` を指すなど）は依然としてプロファイルをソースします。そのプロファイルに無条件の `echo` ステートメントが含まれている場合、その出力は hook の JSON に前置されます：
 
 ```text theme={null}
 Shell ready on arm64

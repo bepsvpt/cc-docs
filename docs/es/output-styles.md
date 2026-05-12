@@ -14,7 +14,9 @@ Para instrucciones sobre su proyecto, convenciones o base de código, use [CLAUD
 
 El estilo de salida **Default** de Claude Code es el mensaje del sistema existente, diseñado para ayudarle a completar tareas de ingeniería de software de manera eficiente.
 
-Hay dos estilos de salida integrados adicionales enfocados en enseñarle la base de código y cómo funciona Claude:
+Hay tres estilos de salida integrados adicionales:
+
+* **Proactive**: Claude se ejecuta inmediatamente, realiza suposiciones razonables en lugar de pausarse para decisiones rutinarias, y prefiere la acción sobre la planificación. Esto aplica la misma orientación que [modo automático](/es/permission-modes#eliminate-prompts-with-auto-mode) sin cambiar su modo de permisos, por lo que aún ve mensajes de permisos antes de que se ejecuten las herramientas.
 
 * **Explanatory**: Proporciona "Insights" educativos entre ayudarle a completar tareas de ingeniería de software. Le ayuda a entender las opciones de implementación y los patrones de la base de código.
 

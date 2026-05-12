@@ -34,9 +34,9 @@ Modellaliase bieten eine bequeme Möglichkeit, Modelleinstellungen auszuwählen,
 | **`haiku`**      | Verwendet das schnelle und effiziente Haiku-Modell für einfache Aufgaben                                                                                                       |
 | **`sonnet[1m]`** | Verwendet Sonnet mit einem [1-Million-Token-Kontextfenster](https://platform.claude.com/docs/de/build-with-claude/context-windows#1m-token-context-window) für lange Sitzungen |
 | **`opus[1m]`**   | Verwendet Opus mit einem [1-Million-Token-Kontextfenster](https://platform.claude.com/docs/de/build-with-claude/context-windows#1m-token-context-window) für lange Sitzungen   |
-| **`opusplan`**   | Spezieller Modus, der `opus` während des Plan-Modus verwendet und dann zu `sonnet` für die Ausführung wechselt                                                                 |
+| **`opusplan`**   | Spezieller Modus, der `opus` während des Plan Mode verwendet und dann zu `sonnet` für die Ausführung wechselt                                                                  |
 
-Bei der Anthropic API wird `opus` zu Opus 4.7 und `sonnet` zu Sonnet 4.6 aufgelöst. Bei Bedrock, Vertex und Foundry wird `opus` zu Opus 4.6 und `sonnet` zu Sonnet 4.5 aufgelöst; neuere Modelle sind bei diesen Anbietern verfügbar, indem Sie den vollständigen Modellnamen explizit auswählen oder `ANTHROPIC_DEFAULT_OPUS_MODEL` oder `ANTHROPIC_DEFAULT_SONNET_MODEL` setzen.
+Bei der Anthropic API und [Claude Platform on AWS](/de/claude-platform-on-aws) wird `opus` zu Opus 4.7 und `sonnet` zu Sonnet 4.6 aufgelöst. Bei Bedrock, Vertex und Foundry wird `opus` zu Opus 4.6 und `sonnet` zu Sonnet 4.5 aufgelöst; neuere Modelle sind bei diesen Anbietern verfügbar, indem Sie den vollständigen Modellnamen explizit auswählen oder `ANTHROPIC_DEFAULT_OPUS_MODEL` oder `ANTHROPIC_DEFAULT_SONNET_MODEL` setzen.
 
 Aliase verweisen auf die empfohlene Version für Ihren Anbieter und werden im Laufe der Zeit aktualisiert. Um eine bestimmte Version zu fixieren, verwenden Sie den vollständigen Modellnamen (z. B. `claude-opus-4-7`) oder setzen Sie die entsprechende Umgebungsvariable wie `ANTHROPIC_DEFAULT_OPUS_MODEL`.
 
@@ -54,6 +54,8 @@ Sie können Ihr Modell auf mehrere Arten konfigurieren, aufgelistet nach Priorit
 4. **Einstellungen** - Konfigurieren Sie dauerhaft in Ihrer Einstellungsdatei mit dem `model`-Feld.
 
 Ihre `/model`-Auswahl wird in den Benutzereinstellungen gespeichert und bleibt über Neustarts hinweg erhalten. Ab v2.1.117 schreibt Claude Code Ihre Auswahl auch in `.claude/settings.local.json`, wenn die `.claude/settings.json` des Projekts ein anderes Modell festlegt, damit sie nach einem Neustart in diesem Projekt weiterhin gilt. Verwaltete Einstellungen haben Vorrang und werden beim nächsten Start erneut angewendet.
+
+Das `--model`-Flag und die `ANTHROPIC_MODEL`-Umgebungsvariable gelten nur für die Sitzung, mit der Sie sie starten, und werden nicht gespeichert. Um verschiedene Modelle in verschiedenen Terminals gleichzeitig auszuführen, starten Sie jedes mit seinem eigenen `--model`-Flag, anstatt mit `/model` zu wechseln.
 
 Wenn das aktive Modell beim Start aus Projekt- oder verwalteten Einstellungen stammt und nicht aus Ihrer eigenen Auswahl, zeigt der Startheader an, welche Einstellungsdatei es festgelegt hat. Führen Sie `/model` aus, um es für die aktuelle Sitzung zu überschreiben.
 
@@ -294,7 +296,7 @@ Hinweis: `ANTHROPIC_SMALL_FAST_MODEL` ist veraltet zugunsten von `ANTHROPIC_DEFA
 
 ### Modelle für Drittanbieter-Bereitstellungen fixieren
 
-Beim Bereitstellen von Claude Code über [Bedrock](/de/amazon-bedrock), [Vertex AI](/de/google-vertex-ai) oder [Foundry](/de/microsoft-foundry) sollten Sie Modellversionen vor dem Rollout für Benutzer fixieren.
+Beim Bereitstellen von Claude Code über [Bedrock](/de/amazon-bedrock), [Vertex AI](/de/google-vertex-ai), [Foundry](/de/microsoft-foundry) oder [Claude Platform on AWS](/de/claude-platform-on-aws) sollten Sie Modellversionen vor dem Rollout für Benutzer fixieren.
 
 Ohne Fixierung verwendet Claude Code Modellaliase (`sonnet`, `opus`, `haiku`), die zur neuesten Version aufgelöst werden. Wenn Anthropic ein neues Modell veröffentlicht, das noch nicht in einem Benutzerkonto aktiviert ist, sehen Bedrock- und Vertex AI-Benutzer einen Hinweis und greifen für diese Sitzung auf die vorherige Version zurück, während Foundry-Benutzer Fehler sehen, da Foundry keine entsprechende Startprüfung hat.
 

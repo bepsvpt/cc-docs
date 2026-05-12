@@ -289,6 +289,10 @@ claude mcp add --transport sse private-api https://api.company.com/sse \
 
 Servidores Stdio são executados como processos locais em sua máquina. Eles são ideais para ferramentas que precisam de acesso direto ao sistema ou scripts personalizados.
 
+Claude Code define `CLAUDE_PROJECT_DIR` no ambiente do servidor gerado para a raiz do projeto, para que seu servidor possa resolver caminhos relativos ao projeto sem depender do diretório de trabalho. Este é o mesmo diretório que hooks recebem em sua variável `CLAUDE_PROJECT_DIR`. Leia-o de dentro do seu processo de servidor, por exemplo `process.env.CLAUDE_PROJECT_DIR` em Node ou `os.environ["CLAUDE_PROJECT_DIR"]` em Python. Seu servidor também pode chamar a solicitação MCP `roots/list`, que retorna o diretório do qual Claude Code foi iniciado.
+
+Esta variável é definida no ambiente do servidor, não no ambiente do próprio Claude Code, portanto referenciá-la via expansão `${VAR}` em um `.mcp.json` com escopo de projeto ou usuário `command` ou `args` requer um padrão como `${CLAUDE_PROJECT_DIR:-.}`. As configurações MCP fornecidas por plugins substituem `${CLAUDE_PROJECT_DIR}` diretamente e não precisam do padrão.
+
 ```bash theme={null}
 # Sintaxe básica
 claude mcp add [options] <name> -- <command> [args...]
@@ -406,7 +410,7 @@ Ou inline em `plugin.json`:
 **Recursos de MCP de plugin**:
 
 * **Ciclo de vida automático**: Na inicialização da sessão, os servidores para plugins habilitados se conectam automaticamente. Se você habilitar ou desabilitar um plugin durante uma sessão, execute `/reload-plugins` para conectar ou desconectar seus servidores MCP
-* **Variáveis de ambiente**: Use `${CLAUDE_PLUGIN_ROOT}` para arquivos agrupados do plugin e `${CLAUDE_PLUGIN_DATA}` para [estado persistente](/pt/plugins-reference#persistent-data-directory) que sobrevive a atualizações de plugins
+* **Variáveis de ambiente**: Use `${CLAUDE_PLUGIN_ROOT}` para arquivos agrupados do plugin, `${CLAUDE_PLUGIN_DATA}` para [estado persistente](/pt/plugins-reference#persistent-data-directory) que sobrevive a atualizações de plugins, e `${CLAUDE_PROJECT_DIR}` para a raiz do projeto estável
 * **Acesso a variáveis de ambiente do usuário**: Acesso às mesmas variáveis de ambiente que servidores configurados manualmente
 * **Múltiplos tipos de transporte**: Suporte para transportes stdio, SSE e HTTP (o suporte de transporte pode variar por servidor)
 
@@ -645,6 +649,8 @@ Encontre clientes que não fizeram uma compra em 90 dias
 ## Autenticar com servidores MCP remotos
 
 Muitos servidores MCP baseados em nuvem exigem autenticação. Claude Code suporta OAuth 2.0 para conexões seguras.
+
+Claude Code marca um servidor remoto como necessitando autenticação quando o servidor responde com `401 Unauthorized` e um cabeçalho `WWW-Authenticate` apontando para seu servidor de autorização. Qualquer servidor personalizado que retorna essa resposta obtém o mesmo fluxo de autenticação `/mcp` que qualquer outro servidor remoto.
 
 <Steps>
   <Step title="Adicione o servidor que requer autenticação">

@@ -41,9 +41,13 @@ LLM gateway 提供了 Claude Code 和模型提供商之间的集中代理层，�
 
 Claude Code 在每个 API 请求上包含以下请求头：
 
-| 请求头                        | 描述                                                              |
-| :------------------------- | :-------------------------------------------------------------- |
-| `X-Claude-Code-Session-Id` | 当前 Claude Code 会话的唯一标识符。代理可以使用此标识符来聚合来自单个会话的所有 API 请求，而无需解析请求体。 |
+| 请求头                             | 描述                                                                                             |
+| :------------------------------ | :--------------------------------------------------------------------------------------------- |
+| `X-Claude-Code-Session-Id`      | 当前 Claude Code 会话的唯一标识符。代理可以使用此标识符来聚合来自单个会话的所有 API 请求，而无需解析请求体。                                |
+| `X-Claude-Code-Agent-Id`        | 发出请求的子代理或队友的标识符。您的代理可以使用此标识符将 API 成本归属于会话内的各个并行子代理，而无需解析请求体。仅在由进程内子代理或队友发出的请求中出现。              |
+| `X-Claude-Code-Parent-Agent-Id` | 生成发出请求的代理的代理的标识符。将此与 `X-Claude-Code-Agent-Id` 一起使用，以在您的代理中跨嵌套代理归属 API 成本。仅当请求代理本身由另一个代理生成时才出现。 |
+
+两个代理 ID 请求头都是每次生成的临时标识符，而不是持久的用户或设备 ID。
 
 Claude Code 还会在系统提示前面添加一个简短的归属块，其中包含客户端版本和从对话派生的指纹。Anthropic API 在处理前会删除此块，因此不会影响第一方提示缓存。如果您的网关实现了自己的提示缓存（以完整请求体为键），请设置 [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/zh-CN/env-vars) 以省略它。
 
@@ -184,6 +188,17 @@ export ANTHROPIC_VERTEX_PROJECT_ID=your-gcp-project-id
 export CLAUDE_CODE_SKIP_VERTEX_AUTH=1
 export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=us-east5
+```
+
+##### 通过网关的 AWS 上的 Claude Platform
+
+路由到转发到 [AWS 上的 Claude Platform](/zh-CN/claude-platform-on-aws) 端点的网关：
+
+```bash theme={null}
+export ANTHROPIC_AWS_BASE_URL=https://litellm-server:4000/anthropic-aws
+export ANTHROPIC_AWS_WORKSPACE_ID=wrkspc_01ABCDEFGHIJKLMN
+export CLAUDE_CODE_SKIP_ANTHROPIC_AWS_AUTH=1
+export CLAUDE_CODE_USE_ANTHROPIC_AWS=1
 ```
 
 有关更多详细信息，请参阅 [LiteLLM 文档](https://docs.litellm.ai/)。

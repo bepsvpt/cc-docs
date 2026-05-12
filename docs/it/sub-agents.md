@@ -11,7 +11,7 @@ I subagent sono assistenti AI specializzati che gestiscono tipi specifici di att
 Ogni subagent viene eseguito nella propria finestra di contesto con un prompt di sistema personalizzato, accesso a strumenti specifici e autorizzazioni indipendenti. Quando Claude incontra un'attività che corrisponde alla descrizione di un subagent, la delega a quel subagent, che lavora in modo indipendente e restituisce i risultati. Per vedere il risparmio di contesto in pratica, la [visualizzazione della finestra di contesto](/it/context-window) illustra una sessione in cui un subagent gestisce la ricerca nella sua finestra separata.
 
 <Note>
-  Se ha bisogno di più agenti che lavorano in parallelo e comunicano tra loro, consulti invece [agent teams](/it/agent-teams). I subagent lavorano all'interno di una singola sessione; i team di agenti coordinano tra sessioni separate.
+  I subagent funzionano all'interno di una singola sessione. Per eseguire molte sessioni indipendenti in parallelo e monitorarle da un unico posto, consulti [background agents](/it/agent-view). Per sessioni che comunicano tra loro, consulti [agent teams](/it/agent-teams).
 </Note>
 
 I subagent la aiutano a:
@@ -158,7 +158,7 @@ Il comando `/agents` apre un'interfaccia a schede per gestire i subagent. La sch
 
 Questo è il modo consigliato per creare e gestire i subagent. Per la creazione manuale o l'automazione, può anche aggiungere file subagent direttamente.
 
-Per elencare tutti i subagent configurati dalla riga di comando senza avviare una sessione interattiva, esegua `claude agents`. Questo mostra gli agenti raggruppati per fonte e indica quali sono sovrascritti da definizioni di priorità più alta.
+Per elencare tutti i subagent configurati dalla riga di comando senza aprire la [visualizzazione agente](/it/agent-view), esegua il piping dell'output di `claude agents`. Ad esempio, `claude agents | cat` stampa gli agenti raggruppati per fonte e indica quali sono sovrascritti da definizioni di priorità più alta.
 
 ### Scelga l'ambito del subagent
 
@@ -260,7 +260,7 @@ I seguenti campi possono essere utilizzati nel frontmatter YAML. Solo `name` e `
 
 | Field             | Required | Description                                                                                                                                                                                                                                                                                                                                                                 |
 | :---------------- | :------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`            | Yes      | Identificatore univoco utilizzando lettere minuscole e trattini                                                                                                                                                                                                                                                                                                             |
+| `name`            | Yes      | Identificatore univoco utilizzando lettere minuscole e trattini. [Hooks](/it/hooks#subagentstart) ricevono questo valore come `agent_type`. Il nome del file non deve corrispondere                                                                                                                                                                                         |
 | `description`     | Yes      | Quando Claude dovrebbe delegare a questo subagent                                                                                                                                                                                                                                                                                                                           |
 | `tools`           | No       | [Strumenti](#available-tools) che il subagent può utilizzare. Eredita tutti gli strumenti se omesso. Per precaricare Skills nel contesto, usi il campo `skills` piuttosto che elencare `Skill` qui                                                                                                                                                                          |
 | `disallowedTools` | No       | Strumenti da negare, rimossi dall'elenco ereditato o specificato                                                                                                                                                                                                                                                                                                            |
@@ -666,8 +666,8 @@ Il flag CLI sostituisce l'impostazione se entrambi sono presenti.
 
 I subagent possono essere eseguiti in primo piano (bloccante) o in background (concorrente):
 
-* **Subagent in primo piano** bloccano la conversazione principale fino al completamento. I prompt di autorizzazione e le domande di chiarimento (come [`AskUserQuestion`](/it/tools-reference)) vengono passati a lei.
-* **Subagent in background** vengono eseguiti contemporaneamente mentre continua a lavorare. Prima di avviare, Claude Code richiede le autorizzazioni di strumenti di cui il subagent avrà bisogno, assicurando che abbia le approvazioni necessarie in anticipo. Una volta in esecuzione, il subagent eredita queste autorizzazioni e auto-nega qualsiasi cosa non pre-approvata. Se un subagent in background ha bisogno di fare domande di chiarimento, quella chiamata di strumento fallisce ma il subagent continua.
+* **Subagent in primo piano** bloccano la conversazione principale fino al completamento. I prompt di autorizzazione vengono passati a lei mentre si presentano.
+* **Subagent in background** vengono eseguiti contemporaneamente mentre continua a lavorare. Vengono eseguiti con le autorizzazioni già concesse nella sessione e auto-negano qualsiasi chiamata di strumento che altrimenti richiederebbe un prompt. Se un subagent in background ha bisogno di fare domande di chiarimento, quella chiamata di strumento fallisce ma il subagent continua.
 
 Se un subagent in background fallisce a causa di autorizzazioni mancanti, può avviare un nuovo subagent in primo piano con lo stesso compito per riprovare con prompt interattivi.
 
@@ -678,7 +678,7 @@ Claude decide se eseguire i subagent in primo piano o in background in base all'
 
 Per disabilitare tutta la funzionalità di background task, imposti la variabile di ambiente `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` su `1`. Consulti [Environment variables](/it/env-vars).
 
-Quando la [fork mode](#fork-the-current-conversation) è abilitata, ogni spawn di subagent viene eseguito in background indipendentemente dal campo `background`. I fork continuano a far emergere i prompt di autorizzazione nel suo terminale mentre si verificano invece di pre-approvare; i subagent denominati seguono il flusso di pre-approvazione sopra.
+Quando la [fork mode](#fork-the-current-conversation) è abilitata, ogni spawn di subagent viene eseguito in background indipendentemente dal campo `background`. I fork continuano a far emergere i prompt di autorizzazione nel suo terminale mentre si verificano; i subagent denominati auto-negano qualsiasi cosa che altrimenti richiederebbe un prompt, come descritto sopra.
 
 ### Modelli comuni
 
@@ -823,13 +823,13 @@ I fork in esecuzione appaiono in un pannello sotto l'input del prompt, con una r
 
 Un fork eredita tutto ciò che la sessione principale ha nel momento in cui viene generato. Un subagent denominato inizia dalla sua propria definizione.
 
-|                       | Fork                                 | Subagent denominato                                                                              |
-| :-------------------- | :----------------------------------- | :----------------------------------------------------------------------------------------------- |
-| Context               | Cronologia di conversazione completa | Contesto fresco con il prompt che passa                                                          |
-| System prompt e tools | Uguale alla sessione principale      | Dalla [definition file](#write-subagent-files) del subagent                                      |
-| Model                 | Uguale alla sessione principale      | Dal campo `model` del subagent                                                                   |
-| Permissions           | I prompt emergono nel suo terminale  | [Pre-approvati](#run-subagents-in-foreground-or-background) prima del lancio, quindi auto-negati |
-| Prompt cache          | Condiviso con la sessione principale | Cache separata                                                                                   |
+|                       | Fork                                 | Subagent denominato                                                                           |
+| :-------------------- | :----------------------------------- | :-------------------------------------------------------------------------------------------- |
+| Context               | Cronologia di conversazione completa | Contesto fresco con il prompt che passa                                                       |
+| System prompt e tools | Uguale alla sessione principale      | Dalla [definition file](#write-subagent-files) del subagent                                   |
+| Model                 | Uguale alla sessione principale      | Dal campo `model` del subagent                                                                |
+| Permissions           | I prompt emergono nel suo terminale  | [Auto-negati](#run-subagents-in-foreground-or-background) quando viene eseguito in background |
+| Prompt cache          | Condiviso con la sessione principale | Cache separata                                                                                |
 
 Poiché il prompt di sistema di un fork e le definizioni di strumenti sono identici al principale, la sua prima richiesta riutilizza la cache del prompt del principale. Questo rende il fork più economico rispetto alla generazione di un subagent fresco per attività che necessitano dello stesso contesto.
 

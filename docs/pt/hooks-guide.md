@@ -895,7 +895,7 @@ Você vê uma mensagem como "PreToolUse hook error: ..." na transcrição.
   echo '{"tool_name":"Bash","tool_input":{"command":"ls"}}' | ./my-hook.sh
   echo $?  # Verifique o código de saída
   ```
-* Se você vir "command not found", use caminhos absolutos ou `$CLAUDE_PROJECT_DIR` para referenciar scripts
+* Se você vir "command not found", use caminhos absolutos ou `${CLAUDE_PROJECT_DIR}` para referenciar scripts. Para evitar quoting de shell completamente, adicione `"args": []` para mudar para [forma exec](/pt/hooks#exec-form-and-shell-form), que gera o script diretamente sem um shell
 * Se você vir "jq: command not found", instale `jq` ou use Python/Node.js para análise JSON
 * Se o script não está executando em tudo, torne-o executável: `chmod +x ./my-hook.sh`
 
@@ -926,7 +926,7 @@ fi
 
 Claude Code mostra um erro de análise JSON mesmo que seu script de hook produza JSON válido.
 
-Quando Claude Code executa um hook, ele gera um shell que fornece seu perfil (`~/.zshrc` ou `~/.bashrc`). Se seu perfil contiver instruções `echo` incondicionais, essa saída é adicionada ao seu JSON do hook:
+Quando Claude Code executa um hook de comando em forma de shell (um sem `args`), ele gera `sh -c` no macOS e Linux ou Git Bash no Windows por padrão. Este shell é não-interativo, mas Git Bash e algumas configurações (como `BASH_ENV` apontando para `~/.bashrc`) ainda fornecem seu perfil. Se esse perfil contiver instruções `echo` incondicionais, a saída é adicionada ao seu JSON do hook:
 
 ```text theme={null}
 Shell ready on arm64

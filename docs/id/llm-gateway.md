@@ -39,11 +39,15 @@ Kegagalan untuk meneruskan header atau mempertahankan bidang badan dapat mengaki
 
 **Header permintaan**
 
-Claude Code menyertakan header berikut pada setiap permintaan API:
+Claude Code menyertakan header berikut pada permintaan API:
 
-| Header                     | Deskripsi                                                                                                                                                                     |
-| :------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `X-Claude-Code-Session-Id` | Pengidentifikasi unik untuk sesi Claude Code saat ini. Proxy dapat menggunakan ini untuk mengagregasi semua permintaan API dari sesi tunggal tanpa mengurai badan permintaan. |
+| Header                          | Deskripsi                                                                                                                                                                                                                                                                                              |
+| :------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `X-Claude-Code-Session-Id`      | Pengidentifikasi unik untuk sesi Claude Code saat ini. Proxy dapat menggunakan ini untuk mengagregasi semua permintaan API dari sesi tunggal tanpa mengurai badan permintaan.                                                                                                                          |
+| `X-Claude-Code-Agent-Id`        | Pengidentifikasi subagen atau rekan kerja yang mengeluarkan permintaan. Proxy Anda dapat menggunakan ini untuk mengatribusikan biaya API ke subagen paralel individual dalam sesi, tanpa mengurai badan permintaan. Hanya ada untuk permintaan yang dibuat oleh subagen atau rekan kerja dalam proses. |
+| `X-Claude-Code-Parent-Agent-Id` | Pengidentifikasi agen yang melahirkan agen yang membuat permintaan. Gunakan ini dengan `X-Claude-Code-Agent-Id` untuk mengatribusikan biaya API di seluruh agen bersarang dalam proxy Anda. Hanya ada ketika agen yang meminta itu sendiri dilahirkan oleh agen lain.                                  |
+
+Kedua header ID agen adalah pengidentifikasi per-spawn yang bersifat sementara, bukan ID pengguna atau perangkat yang persisten.
 
 Claude Code juga menambahkan blok atribusi singkat ke prompt sistem yang berisi versi klien dan sidik jari yang berasal dari percakapan. API Anthropic menghapus blok ini sebelum memproses, sehingga tidak mempengaruhi prompt caching pihak pertama. Jika gateway Anda menerapkan cache prompt sendiri yang dikunci pada badan permintaan lengkap, atur [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/id/env-vars) untuk menghilangkannya.
 
@@ -184,6 +188,17 @@ export ANTHROPIC_VERTEX_PROJECT_ID=your-gcp-project-id
 export CLAUDE_CODE_SKIP_VERTEX_AUTH=1
 export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=us-east5
+```
+
+##### Claude Platform on AWS melalui gateway
+
+Arahkan ke gateway yang meneruskan ke endpoint [Claude Platform on AWS](/id/claude-platform-on-aws):
+
+```bash theme={null}
+export ANTHROPIC_AWS_BASE_URL=https://litellm-server:4000/anthropic-aws
+export ANTHROPIC_AWS_WORKSPACE_ID=wrkspc_01ABCDEFGHIJKLMN
+export CLAUDE_CODE_SKIP_ANTHROPIC_AWS_AUTH=1
+export CLAUDE_CODE_USE_ANTHROPIC_AWS=1
 ```
 
 Untuk informasi lebih terperinci, lihat [dokumentasi LiteLLM](https://docs.litellm.ai/).

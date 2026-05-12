@@ -307,10 +307,10 @@ Per ulteriori informazioni, vedi [best practices](/it/best-practices) e [flussi 
   </Accordion>
 
   <Accordion title="Risparmia tempo con le scorciatoie">
-    * Premi `?` per vedere tutte le scorciatoie da tastiera disponibili
+    * Digita `/` per vedere tutti i comandi e le skills
     * Usa Tab per il completamento dei comandi
     * Premi ↑ per la cronologia dei comandi
-    * Digita `/` per vedere tutti i comandi e le skill
+    * Premi `Shift+Tab` per ciclo tra le modalità di autorizzazione
   </Accordion>
 </AccordionGroup>
 

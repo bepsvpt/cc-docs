@@ -36,7 +36,7 @@ Alias model menyediakan cara yang nyaman untuk memilih pengaturan model tanpa pe
 | **`opus[1m]`**   | Menggunakan Opus dengan [jendela konteks 1 juta token](https://platform.claude.com/docs/id/build-with-claude/context-windows#1m-token-context-window) untuk sesi panjang   |
 | **`opusplan`**   | Mode khusus yang menggunakan `opus` selama Plan Mode, kemudian beralih ke `sonnet` untuk eksekusi                                                                          |
 
-Di Anthropic API, `opus` diselesaikan ke Opus 4.7 dan `sonnet` diselesaikan ke Sonnet 4.6. Di Bedrock, Vertex, dan Foundry, `opus` diselesaikan ke Opus 4.6 dan `sonnet` diselesaikan ke Sonnet 4.5; model yang lebih baru tersedia di penyedia tersebut dengan memilih nama model lengkap secara eksplisit atau mengatur `ANTHROPIC_DEFAULT_OPUS_MODEL` atau `ANTHROPIC_DEFAULT_SONNET_MODEL`.
+Di Anthropic API dan [Claude Platform on AWS](/id/claude-platform-on-aws), `opus` diselesaikan ke Opus 4.7 dan `sonnet` diselesaikan ke Sonnet 4.6. Di Bedrock, Vertex, dan Foundry, `opus` diselesaikan ke Opus 4.6 dan `sonnet` diselesaikan ke Sonnet 4.5; model yang lebih baru tersedia di penyedia tersebut dengan memilih nama model lengkap secara eksplisit atau mengatur `ANTHROPIC_DEFAULT_OPUS_MODEL` atau `ANTHROPIC_DEFAULT_SONNET_MODEL`.
 
 Alias menunjuk ke versi yang direkomendasikan untuk penyedia Anda dan diperbarui seiring waktu. Untuk menetapkan versi tertentu, gunakan nama model lengkap (misalnya, `claude-opus-4-7`) atau atur variabel lingkungan yang sesuai seperti `ANTHROPIC_DEFAULT_OPUS_MODEL`.
 
@@ -53,7 +53,11 @@ Anda dapat mengonfigurasi model Anda dengan beberapa cara, yang tercantum dalam 
 3. **Variabel lingkungan** - Atur `ANTHROPIC_MODEL=<alias|name>`
 4. **Pengaturan** - Konfigurasi secara permanen di file pengaturan Anda menggunakan bidang `model`.
 
-Pilihan `/model` Anda disimpan ke pengaturan pengguna dan bertahan di seluruh restart. Mulai dari v2.1.117, jika `.claude/settings.json` proyek menetapkan model yang berbeda, Claude Code juga menulis pilihan Anda ke `.claude/settings.local.json` sehingga terus berlaku di proyek tersebut setelah restart. Pengaturan yang dikelola memiliki prioritas dan diterapkan kembali pada peluncuran berikutnya.
+<Note>
+  Pilihan `/model` Anda disimpan ke pengaturan pengguna dan bertahan di seluruh restart. Mulai dari v2.1.117, jika `.claude/settings.json` proyek menetapkan model yang berbeda, Claude Code juga menulis pilihan Anda ke `.claude/settings.local.json` sehingga terus berlaku di proyek tersebut setelah restart. Pengaturan yang dikelola memiliki prioritas dan diterapkan kembali pada peluncuran berikutnya.
+</Note>
+
+Bendera `--model` dan variabel lingkungan `ANTHROPIC_MODEL` hanya berlaku untuk sesi yang Anda luncurkan dengan mereka dan tidak disimpan. Untuk menjalankan model yang berbeda di terminal yang berbeda pada waktu yang sama, luncurkan masing-masing dengan bendera `--model` miliknya sendiri daripada beralih dengan `/model`.
 
 Ketika model aktif saat startup berasal dari pengaturan proyek atau yang dikelola daripada pilihan Anda sendiri, header startup menunjukkan file pengaturan mana yang menetapkannya. Jalankan `/model` untuk mengganti untuk sesi saat ini.
 
@@ -294,7 +298,7 @@ Catatan: `ANTHROPIC_SMALL_FAST_MODEL` sudah usang dan digantikan oleh `ANTHROPIC
 
 ### Tetapkan model untuk deployment pihak ketiga
 
-Saat menerapkan Claude Code melalui [Bedrock](/id/amazon-bedrock), [Vertex AI](/id/google-vertex-ai), atau [Foundry](/id/microsoft-foundry), tetapkan versi model sebelum meluncurkan ke pengguna.
+Saat menerapkan Claude Code melalui [Bedrock](/id/amazon-bedrock), [Vertex AI](/id/google-vertex-ai), [Foundry](/id/microsoft-foundry), atau [Claude Platform on AWS](/id/claude-platform-on-aws), tetapkan versi model sebelum meluncurkan ke pengguna.
 
 Tanpa penentapan, Claude Code menggunakan alias model (`sonnet`, `opus`, `haiku`) yang diselesaikan ke versi terbaru. Ketika Anthropic merilis model baru yang belum diaktifkan di akun pengguna, pengguna Bedrock dan Vertex AI melihat pemberitahuan dan kembali ke versi sebelumnya untuk sesi itu, sementara pengguna Foundry melihat kesalahan karena Foundry tidak memiliki pemeriksaan startup yang setara.
 

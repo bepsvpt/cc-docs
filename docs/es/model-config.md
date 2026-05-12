@@ -36,7 +36,7 @@ Los alias de modelo proporcionan una forma conveniente de seleccionar configurac
 | **`opus[1m]`**   | Utiliza Opus con una [ventana de contexto de 1 millón de tokens](https://platform.claude.com/docs/es/build-with-claude/context-windows#1m-token-context-window) para sesiones largas   |
 | **`opusplan`**   | Modo especial que utiliza `opus` durante el modo de plan, luego cambia a `sonnet` para la ejecución                                                                                    |
 
-En la API de Anthropic, `opus` se resuelve a Opus 4.7 y `sonnet` se resuelve a Sonnet 4.6. En Bedrock, Vertex y Foundry, `opus` se resuelve a Opus 4.6 y `sonnet` se resuelve a Sonnet 4.5; hay modelos más nuevos disponibles en esos proveedores seleccionando el nombre de modelo completo explícitamente o estableciendo `ANTHROPIC_DEFAULT_OPUS_MODEL` o `ANTHROPIC_DEFAULT_SONNET_MODEL`.
+En la API de Anthropic y [Claude Platform on AWS](/es/claude-platform-on-aws), `opus` se resuelve a Opus 4.7 y `sonnet` se resuelve a Sonnet 4.6. En Bedrock, Vertex y Foundry, `opus` se resuelve a Opus 4.6 y `sonnet` se resuelve a Sonnet 4.5; hay modelos más nuevos disponibles en esos proveedores seleccionando el nombre de modelo completo explícitamente o estableciendo `ANTHROPIC_DEFAULT_OPUS_MODEL` o `ANTHROPIC_DEFAULT_SONNET_MODEL`.
 
 Los alias siempre apuntan a la versión recomendada para su proveedor y se actualizan con el tiempo. Para fijar una versión específica, utilice el nombre de modelo completo (por ejemplo, `claude-opus-4-7`) o establezca la variable de entorno correspondiente como `ANTHROPIC_DEFAULT_OPUS_MODEL`.
 
@@ -294,7 +294,7 @@ Nota: `ANTHROPIC_SMALL_FAST_MODEL` está deprecado en favor de `ANTHROPIC_DEFAUL
 
 ### Fijar modelos para implementaciones de terceros
 
-Al implementar Claude Code a través de [Bedrock](/es/amazon-bedrock), [Vertex AI](/es/google-vertex-ai), o [Foundry](/es/microsoft-foundry), fije versiones de modelo antes de implementar para usuarios.
+Al implementar Claude Code a través de [Bedrock](/es/amazon-bedrock), [Vertex AI](/es/google-vertex-ai), [Foundry](/es/microsoft-foundry), o [Claude Platform on AWS](/es/claude-platform-on-aws), fije versiones de modelo antes de implementar para usuarios.
 
 Sin fijar, Claude Code utiliza alias de modelo (`sonnet`, `opus`, `haiku`) que se resuelven a la versión más reciente. Cuando Anthropic lanza un nuevo modelo que aún no está habilitado en la cuenta de un usuario, los usuarios de Bedrock y Vertex AI ven un aviso y retroceden a la versión anterior para esa sesión, mientras que los usuarios de Foundry ven errores porque Foundry no tiene ninguna verificación de inicio equivalente.
 

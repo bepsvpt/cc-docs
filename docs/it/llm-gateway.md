@@ -41,11 +41,15 @@ Il mancato inoltro delle intestazioni o la mancata preservazione dei campi del c
 
 Claude Code include le seguenti intestazioni su ogni richiesta API:
 
-| Intestazione               | Descrizione                                                                                                                                                                                         |
-| :------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `X-Claude-Code-Session-Id` | Un identificatore univoco per la sessione Claude Code corrente. I proxy possono utilizzarlo per aggregare tutte le richieste API da una singola sessione senza analizzare il corpo della richiesta. |
+| Intestazione                    | Descrizione                                                                                                                                                                                                                                                                                                              |
+| :------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `X-Claude-Code-Session-Id`      | Un identificatore univoco per la sessione Claude Code corrente. I proxy possono utilizzarlo per aggregare tutte le richieste API da una singola sessione senza analizzare il corpo della richiesta.                                                                                                                      |
+| `X-Claude-Code-Agent-Id`        | Identificatore del subagent o del teammate che ha emesso la richiesta. Il vostro proxy può utilizzarlo per attribuire il costo API ai singoli subagent paralleli all'interno di una sessione, senza analizzare il corpo della richiesta. Presente solo per le richieste effettuate da un subagent o teammate in-process. |
+| `X-Claude-Code-Parent-Agent-Id` | Identificatore dell'agente che ha generato l'agente che effettua la richiesta. Utilizzatelo insieme a `X-Claude-Code-Agent-Id` per attribuire i costi API tra gli agenti annidati nel vostro proxy. Presente solo quando l'agente richiedente è stato a sua volta generato da un altro agente.                           |
 
-Claude Code inoltre antepone un breve blocco di attribuzione al prompt di sistema contenente la versione del client e un'impronta digitale derivata dalla conversazione. L'API Anthropic rimuove questo blocco prima dell'elaborazione, quindi non influisce sulla memorizzazione nella cache del prompt di prima parte. Se il tuo gateway implementa la propria cache del prompt con chiave sul corpo della richiesta completo, imposta [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/it/env-vars) per ometterlo.
+Entrambe le intestazioni dell'ID agente sono identificatori effimeri per spawn, non ID utente o dispositivo persistenti.
+
+Claude Code inoltre antepone un breve blocco di attribuzione al prompt di sistema contenente la versione del client e un'impronta digitale derivata dalla conversazione. L'API Anthropic rimuove questo blocco prima dell'elaborazione, quindi non influisce sulla memorizzazione nella cache del prompt di prima parte. Se il vostro gateway implementa la propria cache del prompt con chiave sul corpo della richiesta completo, impostate [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/it/env-vars) per ometterlo.
 
 ## Configurazione
 
@@ -184,6 +188,17 @@ export ANTHROPIC_VERTEX_PROJECT_ID=your-gcp-project-id
 export CLAUDE_CODE_SKIP_VERTEX_AUTH=1
 export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=us-east5
+```
+
+##### Claude Platform su AWS attraverso un gateway
+
+Instrada verso un gateway che inoltra all'endpoint [Claude Platform su AWS](/it/claude-platform-on-aws):
+
+```bash theme={null}
+export ANTHROPIC_AWS_BASE_URL=https://litellm-server:4000/anthropic-aws
+export ANTHROPIC_AWS_WORKSPACE_ID=wrkspc_01ABCDEFGHIJKLMN
+export CLAUDE_CODE_SKIP_ANTHROPIC_AWS_AUTH=1
+export CLAUDE_CODE_USE_ANTHROPIC_AWS=1
 ```
 
 Per informazioni più dettagliate, consulta la [documentazione di LiteLLM](https://docs.litellm.ai/).

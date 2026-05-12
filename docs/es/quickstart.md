@@ -284,7 +284,7 @@ Para más información, consulte [mejores prácticas](/es/best-practices) y [flu
     Intente: "corrige el error de inicio de sesión donde los usuarios ven una pantalla en blanco después de ingresar credenciales incorrectas"
   </Accordion>
 
-  <Accordion title="Use instrucciones paso a paso">
+  <Accordion title="Utilice instrucciones paso a paso">
     Divida tareas complejas en pasos:
 
     ```text theme={null}
@@ -307,10 +307,10 @@ Para más información, consulte [mejores prácticas](/es/best-practices) y [flu
   </Accordion>
 
   <Accordion title="Ahorre tiempo con atajos de teclado">
-    * Presione `?` para ver todos los atajos de teclado disponibles
-    * Use Tab para completar comandos
-    * Presione ↑ para el historial de comandos
     * Escriba `/` para ver todos los comandos y skills
+    * Utilice Tab para completar comandos
+    * Presione ↑ para el historial de comandos
+    * Presione `Shift+Tab` para ciclar a través de los modos de permisos
   </Accordion>
 </AccordionGroup>
 

@@ -287,6 +287,10 @@ claude mcp add --transport sse private-api https://api.company.com/sse \
 
 Stdio 服务器作为您机器上的本地进程运行。它们非常适合需要直接系统访问或自定义脚本的工具。
 
+Claude Code 在生成的服务器的环境中设置 `CLAUDE_PROJECT_DIR`，指向项目根目录，因此您的服务器可以解析项目相对路径，而无需依赖工作目录。这与 hooks 在其 `CLAUDE_PROJECT_DIR` 变量中接收的目录相同。从服务器进程内部读取它，例如 Node 中的 `process.env.CLAUDE_PROJECT_DIR` 或 Python 中的 `os.environ["CLAUDE_PROJECT_DIR"]`。您的服务器也可以调用 MCP `roots/list` 请求，该请求返回启动 Claude Code 的目录。
+
+此变量在服务器的环境中设置，而不是在 Claude Code 自己的环境中，因此在项目或用户范围的 `.mcp.json` `command` 或 `args` 中通过 `${VAR}` 扩展引用它需要一个默认值，例如 `${CLAUDE_PROJECT_DIR:-.}`。插件提供的 MCP 配置直接替换 `${CLAUDE_PROJECT_DIR}`，不需要默认值。
+
 ```bash theme={null}
 # 基本语法
 claude mcp add [options] <name> -- <command> [args...]
@@ -404,7 +408,7 @@ MCP 服务器也可以直接将消息推送到您的会话中，以便 Claude �
 **插件 MCP 功能**：
 
 * **自动生命周期**：在会话启动时，启用的插件的服务器会自动连接。如果您在会话期间启用或禁用插件，请运行 `/reload-plugins` 以连接或断开其 MCP 服务器
-* **环境变量**：对插件相对路径使用 `${CLAUDE_PLUGIN_ROOT}`，对[持久状态](/zh-CN/plugins-reference#persistent-data-directory)使用 `${CLAUDE_PLUGIN_DATA}`，该状态在插件更新后仍然存在
+* **环境变量**：对插件相对路径使用 `${CLAUDE_PLUGIN_ROOT}`，对[持久状态](/zh-CN/plugins-reference#persistent-data-directory)使用 `${CLAUDE_PLUGIN_DATA}`，该状态在插件更新后仍然存在，以及对稳定项目根目录使用 `${CLAUDE_PROJECT_DIR}`
 * **用户环境访问**：访问与手动配置的服务器相同的环境变量
 * **多种传输类型**：支持 stdio、SSE 和 HTTP 传输（传输支持可能因服务器而异）
 
@@ -643,6 +647,8 @@ claude mcp add --transport stdio db -- npx -y @bytebase/dbhub \
 ## 使用远程 MCP 服务器进行身份验证
 
 许多基于云的 MCP 服务器需要身份验证。Claude Code 支持 OAuth 2.0 以实现安全连接。
+
+当服务器响应 `401 Unauthorized` 和指向其授权服务器的 `WWW-Authenticate` 标头时，Claude Code 将远程服务器标记为需要身份验证。任何返回该响应的自定义服务器都会获得与任何其他远程服务器相同的 `/mcp` 身份验证流程。
 
 <Steps>
   <Step title="添加需要身份验证的服务器">

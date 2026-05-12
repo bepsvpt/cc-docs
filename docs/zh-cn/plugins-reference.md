@@ -42,7 +42,7 @@ skills/
 * Claude 可以根据任务上下文自动调用它们
 * Skills 可以在 SKILL.md 旁边包含支持文件
 
-有关完整详情，请参阅[Skills](/zh-CN/skills)。
+有关完整详情，请参阅 [Skills](/zh-CN/skills)。
 
 ### Agents
 
@@ -76,7 +76,7 @@ Plugin agents 支持 `name`、`description`、`model`、`effort`、`maxTurns`、
 * Agents 可以由用户手动调用
 * Plugin agents 与内置 Claude agents 一起工作
 
-有关完整详情，请参阅[Subagents](/zh-CN/sub-agents)。
+有关完整详情，请参阅 [Subagents](/zh-CN/sub-agents)。
 
 ### Hooks
 
@@ -97,7 +97,7 @@ Plugins 可以提供事件处理程序，自动响应 Claude Code 事件。
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/format-code.sh"
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/format-code.sh"
           }
         ]
       }
@@ -106,7 +106,7 @@ Plugins 可以提供事件处理程序，自动响应 Claude Code 事件。
 }
 ```
 
-Plugin hooks 响应与[用户定义的 hooks](/zh-CN/hooks)相同的生命周期事件：
+Plugin hooks 响应与 [用户定义的 hooks](/zh-CN/hooks) 相同的生命周期事件：
 
 | Event                 | When it fires                                                                                                                                          |
 | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -190,7 +190,7 @@ Plugins 可以捆绑 Model Context Protocol (MCP) servers 以将 Claude Code 与
   想要使用 LSP plugins？从官方市场安装它们：在 `/plugin` Discover 选项卡中搜索"lsp"。本部分记录了如何为官方市场未涵盖的语言创建 LSP plugins。
 </Tip>
 
-Plugins 可以提供[Language Server Protocol](https://microsoft.github.io/language-server-protocol/) (LSP) servers，在处理代码库时为 Claude 提供实时代码智能。
+Plugins 可以提供 [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) (LSP) servers，在处理代码库时为 Claude 提供实时代码智能。
 
 LSP 集成提供：
 
@@ -273,7 +273,7 @@ LSP 集成提供：
 
 Plugins 可以声明后台 monitors，Claude Code 在 plugin 激活时自动启动。每个 monitor 为会话的生命周期运行一个 shell 命令，并将每个 stdout 行作为通知传递给 Claude，以便 Claude 可以对日志条目、状态更改或轮询事件做出反应，而无需被要求启动监视本身。
 
-Plugin monitors 使用与[Monitor tool](/zh-CN/tools-reference#monitor-tool)相同的机制，并共享其可用性约束。它们仅在交互式 CLI 会话中运行，在与[hooks](#hooks)相同的信任级别上无沙箱运行，并在 Monitor tool 不可用的主机上跳过。
+Plugin monitors 使用与 [Monitor tool](/zh-CN/tools-reference#monitor-tool) 相同的机制，并共享其可用性约束。它们仅在交互式 CLI 会话中运行，在与 [hooks](#hooks) 相同的信任级别上无沙箱运行，并在 Monitor tool 不可用的主机上跳过。
 
 <Note>
   Plugin monitors 需要 Claude Code v2.1.105 或更高版本。
@@ -289,7 +289,7 @@ Plugin monitors 使用与[Monitor tool](/zh-CN/tools-reference#monitor-tool)相�
 [
   {
     "name": "deploy-status",
-    "command": "${CLAUDE_PLUGIN_ROOT}/scripts/poll-deploy.sh ${user_config.api_endpoint}",
+    "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/poll-deploy.sh ${user_config.api_endpoint}",
     "description": "Deployment status changes"
   },
   {
@@ -301,7 +301,7 @@ Plugin monitors 使用与[Monitor tool](/zh-CN/tools-reference#monitor-tool)相�
 ]
 ```
 
-要内联声明 monitors，请将 `plugin.json` 中的 `experimental.monitors` 设置为相同的数组。要从非默认路径加载，请将 `experimental.monitors` 设置为相对路径字符串，例如 `"./config/monitors.json"`。Monitors 是一个[实验性组件](#experimental-components)。
+要内联声明 monitors，请将 `plugin.json` 中的 `experimental.monitors` 设置为相同的数组。要从非默认路径加载，请将 `experimental.monitors` 设置为相对路径字符串，例如 `"./config/monitors.json"`。Monitors 是一个 [实验性组件](#experimental-components)。
 
 **必需字段：**
 
@@ -317,13 +317,13 @@ Plugin monitors 使用与[Monitor tool](/zh-CN/tools-reference#monitor-tool)相�
 | :----- | :---------------------------------------------------------------------------------------------------------- |
 | `when` | 控制 monitor 何时启动。`"always"` 在会话启动和插件重新加载时启动它，这是默认值。`"on-skill-invoke:<skill-name>"` 在此插件中的命名 skill 首次被分派时启动它 |
 
-`command` 值支持与 MCP 和 LSP server 配置相同的[变量替换](#environment-variables)：`${CLAUDE_PLUGIN_ROOT}`、`${CLAUDE_PLUGIN_DATA}`、`${user_config.*}` 和环境中的任何 `${ENV_VAR}`。如果脚本需要从插件自己的目录运行，请在命令前加上 `cd "${CLAUDE_PLUGIN_ROOT}" && `。
+`command` 值支持与 MCP 和 LSP server 配置相同的 [变量替换](#environment-variables)：`${CLAUDE_PLUGIN_ROOT}`、`${CLAUDE_PLUGIN_DATA}`、`${CLAUDE_PROJECT_DIR}`、`${user_config.*}` 和环境中的任何 `${ENV_VAR}`。如果脚本需要从插件自己的目录运行，请在命令前加上 `cd "${CLAUDE_PLUGIN_ROOT}" && `。
 
 在会话中途禁用插件不会停止已在运行的 monitors。它们在会话结束时停止。
 
 ### Themes
 
-Plugins 可以提供颜色主题，这些主题与内置预设和用户的本地主题一起出现在 `/theme` 中。主题是 `themes/` 中的 JSON 文件，具有 `base` 预设和稀疏的 `overrides` 颜色令牌映射。Themes 是一个[实验性组件](#experimental-components)。
+Plugins 可以提供颜色主题，这些主题与内置预设和用户的本地主题一起出现在 `/theme` 中。主题是 `themes/` 中的 JSON 文件，具有 `base` 预设和稀疏的 `overrides` 颜色令牌映射。Themes 是一个 [实验性组件](#experimental-components)。
 
 ```json theme={null}
 {
@@ -540,13 +540,15 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
 
 ### 环境变量
 
-Claude Code 提供两个变量用于引用 plugin 路径。两者都在 skill 内容、agent 内容、hook 命令、monitor 命令以及 MCP 或 LSP server 配置中出现的任何地方进行内联替换。两者也都作为环境变量导出到 hook 进程和 MCP 或 LSP server 子进程。
+Claude Code 提供三个变量用于引用路径。所有这些变量都在 skill 内容、agent 内容、hook 命令、monitor 命令以及 MCP 或 LSP server 配置中出现的任何地方进行内联替换。所有这些变量也都作为环境变量导出到 hook 进程和 MCP 或 LSP server 子进程。
 
-**`${CLAUDE_PLUGIN_ROOT}`**：plugin 安装目录的绝对路径。使用此路径引用与 plugin 捆绑的脚本、二进制文件和配置文件。当 plugin 更新时，此路径会更改。前一个版本的目录在更新后约七天内保留在磁盘上以进行清理，但应将其视为临时的，不要在此处写入状态。
+**`${CLAUDE_PLUGIN_ROOT}`**：plugin 安装目录的绝对路径。使用此路径引用与 plugin 捆绑的脚本、二进制文件和配置文件。在 hook 命令中，使用[执行形式](/zh-CN/hooks#exec-form-and-shell-form)与 `args` 以便路径作为一个参数传递，无需引用。在 shell 形式的 hooks 和 monitor 命令中，用双引号包装它，如 `"${CLAUDE_PLUGIN_ROOT}"`。当 plugin 更新时，此路径会更改。前一个版本的目录在更新后约七天内保留在磁盘上以进行清理，但应将其视为临时的，不要在此处写入状态。
 
 当 plugin 在会话中期更新时，hook 命令、monitors、MCP servers 和 LSP servers 继续使用前一个版本的路径。运行 `/reload-plugins` 以将 hooks、MCP servers 和 LSP servers 切换到新路径；monitors 需要会话重启。
 
 **`${CLAUDE_PLUGIN_DATA}`**：用于 plugin 状态的持久目录，在更新后保留。使用此目录用于已安装的依赖项，如 `node_modules` 或 Python 虚拟环境、生成的代码、缓存以及任何应在 plugin 版本之间保留的其他文件。首次引用此变量时，目录会自动创建。
+
+**`${CLAUDE_PROJECT_DIR}`**：项目根目录。这是 hooks 在其 `CLAUDE_PROJECT_DIR` 变量中接收的相同目录。使用此路径引用项目本地脚本或配置文件。用引号包装以处理包含空格的路径，例如 `"${CLAUDE_PROJECT_DIR}/scripts/server.sh"`。MCP servers 也可以调用 MCP `roots/list` 请求，该请求返回启动 Claude Code 的目录。
 
 ```json theme={null}
 {
@@ -556,7 +558,7 @@ Claude Code 提供两个变量用于引用 plugin 路径。两者都在 skill �
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/process.sh"
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/process.sh"
           }
         ]
       }
@@ -629,12 +631,20 @@ Claude 的 Glob 和 Grep 工具在搜索期间跳过孤立版本目录，因此�
 
 已安装的 plugins 无法引用其目录外的文件。遍历 plugin 根目录外的路径（例如 `../shared-utils`）在安装后将不起作用，因为这些外部文件不会被复制到缓存中。
 
-### 使用外部依赖
+### 使用符号链接在市场内共享文件
 
-如果您的 plugin 需要访问其目录外的文件，您可以在 plugin 目录中创建指向外部文件的符号链接。符号链接在缓存中被保留而不是解引用，并在运行时解析到其目标。以下命令在插件目录内创建指向共享实用程序位置的链接：
+如果您的 plugin 需要与同一市场的其他部分共享文件，您可以在 plugin 目录中创建符号链接。当 plugin 被复制到缓存中时，符号链接的处理方式取决于其目标的解析位置：
+
+* **在 plugin 自己的目录内：** 符号链接在缓存中被保留为相对符号链接，因此它在运行时继续解析到复制的目标。
+* **在同一市场内的其他位置：** 符号链接被解引用。目标的内容被复制到缓存中以替代它。这允许元 plugin 的 `skills/` 目录链接到市场中其他 plugins 定义的技能。
+* **在市场外：** 符号链接出于安全考虑被跳过。这防止 plugins 从任意主机文件（如系统路径）拉入缓存。
+
+对于使用 `--plugin-dir` 安装或从本地路径安装的 plugins，只有解析到 plugin 自己目录内的符号链接被保留。所有其他的都被跳过。
+
+以下命令创建从市场 plugin 内部到由同级 plugin 定义的共享技能的链接。在 Windows 上，从提升的命令提示符使用 `mklink /D` 或启用开发者模式：
 
 ```bash theme={null}
-ln -s /path/to/shared-utils ./shared-utils
+ln -s ../../shared-plugin/skills/foo ./skills/foo
 ```
 
 这在保持缓存系统安全优势的同时提供了灵活性。
@@ -875,6 +885,56 @@ claude plugin list [options]
 | `--available` | 包括来自市场的可用 plugins。需要 `--json` |     |
 | `-h, --help`  | 显示命令帮助                        |     |
 
+### plugin details
+
+显示 plugin 的组件清单和预计令牌成本。输出列出 plugin 贡献的所有组件，分组为 Skills（技能和命令）、Agents、Hooks 和 MCP servers，以及它为每个会话添加多少令牌的估计。
+
+```bash theme={null}
+claude plugin details <name>
+```
+
+**参数：**
+
+* `<name>`：Plugin 名称或 `plugin-name@marketplace-name`
+
+**选项：**
+
+| 选项           | 描述     | 默认值 |
+| :----------- | :----- | :-- |
+| `-h, --help` | 显示命令帮助 |     |
+
+输出为每个组件显示两个成本数字：
+
+* **Always-on：** plugin 的列表文本（如技能描述、agent 描述和命令名称）添加到每个会话的令牌，无论是否有任何组件触发。
+* **On-invoke：** 组件触发时的成本令牌。按组件显示，而不是作为 plugin 总计，因为典型会话仅调用组件的子集。
+
+此示例显示具有两个技能的 plugin 的输出外观：
+
+```
+security-guidance 1.2.0
+  Real-time security analysis for Claude Code sessions
+  Source: security-guidance@claude-code-marketplace
+
+Component inventory
+  Skills (2)  scan-dependencies, review-changes
+  Agents (0)
+  Hooks (1)  (harness-only — no model context cost)
+  MCP servers (0)
+
+Projected token cost
+  Always-on:   ~180 tok   added to every session
+
+Per-component (rounded)
+  component            always-on  on-invoke
+  scan-dependencies        ~100      ~2400
+  review-changes            ~80      ~1800
+
+  On-invoke cost is paid each time a skill or agent fires.
+  Token counts are estimates and may differ from actual usage.
+```
+
+always-on 总计通过您的活跃模型的 `count_tokens` API 计算。按组件的数字按比例从该总计缩放。如果 API 无法访问，该命令会回退到基于字符的估计。
+
 ### plugin tag
 
 为当前目录中的 plugin 创建发布 git 标签。从 plugin 的文件夹内运行。请参阅[标记 plugin 发布](/zh-CN/plugin-dependencies#tag-plugin-releases-for-version-resolution)。
@@ -938,7 +998,7 @@ claude plugin tag [options]
 
 1. 检查脚本是否可执行：`chmod +x ./scripts/your-script.sh`
 2. 验证 shebang 行：第一行应该是 `#!/bin/bash` 或 `#!/usr/bin/env bash`
-3. 检查路径是否使用 `${CLAUDE_PLUGIN_ROOT}`：`"command": "${CLAUDE_PLUGIN_ROOT}/scripts/your-script.sh"`
+3. 检查路径是否使用 `${CLAUDE_PLUGIN_ROOT}`：`"command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/your-script.sh"`
 4. 手动测试脚本：`./scripts/your-script.sh`
 
 **Hook 未在预期事件上触发**：

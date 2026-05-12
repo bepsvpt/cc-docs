@@ -97,7 +97,7 @@ Plugins 可以提供事件處理程式，自動回應 Claude Code 事件。
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/format-code.sh"
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/format-code.sh"
           }
         ]
       }
@@ -289,7 +289,7 @@ Plugin monitors 使用與 [Monitor tool](/zh-TW/tools-reference#monitor-tool) �
 [
   {
     "name": "deploy-status",
-    "command": "${CLAUDE_PLUGIN_ROOT}/scripts/poll-deploy.sh ${user_config.api_endpoint}",
+    "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/poll-deploy.sh ${user_config.api_endpoint}",
     "description": "Deployment status changes"
   },
   {
@@ -317,7 +317,7 @@ Plugin monitors 使用與 [Monitor tool](/zh-TW/tools-reference#monitor-tool) �
 | :----- | :----------------------------------------------------------------------------------------------------------------------- |
 | `when` | 控制 monitor 何時啟動。`"always"` 在工作階段啟動和 plugin 重新載入時啟動它，是預設值。`"on-skill-invoke:<skill-name>"` 在此 plugin 中的命名 skill 首次被分派時啟動它 |
 
-`command` 值支援與 MCP 和 LSP server 設定相同的 [variable substitutions](#environment-variables)：`${CLAUDE_PLUGIN_ROOT}`、`${CLAUDE_PLUGIN_DATA}`、`${user_config.*}` 和環境中的任何 `${ENV_VAR}`。如果指令碼需要從 plugin 自己的目錄執行，請在命令前加上 `cd "${CLAUDE_PLUGIN_ROOT}" && `。
+`command` 值支援與 MCP 和 LSP server 設定相同的 [variable substitutions](#environment-variables)：`${CLAUDE_PLUGIN_ROOT}`、`${CLAUDE_PLUGIN_DATA}`、`${CLAUDE_PROJECT_DIR}`、`${user_config.*}` 和環境中的任何 `${ENV_VAR}`。如果指令碼需要從 plugin 自己的目錄執行，請在命令前加上 `cd "${CLAUDE_PLUGIN_ROOT}" && `。
 
 在工作階段中途停用 plugin 不會停止已在執行的 monitors。它們在工作階段結束時停止。
 
@@ -540,13 +540,15 @@ manifest 是選用的。如果省略，Claude Code 會自動探索[預設位置]
 
 ### 環境變數
 
-Claude Code 提供兩個變數用於參考 plugin 路徑。兩者都在 skill 內容、agent 內容、hook 命令、monitor 命令以及 MCP 或 LSP server 設定中出現的任何地方內聯替換。兩者也會匯出為環境變數到 hook 程序和 MCP 或 LSP server 子程序。
+Claude Code 提供三個變數用於參考路徑。所有變數都在 skill 內容、agent 內容、hook 命令、monitor 命令以及 MCP 或 LSP server 設定中出現的任何地方內聯替換。所有變數也會匯出為環境變數到 hook 程序和 MCP 或 LSP server 子程序。
 
-**`${CLAUDE_PLUGIN_ROOT}`**：plugin 安裝目錄的絕對路徑。使用此方法參考與 plugin 捆綁的指令碼、二進位檔和設定檔。此路徑在 plugin 更新時會變更。前一個版本的目錄在更新後約七天內保留在磁碟上，然後才進行清理，但應將其視為暫時性的，不要在此處寫入狀態。
+**`${CLAUDE_PLUGIN_ROOT}`**：plugin 安裝目錄的絕對路徑。使用此方法參考與 plugin 捆綁的指令碼、二進位檔和設定檔。在 hook 命令中，使用[執行形式](/zh-TW/hooks#exec-form-and-shell-form)搭配 `args`，以便路徑作為一個引數傳遞，無需引號。在 shell 形式的 hooks 和 monitor 命令中，將其包裝在雙引號中，如 `"${CLAUDE_PLUGIN_ROOT}"`。此路徑在 plugin 更新時會變更。前一個版本的目錄在更新後約七天內保留在磁碟上，然後才進行清理，但應將其視為暫時性的，不要在此處寫入狀態。
 
 當 plugin 在工作階段中途更新時，hook 命令、monitors、MCP servers 和 LSP servers 會繼續使用前一個版本的路徑。執行 `/reload-plugins` 以將 hooks、MCP servers 和 LSP servers 切換到新路徑；monitors 需要工作階段重新啟動。
 
 **`${CLAUDE_PLUGIN_DATA}`**：用於在更新後保留的 plugin 狀態的持久目錄。使用此方法用於已安裝的依賴項，例如 `node_modules` 或 Python 虛擬環境、生成的程式碼、快取和任何應在 plugin 版本之間保留的其他檔案。首次參考此變數時會自動建立目錄。
+
+**`${CLAUDE_PROJECT_DIR}`**：專案根目錄。這是 hooks 在其 `CLAUDE_PROJECT_DIR` 變數中接收的相同目錄。使用此方法參考專案本地指令碼或設定檔。包裝在引號中以處理包含空格的路徑，例如 `"${CLAUDE_PROJECT_DIR}/scripts/server.sh"`。MCP servers 也可以呼叫 MCP `roots/list` 請求，該請求會傳回啟動 Claude Code 的目錄。
 
 ```json theme={null}
 {
@@ -556,7 +558,7 @@ Claude Code 提供兩個變數用於參考 plugin 路徑。兩者都在 skill �
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/process.sh"
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/process.sh"
           }
         ]
       }
@@ -629,12 +631,20 @@ Claude 的 Glob 和 Grep 工具在搜尋期間跳過孤立的版本目錄，因�
 
 已安裝的 plugins 無法參考其目錄外的檔案。遍歷 plugin 根目錄外的路徑（例如 `../shared-utils`）在安裝後將無法運作，因為這些外部檔案不會複製到快取中。
 
-### 使用外部依賴項
+### 使用 symlinks 在 marketplace 內共享檔案
 
-如果您的 plugin 需要存取其目錄外的檔案，您可以在 plugin 目錄中建立指向外部檔案的符號連結。符號連結在快取中被保留而不是被取消參考，並在執行時解析到其目標。以下命令從 plugin 目錄內建立到共享公用程式位置的連結：
+如果您的 plugin 需要與同一 marketplace 的其他部分共享檔案，您可以在 plugin 目錄內建立符號連結。當 plugin 被複製到快取時，symlink 的處理方式取決於其目標的解析位置：
+
+* **在 plugin 自身目錄內：** symlink 在快取中被保留為相對 symlink，因此在執行時繼續解析到複製的目標。
+* **在同一 marketplace 內的其他位置：** symlink 被取消參考。目標的內容被複製到快取中以取代它。這讓 meta-plugin 的 `skills/` 目錄可以連結到 marketplace 中其他 plugins 定義的 skills。
+* **在 marketplace 外：** symlink 因安全考量而被跳過。這防止 plugins 將任意主機檔案（例如系統路徑）拉入快取。
+
+對於使用 `--plugin-dir` 安裝或從本機路徑安裝的 plugins，只有解析在 plugin 自身目錄內的 symlinks 被保留。所有其他的都被跳過。
+
+以下命令從 marketplace plugin 內建立到由同級 plugin 定義的共享 skill 的連結。在 Windows 上，從提升的命令提示字元使用 `mklink /D` 或啟用開發人員模式：
 
 ```bash theme={null}
-ln -s /path/to/shared-utils ./shared-utils
+ln -s ../../shared-plugin/skills/foo ./skills/foo
 ```
 
 這在維持快取系統安全優勢的同時提供了靈活性。
@@ -874,6 +884,56 @@ claude plugin list [options]
 | `--json`      | 輸出為 JSON                                  |    |
 | `--available` | 包含來自 marketplaces 的可用 plugins。需要 `--json` |    |
 | `-h, --help`  | 顯示命令說明                                    |    |
+
+### plugin details
+
+顯示 plugin 的元件清單和預計的 token 成本。輸出列出 plugin 貢獻的所有元件，分組為 Skills（技能和命令）、Agents、Hooks 和 MCP servers，以及它為每個工作階段新增多少 tokens 的估計。
+
+```bash theme={null}
+claude plugin details <name>
+```
+
+**引數：**
+
+* `<name>`：Plugin 名稱或 `plugin-name@marketplace-name`
+
+**選項：**
+
+| 選項           | 描述     | 預設 |
+| :----------- | :----- | :- |
+| `-h, --help` | 顯示命令說明 |    |
+
+輸出為每個元件顯示兩個成本數字：
+
+* **Always-on：** plugin 的列表文字新增到每個工作階段的 tokens，例如技能描述、agent 描述和命令名稱，無論任何元件是否觸發。
+* **On-invoke：** 元件觸發時的成本。按元件顯示，而不是作為 plugin 總計，因為典型的工作階段只會呼叫元件的子集。
+
+此範例顯示具有兩個技能的 plugin 的輸出外觀：
+
+```
+security-guidance 1.2.0
+  Real-time security analysis for Claude Code sessions
+  Source: security-guidance@claude-code-marketplace
+
+Component inventory
+  Skills (2)  scan-dependencies, review-changes
+  Agents (0)
+  Hooks (1)  (harness-only — no model context cost)
+  MCP servers (0)
+
+Projected token cost
+  Always-on:   ~180 tok   added to every session
+
+Per-component (rounded)
+  component            always-on  on-invoke
+  scan-dependencies        ~100      ~2400
+  review-changes            ~80      ~1800
+
+  On-invoke cost is paid each time a skill or agent fires.
+  Token counts are estimates and may differ from actual usage.
+```
+
+always-on 總計是透過您的作用中模型的 `count_tokens` API 計算的。按元件的數字按比例從該總計縮放。如果 API 無法連線，該命令會回退到基於字元的估計。
 
 ### plugin tag
 

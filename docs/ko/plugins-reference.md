@@ -97,7 +97,7 @@ disallowedTools: Write, Edit
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/format-code.sh"
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/format-code.sh"
           }
         ]
       }
@@ -289,7 +289,7 @@ LSP 통합은 다음을 제공합니다:
 [
   {
     "name": "deploy-status",
-    "command": "${CLAUDE_PLUGIN_ROOT}/scripts/poll-deploy.sh ${user_config.api_endpoint}",
+    "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/poll-deploy.sh ${user_config.api_endpoint}",
     "description": "배포 상태 변경"
   },
   {
@@ -317,7 +317,7 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `experimental.monit
 | :----- | :------------------------------------------------------------------------------------------------------------------------------------------ |
 | `when` | monitor가 시작되는 시기를 제어합니다. `"always"`는 세션 시작 및 플러그인 다시 로드 시 시작하며 기본값입니다. `"on-skill-invoke:<skill-name>"`은 이 플러그인의 명명된 skill이 처음 발송될 때 시작합니다. |
 
-`command` 값은 MCP 및 LSP 서버 구성과 동일한 [변수 대체](#environment-variables)를 지원합니다: `${CLAUDE_PLUGIN_ROOT}`, `${CLAUDE_PLUGIN_DATA}`, `${user_config.*}` 및 환경의 모든 `${ENV_VAR}`. 스크립트가 플러그인 자체 디렉토리에서 실행되어야 하는 경우 명령어 앞에 `cd "${CLAUDE_PLUGIN_ROOT}" && `를 붙이세요.
+`command` 값은 MCP 및 LSP 서버 구성과 동일한 [변수 대체](#environment-variables)를 지원합니다: `${CLAUDE_PLUGIN_ROOT}`, `${CLAUDE_PLUGIN_DATA}`, `${CLAUDE_PROJECT_DIR}`, `${user_config.*}` 및 환경의 모든 `${ENV_VAR}`. 스크립트가 플러그인 자체 디렉토리에서 실행되어야 하는 경우 명령어 앞에 `cd "${CLAUDE_PLUGIN_ROOT}" && `를 붙이세요.
 
 세션 중간에 플러그인을 비활성화해도 이미 실행 중인 monitors는 중지되지 않습니다. 세션이 끝날 때 중지됩니다.
 
@@ -540,13 +540,15 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `experimental.monit
 
 ### 환경 변수
 
-Claude Code는 플러그인 경로를 참조하기 위한 두 가지 변수를 제공합니다. 둘 다 skill 콘텐츠, agent 콘텐츠, hook 명령어, monitor 명령어 및 MCP 또는 LSP 서버 구성에 나타나는 모든 곳에서 인라인으로 대체됩니다. 둘 다 hook 프로세스 및 MCP 또는 LSP 서버 서브프로세스에 환경 변수로 내보내집니다.
+Claude Code는 플러그인 경로를 참조하기 위한 세 가지 변수를 제공합니다. 모두 skill 콘텐츠, agent 콘텐츠, hook 명령어, monitor 명령어 및 MCP 또는 LSP 서버 구성에 나타나는 모든 곳에서 인라인으로 대체됩니다. 모두 hook 프로세스 및 MCP 또는 LSP 서버 서브프로세스에 환경 변수로 내보내집니다.
 
-**`${CLAUDE_PLUGIN_ROOT}`**: 플러그인 설치 디렉토리의 절대 경로입니다. 플러그인과 함께 번들로 제공되는 스크립트, 바이너리 및 구성 파일을 참조하는 데 사용하세요. 이 경로는 플러그인이 업데이트될 때 변경됩니다. 이전 버전의 디렉토리는 업데이트 후 약 7일 동안 디스크에 남아 있지만 이를 임시로 취급하고 여기에 상태를 작성하지 마세요.
+**`${CLAUDE_PLUGIN_ROOT}`**: 플러그인 설치 디렉토리의 절대 경로입니다. 플러그인과 함께 번들로 제공되는 스크립트, 바이너리 및 구성 파일을 참조하는 데 사용하세요. hook 명령어에서 [exec form](/ko/hooks#exec-form-and-shell-form)을 `args`와 함께 사용하여 경로가 따옴표 없이 하나의 인수로 전달되도록 하세요. shell-form hook 및 monitor 명령어에서 `"${CLAUDE_PLUGIN_ROOT}"`와 같이 큰따옴표로 감싸세요. 이 경로는 플러그인이 업데이트될 때 변경됩니다. 이전 버전의 디렉토리는 업데이트 후 약 7일 동안 디스크에 남아 있지만 이를 임시로 취급하고 여기에 상태를 작성하지 마세요.
 
 플러그인이 세션 중에 업데이트될 때 hook 명령어, monitors, MCP 서버 및 LSP 서버는 이전 버전의 경로를 계속 사용합니다. `/reload-plugins`를 실행하여 hook, MCP 서버 및 LSP 서버를 새 경로로 전환하세요. monitors는 세션 재시작이 필요합니다.
 
 **`${CLAUDE_PLUGIN_DATA}`**: 업데이트 후에도 유지되는 플러그인 상태를 위한 영구 디렉토리입니다. `node_modules` 또는 Python 가상 환경과 같은 설치된 종속성, 생성된 코드, 캐시 및 플러그인 버전 전체에서 유지되어야 하는 기타 파일에 사용하세요. 이 변수가 처음 참조될 때 디렉토리가 자동으로 생성됩니다.
+
+**`${CLAUDE_PROJECT_DIR}`**: 프로젝트 루트입니다. 이는 hook이 `CLAUDE_PROJECT_DIR` 변수에서 받는 것과 동일한 디렉토리입니다. 프로젝트 로컬 스크립트 또는 구성 파일을 참조하는 데 사용하세요. 공백이 있는 경로를 처리하기 위해 따옴표로 감싸세요 (예: `"${CLAUDE_PROJECT_DIR}/scripts/server.sh"`). MCP 서버는 MCP `roots/list` 요청을 호출할 수도 있으며, 이는 Claude Code가 시작된 디렉토리를 반환합니다.
 
 ```json theme={null}
 {
@@ -556,7 +558,7 @@ Claude Code는 플러그인 경로를 참조하기 위한 두 가지 변수를 �
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/process.sh"
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/process.sh"
           }
         ]
       }
@@ -629,12 +631,20 @@ Claude의 Glob 및 Grep 도구는 검색 중에 고아 버전 디렉토리를 �
 
 설치된 플러그인은 해당 디렉토리 외부의 파일을 참조할 수 없습니다. 플러그인 루트 외부를 순회하는 경로(예: `../shared-utils`)는 설치 후 작동하지 않습니다. 왜냐하면 이러한 외부 파일이 캐시에 복사되지 않기 때문입니다.
 
-### 외부 종속성 작업
+### 마켓플레이스 내에서 심볼릭 링크를 사용하여 파일 공유
 
-플러그인이 디렉토리 외부의 파일에 액세스해야 하는 경우 플러그인 디렉토리 내에서 외부 파일에 대한 심볼릭 링크를 만들 수 있습니다. 심볼릭 링크는 캐시에 보존되며 런타임에 해당 대상으로 확인됩니다. 다음 명령어는 플러그인 디렉토리 내부에서 공유 유틸리티 위치로의 링크를 만듭니다:
+플러그인이 동일한 마켓플레이스의 다른 부분과 파일을 공유해야 하는 경우 플러그인 디렉토리 내에 심볼릭 링크를 만들 수 있습니다. 플러그인이 캐시에 복사될 때 심볼릭 링크가 처리되는 방식은 해당 대상이 어디로 해석되는지에 따라 달라집니다:
+
+* **플러그인 자체 디렉토리 내:** 심볼릭 링크는 캐시에 상대 심볼릭 링크로 보존되므로 런타임에 복사된 대상으로 계속 해석됩니다.
+* **동일한 마켓플레이스 내의 다른 곳:** 심볼릭 링크는 역참조됩니다. 대상의 콘텐츠가 캐시에 복사됩니다. 이를 통해 메타 플러그인의 `skills/` 디렉토리가 마켓플레이스의 다른 플러그인으로 정의된 skills에 링크할 수 있습니다.
+* **마켓플레이스 외부:** 심볼릭 링크는 보안상의 이유로 건너뜁니다. 이는 플러그인이 시스템 경로와 같은 임의의 호스트 파일을 캐시로 가져오는 것을 방지합니다.
+
+`--plugin-dir`으로 설치되거나 로컬 경로에서 설치된 플러그인의 경우 플러그인 자체 디렉토리 내에서 해석되는 심볼릭 링크만 보존됩니다. 다른 모든 것은 건너뜁니다.
+
+다음 명령어는 마켓플레이스 플러그인 내부에서 형제 플러그인으로 정의된 공유 skill로의 링크를 만듭니다. Windows에서는 관리자 권한 명령 프롬프트에서 `mklink /D`를 사용하거나 개발자 모드를 활성화하세요:
 
 ```bash theme={null}
-ln -s /path/to/shared-utils ./shared-utils
+ln -s ../../shared-plugin/skills/foo ./skills/foo
 ```
 
 이는 캐싱 시스템의 보안 이점을 유지하면서 유연성을 제공합니다.
@@ -874,6 +884,56 @@ claude plugin list [options]
 | `--json`      | JSON으로 출력                            |     |
 | `--available` | 마켓플레이스에서 사용 가능한 플러그인 포함. `--json` 필요 |     |
 | `-h, --help`  | 명령어 도움말 표시                           |     |
+
+### plugin details
+
+플러그인의 컴포넌트 인벤토리 및 예상 토큰 비용을 표시합니다. 출력은 플러그인이 기여하는 모든 컴포넌트를 Skills(스킬 및 명령어), Agents, Hooks 및 MCP 서버로 그룹화하여 나열하며, 각 세션에 추가되는 토큰 수의 추정치를 함께 표시합니다.
+
+```bash theme={null}
+claude plugin details <name>
+```
+
+**인수:**
+
+* `<name>`: 플러그인 이름 또는 `plugin-name@marketplace-name`
+
+**옵션:**
+
+| 옵션           | 설명         | 기본값 |
+| :----------- | :--------- | :-- |
+| `-h, --help` | 명령어 도움말 표시 |     |
+
+출력은 각 컴포넌트에 대해 두 가지 비용 수치를 표시합니다:
+
+* **Always-on:** 컴포넌트가 실행되는지 여부와 관계없이 플러그인의 목록 텍스트(예: 스킬 설명, 에이전트 설명, 명령어 이름)에 의해 모든 세션에 추가되는 토큰입니다.
+* **On-invoke:** 컴포넌트가 실행될 때 비용이 드는 토큰입니다. 일반적인 세션에서는 컴포넌트의 일부만 호출되므로 플러그인 전체가 아닌 컴포넌트별로 표시됩니다.
+
+다음 예시는 두 개의 스킬이 있는 플러그인의 출력 모습을 보여줍니다:
+
+```
+security-guidance 1.2.0
+  Real-time security analysis for Claude Code sessions
+  Source: security-guidance@claude-code-marketplace
+
+Component inventory
+  Skills (2)  scan-dependencies, review-changes
+  Agents (0)
+  Hooks (1)  (harness-only — no model context cost)
+  MCP servers (0)
+
+Projected token cost
+  Always-on:   ~180 tok   added to every session
+
+Per-component (rounded)
+  component            always-on  on-invoke
+  scan-dependencies        ~100      ~2400
+  review-changes            ~80      ~1800
+
+  On-invoke cost is paid each time a skill or agent fires.
+  Token counts are estimates and may differ from actual usage.
+```
+
+Always-on 합계는 활성 모델에 대한 `count_tokens` API를 통해 계산됩니다. 컴포넌트별 수치는 해당 합계에서 비례적으로 조정됩니다. API에 연결할 수 없으면 명령어는 문자 기반 추정으로 폴백됩니다.
 
 ### plugin tag
 

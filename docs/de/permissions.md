@@ -28,6 +28,10 @@ Sie können Claude Code's Werkzeugberechtigungen mit `/permissions` anzeigen und
 
 Regeln werden in dieser Reihenfolge ausgewertet: **deny -> ask -> allow**. Die erste übereinstimmende Regel gewinnt, daher haben Deny-Regeln immer Vorrang.
 
+<Note>
+  Berechtigungsregeln werden von Claude Code durchgesetzt, nicht vom Modell. Anweisungen in Ihrem Prompt oder `CLAUDE.md` bestimmen, was Claude versucht zu tun, aber sie ändern nicht, was Claude Code erlaubt. Um Zugriff zu gewähren oder zu widerrufen, verwenden Sie `/permissions`, die hier beschriebenen Regeln, einen [Berechtigungsmodus](/de/permission-modes) oder einen [PreToolUse-Hook](#extend-permissions-with-hooks).
+</Note>
+
 ## Berechtigungsmodi
 
 Claude Code unterstützt mehrere Berechtigungsmodi, die steuern, wie Werkzeuge genehmigt werden. Siehe [Berechtigungsmodi](/de/permission-modes) für den Zeitpunkt der Verwendung jedes Modus. Legen Sie den `defaultMode` in Ihren [Einstellungsdateien](/de/settings#settings-files) fest:
@@ -153,7 +157,7 @@ Ein `cd` in einen Pfad innerhalb Ihres Arbeitsverzeichnisses oder eines [zusätz
 
   * **Bash-Netzwerkwerkzeuge einschränken**: Verwenden Sie Deny-Regeln, um `curl`, `wget` und ähnliche Befehle zu blockieren, verwenden Sie dann das WebFetch-Werkzeug mit `WebFetch(domain:github.com)`-Berechtigung für zulässige Domänen
   * **PreToolUse-Hooks verwenden**: Implementieren Sie einen Hook, der URLs in Bash-Befehlen validiert und nicht zulässige Domänen blockiert
-  * Claude Code über Ihre zulässigen curl-Muster über CLAUDE.md informieren
+  * **CLAUDE.md-Anleitung hinzufügen**: Beschreiben Sie Ihre zulässigen curl-Muster in `CLAUDE.md`. Dies beeinflusst, was Claude versucht, erzwingt aber keine Grenze, daher kombinieren Sie es mit einer der obigen Optionen
 
   Beachten Sie, dass die alleinige Verwendung von WebFetch keinen Netzwerkzugriff verhindert. Wenn Bash zulässig ist, kann Claude immer noch `curl`, `wget` oder andere Werkzeuge verwenden, um auf jede URL zuzugreifen.
 </Warning>
@@ -185,7 +189,7 @@ Claude Code analysiert die PowerShell-AST und überprüft jeden Befehl in einem 
 `Edit`-Regeln gelten für alle integrierten Werkzeuge, die Dateien bearbeiten. Claude versucht nach besten Kräften, `Read`-Regeln auf alle integrierten Werkzeuge anzuwenden, die Dateien lesen, wie Grep und Glob.
 
 <Warning>
-  Read- und Edit-Deny-Regeln gelten für Claude's integrierte Dateiwerkzeuge, nicht für Bash-Unterprozesse. Eine `Read(./.env)`-Deny-Regel blockiert das Read-Werkzeug, verhindert aber nicht `cat .env` in Bash. Für OS-Ebenen-Durchsetzung, die alle Prozesse daran hindert, auf einen Pfad zuzugreifen, [aktivieren Sie die Sandbox](/de/sandboxing).
+  Read- und Edit-Deny-Regeln gelten für Claude's integrierte Dateiwerkzeuge und für Dateibefehle, die Claude Code in Bash erkennt, wie `cat`, `head`, `tail` und `sed`. Sie gelten nicht für beliebige Unterprozesse, die Dateien indirekt lesen oder schreiben, wie ein Python- oder Node-Skript, das Dateien selbst öffnet. Für OS-Ebenen-Durchsetzung, die alle Prozesse daran hindert, auf einen Pfad zuzugreifen, [aktivieren Sie die Sandbox](/de/sandboxing).
 </Warning>
 
 Read- und Edit-Regeln folgen beide der [gitignore](https://git-scm.com/docs/gitignore)-Spezifikation mit vier unterschiedlichen Mustertypen:

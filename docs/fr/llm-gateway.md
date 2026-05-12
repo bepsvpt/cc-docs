@@ -39,11 +39,15 @@ L'absence de transfert d'en-têtes ou la non-préservation des champs du corps p
 
 **En-têtes de requête**
 
-Claude Code inclut les en-têtes suivants sur chaque requête API :
+Claude Code inclut les en-têtes suivants sur les requêtes API :
 
-| En-tête                    | Description                                                                                                                                                                                  |
-| :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `X-Claude-Code-Session-Id` | Un identifiant unique pour la session Claude Code actuelle. Les proxies peuvent utiliser ceci pour agréger toutes les requêtes API d'une seule session sans analyser le corps de la requête. |
+| En-tête                         | Description                                                                                                                                                                                                                                                                                                                            |
+| :------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `X-Claude-Code-Session-Id`      | Un identifiant unique pour la session Claude Code actuelle. Les proxies peuvent utiliser ceci pour agréger toutes les requêtes API d'une seule session sans analyser le corps de la requête.                                                                                                                                           |
+| `X-Claude-Code-Agent-Id`        | Identifiant du sous-agent ou du coéquipier qui a émis la requête. Votre proxy peut utiliser ceci pour attribuer le coût API aux sous-agents parallèles individuels au sein d'une session, sans analyser le corps de la requête. Présent uniquement pour les requêtes émises par un sous-agent ou un coéquipier en cours de traitement. |
+| `X-Claude-Code-Parent-Agent-Id` | Identifiant de l'agent qui a généré l'agent effectuant la requête. Utilisez ceci avec `X-Claude-Code-Agent-Id` pour attribuer les coûts API entre les agents imbriqués dans votre proxy. Présent uniquement lorsque l'agent demandeur a lui-même été généré par un autre agent.                                                        |
+
+Les deux en-têtes d'identifiant d'agent sont des identifiants éphémères par génération, et non des identifiants persistants d'utilisateur ou d'appareil.
 
 Claude Code ajoute également un court bloc d'attribution au début de l'invite système contenant la version du client et une empreinte dérivée de la conversation. L'API Anthropic supprime ce bloc avant le traitement, il n'affecte donc pas la mise en cache des invites de première partie. Si votre passerelle implémente son propre cache d'invite basé sur le corps complet de la requête, définissez [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/fr/env-vars) pour l'omettre.
 
@@ -184,6 +188,17 @@ export ANTHROPIC_VERTEX_PROJECT_ID=your-gcp-project-id
 export CLAUDE_CODE_SKIP_VERTEX_AUTH=1
 export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=us-east5
+```
+
+##### Claude Platform sur AWS via une passerelle
+
+Acheminez vers une passerelle qui transfère au point de terminaison [Claude Platform sur AWS](/fr/claude-platform-on-aws) :
+
+```bash theme={null}
+export ANTHROPIC_AWS_BASE_URL=https://litellm-server:4000/anthropic-aws
+export ANTHROPIC_AWS_WORKSPACE_ID=wrkspc_01ABCDEFGHIJKLMN
+export CLAUDE_CODE_SKIP_ANTHROPIC_AWS_AUTH=1
+export CLAUDE_CODE_USE_ANTHROPIC_AWS=1
 ```
 
 Pour plus d'informations détaillées, consultez la [documentation de LiteLLM](https://docs.litellm.ai/).

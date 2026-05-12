@@ -172,7 +172,7 @@ Claude Code를 사용할 수 있는 몇 가지 방법은 다음과 같습니다:
   <Accordion title="에이전트 팀 실행 및 커스텀 에이전트 구축" icon="users">
     작업의 다른 부분에서 동시에 작동하는 [여러 Claude Code 에이전트](/ko/sub-agents)를 생성합니다. 리드 에이전트가 작업을 조정하고, 하위 작업을 할당하고, 결과를 병합합니다.
 
-    완전히 커스텀 워크플로우의 경우 [Agent SDK](/ko/agent-sdk/overview)를 사용하면 Claude Code의 도구 및 기능으로 구동되는 자신의 에이전트를 구축할 수 있으며, 오케스트레이션, 도구 액세스 및 권한에 대한 완전한 제어가 가능합니다.
+    여러 전체 세션을 병렬로 실행하고 한 화면에서 감시하려면 [백그라운드 에이전트](/ko/agent-view)를 사용합니다. 완전히 커스텀 워크플로우의 경우 [Agent SDK](/ko/agent-sdk/overview)를 사용하면 Claude Code의 도구 및 기능으로 구동되는 자신의 에이전트를 구축할 수 있으며, 오케스트레이션, 도구 액세스 및 권한에 대한 완전한 제어가 가능합니다.
   </Accordion>
 
   <Accordion title="CLI로 파이프, 스크립트 및 자동화" icon="terminal">

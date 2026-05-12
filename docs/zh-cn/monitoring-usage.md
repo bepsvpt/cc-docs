@@ -171,6 +171,8 @@ claude_code.interaction
 | `gen_ai.system`                  | 始终为 `anthropic`。OpenTelemetry GenAI 语义约定                                                            |      |
 | `gen_ai.request.model`           | 与 `model` 相同的值。OpenTelemetry GenAI 语义约定                                                             |      |
 | `query_source`                   | 发出请求的子系统，例如 `repl_main_thread` 或子代理名称                                                               |      |
+| `agent_id`                       | 发出请求的子代理或队友的标识符。在主会话中不存在                                                                            |      |
+| `parent_agent_id`                | 生成此代理的代理的标识符。对于主会话和直接从其生成的代理不存在                                                                     |      |
 | `speed`                          | `fast` 或 `normal`                                                                                   |      |
 | `llm_request.context`            | `interaction`、`tool` 或 `standalone`，取决于父 span                                                       |      |
 | `duration_ms`                    | 包括重试的实际时钟持续时间                                                                                       |      |
@@ -446,6 +448,10 @@ Claude Code 导出以下指标：
 * `query_source`：发出请求的子系统的类别。`"main"`、`"subagent"` 或 `"auxiliary"` 之一
 * `speed`：当请求使用快速模式时为 `"fast"`。否则不存在
 * `effort`：应用于请求的 [努力级别](/zh-CN/model-config#adjust-effort-level)：`"low"`、`"medium"`、`"high"`、`"xhigh"` 或 `"max"`。当模型不支持努力时不存在。
+* `agent.name`：发出请求的子代理类型。内置代理名称和来自官方市场插件的代理按原样出现。其他用户定义的代理名称被替换为 `"custom"`。当请求不是由命名子代理类型发出时不存在。
+* `skill.name`：对请求活跃的技能，由 Skill 工具、`/` 命令设置或由生成的子代理继承。内置、捆绑、用户定义和官方市场插件技能名称按原样出现。第三方插件技能名称被替换为 `"third-party"`。当没有技能活跃时不存在。
+* `plugin.name`：当活跃技能或子代理由插件提供时的拥有插件。官方市场插件名称按原样出现。第三方插件名称被替换为 `"third-party"`。当技能和子代理都没有拥有插件时不存在。
+* `marketplace.name`：拥有插件安装来源的市场。仅为官方市场插件发出。否则不存在。
 
 #### 令牌计数器
 
@@ -459,6 +465,7 @@ Claude Code 导出以下指标：
 * `query_source`：发出请求的子系统的类别。`"main"`、`"subagent"` 或 `"auxiliary"` 之一
 * `speed`：当请求使用快速模式时为 `"fast"`。否则不存在
 * `effort`：应用于请求的 [努力级别](/zh-CN/model-config#adjust-effort-level)。有关详情，请参阅 [成本计数器](#cost-counter)。
+* `agent.name`、`skill.name`、`plugin.name`、`marketplace.name`：请求的技能、插件和代理归属。有关定义和编辑行为，请参阅 [成本计数器](#cost-counter)。
 
 #### 代码编辑工具决策计数器
 
@@ -647,10 +654,10 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * `tool_use_id`：此工具调用的唯一标识符。与传递给 hooks 的 `tool_use_id` 匹配，允许在 OTel 事件和 hook 捕获的数据之间进行关联。
 * `decision`：`"accept"` 或 `"reject"`
 * `source`：决策来源：
-  * `"config"`：基于项目设置、企业托管策略、`--allowedTools` 或 `--disallowedTools` 标志、活跃权限模式或因为工具本身是安全的，自动决策而不提示。
+  * `"config"`：基于项目设置、企业托管策略、`--allowedTools` 或 `--disallowedTools` 标志、活跃权限模式或因为工具本身是安全的，自动决策而不提示。事件不指示这些来源中的哪一个匹配。
   * `"hook"`：`PreToolUse` 或 `PermissionRequest` hook 返回了决策。
-  * `"user_permanent"`：当用户在提示时选择"始终允许"时发出，将规则保存到其个人设置。也为与该保存规则匹配的后续调用发出。视为接受。
-  * `"user_temporary"`：当用户在提示时选择"是"或"是，仅此会话"时发出，不保存规则。也为同一会话中与该会话范围允许匹配的后续调用发出。视为接受。
+  * `"user_permanent"`：当用户在权限提示时选择"是，并且不要再问..."时发出，将允许规则保存到其个人设置。在交互式 CLI 中，仅为该选择本身发出；与保存规则匹配的后续调用发出 `"config"`。在 Agent SDK 或非交互式 `-p` 会话中，初始选择和后续规则匹配都发出 `"user_permanent"`。视为接受。
+  * `"user_temporary"`：当用户在权限提示时选择"是"，或在文件编辑或读取提示上选择"...仅在此会话期间"选项时发出。在交互式 CLI 中，仅为该选择本身发出；与该会话范围允许匹配的后续调用发出 `"config"`。在 Agent SDK 或非交互式 `-p` 会话中，选择和后续匹配都发出 `"user_temporary"`。视为接受。
   * `"user_abort"`：当用户关闭权限提示而不回答时发出。视为拒绝。
   * `"user_reject"`：当用户选择"否"时发出，或调用与其个人设置中的拒绝规则匹配。视为拒绝。
 
@@ -741,6 +748,30 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * `plugin.version`：在市场条目中声明时的插件版本。对于第三方市场，仅当 `OTEL_LOG_TOOL_DETAILS=1` 时才包含
 * `marketplace.name`：插件安装来源的市场。对于第三方市场，仅当 `OTEL_LOG_TOOL_DETAILS=1` 时才包含
 
+#### 插件已加载事件
+
+在会话开始时为每个启用的插件记录一次。使用此事件来清点您的整个队伍中哪些插件处于活跃状态，作为记录安装操作本身的 `plugin_installed` 的补充。
+
+**事件名称**：`claude_code.plugin_loaded`
+
+**属性**：
+
+* 所有 [标准属性](#standard-attributes)
+* `event.name`：`"plugin_loaded"`
+* `event.timestamp`：ISO 8601 时间戳
+* `event.sequence`：单调递增的计数器，用于在会话内排序事件
+* `plugin.name`：插件的名称。对于官方市场外和内置捆绑的插件，除非 `OTEL_LOG_TOOL_DETAILS=1`，否则值为 `"third-party"`
+* `marketplace.name`：插件安装来源的市场（已知时）。在与 `plugin.name` 相同的条件下编辑为 `"third-party"`
+* `plugin.version`：来自插件清单的版本。仅当名称未被编辑且清单声明版本时才包含
+* `plugin.scope`：插件的来源类别：`"official"`、`"org"`、`"user-local"` 或 `"default-bundle"`
+* `enabled_via`：插件如何被启用的方式：`"default-enable"`、`"org-policy"`、`"seed-mount"` 或 `"user-install"`
+* `plugin_id_hash`：插件名称和市场的确定性哈希，仅发送到您配置的导出器。让您计算整个队伍中加载了多少个不同的第三方插件，而无需记录其名称
+* `has_hooks`：插件是否贡献 hooks
+* `has_mcp`：插件是否贡献 MCP 服务器
+* `skill_path_count`：插件声明的技能目录数
+* `command_path_count`：插件声明的命令目录数
+* `agent_path_count`：插件声明的代理目录数
+
 #### 技能激活事件
 
 当调用技能时记录，无论 Claude 是通过 Skill 工具调用它还是您将其作为 `/` 命令运行。
@@ -792,6 +823,25 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * `total_attempts`：进行的总尝试次数
 * `total_retry_duration_ms`：所有尝试的总实际时钟时间
 * `speed`：`"fast"` 或 `"normal"`
+
+#### Hook 已注册事件
+
+在会话开始时为每个配置的 hook 记录一次。使用此事件来清点您的整个队伍中哪些 hooks 处于活跃状态，作为每次执行 `hook_execution_start` 和 `hook_execution_complete` 事件的补充。
+
+**事件名称**：`claude_code.hook_registered`
+
+**属性**：
+
+* 所有 [标准属性](#standard-attributes)
+* `event.name`：`"hook_registered"`
+* `event.timestamp`：ISO 8601 时间戳
+* `event.sequence`：单调递增的计数器，用于在会话内排序事件
+* `hook_event`：hook 事件类型，例如 `"PreToolUse"` 或 `"PostToolUse"`
+* `hook_type`：hook 实现类型：`"command"`、`"prompt"`、`"mcp_tool"`、`"http"` 或 `"agent"`
+* `hook_source`：hook 定义的位置：`"userSettings"`、`"projectSettings"`、`"localSettings"`、`"flagSettings"`、`"policySettings"` 或 `"pluginHook"`
+* `hook_matcher`（当 `OTEL_LOG_TOOL_DETAILS=1` 时）：hook 配置中的匹配器字符串（设置时）
+* `plugin.name`（当 `hook_source` 是 `"pluginHook"` 时）：贡献插件的名称。对于官方市场外和内置捆绑的插件，除非 `OTEL_LOG_TOOL_DETAILS=1`，否则值为 `"third-party"`
+* `plugin_id_hash`（当 `hook_source` 是 `"pluginHook"` 时）：插件名称和市场的确定性哈希，仅发送到您配置的导出器。让您计算不同的贡献插件数而无需记录其名称
 
 #### Hook 执行开始事件
 
@@ -861,12 +911,12 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 
 ### 使用情况监控
 
-| 指标                                                            | 分析机会                       |
-| ------------------------------------------------------------- | -------------------------- |
-| `claude_code.token.usage`                                     | 按 `type`（输入/输出）、用户、团队或模型分解 |
-| `claude_code.session.count`                                   | 跟踪随时间推移的采用和参与度             |
-| `claude_code.lines_of_code.count`                             | 通过跟踪代码添加/删除来衡量生产力          |
-| `claude_code.commit.count` & `claude_code.pull_request.count` | 了解对开发工作流的影响                |
+| 指标                                                            | 分析机会                                                                  |
+| ------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `claude_code.token.usage`                                     | 按 `type`（输入/输出）、用户、团队、模型、`skill.name`、`plugin.name` 或 `agent.name` 分解 |
+| `claude_code.session.count`                                   | 跟踪随时间推移的采用和参与度                                                        |
+| `claude_code.lines_of_code.count`                             | 通过跟踪代码添加/删除来衡量生产力                                                     |
+| `claude_code.commit.count` & `claude_code.pull_request.count` | 了解对开发工作流的影响                                                           |
 
 ### 成本监控
 
@@ -874,6 +924,7 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 
 * 跟踪团队或个人的使用趋势
 * 识别高使用会话以进行优化
+* 通过 `skill.name`、`plugin.name` 和 `agent.name` 属性将支出归属于特定技能、插件或子代理类型
 
 <Note>
   成本指标是近似值。有关官方计费数据，请参阅您的 API 提供商（Claude 控制台、Amazon Bedrock 或 Google Cloud Vertex）。
@@ -909,6 +960,67 @@ Claude Code 在内部重试失败的 API 请求，仅在放弃后才发出单个
 * 按工具类型的错误模式
 
 **性能监控**：跟踪 API 请求持续时间和工具执行时间以识别性能瓶颈。
+
+## 审计安全事件
+
+OpenTelemetry 事件是 Claude Code 活动的审计数据源。每个事件都携带身份属性，将工具调用、MCP 活动和权限决策与触发它们的用户联系起来，OTLP 日志导出器可以将这些事件传递到任何具有 OTLP 接收器的安全信息和事件管理 (SIEM) 平台或转发到您的 SIEM 的 OpenTelemetry Collector。
+
+### 将属性操作归属于用户
+
+每个事件上的 [标准属性](#standard-attributes) 包括已认证用户的身份：`user.email`、`user.account_uuid`、`user.account_id` 和 `organization.id`（使用 Claude 账户登录时），加上安装范围的 `user.id` 和每会话的 `session.id`。
+
+MCP 工具调用、Bash 命令和文件编辑因此归属于启动会话的开发人员。Claude Code 不在单独的服务账户下运行；每个事件上记录的身份是开发人员自己的 Claude 账户。
+
+当 Claude Code 使用直接 API 密钥进行身份验证，或针对 Bedrock、Vertex AI 或 Microsoft Foundry 进行身份验证时，会话中没有 Claude 账户，仅填充 `user.id` 和 `session.id`。在这些部署中，使用 `OTEL_RESOURCE_ATTRIBUTES` 自己附加用户身份，通过 [托管设置](#administrator-configuration) 文件或启动包装器按用户设置：
+
+```bash theme={null}
+export OTEL_RESOURCE_ATTRIBUTES="enduser.id=jdoe@example.com,enduser.directory_id=S-1-5-21-..."
+```
+
+### 审计 MCP 活动
+
+要使用完整的调用详情捕获 MCP 服务器活动，启用日志导出器并设置 `OTEL_LOG_TOOL_DETAILS=1`。每个 MCP 操作然后产生结构化事件，携带服务器名称、工具名称和调用参数以及标准身份属性：
+
+| 事件                      | 它为 MCP 记录的内容                                                                                                                                |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mcp_server_connection` | 服务器连接、断开连接和连接失败，带有 `server_name`、`transport_type`、`server_scope` 和错误详情                                                                      |
+| `tool_result`           | 每个 MCP 工具调用，带有 `tool_name` 和 `mcp_server_scope`，包含 `mcp_server_name` 和 `mcp_tool_name` 的 `tool_parameters` 有效负载，以及包含调用参数的 `tool_input` 有效负载 |
+| `tool_decision`         | 调用是否被允许或拒绝，以及决策是来自配置、hook 还是用户                                                                                                              |
+
+没有 `OTEL_LOG_TOOL_DETAILS`，`tool_result` 事件仍然携带 `tool_name` 和 `mcp_server_scope` 但省略 `mcp_server_name`/`mcp_tool_name` 分解和参数，`mcp_server_connection` 事件省略 `server_name` 和错误消息。
+
+### 将安全问题映射到事件
+
+构建检测规则时，查找您想要监控的信号并查询您的后端以获取相应的事件和属性：
+
+| 信号                | 事件                                        | 关键属性                                                       |
+| ----------------- | ----------------------------------------- | ---------------------------------------------------------- |
+| 工具调用被允许或拒绝，以及通过什么 | `tool_decision`                           | `decision`、`source`、`tool_name`                            |
+| 权限模式升级            | `permission_mode_changed`                 | `from_mode`、`to_mode`、`trigger`                            |
+| 策略 hook 阻止了操作     | `hook_execution_complete`                 | `hook_event`、`num_blocking`                                |
+| 登录、登出和身份验证失败      | `auth`                                    | `action`、`success`、`error_category`                        |
+| MCP 服务器连接或失败      | `mcp_server_connection`                   | `status`、`server_name`、`error_code`                        |
+| 插件已安装及其来源         | `plugin_installed`                        | `plugin.name`、`marketplace.name`、`marketplace.is_official` |
+| 运行的命令和触及的文件       | `tool_result` 带 `OTEL_LOG_TOOL_DETAILS=1` | `tool_parameters`、`tool_input`                             |
+
+Claude Code 仅发出原始事件流。异常检测、基线化、跨会话关联和警报是您的 SIEM 或可观测性后端的责任。
+
+### 将事件发送到 SIEM
+
+将 `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT` 指向您的 SIEM 的 OTLP 接收器，或指向转发到您的 SIEM 的本机摄取 API 的 OpenTelemetry Collector。以下托管设置示例仅导出事件，启用了完整的工具详情用于 MCP 和 Bash 审计：
+
+```json theme={null}
+{
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "OTEL_LOGS_EXPORTER": "otlp",
+    "OTEL_LOG_TOOL_DETAILS": "1",
+    "OTEL_EXPORTER_OTLP_LOGS_PROTOCOL": "http/protobuf",
+    "OTEL_EXPORTER_OTLP_LOGS_ENDPOINT": "https://siem.example.com:4318/v1/logs",
+    "OTEL_EXPORTER_OTLP_HEADERS": "Authorization=Bearer your-siem-token"
+  }
+}
+```
 
 ## 后端考虑事项
 
@@ -953,7 +1065,7 @@ Claude Code 在内部重试失败的 API 请求，仅在放弃后才发出单个
 
 ## 安全和隐私
 
-* OpenTelemetry 导出到您的后端是可选的，需要显式配置。有关 Anthropic 的单独操作遥测以及如何禁用它，请参阅[数据使用](/zh-CN/data-usage#telemetry-services)
+* OpenTelemetry 导出到您的后端是可选的，需要显式配置。有关 Anthropic 的单独操作遥测以及如何禁用它，请参阅 [数据使用](/zh-CN/data-usage#telemetry-services)
 * 原始文件内容和代码片段不包含在指标或事件中。Trace spans 是一个单独的数据路径：请参阅下面的 `OTEL_LOG_TOOL_CONTENT` 项目符号
 * 通过 OAuth 认证时，`user.email` 包含在遥测属性中。如果这对您的组织是一个问题，请与您的遥测后端合作以过滤或编辑此字段
 * 默认情况下不收集用户提示内容。仅记录提示长度。要包含提示内容，请设置 `OTEL_LOG_USER_PROMPTS=1`

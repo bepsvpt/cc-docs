@@ -172,7 +172,7 @@ Berikut adalah beberapa cara Anda dapat menggunakan Claude Code:
   <Accordion title="Jalankan tim agen dan bangun agen khusus" icon="users">
     Spawn [beberapa agen Claude Code](/id/sub-agents) yang bekerja pada bagian berbeda dari tugas secara bersamaan. Agen utama mengoordinasikan pekerjaan, menetapkan subtask, dan menggabungkan hasil.
 
-    Untuk alur kerja yang sepenuhnya khusus, [Agent SDK](/id/agent-sdk/overview) memungkinkan Anda membangun agen Anda sendiri yang didukung oleh alat dan kemampuan Claude Code, dengan kontrol penuh atas orkestrasi, akses alat, dan izin.
+    Untuk menjalankan beberapa sesi lengkap secara paralel dan menontonnya dari satu layar, gunakan [agen latar belakang](/id/agent-view). Untuk alur kerja yang sepenuhnya khusus, [Agent SDK](/id/agent-sdk/overview) memungkinkan Anda membangun agen Anda sendiri yang didukung oleh alat dan kemampuan Claude Code, dengan kontrol penuh atas orkestrasi, akses alat, dan izin.
   </Accordion>
 
   <Accordion title="Pipa, skrip, dan otomatisasi dengan CLI" icon="terminal">

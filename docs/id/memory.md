@@ -26,7 +26,7 @@ Claude Code memiliki dua sistem memori yang saling melengkapi. Keduanya dimuat d
 | :------------------------ | :------------------------------------------------ | :---------------------------------------------------------------- |
 | **Siapa yang menulisnya** | Anda                                              | Claude                                                            |
 | **Apa yang dikandungnya** | Instruksi dan aturan                              | Pembelajaran dan pola                                             |
-| **Cakupan**               | Proyek, pengguna, atau organisasi                 | Per working tree                                                  |
+| **Cakupan**               | Proyek, pengguna, atau organisasi                 | Per repositori, dibagikan di seluruh worktrees                    |
 | **Dimuat ke dalam**       | Setiap sesi                                       | Setiap sesi (200 baris pertama atau 25KB)                         |
 | **Gunakan untuk**         | Standar pengkodean, alur kerja, arsitektur proyek | Perintah build, wawasan debugging, preferensi yang Claude temukan |
 
@@ -272,7 +272,23 @@ Organisasi dapat menerapkan CLAUDE.md yang dikelola secara terpusat yang berlaku
   </Step>
 </Steps>
 
-CLAUDE.md yang dikelola dan [pengaturan terkelola](/id/settings#settings-files) melayani tujuan yang berbeda. Gunakan pengaturan untuk penegakan teknis dan CLAUDE.md untuk panduan perilaku:
+Kunci `claudeMd` memungkinkan Anda menempatkan konten CLAUDE.md terkelola langsung di dalam `managed-settings.json` alih-alih menerapkan file terpisah.
+
+**Cakupan**: setiap sesi Claude Code di mesin, di setiap repositori. Untuk panduan khusus repositori, komit CLAUDE.md proyek sebagai gantinya.
+
+**Prioritas**: sama dengan file CLAUDE.md terkelola. Dimuat sebelum CLAUDE.md pengguna dan proyek.
+
+**Di mana itu dihormati**: pengaturan terkelola dan kebijakan saja. Menetapkan `claudeMd` dalam pengaturan pengguna, proyek, atau lokal tidak berpengaruh.
+
+Contoh di bawah menambahkan instruksi perilaku langsung dalam file pengaturan terkelola:
+
+```json theme={null}
+{
+  "claudeMd": "Always run `make lint` before committing.\nNever push directly to main."
+}
+```
+
+CLAUDE.md terkelola dan [pengaturan terkelola](/id/settings#settings-files) melayani tujuan yang berbeda. Gunakan pengaturan untuk penegakan teknis dan CLAUDE.md untuk panduan perilaku:
 
 | Kekhawatiran                                    | Konfigurasi dalam                                             |
 | :---------------------------------------------- | :------------------------------------------------------------ |

@@ -165,30 +165,32 @@ Ogni span porta gli [attributi standard](#standard-attributes) più un attributo
 
 **`claude_code.llm_request`**
 
-| Attributo                        | Descrizione                                                                                                             | Controllato da |
-| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | -------------- |
-| `model`                          | Identificatore del modello                                                                                              |                |
-| `gen_ai.system`                  | Sempre `anthropic`. Convenzione semantica OpenTelemetry GenAI                                                           |                |
-| `gen_ai.request.model`           | Stesso valore di `model`. Convenzione semantica OpenTelemetry GenAI                                                     |                |
-| `query_source`                   | Sottosistema che ha emesso la richiesta, come `repl_main_thread` o un nome di subagent                                  |                |
-| `speed`                          | `fast` o `normal`                                                                                                       |                |
-| `llm_request.context`            | `interaction`, `tool`, o `standalone` a seconda dello span genitore                                                     |                |
-| `duration_ms`                    | Durata wall-clock inclusi i tentativi                                                                                   |                |
-| `ttft_ms`                        | Tempo al primo token in millisecondi                                                                                    |                |
-| `input_tokens`                   | Conteggio dei token di input dal blocco di utilizzo dell'API                                                            |                |
-| `output_tokens`                  | Conteggio dei token di output                                                                                           |                |
-| `cache_read_tokens`              | Token letti dalla cache del prompt                                                                                      |                |
-| `cache_creation_tokens`          | Token scritti nella cache del prompt                                                                                    |                |
-| `request_id`                     | ID della richiesta API Anthropic dall'intestazione della risposta `request-id`                                          |                |
-| `gen_ai.response.id`             | Stesso valore di `request_id`. Convenzione semantica OpenTelemetry GenAI                                                |                |
-| `client_request_id`              | `x-client-request-id` generato dal client del tentativo finale                                                          |                |
-| `attempt`                        | Tentativi totali effettuati per questa richiesta                                                                        |                |
-| `success`                        | `true` o `false`                                                                                                        |                |
-| `status_code`                    | Codice di stato HTTP quando la richiesta non è riuscita                                                                 |                |
-| `error`                          | Messaggio di errore quando la richiesta non è riuscita                                                                  |                |
-| `response.has_tool_call`         | `true` quando la risposta conteneva blocchi di tool-use                                                                 |                |
-| `stop_reason`                    | `stop_reason` della risposta API, come `end_turn`, `tool_use`, `max_tokens`, `stop_sequence`, `pause_turn`, o `refusal` |                |
-| `gen_ai.response.finish_reasons` | Stesso valore di `stop_reason`, racchiuso in un array di stringhe. Convenzione semantica OpenTelemetry GenAI            |                |
+| Attributo                        | Descrizione                                                                                                                          | Controllato da |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | -------------- |
+| `model`                          | Identificatore del modello                                                                                                           |                |
+| `gen_ai.system`                  | Sempre `anthropic`. Convenzione semantica OpenTelemetry GenAI                                                                        |                |
+| `gen_ai.request.model`           | Stesso valore di `model`. Convenzione semantica OpenTelemetry GenAI                                                                  |                |
+| `query_source`                   | Sottosistema che ha emesso la richiesta, come `repl_main_thread` o un nome di subagent                                               |                |
+| `agent_id`                       | Identificatore del subagent o del collega che ha emesso la richiesta. Assente nella sessione principale                              |                |
+| `parent_agent_id`                | Identificatore dell'agente che ha generato questo. Assente per la sessione principale e per gli agenti generati direttamente da essa |                |
+| `speed`                          | `fast` o `normal`                                                                                                                    |                |
+| `llm_request.context`            | `interaction`, `tool`, o `standalone` a seconda dello span genitore                                                                  |                |
+| `duration_ms`                    | Durata wall-clock inclusi i tentativi                                                                                                |                |
+| `ttft_ms`                        | Tempo al primo token in millisecondi                                                                                                 |                |
+| `input_tokens`                   | Conteggio dei token di input dal blocco di utilizzo dell'API                                                                         |                |
+| `output_tokens`                  | Conteggio dei token di output                                                                                                        |                |
+| `cache_read_tokens`              | Token letti dalla cache del prompt                                                                                                   |                |
+| `cache_creation_tokens`          | Token scritti nella cache del prompt                                                                                                 |                |
+| `request_id`                     | ID della richiesta API Anthropic dall'intestazione della risposta `request-id`                                                       |                |
+| `gen_ai.response.id`             | Stesso valore di `request_id`. Convenzione semantica OpenTelemetry GenAI                                                             |                |
+| `client_request_id`              | `x-client-request-id` generato dal client del tentativo finale                                                                       |                |
+| `attempt`                        | Tentativi totali effettuati per questa richiesta                                                                                     |                |
+| `success`                        | `true` o `false`                                                                                                                     |                |
+| `status_code`                    | Codice di stato HTTP quando la richiesta non è riuscita                                                                              |                |
+| `error`                          | Messaggio di errore quando la richiesta non è riuscita                                                                               |                |
+| `response.has_tool_call`         | `true` quando la risposta conteneva blocchi di tool-use                                                                              |                |
+| `stop_reason`                    | `stop_reason` della risposta API, come `end_turn`, `tool_use`, `max_tokens`, `stop_sequence`, `pause_turn`, o `refusal`              |                |
+| `gen_ai.response.finish_reasons` | Stesso valore di `stop_reason`, racchiuso in un array di stringhe. Convenzione semantica OpenTelemetry GenAI                         |                |
 
 Ogni tentativo di ripetizione viene anche registrato come evento di span `gen_ai.request.attempt` con attributi `attempt` e `client_request_id`.
 
@@ -446,6 +448,10 @@ Incrementato dopo ogni richiesta API.
 * `query_source`: Categoria del sottosistema che ha emesso la richiesta. Uno di `"main"`, `"subagent"`, o `"auxiliary"`
 * `speed`: `"fast"` quando la richiesta ha utilizzato la modalità veloce. Assente altrimenti
 * `effort`: [Livello di sforzo](/it/model-config#adjust-effort-level) applicato alla richiesta: `"low"`, `"medium"`, `"high"`, `"xhigh"`, o `"max"`. Assente quando il modello non supporta lo sforzo.
+* `agent.name`: Tipo di subagent che ha emesso la richiesta. I nomi degli agenti incorporati e i nomi degli agenti dai plugin del marketplace ufficiale vengono visualizzati così come sono. Gli altri nomi degli agenti definiti dall'utente vengono sostituiti con `"custom"`. Assente quando la richiesta non è stata emessa da un tipo di subagent denominato.
+* `skill.name`: Skill attiva per la richiesta, impostata dallo strumento Skill, da un comando `/`, o ereditata da un subagent generato. I nomi delle skill incorporate, in bundle, definite dall'utente e dei plugin del marketplace ufficiale vengono visualizzati così come sono. I nomi delle skill dei plugin di terze parti vengono sostituiti con `"third-party"`. Assente quando nessuna skill è attiva.
+* `plugin.name`: Plugin proprietario quando la skill attiva o il subagent è fornito da un plugin. I nomi dei plugin del marketplace ufficiale vengono visualizzati così come sono. I nomi dei plugin di terze parti vengono sostituiti con `"third-party"`. Assente quando né la skill né il subagent hanno un plugin proprietario.
+* `marketplace.name`: Marketplace da cui è stato installato il plugin proprietario. Emesso solo per i plugin del marketplace ufficiale. Assente altrimenti.
 
 #### Contatore di token
 
@@ -459,6 +465,7 @@ Incrementato dopo ogni richiesta API.
 * `query_source`: Categoria del sottosistema che ha emesso la richiesta. Uno di `"main"`, `"subagent"`, o `"auxiliary"`
 * `speed`: `"fast"` quando la richiesta ha utilizzato la modalità veloce. Assente altrimenti
 * `effort`: [Livello di sforzo](/it/model-config#adjust-effort-level) applicato alla richiesta. Vedi [Contatore di costo](#cost-counter) per i dettagli.
+* `agent.name`, `skill.name`, `plugin.name`, `marketplace.name`: Attribuzione di skill, plugin e agente per la richiesta. Vedi [Contatore di costo](#cost-counter) per le definizioni e il comportamento di redazione.
 
 #### Contatore di decisione dello strumento di modifica del codice
 
@@ -647,10 +654,10 @@ Registrato quando viene presa una decisione di autorizzazione dello strumento (a
 * `tool_use_id`: Identificatore univoco per questa invocazione dello strumento. Corrisponde al `tool_use_id` passato agli hooks, consentendo la correlazione tra gli eventi OTel e i dati acquisiti dagli hooks.
 * `decision`: `"accept"` o `"reject"`
 * `source`: Fonte della decisione:
-  * `"config"`: Deciso automaticamente senza richiedere, in base alle impostazioni del progetto, alla politica gestita dall'azienda, ai flag `--allowedTools` o `--disallowedTools`, alla modalità di autorizzazione attiva, o perché lo strumento è intrinsecamente sicuro.
+  * `"config"`: Deciso automaticamente senza richiedere, in base alle impostazioni del progetto, alle regole di autorizzazione nelle impostazioni personali dell'utente, alla politica gestita dall'azienda, ai flag `--allowedTools` o `--disallowedTools`, alla modalità di autorizzazione attiva, a una concessione con ambito di sessione da un prompt precedente nella stessa sessione CLI interattiva, o perché lo strumento è intrinsecamente sicuro. L'evento non indica quale di queste fonti corrisponde.
   * `"hook"`: Un hook `PreToolUse` o `PermissionRequest` ha restituito la decisione.
-  * `"user_permanent"`: Emesso quando l'utente ha scelto "Consenti sempre" quando richiesto, salvando una regola alle sue impostazioni personali. Emesso anche per le chiamate successive che corrispondono a quella regola salvata. Trattato come un'accettazione.
-  * `"user_temporary"`: Emesso quando l'utente ha scelto "Sì" o "Sì, per questa sessione" quando richiesto, senza salvare una regola. Emesso anche per le chiamate successive nella stessa sessione che corrispondono a quel permesso con ambito di sessione. Trattato come un'accettazione.
+  * `"user_permanent"`: Emesso quando l'utente ha scelto "Sì, e non chiedere di nuovo per ..." in un prompt di autorizzazione, il che salva una regola di autorizzazione alle sue impostazioni personali. Nella CLI interattiva questo viene emesso solo per quella scelta stessa; le chiamate successive che corrispondono alla regola salvata emettono `"config"` invece. Nelle sessioni Agent SDK o non interattive `-p`, sia la scelta iniziale che le corrispondenze di regole successive emettono `"user_permanent"`. Trattato come un'accettazione.
+  * `"user_temporary"`: Emesso quando l'utente ha scelto "Sì" in un prompt di autorizzazione per un'approvazione una tantum, o ha scelto una delle opzioni "... durante questa sessione" in un prompt di modifica o lettura di file. Nella CLI interattiva questo viene emesso solo per la scelta stessa; le chiamate successive consentite da quella concessione con ambito di sessione emettono `"config"` invece. Nelle sessioni Agent SDK o non interattive `-p`, sia la scelta che le corrispondenze successive emettono `"user_temporary"`. Trattato come un'accettazione.
   * `"user_abort"`: Emesso quando l'utente ha chiuso il prompt di autorizzazione senza rispondere. Trattato come un rifiuto.
   * `"user_reject"`: Emesso quando l'utente ha scelto "No" quando richiesto, o una chiamata ha corrisposto a una regola di negazione nelle sue impostazioni personali. Trattato come un rifiuto.
 
@@ -741,6 +748,30 @@ Registrato quando un plugin finisce di installarsi, sia dal comando CLI `claude 
 * `plugin.version`: Versione del plugin quando dichiarata nella voce del marketplace. Per i marketplace di terze parti questo è incluso solo quando `OTEL_LOG_TOOL_DETAILS=1`
 * `marketplace.name`: Marketplace da cui è stato installato il plugin. Per i marketplace di terze parti questo è incluso solo quando `OTEL_LOG_TOOL_DETAILS=1`
 
+#### Evento di plugin caricato
+
+Registrato una volta per ogni plugin abilitato all'avvio della sessione. Usa questo evento per inventariare quali plugin sono attivi nella tua flotta, come complemento a `plugin_installed` che registra l'azione di installazione stessa.
+
+**Nome evento**: `claude_code.plugin_loaded`
+
+**Attributi**:
+
+* Tutti gli [attributi standard](#standard-attributes)
+* `event.name`: `"plugin_loaded"`
+* `event.timestamp`: Timestamp ISO 8601
+* `event.sequence`: Contatore monotonicamente crescente per ordinare gli eventi all'interno di una sessione
+* `plugin.name`: Nome del plugin. Per i plugin al di fuori del marketplace ufficiale e del bundle incorporato il valore è `"third-party"` a meno che `OTEL_LOG_TOOL_DETAILS=1`
+* `marketplace.name`: Marketplace da cui è stato installato il plugin, quando noto. Redatto a `"third-party"` nella stessa condizione di `plugin.name`
+* `plugin.version`: Versione dal manifesto del plugin. Incluso solo quando il nome non è redatto e il manifesto dichiara una versione
+* `plugin.scope`: Categoria di provenienza per il plugin: `"official"`, `"org"`, `"user-local"`, o `"default-bundle"`
+* `enabled_via`: Come il plugin è stato abilitato: `"default-enable"`, `"org-policy"`, `"seed-mount"`, o `"user-install"`
+* `plugin_id_hash`: Hash deterministico del nome del plugin e del marketplace, inviato solo al tuo esportatore configurato. Ti consente di contare quanti plugin di terze parti distinti sono caricati nella tua flotta senza registrare i loro nomi
+* `has_hooks`: Se il plugin contribuisce hooks
+* `has_mcp`: Se il plugin contribuisce server MCP
+* `skill_path_count`: Numero di directory di skill che il plugin dichiara
+* `command_path_count`: Numero di directory di comandi che il plugin dichiara
+* `agent_path_count`: Numero di directory di agenti che il plugin dichiara
+
 #### Evento di skill attivata
 
 Registrato quando una skill viene invocata, sia che Claude la chiami tramite lo strumento Skill sia che tu la esegua come comando `/`.
@@ -792,6 +823,25 @@ Registrato una volta quando una richiesta API non riesce dopo più di un tentati
 * `total_attempts`: Numero totale di tentativi effettuati
 * `total_retry_duration_ms`: Tempo wall-clock totale tra tutti i tentativi
 * `speed`: `"fast"` o `"normal"`
+
+#### Evento di hook registrato
+
+Registrato una volta per ogni hook configurato all'avvio della sessione. Usa questo evento per inventariare quali hook sono attivi nella tua flotta, come complemento agli eventi per esecuzione `hook_execution_start` e `hook_execution_complete`.
+
+**Nome evento**: `claude_code.hook_registered`
+
+**Attributi**:
+
+* Tutti gli [attributi standard](#standard-attributes)
+* `event.name`: `"hook_registered"`
+* `event.timestamp`: Timestamp ISO 8601
+* `event.sequence`: Contatore monotonicamente crescente per ordinare gli eventi all'interno di una sessione
+* `hook_event`: Tipo di evento hook, come `"PreToolUse"` o `"PostToolUse"`
+* `hook_type`: Tipo di implementazione dell'hook: `"command"`, `"prompt"`, `"mcp_tool"`, `"http"`, o `"agent"`
+* `hook_source`: Dove è definito l'hook: `"userSettings"`, `"projectSettings"`, `"localSettings"`, `"flagSettings"`, `"policySettings"`, o `"pluginHook"`
+* `hook_matcher` (quando `OTEL_LOG_TOOL_DETAILS=1`): La stringa matcher dalla configurazione dell'hook, quando è impostata
+* `plugin.name` (quando `hook_source` è `"pluginHook"`): Nome del plugin che contribuisce. Per i plugin al di fuori del marketplace ufficiale e del bundle incorporato il valore è `"third-party"` a meno che `OTEL_LOG_TOOL_DETAILS=1`
+* `plugin_id_hash` (quando `hook_source` è `"pluginHook"`): Hash deterministico del nome del plugin e del marketplace, inviato solo al tuo esportatore configurato. Ti consente di contare i plugin che contribuiscono distinti senza registrare i loro nomi
 
 #### Evento di inizio esecuzione dell'hook
 
@@ -861,12 +911,12 @@ Le metriche e gli eventi esportati supportano una gamma di analisi:
 
 ### Monitoraggio dell'utilizzo
 
-| Metrica                                                       | Opportunità di analisi                                            |
-| ------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `claude_code.token.usage`                                     | Suddividi per `type` (input/output), utente, team o modello       |
-| `claude_code.session.count`                                   | Traccia l'adozione e l'engagement nel tempo                       |
-| `claude_code.lines_of_code.count`                             | Misura la produttività tracciando le aggiunte/rimozioni di codice |
-| `claude_code.commit.count` & `claude_code.pull_request.count` | Comprendi l'impatto sui flussi di lavoro di sviluppo              |
+| Metrica                                                       | Opportunità di analisi                                                                                  |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `claude_code.token.usage`                                     | Suddividi per `type` (input/output), utente, team, modello, `skill.name`, `plugin.name`, o `agent.name` |
+| `claude_code.session.count`                                   | Traccia l'adozione e l'engagement nel tempo                                                             |
+| `claude_code.lines_of_code.count`                             | Misura la produttività tracciando le aggiunte/rimozioni di codice                                       |
+| `claude_code.commit.count` & `claude_code.pull_request.count` | Comprendi l'impatto sui flussi di lavoro di sviluppo                                                    |
 
 ### Monitoraggio dei costi
 
@@ -874,6 +924,7 @@ La metrica `claude_code.cost.usage` aiuta con:
 
 * Tracciare i trend di utilizzo tra team o individui
 * Identificare sessioni ad alto utilizzo per l'ottimizzazione
+* Attribuire la spesa a skill, plugin, o tipi di subagent specifici tramite gli attributi `skill.name`, `plugin.name`, e `agent.name`
 
 <Note>
   Le metriche di costo sono approssimazioni. Per i dati di fatturazione ufficiali, consulta il tuo provider API (Claude Console, Amazon Bedrock, o Google Cloud Vertex).

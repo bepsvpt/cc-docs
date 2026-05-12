@@ -6,11 +6,24 @@
 
 > Panduan langkah demi langkah untuk menjelajahi basis kode, memperbaiki bug, refactoring, pengujian, dan tugas sehari-hari lainnya dengan Claude Code.
 
-Halaman ini mencakup alur kerja praktis untuk pengembangan sehari-hari: menjelajahi kode yang tidak familiar, debugging, refactoring, menulis tes, membuat PR, dan mengelola sesi. Setiap bagian mencakup contoh prompt yang dapat Anda sesuaikan dengan proyek Anda sendiri. Untuk pola dan tips tingkat yang lebih tinggi, lihat [Best practices](/id/best-practices).
+Halaman ini mengumpulkan resep singkat untuk pengembangan sehari-hari. Untuk panduan tingkat yang lebih tinggi tentang prompting dan manajemen konteks, lihat [Best practices](/id/best-practices).
 
-## Pahami basis kode baru
+Halaman ini mencakup:
 
-### Dapatkan gambaran umum basis kode dengan cepat
+* [Resep prompt](#prompt-recipes) untuk menjelajahi kode, memperbaiki bug, refactoring, pengujian, PR, dan dokumentasi
+* [Lanjutkan percakapan sebelumnya](#resume-previous-conversations) sehingga tugas dapat berlangsung selama beberapa sesi
+* [Jalankan sesi paralel dengan worktrees](#run-parallel-sessions-with-worktrees) sehingga edit bersamaan tidak bertabrakan
+* [Rencanakan sebelum mengedit](#plan-before-editing) untuk meninjau perubahan sebelum menyentuh disk
+* [Delegasikan penelitian ke subagents](#delegate-research-to-subagents) untuk menjaga konteks utama Anda tetap bersih
+* [Pipe Claude ke dalam skrip](#pipe-claude-into-scripts) untuk CI dan pemrosesan batch
+
+## Resep prompt
+
+Ini adalah pola prompt untuk tugas sehari-hari seperti menjelajahi kode yang tidak familiar, debugging, refactoring, menulis tes, dan membuat PR. Masing-masing bekerja di permukaan Claude Code apa pun; sesuaikan wording dengan proyek Anda.
+
+### Pahami basis kode baru
+
+#### Dapatkan gambaran umum basis kode dengan cepat
 
 Misalkan Anda baru saja bergabung dengan proyek baru dan perlu memahami strukturnya dengan cepat.
 
@@ -56,7 +69,7 @@ Misalkan Anda baru saja bergabung dengan proyek baru dan perlu memahami struktur
   * Minta glosarium istilah khusus proyek
 </Tip>
 
-### Temukan kode yang relevan
+#### Temukan kode yang relevan
 
 Misalkan Anda perlu menemukan kode yang terkait dengan fitur atau fungsionalitas tertentu.
 
@@ -90,7 +103,7 @@ Misalkan Anda perlu menemukan kode yang terkait dengan fitur atau fungsionalitas
 
 ***
 
-## Perbaiki bug secara efisien
+### Perbaiki bug secara efisien
 
 Misalkan Anda telah mengalami pesan kesalahan dan perlu menemukan dan memperbaiki sumbernya.
 
@@ -124,7 +137,7 @@ Misalkan Anda telah mengalami pesan kesalahan dan perlu menemukan dan memperbaik
 
 ***
 
-## Refactor kode
+### Refactor kode
 
 Misalkan Anda perlu memperbarui kode lama untuk menggunakan pola dan praktik modern.
 
@@ -164,140 +177,7 @@ Misalkan Anda perlu memperbarui kode lama untuk menggunakan pola dan praktik mod
 
 ***
 
-## Gunakan subagents khusus
-
-Misalkan Anda ingin menggunakan subagents AI khusus untuk menangani tugas spesifik dengan lebih efektif.
-
-<Steps>
-  <Step title="Lihat subagents yang tersedia">
-    ```text theme={null}
-    /agents
-    ```
-
-    Ini menampilkan semua subagents yang tersedia dan memungkinkan Anda membuat yang baru.
-  </Step>
-
-  <Step title="Gunakan subagents secara otomatis">
-    Claude Code secara otomatis mendelegasikan tugas yang sesuai ke subagents khusus:
-
-    ```text theme={null}
-    review my recent code changes for security issues
-    ```
-
-    ```text theme={null}
-    run all tests and fix any failures
-    ```
-  </Step>
-
-  <Step title="Secara eksplisit minta subagents spesifik">
-    ```text theme={null}
-    use the code-reviewer subagent to check the auth module
-    ```
-
-    ```text theme={null}
-    have the debugger subagent investigate why users can't log in
-    ```
-  </Step>
-
-  <Step title="Buat subagents kustom untuk alur kerja Anda">
-    ```text theme={null}
-    /agents
-    ```
-
-    Kemudian pilih "Create New subagent" dan ikuti prompt untuk menentukan:
-
-    * Pengenal unik yang menggambarkan tujuan subagent (misalnya, `code-reviewer`, `api-designer`).
-    * Kapan Claude harus menggunakan agen ini
-    * Alat mana yang dapat diaksesnya
-    * Prompt sistem yang menggambarkan peran dan perilaku agen
-  </Step>
-</Steps>
-
-<Tip>
-  Tips:
-
-  * Buat subagents khusus proyek di `.claude/agents/` untuk berbagi tim
-  * Gunakan bidang `description` deskriptif untuk mengaktifkan delegasi otomatis
-  * Batasi akses alat ke apa yang benar-benar dibutuhkan setiap subagent
-  * Periksa [dokumentasi subagents](/id/sub-agents) untuk contoh terperinci
-</Tip>
-
-***
-
-## Gunakan Plan Mode untuk analisis kode yang aman
-
-Plan Mode menginstruksikan Claude untuk membuat rencana dengan menganalisis basis kode dengan operasi read-only, sempurna untuk menjelajahi basis kode, merencanakan perubahan kompleks, atau meninjau kode dengan aman. Dalam Plan Mode, Claude menggunakan [`AskUserQuestion`](/id/tools-reference) untuk mengumpulkan persyaratan dan memperjelas tujuan Anda sebelum mengusulkan rencana.
-
-### Kapan menggunakan Plan Mode
-
-* **Implementasi multi-langkah**: Ketika fitur Anda memerlukan pengeditan ke banyak file
-* **Eksplorasi kode**: Ketika Anda ingin meneliti basis kode secara menyeluruh sebelum mengubah apa pun
-* **Pengembangan interaktif**: Ketika Anda ingin mengulangi arah dengan Claude
-
-### Cara menggunakan Plan Mode
-
-**Aktifkan Plan Mode selama sesi**
-
-Anda dapat beralih ke Plan Mode selama sesi menggunakan **Shift+Tab** untuk bersiklus melalui mode izin.
-
-Jika Anda berada dalam Normal Mode, **Shift+Tab** pertama kali beralih ke Auto-Accept Mode, ditunjukkan oleh `⏵⏵ accept edits on` di bagian bawah terminal. **Shift+Tab** berikutnya akan beralih ke Plan Mode, ditunjukkan oleh `⏸ plan mode on`.
-
-**Mulai sesi baru dalam Plan Mode**
-
-Untuk memulai sesi baru dalam Plan Mode, gunakan flag `--permission-mode plan`:
-
-```bash theme={null}
-claude --permission-mode plan
-```
-
-**Jalankan kueri "headless" dalam Plan Mode**
-
-Anda juga dapat menjalankan kueri dalam Plan Mode secara langsung dengan `-p` (yaitu, dalam ["headless mode"](/id/headless)):
-
-```bash theme={null}
-claude --permission-mode plan -p "Analyze the authentication system and suggest improvements"
-```
-
-### Contoh: Merencanakan refactor kompleks
-
-```bash theme={null}
-claude --permission-mode plan
-```
-
-```text theme={null}
-I need to refactor our authentication system to use OAuth2. Create a detailed migration plan.
-```
-
-Claude menganalisis implementasi saat ini dan membuat rencana komprehensif. Perbaiki dengan tindak lanjut:
-
-```text theme={null}
-What about backward compatibility?
-```
-
-```text theme={null}
-How should we handle database migration?
-```
-
-<Tip>Tekan `Ctrl+G` untuk membuka rencana di editor teks default Anda, di mana Anda dapat mengeditnya secara langsung sebelum Claude melanjutkan.</Tip>
-
-Ketika Anda menerima rencana, Claude secara otomatis memberi nama sesi dari konten rencana. Nama muncul di bilah prompt dan di pemilih sesi. Jika Anda telah menetapkan nama dengan `--name` atau `/rename`, menerima rencana tidak akan menimpanya.
-
-### Konfigurasikan Plan Mode sebagai default
-
-```json theme={null}
-// .claude/settings.json
-{
-  "permissions": {
-    "defaultMode": "plan"
-  }
-}
-```
-
-Lihat [dokumentasi settings](/id/settings#available-settings) untuk opsi konfigurasi lainnya.
-
-***
-
-## Bekerja dengan tes
+### Bekerja dengan tes
 
 Misalkan Anda perlu menambahkan tes untuk kode yang tidak tercakup.
 
@@ -333,7 +213,7 @@ Untuk cakupan komprehensif, minta Claude untuk mengidentifikasi kasus tepi yang 
 
 ***
 
-## Buat pull request
+### Buat pull request
 
 Anda dapat membuat pull request dengan meminta Claude secara langsung ("create a pr for my changes"), atau memandu Claude melaluinya langkah demi langkah:
 
@@ -357,13 +237,13 @@ Anda dapat membuat pull request dengan meminta Claude secara langsung ("create a
   </Step>
 </Steps>
 
-Ketika Anda membuat PR menggunakan `gh pr create`, sesi secara otomatis ditautkan ke PR tersebut. Anda dapat melanjutkannya nanti dengan `claude --from-pr <number>`.
+Ketika Anda membuat PR menggunakan `gh pr create`, sesi secara otomatis ditautkan ke PR tersebut. Untuk kembali ke sana nanti, jalankan `claude --from-pr <number>` atau tempel URL PR ke dalam [pemilih `/resume`](/id/sessions#use-the-session-picker).
 
 <Tip>
   Tinjau PR yang dihasilkan Claude sebelum mengirimkan dan minta Claude untuk menyoroti risiko atau pertimbangan potensial.
 </Tip>
 
-## Tangani dokumentasi
+### Tangani dokumentasi
 
 Misalkan Anda perlu menambah atau memperbarui dokumentasi untuk kode Anda.
 
@@ -403,7 +283,7 @@ Misalkan Anda perlu menambah atau memperbarui dokumentasi untuk kode Anda.
 
 ***
 
-## Bekerja dalam catatan dan folder non-kode
+### Bekerja dalam catatan dan folder non-kode
 
 Claude Code bekerja di direktori apa pun. Jalankan di dalam vault catatan, folder dokumentasi, atau koleksi file markdown apa pun untuk mencari, mengedit, dan mengatur ulang konten dengan cara yang sama seperti Anda melakukan kode.
 
@@ -411,7 +291,7 @@ Direktori `.claude/` dan `CLAUDE.md` duduk bersama direktori konfigurasi alat la
 
 ***
 
-## Bekerja dengan gambar
+### Bekerja dengan gambar
 
 Misalkan Anda perlu bekerja dengan gambar dalam basis kode Anda, dan Anda ingin bantuan Claude menganalisis konten gambar.
 
@@ -471,7 +351,7 @@ Misalkan Anda perlu bekerja dengan gambar dalam basis kode Anda, dan Anda ingin 
 
 ***
 
-## File dan direktori referensi
+### File dan direktori referensi
 
 Gunakan @ untuk dengan cepat menyertakan file atau direktori tanpa menunggu Claude membacanya.
 
@@ -512,441 +392,7 @@ Gunakan @ untuk dengan cepat menyertakan file atau direktori tanpa menunggu Clau
 
 ***
 
-## Gunakan extended thinking (thinking mode)
-
-[Extended thinking](https://platform.claude.com/docs/en/build-with-claude/extended-thinking) diaktifkan secara default, memberikan Claude ruang untuk bernalar melalui masalah kompleks langkah demi langkah sebelum merespons. Penalaran ini terlihat dalam verbose mode, yang dapat Anda aktifkan dengan `Ctrl+O`. Selama extended thinking, spinner menampilkan petunjuk kemajuan inline seperti "still thinking" dan "almost done thinking" untuk menunjukkan bahwa Claude sedang bekerja secara aktif.
-
-Selain itu, [model yang mendukung effort](/id/model-config#adjust-effort-level) menggunakan adaptive reasoning: alih-alih anggaran token thinking yang tetap, model secara dinamis memutuskan apakah dan berapa banyak untuk berpikir berdasarkan pengaturan effort level Anda dan tugas yang dihadapi. Adaptive reasoning memungkinkan Claude merespons lebih cepat untuk prompt rutin dan menyisihkan pemikiran yang lebih dalam untuk langkah-langkah yang mendapat manfaat darinya.
-
-Extended thinking sangat berharga untuk keputusan arsitektur kompleks, bug menantang, perencanaan implementasi multi-langkah, dan mengevaluasi trade-off antara pendekatan yang berbeda.
-
-<Note>
-  Frasa seperti "think", "think hard", dan "think more" ditafsirkan sebagai instruksi prompt reguler dan tidak mengalokasikan token thinking.
-</Note>
-
-### Konfigurasikan thinking mode
-
-Thinking diaktifkan secara default, tetapi Anda dapat menyesuaikan atau menonaktifkannya.
-
-| Scope                       | Cara mengkonfigurasi                                                                            | Detail                                                                                                                                                                                                                      |
-| --------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Effort level**            | Jalankan `/effort`, sesuaikan di `/model`, atau atur [`CLAUDE_CODE_EFFORT_LEVEL`](/id/env-vars) | Kontrol kedalaman thinking pada [model yang didukung](/id/model-config#adjust-effort-level)                                                                                                                                 |
-| **Kata kunci `ultrathink`** | Sertakan "ultrathink" di mana saja dalam prompt Anda                                            | Menambahkan instruksi in-context yang memberi tahu model untuk bernalar lebih banyak pada giliran itu. Tidak mengubah effort level itu sendiri; lihat [Adjust effort level](/id/model-config#adjust-effort-level) untuk itu |
-| **Pintasan toggle**         | Tekan `Option+T` (macOS) atau `Alt+T` (Windows/Linux)                                           | Toggle thinking on/off untuk sesi saat ini (semua model). Mungkin memerlukan [konfigurasi terminal](/id/terminal-config) untuk mengaktifkan pintasan tombol Option                                                          |
-| **Default global**          | Gunakan `/config` untuk toggle thinking mode                                                    | Menetapkan default Anda di semua proyek (semua model).<br />Disimpan sebagai `alwaysThinkingEnabled` di `~/.claude/settings.json`                                                                                           |
-| **Batasi anggaran token**   | Atur variabel lingkungan [`MAX_THINKING_TOKENS`](/id/env-vars)                                  | Batasi anggaran thinking ke jumlah token tertentu. Pada model dengan adaptive reasoning, hanya `0` berlaku kecuali adaptive reasoning dinonaktifkan. Contoh: `export MAX_THINKING_TOKENS=10000`                             |
-
-Untuk melihat proses thinking Claude, tekan `Ctrl+O` untuk toggle verbose mode dan lihat penalaran internal ditampilkan sebagai teks italic abu-abu.
-
-### Cara extended thinking bekerja
-
-Extended thinking mengontrol berapa banyak penalaran internal yang dilakukan Claude sebelum merespons. Lebih banyak thinking memberikan lebih banyak ruang untuk menjelajahi solusi, menganalisis kasus tepi, dan memperbaiki kesalahan sendiri.
-
-Pada [model yang mendukung effort](/id/model-config#adjust-effort-level), thinking menggunakan adaptive reasoning: model secara dinamis mengalokasikan token thinking berdasarkan effort level yang Anda pilih. Ini adalah cara yang direkomendasikan untuk menyesuaikan trade-off antara kecepatan dan kedalaman penalaran. Jika Anda ingin Claude berpikir lebih atau kurang sering daripada yang akan dihasilkan effort level Anda, Anda juga dapat mengatakan demikian secara langsung dalam prompt Anda atau di `CLAUDE.md`.
-
-Dengan model yang lebih lama, thinking menggunakan anggaran token tetap yang diambil dari alokasi output Anda. Anggaran bervariasi menurut model; lihat [`MAX_THINKING_TOKENS`](/id/env-vars) untuk batas per-model. Anda dapat membatasinya dengan variabel lingkungan itu, atau menonaktifkan thinking sepenuhnya melalui `/config` atau toggle `Option+T`/`Alt+T`.
-
-Pada model dengan adaptive reasoning, `MAX_THINKING_TOKENS` hanya berlaku ketika diatur ke `0` untuk menonaktifkan thinking, atau ketika `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` mengembalikan model ke anggaran tetap. `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` berlaku untuk Opus 4.6 dan Sonnet 4.6 saja. Opus 4.7 selalu menggunakan adaptive reasoning dan tidak mendukung anggaran thinking tetap. Lihat [variabel lingkungan](/id/env-vars).
-
-<Warning>
-  Anda dikenakan biaya untuk semua token thinking yang digunakan bahkan ketika ringkasan thinking dihilangkan. Dalam mode interaktif, thinking muncul sebagai stub yang diruntuhkan secara default. Atur `showThinkingSummaries: true` di `settings.json` untuk menampilkan ringkasan lengkap.
-</Warning>
-
-***
-
-## Lanjutkan percakapan sebelumnya
-
-Saat memulai Claude Code, Anda dapat melanjutkan sesi sebelumnya:
-
-* `claude --continue` melanjutkan percakapan terbaru di direktori saat ini
-* `claude --resume` membuka pemilih percakapan atau melanjutkan berdasarkan nama
-* `claude --from-pr 123` melanjutkan sesi yang ditautkan ke pull request tertentu
-
-Dari dalam sesi aktif, gunakan `/resume` untuk beralih ke percakapan berbeda.
-
-Ketika sesi yang dipilih sudah lama dan cukup besar sehingga membacanya kembali akan mengonsumsi bagian substansial dari batas penggunaan Anda, `--resume`, `--continue`, dan `/resume` menawarkan untuk melanjutkan dari ringkasan alih-alih memuat transkrip lengkap. Prompt ini tidak tersedia di Amazon Bedrock, Google Cloud Vertex AI, atau Microsoft Foundry.
-
-Sesi disimpan per direktori proyek. Secara default, pemilih `/resume` menampilkan sesi interaktif dari worktree saat ini, dengan pintasan keyboard untuk memperluas daftar ke worktrees lain atau proyek, mencari, melihat pratinjau, dan mengganti nama. Lihat [Gunakan pemilih sesi](#use-the-session-picker) di bawah untuk referensi pintasan lengkap.
-
-Ketika Anda memilih sesi dari worktree lain dari repositori yang sama, Claude Code melanjutkannya secara langsung tanpa memerlukan Anda untuk beralih direktori terlebih dahulu. Memilih sesi dari proyek yang tidak terkait menyalin perintah `cd` dan resume ke clipboard Anda sebagai gantinya.
-
-Melanjutkan berdasarkan nama menyelesaikan di seluruh repositori saat ini dan worktrees-nya. Baik `claude --resume <name>` dan `/resume <name>` mencari kecocokan yang tepat dan melanjutkannya secara langsung, bahkan jika sesi berada di worktree yang berbeda.
-
-Ketika nama ambigu, `claude --resume <name>` membuka pemilih dengan nama yang sudah diisi sebagai istilah pencarian. `/resume <name>` dari dalam sesi melaporkan kesalahan sebagai gantinya, jadi jalankan `/resume` tanpa argumen untuk membuka pemilih dan pilih.
-
-Sesi yang dibuat oleh `claude -p` atau invokasi SDK tidak muncul di pemilih, tetapi Anda masih dapat melanjutkan satu dengan meneruskan ID sesinya langsung ke `claude --resume <session-id>`.
-
-### Beri nama sesi Anda
-
-Berikan sesi nama deskriptif untuk menemukannya nanti. Ini adalah praktik terbaik saat mengerjakan beberapa tugas atau fitur.
-
-<Steps>
-  <Step title="Beri nama sesi">
-    Beri nama sesi saat startup dengan `-n`:
-
-    ```bash theme={null}
-    claude -n auth-refactor
-    ```
-
-    Atau gunakan `/rename` selama sesi, yang juga menampilkan nama di bilah prompt:
-
-    ```text theme={null}
-    /rename auth-refactor
-    ```
-
-    Anda juga dapat mengganti nama sesi apa pun dari pemilih: jalankan `/resume`, navigasi ke sesi, dan tekan `Ctrl+R`.
-  </Step>
-
-  <Step title="Lanjutkan berdasarkan nama nanti">
-    Dari baris perintah:
-
-    ```bash theme={null}
-    claude --resume auth-refactor
-    ```
-
-    Atau dari dalam sesi aktif:
-
-    ```text theme={null}
-    /resume auth-refactor
-    ```
-  </Step>
-</Steps>
-
-### Gunakan pemilih sesi
-
-Perintah `/resume` (atau `claude --resume` tanpa argumen) membuka pemilih sesi interaktif dengan fitur-fitur ini:
-
-**Pintasan keyboard dalam pemilih:**
-
-| Pintasan                                                    | Tindakan                                                                                                                                                       |
-| :---------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `↑` / `↓`                                                   | Navigasi antar sesi                                                                                                                                            |
-| `→` / `←`                                                   | Perluas atau tutup sesi yang dikelompokkan                                                                                                                     |
-| `Enter`                                                     | Pilih dan lanjutkan sesi yang disorot                                                                                                                          |
-| `Space`                                                     | Lihat pratinjau konten sesi. `Ctrl+V` juga bekerja di terminal yang tidak menangkapnya sebagai paste                                                           |
-| `Ctrl+R`                                                    | Ganti nama sesi yang disorot                                                                                                                                   |
-| `/` atau karakter yang dapat dicetak lainnya selain `Space` | Masuk mode pencarian dan filter sesi                                                                                                                           |
-| `Ctrl+A`                                                    | Tampilkan sesi dari semua proyek di mesin ini. Tekan lagi untuk mengembalikan repositori saat ini                                                              |
-| `Ctrl+W`                                                    | Tampilkan sesi dari semua worktrees dari repositori saat ini. Tekan lagi untuk mengembalikan worktree saat ini. Hanya ditampilkan di repositori multi-worktree |
-| `Ctrl+B`                                                    | Filter ke sesi dari cabang git saat ini Anda. Tekan lagi untuk menampilkan sesi dari semua cabang                                                              |
-| `Esc`                                                       | Keluar dari pemilih atau mode pencarian                                                                                                                        |
-
-**Organisasi sesi:**
-
-Pemilih menampilkan sesi dengan metadata yang membantu:
-
-* Nama sesi jika diatur, jika tidak ringkasan percakapan atau prompt pengguna pertama
-* Waktu yang telah berlalu sejak aktivitas terakhir
-* Jumlah pesan
-* Cabang Git (jika berlaku)
-* Jalur proyek, ditampilkan setelah memperluas ke semua proyek dengan `Ctrl+A`
-
-Sesi yang di-fork (dibuat dengan `/branch`, `/rewind`, atau `--fork-session`) dikelompokkan bersama di bawah sesi root mereka, memudahkan menemukan percakapan terkait.
-
-<Tip>
-  Tips:
-
-  * **Beri nama sesi lebih awal**: Gunakan `/rename` saat memulai pekerjaan pada tugas yang berbeda—jauh lebih mudah menemukan "payment-integration" daripada "explain this function" nanti
-  * Gunakan `--continue` untuk akses cepat ke percakapan terbaru Anda di direktori saat ini
-  * Gunakan `--resume session-name` ketika Anda tahu sesi mana yang Anda butuhkan
-  * Gunakan `--resume` (tanpa nama) ketika Anda perlu menjelajahi dan memilih
-  * Untuk skrip, gunakan `claude --continue --print "prompt"` untuk melanjutkan dalam mode non-interaktif
-  * Tekan `Space` dalam pemilih untuk melihat pratinjau sesi sebelum melanjutkannya
-  * Percakapan yang dilanjutkan dimulai dengan model dan konfigurasi yang sama dengan yang asli
-
-  Cara kerjanya:
-
-  1. **Penyimpanan Percakapan**: Semua percakapan secara otomatis disimpan secara lokal dengan riwayat pesan lengkap mereka
-  2. **Deserialisasi Pesan**: Saat melanjutkan, seluruh riwayat pesan dipulihkan untuk mempertahankan konteks
-  3. **Status Alat**: Penggunaan alat dan hasil dari percakapan sebelumnya dipertahankan
-  4. **Pemulihan Konteks**: Percakapan dilanjutkan dengan semua konteks sebelumnya utuh
-</Tip>
-
-***
-
-## Jalankan sesi Claude Code paralel dengan Git worktrees
-
-Saat mengerjakan beberapa tugas sekaligus, Anda memerlukan setiap sesi Claude untuk memiliki salinannya sendiri dari basis kode sehingga perubahan tidak bertabrakan. Git worktrees menyelesaikan ini dengan membuat direktori kerja terpisah yang masing-masing memiliki file dan cabang mereka sendiri, sambil berbagi riwayat repositori dan koneksi remote yang sama. Ini berarti Anda dapat memiliki Claude bekerja pada fitur di satu worktree sambil memperbaiki bug di worktree lain, tanpa sesi mana pun mengganggu yang lain.
-
-Gunakan flag `--worktree` (`-w`) untuk membuat worktree terisolasi dan memulai Claude di dalamnya. Nilai yang Anda berikan menjadi nama direktori worktree dan nama cabang:
-
-```bash theme={null}
-# Mulai Claude dalam worktree bernama "feature-auth"
-# Membuat .claude/worktrees/feature-auth/ dengan cabang baru
-claude --worktree feature-auth
-
-# Mulai sesi lain dalam worktree terpisah
-claude --worktree bugfix-123
-```
-
-Jika Anda menghilangkan nama, Claude secara otomatis menghasilkan nama acak:
-
-```bash theme={null}
-# Auto-generates a name like "bright-running-fox"
-claude --worktree
-```
-
-Worktrees dibuat di `<repo>/.claude/worktrees/<name>` dan bercabang dari cabang remote default, yang merupakan tempat `origin/HEAD` menunjuk. Cabang worktree dinamai `worktree-<name>`.
-
-Cabang dasar tidak dapat dikonfigurasi melalui flag atau pengaturan Claude Code. `origin/HEAD` adalah referensi yang disimpan di direktori `.git` lokal Anda yang Git atur sekali saat Anda mengkloning. Jika cabang default repositori berubah nanti di GitHub atau GitLab, `origin/HEAD` lokal Anda terus menunjuk ke yang lama, dan worktrees akan bercabang dari sana. Untuk menyinkronkan ulang referensi lokal Anda dengan apa pun yang dianggap remote sebagai default saat ini:
-
-```bash theme={null}
-git remote set-head origin -a
-```
-
-Ini adalah perintah Git standar yang hanya memperbarui direktori `.git` lokal Anda. Tidak ada yang berubah di server remote. Jika Anda ingin worktrees bercabang dari cabang tertentu daripada default remote, atur secara eksplisit dengan `git remote set-head origin your-branch-name`.
-
-Untuk kontrol penuh atas cara worktrees dibuat, termasuk memilih base yang berbeda per invokasi, konfigurasikan hook [WorktreeCreate](/id/hooks#worktreecreate). Hook menggantikan logika `git worktree` default Claude Code sepenuhnya, jadi Anda dapat mengambil dan bercabang dari ref apa pun yang Anda butuhkan.
-
-Anda juga dapat meminta Claude untuk "work in a worktree" atau "start a worktree" selama sesi, dan itu akan membuat satu secara otomatis.
-
-### Worktrees subagent
-
-Subagents juga dapat menggunakan isolasi worktree untuk bekerja secara paralel tanpa konflik. Minta Claude untuk "use worktrees for your agents" atau konfigurasikan di [custom subagent](/id/sub-agents#supported-frontmatter-fields) dengan menambahkan `isolation: worktree` ke frontmatter agen. Setiap subagent mendapatkan worktree-nya sendiri yang secara otomatis dibersihkan ketika subagent selesai tanpa perubahan.
-
-### Pembersihan worktree
-
-Ketika Anda keluar dari sesi worktree, Claude menangani pembersihan berdasarkan apakah Anda membuat perubahan:
-
-* **Tidak ada perubahan**: worktree dan cabangnya dihapus secara otomatis
-* **Perubahan atau commit ada**: Claude meminta Anda untuk menyimpan atau menghapus worktree. Menyimpan mempertahankan direktori dan cabang sehingga Anda dapat kembali nanti. Menghapus menghapus direktori worktree dan cabangnya, membuang semua perubahan yang tidak dilakukan dan commit
-
-Worktrees subagent yang ditinggalkan oleh crash atau run paralel yang terputus dihapus secara otomatis saat startup setelah mereka lebih lama dari pengaturan [`cleanupPeriodDays`](/id/settings#available-settings) Anda, asalkan mereka tidak memiliki perubahan yang tidak dilakukan, tidak ada file yang tidak dilacak, dan tidak ada commit yang tidak didorong. Worktrees yang Anda buat dengan `--worktree` tidak pernah dihapus oleh sweep ini.
-
-Untuk membersihkan worktrees di luar sesi Claude, gunakan [manajemen worktree manual](#manage-worktrees-manually).
-
-<Tip>
-  Tambahkan `.claude/worktrees/` ke `.gitignore` Anda untuk mencegah konten worktree muncul sebagai file yang tidak dilacak dalam repositori utama Anda.
-</Tip>
-
-### Salin file yang diabaikan git ke worktrees
-
-Git worktrees adalah checkout segar, jadi mereka tidak menyertakan file yang tidak dilacak seperti `.env` atau `.env.local` dari repositori utama Anda. Untuk secara otomatis menyalin file ini ketika Claude membuat worktree, tambahkan file `.worktreeinclude` ke root proyek Anda.
-
-File menggunakan sintaks `.gitignore` untuk mencantumkan file mana yang akan disalin. Hanya file yang cocok dengan pola dan juga diabaikan yang disalin, jadi file yang dilacak tidak pernah diduplikasi.
-
-```text .worktreeinclude theme={null}
-.env
-.env.local
-config/secrets.json
-```
-
-Ini berlaku untuk worktrees yang dibuat dengan `--worktree`, worktrees subagent, dan sesi paralel di [aplikasi desktop](/id/desktop#work-in-parallel-with-sessions).
-
-### Kelola worktrees secara manual
-
-Untuk kontrol lebih besar atas lokasi worktree dan konfigurasi cabang, buat worktrees dengan Git secara langsung. Ini berguna ketika Anda perlu checkout cabang yang ada tertentu atau menempatkan worktree di luar repositori.
-
-```bash theme={null}
-# Buat worktree dengan cabang baru
-git worktree add ../project-feature-a -b feature-a
-
-# Buat worktree dengan cabang yang ada
-git worktree add ../project-bugfix bugfix-123
-
-# Mulai Claude dalam worktree
-cd ../project-feature-a && claude
-
-# Bersihkan saat selesai
-git worktree list
-git worktree remove ../project-feature-a
-```
-
-Pelajari lebih lanjut di [dokumentasi Git worktree resmi](https://git-scm.com/docs/git-worktree).
-
-<Tip>
-  Ingat untuk menginisialisasi lingkungan pengembangan Anda di setiap worktree baru sesuai dengan setup proyek Anda. Tergantung pada stack Anda, ini mungkin termasuk menjalankan instalasi dependensi (`npm install`, `yarn`), menyiapkan lingkungan virtual, atau mengikuti proses setup standar proyek Anda.
-</Tip>
-
-### Kontrol versi non-git
-
-Isolasi worktree bekerja dengan git secara default. Untuk sistem kontrol versi lain seperti SVN, Perforce, atau Mercurial, konfigurasikan [hook WorktreeCreate dan WorktreeRemove](/id/hooks#worktreecreate) untuk menyediakan logika pembuatan dan pembersihan worktree kustom. Ketika dikonfigurasi, hook ini menggantikan perilaku git default saat Anda menggunakan `--worktree`, jadi [`.worktreeinclude`](#copy-gitignored-files-to-worktrees) tidak diproses. Salin file konfigurasi lokal apa pun di dalam skrip hook Anda sebagai gantinya.
-
-Untuk koordinasi otomatis sesi paralel dengan tugas bersama dan pesan, lihat [agent teams](/id/agent-teams).
-
-***
-
-## Dapatkan notifikasi ketika Claude membutuhkan perhatian Anda
-
-Ketika Anda memulai tugas yang berjalan lama dan beralih ke jendela lain, Anda dapat menyiapkan notifikasi desktop sehingga Anda tahu ketika Claude selesai atau membutuhkan input Anda. Ini menggunakan event hook `Notification` [](/id/hooks-guide#get-notified-when-claude-needs-input), yang diaktifkan setiap kali Claude menunggu izin, idle dan siap untuk prompt baru, atau menyelesaikan autentikasi.
-
-<Steps>
-  <Step title="Tambahkan hook ke pengaturan Anda">
-    Buka `~/.claude/settings.json` dan tambahkan hook `Notification` yang memanggil perintah notifikasi asli platform Anda:
-
-    <Tabs>
-      <Tab title="macOS">
-        ```json theme={null}
-        {
-          "hooks": {
-            "Notification": [
-              {
-                "matcher": "",
-                "hooks": [
-                  {
-                    "type": "command",
-                    "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'"
-                  }
-                ]
-              }
-            ]
-          }
-        }
-        ```
-      </Tab>
-
-      <Tab title="Linux">
-        ```json theme={null}
-        {
-          "hooks": {
-            "Notification": [
-              {
-                "matcher": "",
-                "hooks": [
-                  {
-                    "type": "command",
-                    "command": "notify-send 'Claude Code' 'Claude Code needs your attention'"
-                  }
-                ]
-              }
-            ]
-          }
-        }
-        ```
-      </Tab>
-
-      <Tab title="Windows">
-        ```json theme={null}
-        {
-          "hooks": {
-            "Notification": [
-              {
-                "matcher": "",
-                "hooks": [
-                  {
-                    "type": "command",
-                    "command": "powershell.exe -Command \"[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); [System.Windows.Forms.MessageBox]::Show('Claude Code needs your attention', 'Claude Code')\""
-                  }
-                ]
-              }
-            ]
-          }
-        }
-        ```
-      </Tab>
-    </Tabs>
-
-    Jika file pengaturan Anda sudah memiliki kunci `hooks`, gabungkan entri `Notification` ke dalamnya daripada menimpa. Anda juga dapat meminta Claude untuk menulis hook untuk Anda dengan menggambarkan apa yang Anda inginkan di CLI.
-  </Step>
-
-  <Step title="Secara opsional sempit matcher">
-    Secara default hook diaktifkan pada semua jenis notifikasi. Untuk diaktifkan hanya untuk event tertentu, atur bidang `matcher` ke salah satu nilai ini:
-
-    | Matcher                | Diaktifkan ketika                                        |
-    | :--------------------- | :------------------------------------------------------- |
-    | `permission_prompt`    | Claude membutuhkan Anda untuk menyetujui penggunaan alat |
-    | `idle_prompt`          | Claude selesai dan menunggu prompt berikutnya Anda       |
-    | `auth_success`         | Autentikasi selesai                                      |
-    | `elicitation_dialog`   | Server MCP membuka formulir elicitation                  |
-    | `elicitation_complete` | Formulir elicitation MCP dikirimkan atau ditutup         |
-    | `elicitation_response` | Respons elicitation MCP dikirim kembali ke server        |
-  </Step>
-
-  <Step title="Verifikasi hook">
-    Ketik `/hooks` dan pilih `Notification` untuk mengkonfirmasi hook muncul. Memilihnya menampilkan perintah yang akan dijalankan. Untuk mengujinya end-to-end, minta Claude untuk menjalankan perintah yang memerlukan izin dan beralih dari terminal, atau minta Claude untuk memicu notifikasi secara langsung.
-  </Step>
-</Steps>
-
-Untuk skema event lengkap dan jenis notifikasi, lihat [referensi Notification](/id/hooks#notification).
-
-***
-
-## Gunakan Claude sebagai utilitas gaya unix
-
-### Tambahkan Claude ke proses verifikasi Anda
-
-Misalkan Anda ingin menggunakan Claude Code sebagai linter atau code reviewer.
-
-**Tambahkan Claude ke skrip build Anda:**
-
-```json theme={null}
-// package.json
-{
-    ...
-    "scripts": {
-        ...
-        "lint:claude": "claude -p 'you are a linter. please look at the changes vs. main and report any issues related to typos. report the filename and line number on one line, and a description of the issue on the second line. do not return any other text.'"
-    }
-}
-```
-
-<Tip>
-  Tips:
-
-  * Gunakan Claude untuk code review otomatis dalam pipeline CI/CD Anda
-  * Sesuaikan prompt untuk memeriksa masalah spesifik yang relevan dengan proyek Anda
-  * Pertimbangkan membuat beberapa skrip untuk jenis verifikasi yang berbeda
-</Tip>
-
-### Pipe in, pipe out
-
-Misalkan Anda ingin pipe data ke Claude, dan dapatkan kembali data dalam format terstruktur.
-
-**Pipe data melalui Claude:**
-
-```bash theme={null}
-cat build-error.txt | claude -p 'concisely explain the root cause of this build error' > output.txt
-```
-
-<Tip>
-  Tips:
-
-  * Gunakan pipe untuk mengintegrasikan Claude ke dalam skrip shell yang ada
-  * Gabungkan dengan alat Unix lain untuk alur kerja yang kuat
-  * Pertimbangkan menggunakan `--output-format` untuk output terstruktur
-</Tip>
-
-### Kontrol format output
-
-Misalkan Anda memerlukan output Claude dalam format tertentu, terutama saat mengintegrasikan Claude Code ke dalam skrip atau alat lain.
-
-<Steps>
-  <Step title="Gunakan format teks (default)">
-    ```bash theme={null}
-    cat data.txt | claude -p 'summarize this data' --output-format text > summary.txt
-    ```
-
-    Ini menampilkan hanya respons teks biasa Claude (perilaku default).
-  </Step>
-
-  <Step title="Gunakan format JSON">
-    ```bash theme={null}
-    cat code.py | claude -p 'analyze this code for bugs' --output-format json > analysis.json
-    ```
-
-    Ini menampilkan array JSON pesan dengan metadata termasuk biaya dan durasi.
-  </Step>
-
-  <Step title="Gunakan format streaming JSON">
-    ```bash theme={null}
-    cat log.txt | claude -p 'parse this log file for errors' --output-format stream-json
-    ```
-
-    Ini menampilkan serangkaian objek JSON secara real-time saat Claude memproses permintaan. Setiap pesan adalah objek JSON yang valid, tetapi seluruh output bukan JSON yang valid jika digabungkan.
-  </Step>
-</Steps>
-
-<Tip>
-  Tips:
-
-  * Gunakan `--output-format text` untuk integrasi sederhana di mana Anda hanya memerlukan respons Claude
-  * Gunakan `--output-format json` ketika Anda memerlukan log percakapan lengkap
-  * Gunakan `--output-format stream-json` untuk output real-time dari setiap giliran percakapan
-</Tip>
-
-***
-
-## Jalankan Claude pada jadwal
+### Jalankan Claude pada jadwal
 
 Misalkan Anda ingin Claude menangani tugas secara otomatis secara berulang, seperti meninjau PR terbuka setiap pagi, mengaudit dependensi mingguan, atau memeriksa kegagalan CI semalam.
 
@@ -965,11 +411,11 @@ Pilih opsi penjadwalan berdasarkan tempat Anda ingin tugas berjalan:
 
 ***
 
-## Tanyakan Claude tentang kemampuannya
+### Tanyakan Claude tentang kemampuannya
 
 Claude memiliki akses bawaan ke dokumentasinya dan dapat menjawab pertanyaan tentang fitur dan keterbatasannya sendiri.
 
-### Contoh pertanyaan
+#### Contoh pertanyaan
 
 ```text theme={null}
 can Claude Code create pull requests?
@@ -1009,6 +455,56 @@ what are the limitations of Claude Code?
 
 ***
 
+## Lanjutkan percakapan sebelumnya
+
+Ketika tugas berlangsung selama beberapa sesi, ambil alih dari tempat Anda berhenti daripada menjelaskan ulang konteks. Claude Code menyimpan setiap percakapan secara lokal.
+
+```bash theme={null}
+claude --continue
+```
+
+Ini melanjutkan sesi terbaru di direktori saat ini; jika belum ada, itu mencetak `No conversation found to continue` dan keluar. Gunakan `claude --resume` untuk memilih dari daftar, atau `/resume` dari dalam sesi yang berjalan. Lihat [Kelola sesi](/id/sessions) untuk penamaan, branching, dan referensi pemilih lengkap.
+
+## Jalankan sesi paralel dengan worktrees
+
+Bekerja pada fitur di satu terminal sementara Claude memperbaiki bug di terminal lain, tanpa edit bertabrakan. Setiap worktree adalah checkout terpisah di cabangnya sendiri.
+
+```bash theme={null}
+claude --worktree feature-auth
+```
+
+Jalankan perintah yang sama dengan nama berbeda di terminal kedua untuk memulai sesi paralel terisolasi. Lihat [Worktrees](/id/worktrees) untuk pembersihan, `.worktreeinclude`, dan dukungan VCS non-git. Untuk memantau sesi paralel dari satu layar daripada terminal terpisah, lihat [background agents](/id/agent-view).
+
+## Rencanakan sebelum mengedit
+
+Untuk perubahan yang ingin Anda tinjau sebelum menyentuh disk, beralih ke plan mode. Claude membaca file dan mengusulkan rencana tetapi tidak membuat edit sampai Anda menyetujui.
+
+```bash theme={null}
+claude --permission-mode plan
+```
+
+Anda juga dapat menekan `Shift+Tab` di tengah sesi untuk beralih ke plan mode. Lihat [Plan mode](/id/permission-modes#analyze-before-you-edit-with-plan-mode) untuk alur persetujuan dan mengedit rencana di editor teks Anda.
+
+## Delegasikan penelitian ke subagents
+
+Menjelajahi basis kode besar mengisi konteks Anda dengan pembacaan file. Delegasikan eksplorasi sehingga hanya temuan yang kembali.
+
+```text theme={null}
+use a subagent to investigate how our auth system handles token refresh
+```
+
+Subagent membaca file dalam jendela konteksnya sendiri dan melaporkan ringkasan. Lihat [Subagents](/id/sub-agents) untuk mendefinisikan agen kustom dengan alat dan prompt mereka sendiri.
+
+## Pipe Claude ke dalam skrip
+
+Jalankan Claude secara non-interaktif untuk CI, pre-commit hooks, atau pemrosesan batch. Stdin dan stdout bekerja seperti alat Unix apa pun.
+
+```bash theme={null}
+git log --oneline -20 | claude -p "summarize these recent commits"
+```
+
+Lihat [Non-interactive mode](/id/headless) untuk format output, flag izin, dan pola fan-out.
+
 ## Langkah berikutnya
 
 <CardGroup cols={2}>
@@ -1016,15 +512,15 @@ what are the limitations of Claude Code?
     Pola untuk mendapatkan hasil maksimal dari Claude Code
   </Card>
 
-  <Card title="Cara Claude Code bekerja" icon="gear" href="/id/how-claude-code-works">
-    Pahami loop agentic dan manajemen konteks
+  <Card title="Kelola sesi" icon="rotate-left" href="/id/sessions">
+    Lanjutkan, beri nama, dan cabang percakapan
+  </Card>
+
+  <Card title="Worktrees" icon="code-branch" href="/id/worktrees">
+    Jalankan sesi paralel terisolasi
   </Card>
 
   <Card title="Perluas Claude Code" icon="puzzle-piece" href="/id/features-overview">
     Tambahkan skills, hooks, MCP, subagents, dan plugins
-  </Card>
-
-  <Card title="Implementasi referensi" icon="code" href="https://github.com/anthropics/claude-code/tree/main/.devcontainer">
-    Clone implementasi referensi container pengembangan kami
   </Card>
 </CardGroup>

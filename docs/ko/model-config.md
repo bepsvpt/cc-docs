@@ -36,7 +36,7 @@ Claude Code의 `model` 설정에서 다음 중 하나를 구성할 수 있습니
 | **`opus[1m]`**   | 긴 세션을 위해 [100만 토큰 컨텍스트 윈도우](https://platform.claude.com/docs/ko/build-with-claude/context-windows#1m-token-context-window)를 사용하는 Opus를 사용합니다   |
 | **`opusplan`**   | Plan Mode 중에 `opus`를 사용한 후 실행을 위해 `sonnet`으로 전환하는 특수 모드입니다                                                                                     |
 
-Anthropic API에서 `opus`는 Opus 4.7로, `sonnet`은 Sonnet 4.6으로 확인됩니다. Bedrock, Vertex 및 Foundry에서 `opus`는 Opus 4.6으로, `sonnet`은 Sonnet 4.5로 확인됩니다. 더 새로운 모델은 전체 모델 이름을 명시적으로 선택하거나 `ANTHROPIC_DEFAULT_OPUS_MODEL` 또는 `ANTHROPIC_DEFAULT_SONNET_MODEL`을 설정하여 해당 제공자에서 사용할 수 있습니다.
+Anthropic API 및 [Claude Platform on AWS](/ko/claude-platform-on-aws)에서 `opus`는 Opus 4.7로, `sonnet`은 Sonnet 4.6으로 확인됩니다. Bedrock, Vertex 및 Foundry에서 `opus`는 Opus 4.6으로, `sonnet`은 Sonnet 4.5로 확인됩니다. 더 새로운 모델은 전체 모델 이름을 명시적으로 선택하거나 `ANTHROPIC_DEFAULT_OPUS_MODEL` 또는 `ANTHROPIC_DEFAULT_SONNET_MODEL`을 설정하여 해당 제공자에서 사용할 수 있습니다.
 
 별칭은 제공자에 대한 권장 버전을 가리키며 시간이 지남에 따라 업데이트됩니다. 특정 버전으로 고정하려면 전체 모델 이름(예: `claude-opus-4-7`)을 사용하거나 `ANTHROPIC_DEFAULT_OPUS_MODEL`과 같은 해당 환경 변수를 설정합니다.
 
@@ -294,7 +294,7 @@ Claude Code는 `ANTHROPIC_CUSTOM_MODEL_OPTION`에 설정된 모델 ID에 대한 
 
 ### 타사 배포를 위한 모델 고정
 
-[Bedrock](/ko/amazon-bedrock), [Vertex AI](/ko/google-vertex-ai) 또는 [Foundry](/ko/microsoft-foundry)를 통해 Claude Code를 배포할 때 사용자에게 롤아웃하기 전에 모델 버전을 고정합니다.
+[Bedrock](/ko/amazon-bedrock), [Vertex AI](/ko/google-vertex-ai), [Foundry](/ko/microsoft-foundry) 또는 [Claude Platform on AWS](/ko/claude-platform-on-aws)를 통해 Claude Code를 배포할 때 사용자에게 롤아웃하기 전에 모델 버전을 고정합니다.
 
 고정하지 않으면 Claude Code는 최신 버전으로 확인되는 모델 별칭(`sonnet`, `opus`, `haiku`)을 사용합니다. Anthropic이 새 모델을 출시할 때 새 버전이 아직 사용자 계정에서 활성화되지 않으면 Bedrock 및 Vertex AI 사용자는 공지를 보고 해당 세션에 대해 이전 버전으로 폴백되며, Foundry 사용자는 Foundry에 동등한 시작 확인이 없기 때문에 오류를 봅니다.
 

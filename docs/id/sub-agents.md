@@ -11,7 +11,7 @@ Subagent adalah asisten AI khusus yang menangani jenis tugas tertentu. Gunakan s
 Setiap subagent berjalan di jendela konteksnya sendiri dengan prompt sistem khusus, akses alat tertentu, dan izin independen. Ketika Claude menemukan tugas yang sesuai dengan deskripsi subagent, Claude mendelegasikan ke subagent tersebut, yang bekerja secara independen dan mengembalikan hasil. Untuk melihat penghematan konteks dalam praktik, [visualisasi jendela konteks](/id/context-window) menjelaskan sesi di mana subagent menangani penelitian di jendela terpisahnya sendiri.
 
 <Note>
-  Jika Anda memerlukan beberapa agen yang bekerja secara paralel dan berkomunikasi satu sama lain, lihat [tim agen](/id/agent-teams) sebagai gantinya. Subagent bekerja dalam satu sesi; tim agen mengoordinasikan di seluruh sesi terpisah.
+  Subagent bekerja dalam satu sesi. Untuk menjalankan banyak sesi independen secara paralel dan memantaunya dari satu tempat, lihat [agen latar belakang](/id/agent-view). Untuk sesi yang berkomunikasi satu sama lain, lihat [tim agen](/id/agent-teams).
 </Note>
 
 Subagent membantu Anda:
@@ -158,7 +158,7 @@ Perintah `/agents` membuka antarmuka bertab untuk mengelola subagent. Tab **Runn
 
 Ini adalah cara yang direkomendasikan untuk membuat dan mengelola subagent. Untuk pembuatan manual atau otomasi, Anda juga dapat menambahkan file subagent secara langsung.
 
-Untuk membuat daftar semua subagent yang dikonfigurasi dari baris perintah tanpa memulai sesi interaktif, jalankan `claude agents`. Ini menunjukkan agen yang dikelompokkan berdasarkan sumber dan menunjukkan mana yang ditimpa oleh definisi prioritas lebih tinggi.
+Untuk membuat daftar semua subagent yang dikonfigurasi dari baris perintah tanpa membuka [tampilan agen](/id/agent-view), alirkan output dari `claude agents`. Misalnya, `claude agents | cat` mencetak agen yang dikelompokkan berdasarkan sumber dan menunjukkan mana yang ditimpa oleh definisi prioritas lebih tinggi.
 
 ### Pilih cakupan subagent
 
@@ -218,7 +218,7 @@ Subagent proyek ditemukan dengan berjalan naik dari direktori kerja saat ini. Di
   </Tab>
 </Tabs>
 
-Flag `--agents` menerima JSON dengan [frontmatter](#supported-frontmatter-fields) yang sama bidang file-based subagent: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `initialPrompt`, `memory`, `effort`, `background`, `isolation`, dan `color`. Gunakan `prompt` untuk prompt sistem, setara dengan badan markdown dalam subagent berbasis file.
+Flag `--agents` menerima JSON dengan [frontmatter](#supported-frontmatter-fields) yang sama bidang subagent berbasis file: `description`, `prompt`, `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `initialPrompt`, `memory`, `effort`, `background`, `isolation`, dan `color`. Gunakan `prompt` untuk prompt sistem, setara dengan badan markdown dalam subagent berbasis file.
 
 **Subagent terkelola** digunakan oleh administrator organisasi. Tempatkan file markdown dalam `.claude/agents/` di dalam [direktori pengaturan terkelola](/id/settings#settings-files), menggunakan format frontmatter yang sama dengan subagent proyek dan pengguna. Definisi terkelola mengambil alih subagent proyek dan pengguna dengan nama yang sama.
 
@@ -260,7 +260,7 @@ Bidang berikut dapat digunakan dalam frontmatter YAML. Hanya `name` dan `descrip
 
 | Bidang            | Diperlukan | Deskripsi                                                                                                                                                                                                                                                                                                                                                             |
 | :---------------- | :--------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`            | Ya         | Pengenal unik menggunakan huruf kecil dan tanda hubung                                                                                                                                                                                                                                                                                                                |
+| `name`            | Ya         | Pengenal unik menggunakan huruf kecil dan tanda hubung. [Hooks](/id/hooks#subagentstart) menerima nilai ini sebagai `agent_type`. Nama file tidak harus cocok                                                                                                                                                                                                         |
 | `description`     | Ya         | Kapan Claude harus mendelegasikan ke subagent ini                                                                                                                                                                                                                                                                                                                     |
 | `tools`           | Tidak      | [Alat](#available-tools) yang dapat digunakan subagent. Mewarisi semua alat jika dihilangkan. Untuk memuat Skills ke dalam konteks, gunakan bidang `skills` daripada mencantumkan `Skill` di sini                                                                                                                                                                     |
 | `disallowedTools` | Tidak      | Alat untuk ditolak, dihapus dari daftar yang diwarisi atau ditentukan                                                                                                                                                                                                                                                                                                 |
@@ -666,8 +666,8 @@ Flag CLI menimpa pengaturan jika keduanya ada.
 
 Subagent dapat berjalan di foreground (blocking) atau background (concurrent):
 
-* **Subagent foreground** memblokir percakapan utama sampai selesai. Prompt izin dan pertanyaan klarifikasi (seperti [`AskUserQuestion`](/id/tools-reference)) dilewatkan kepada Anda.
-* **Subagent background** berjalan secara bersamaan sementara Anda terus bekerja. Sebelum diluncurkan, Claude Code meminta izin alat apa pun yang akan dibutuhkan subagent, memastikan ia memiliki persetujuan yang diperlukan di muka. Setelah berjalan, subagent mewarisi izin ini dan auto-menolak apa pun yang tidak pra-disetujui. Jika subagent background perlu mengajukan pertanyaan klarifikasi, panggilan alat itu gagal tetapi subagent terus.
+* **Subagent foreground** memblokir percakapan utama sampai selesai. Prompt izin dilewatkan kepada Anda saat muncul.
+* **Subagent background** berjalan secara bersamaan sementara Anda terus bekerja. Mereka berjalan dengan izin yang sudah diberikan dalam sesi dan auto-deny setiap panggilan alat yang sebaliknya akan meminta. Jika subagent background perlu mengajukan pertanyaan klarifikasi, panggilan alat itu gagal tetapi subagent terus.
 
 Jika subagent background gagal karena izin yang hilang, Anda dapat memulai subagent foreground baru dengan tugas yang sama untuk mencoba lagi dengan prompt interaktif.
 
@@ -678,7 +678,7 @@ Claude memutuskan apakah akan menjalankan subagent di foreground atau background
 
 Untuk menonaktifkan semua fungsionalitas background task, atur variabel lingkungan `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` ke `1`. Lihat [Environment variables](/id/env-vars).
 
-Ketika [fork mode](#fork-the-current-conversation) diaktifkan, setiap spawn subagent berjalan di background terlepas dari bidang `background`. Fork masih menampilkan prompt izin di terminal Anda saat terjadi daripada pra-persetujuan; subagent bernama mengikuti alur pra-persetujuan di atas.
+Ketika [fork mode](#fork-the-current-conversation) diaktifkan, setiap spawn subagent berjalan di background terlepas dari bidang `background`. Fork masih menampilkan prompt izin di terminal Anda saat terjadi; subagent bernama auto-deny apa pun yang sebaliknya akan meminta, seperti dijelaskan di atas.
 
 ### Pola umum
 
@@ -756,6 +756,8 @@ Use the code-reviewer subagent to review the authentication module
 Continue that code review and now analyze the authorization logic
 [Claude resumes the subagent with full context from previous conversation]
 ```
+
+Jika subagent yang dihentikan menerima `SendMessage`, ia auto-resume di background tanpa memerlukan invokasi `Agent` baru.
 
 Anda juga dapat meminta Claude untuk ID agen jika Anda ingin mereferensikannya secara eksplisit, atau temukan ID dalam file transkrip di `~/.claude/projects/{project}/{sessionId}/subagents/`. Setiap transkrip disimpan sebagai `agent-{agentId}.jsonl`.
 

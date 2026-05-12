@@ -99,6 +99,7 @@ export const ContactSalesCard = ({surface}) => {
       <th>Claude for Teams/Enterprise</th>
       <th>Anthropic Console</th>
       <th>Amazon Bedrock</th>
+      <th>Claude Platform on AWS</th>
       <th>Google Vertex AI</th>
       <th>Microsoft Foundry</th>
     </tr>
@@ -110,6 +111,7 @@ export const ContactSalesCard = ({surface}) => {
       <td>大多数组织（推荐）</td>
       <td>个人开发者</td>
       <td>AWS 原生部署</td>
+      <td>AWS Marketplace 计费与 Claude API 功能</td>
       <td>GCP 原生部署</td>
       <td>Azure 原生部署</td>
     </tr>
@@ -119,6 +121,7 @@ export const ContactSalesCard = ({surface}) => {
       <td><strong>Teams：</strong> \$150/座位（Premium）提供按使用量付费选项<br /><strong>Enterprise：</strong> <a href="https://claude.com/contact-sales?utm_source=claude_code&utm_medium=docs&utm_content=third_party_enterprise">联系销售</a></td>
       <td>按使用量付费</td>
       <td>通过 AWS 按使用量付费</td>
+      <td>通过 AWS Marketplace 按使用量付费</td>
       <td>通过 GCP 按使用量付费</td>
       <td>通过 Azure 按使用量付费</td>
     </tr>
@@ -128,12 +131,14 @@ export const ContactSalesCard = ({surface}) => {
       <td>支持的[国家/地区](https://www.anthropic.com/supported-countries)</td>
       <td>支持的[国家/地区](https://www.anthropic.com/supported-countries)</td>
       <td>多个 AWS [地区](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html)</td>
+      <td>多个 AWS 地区</td>
       <td>多个 GCP [地区](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations)</td>
       <td>多个 Azure [地区](https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/)</td>
     </tr>
 
     <tr>
       <td>prompt caching</td>
+      <td>默认启用</td>
       <td>默认启用</td>
       <td>默认启用</td>
       <td>默认启用</td>
@@ -146,6 +151,7 @@ export const ContactSalesCard = ({surface}) => {
       <td>Claude.ai SSO 或电子邮件</td>
       <td>API 密钥</td>
       <td>API 密钥或 AWS 凭证</td>
+      <td>API 密钥或 AWS 凭证</td>
       <td>GCP 凭证</td>
       <td>API 密钥或 Microsoft Entra ID</td>
     </tr>
@@ -154,6 +160,7 @@ export const ContactSalesCard = ({surface}) => {
       <td>成本跟踪</td>
       <td>使用情况仪表板</td>
       <td>使用情况仪表板</td>
+      <td>AWS Cost Explorer</td>
       <td>AWS Cost Explorer</td>
       <td>GCP Billing</td>
       <td>Azure Cost Management</td>
@@ -166,12 +173,14 @@ export const ContactSalesCard = ({surface}) => {
       <td>否</td>
       <td>否</td>
       <td>否</td>
+      <td>否</td>
     </tr>
 
     <tr>
       <td>企业功能</td>
       <td>团队管理、SSO、使用情况监控</td>
       <td>无</td>
+      <td>IAM 策略、CloudTrail</td>
       <td>IAM 策略、CloudTrail</td>
       <td>IAM 角色、Cloud Audit Logs</td>
       <td>RBAC 策略、Azure Monitor</td>
@@ -184,6 +193,7 @@ export const ContactSalesCard = ({surface}) => {
 * [Claude for Teams 或 Enterprise](/zh-CN/authentication#claude-for-teams-or-enterprise)
 * [Anthropic Console](/zh-CN/authentication#claude-console-authentication)
 * [Amazon Bedrock](/zh-CN/amazon-bedrock)
+* [Claude Platform on AWS](/zh-CN/claude-platform-on-aws)
 * [Google Vertex AI](/zh-CN/google-vertex-ai)
 * [Microsoft Foundry](/zh-CN/microsoft-foundry)
 
@@ -192,7 +202,7 @@ export const ContactSalesCard = ({surface}) => {
 大多数组织可以直接使用云提供商，无需额外配置。但是，如果您的组织有特定的网络或管理要求，您可能需要配置企业代理或 LLM 网关。这些是可以一起使用的不同配置：
 
 * **企业代理**：通过 HTTP/HTTPS 代理路由流量。如果您的组织要求所有出站流量通过代理服务器以进行安全监控、合规性或网络策略执行，请使用此选项。使用 `HTTPS_PROXY` 或 `HTTP_PROXY` 环境变量进行配置。在[企业网络配置](/zh-CN/network-config)中了解更多。
-* **LLM 网关**：位于 Claude Code 和云提供商之间的服务，用于处理身份验证和路由。如果您需要跨团队的集中使用情况跟踪、自定义速率限制或预算或集中身份验证管理，请使用此选项。使用 `ANTHROPIC_BASE_URL`、`ANTHROPIC_BEDROCK_BASE_URL` 或 `ANTHROPIC_VERTEX_BASE_URL` 环境变量进行配置。在[LLM 网关配置](/zh-CN/llm-gateway)中了解更多。
+* **LLM 网关**：位于 Claude Code 和云提供商之间的服务，用于处理身份验证和路由。如果您需要跨团队的集中使用情况跟踪、自定义速率限制或预算或集中身份验证管理，请使用此选项。使用 `ANTHROPIC_BASE_URL`、`ANTHROPIC_BEDROCK_BASE_URL`、`ANTHROPIC_AWS_BASE_URL` 或 `ANTHROPIC_VERTEX_BASE_URL` 环境变量进行配置。在[LLM 网关配置](/zh-CN/llm-gateway)中了解更多。
 
 以下示例显示在 shell 或 shell 配置文件（`.bashrc`、`.zshrc`）中设置的环境变量。有关其他配置方法，请参阅[设置](/zh-CN/settings)。
 
@@ -313,7 +323,7 @@ export const ContactSalesCard = ({surface}) => {
 
 ### 为云提供商固定模型版本
 
-如果您通过 [Bedrock](/zh-CN/amazon-bedrock)、[Vertex AI](/zh-CN/google-vertex-ai) 或 [Foundry](/zh-CN/microsoft-foundry) 部署，请使用 `ANTHROPIC_DEFAULT_OPUS_MODEL`、`ANTHROPIC_DEFAULT_SONNET_MODEL` 和 `ANTHROPIC_DEFAULT_HAIKU_MODEL` 固定特定模型版本。如果不固定，模型别名会解析为最新版本，当 Anthropic 发布您的账户中尚未启用的新模型时，可能会破坏用户。有关每个提供商在最新版本不可用时的行为，请参阅[模型配置](/zh-CN/model-config#pin-models-for-third-party-deployments)。
+如果您通过 [Bedrock](/zh-CN/amazon-bedrock)、[Vertex AI](/zh-CN/google-vertex-ai)、[Foundry](/zh-CN/microsoft-foundry) 或 [Claude Platform on AWS](/zh-CN/claude-platform-on-aws) 部署，请使用 `ANTHROPIC_DEFAULT_OPUS_MODEL`、`ANTHROPIC_DEFAULT_SONNET_MODEL` 和 `ANTHROPIC_DEFAULT_HAIKU_MODEL` 固定特定模型版本。如果不固定，模型别名会解析为最新版本，当 Anthropic 发布您的账户中尚未启用的新模型时，可能会破坏用户。有关每个提供商在最新版本不可用时的行为，请参阅[模型配置](/zh-CN/model-config#pin-models-for-third-party-deployments)。
 
 ### 配置安全策略
 

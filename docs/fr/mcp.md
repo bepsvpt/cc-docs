@@ -289,6 +289,10 @@ claude mcp add --transport sse private-api https://api.company.com/sse \
 
 Les serveurs Stdio s'exécutent en tant que processus locaux sur votre machine. Ils sont idéaux pour les outils qui ont besoin d'un accès direct au système ou de scripts personnalisés.
 
+Claude Code définit `CLAUDE_PROJECT_DIR` dans l'environnement du serveur généré à la racine du projet, afin que votre serveur puisse résoudre les chemins relatifs au projet sans dépendre du répertoire de travail. C'est le même répertoire que les hooks reçoivent dans leur variable `CLAUDE_PROJECT_DIR`. Lisez-le depuis l'intérieur de votre processus serveur, par exemple `process.env.CLAUDE_PROJECT_DIR` en Node ou `os.environ["CLAUDE_PROJECT_DIR"]` en Python. Votre serveur peut également appeler la demande MCP `roots/list`, qui retourne le répertoire à partir duquel Claude Code a été lancé.
+
+Cette variable est définie dans l'environnement du serveur, pas dans l'environnement propre de Claude Code, donc la référencer via l'expansion `${VAR}` dans un fichier `.mcp.json` de portée projet ou utilisateur `command` ou `args` nécessite une valeur par défaut telle que `${CLAUDE_PROJECT_DIR:-.}`. Les configurations MCP fournies par les plugins remplacent `${CLAUDE_PROJECT_DIR}` directement et n'ont pas besoin de la valeur par défaut.
+
 ```bash theme={null}
 # Syntaxe de base
 claude mcp add [options] <name> -- <command> [args...]
@@ -406,7 +410,7 @@ Ou en ligne dans `plugin.json` :
 **Fonctionnalités MCP du plugin** :
 
 * **Cycle de vie automatique** : Au démarrage de la session, les serveurs des plugins activés se connectent automatiquement. Si vous activez ou désactivez un plugin pendant une session, exécutez `/reload-plugins` pour connecter ou déconnecter ses serveurs MCP
-* **Variables d'environnement** : utilisez `${CLAUDE_PLUGIN_ROOT}` pour les fichiers du plugin groupés et `${CLAUDE_PLUGIN_DATA}` pour l'[état persistant](/fr/plugins-reference#persistent-data-directory) qui survit aux mises à jour du plugin
+* **Variables d'environnement** : utilisez `${CLAUDE_PLUGIN_ROOT}` pour les fichiers du plugin groupés, `${CLAUDE_PLUGIN_DATA}` pour l'[état persistant](/fr/plugins-reference#persistent-data-directory) qui survit aux mises à jour du plugin, et `${CLAUDE_PROJECT_DIR}` pour la racine du projet stable
 * **Accès aux variables d'environnement utilisateur** : Accès aux mêmes variables d'environnement que les serveurs configurés manuellement
 * **Types de transport multiples** : Support des transports stdio, SSE et HTTP (le support des transports peut varier selon le serveur)
 
@@ -645,6 +649,8 @@ Trouver les clients qui n'ont pas effectué d'achat depuis 90 jours
 ## S'authentifier auprès des serveurs MCP distants
 
 De nombreux serveurs MCP basés sur le cloud nécessitent une authentification. Claude Code supporte OAuth 2.0 pour les connexions sécurisées.
+
+Claude Code marque un serveur distant comme nécessitant une authentification lorsque le serveur répond avec `401 Unauthorized` et un en-tête `WWW-Authenticate` pointant vers son serveur d'autorisation. Tout serveur personnalisé qui retourne cette réponse obtient le même flux d'authentification `/mcp` que tout autre serveur distant.
 
 <Steps>
   <Step title="Ajouter le serveur qui nécessite une authentification">

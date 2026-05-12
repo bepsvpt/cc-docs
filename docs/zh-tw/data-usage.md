@@ -67,7 +67,7 @@ Anthropic 根據您的帳戶類型和偏好設定保留 Claude Code 資料。
 
 下圖顯示 Claude Code 在安裝和正常操作期間如何連接到外部服務。實線表示必需的連接，而虛線表示可選或使用者啟動的資料流。
 
-<img src="https://mintcdn.com/claude-code/RcOyXc06Ja8cuvMZ/images/claude-code-data-flow.svg?fit=max&auto=format&n=RcOyXc06Ja8cuvMZ&q=85&s=b5be40abf333defe984993af89546c19" alt="顯示 Claude Code 外部連接的圖表：安裝/更新連接到發佈伺服器，使用者請求連接到 Anthropic 服務，包括 Console 驗證、public-api，以及可選的 Statsig、Sentry 和錯誤報告" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
+<img src="https://mintcdn.com/claude-code/RcOyXc06Ja8cuvMZ/images/claude-code-data-flow.svg?fit=max&auto=format&n=RcOyXc06Ja8cuvMZ&q=85&s=b5be40abf333defe984993af89546c19" alt="顯示 Claude Code 外部連接的圖表：安裝/更新連接到發佈伺服器，使用者請求連接到 Anthropic 服務，包括 Console 驗證、public-api，以及可選的 metrics、Sentry 和錯誤報告" width="720" height="520" data-path="images/claude-code-data-flow.svg" />
 
 Claude Code 在本機執行。為了與 LLM 互動，Claude Code 透過網路發送資料。此資料包括所有使用者提示和模型輸出，在傳輸中透過 TLS 1.2+ 加密。Claude Code 與大多數流行的 VPN 和 LLM 代理相容。
 
@@ -95,7 +95,7 @@ Claude Code 建立在 Anthropic 的 API 上。有關 API 安全控制的詳細�
 
 ## 遙測服務
 
-Claude Code 從使用者的機器連接到 Statsig 服務，以記錄延遲、可靠性和使用模式等操作指標。此記錄不包括任何程式碼或檔案路徑。資料在傳輸中使用 TLS 加密，在靜止時使用 256 位 AES 加密。在 [Statsig 安全文件](https://www.statsig.com/trust/security)中閱讀更多資訊。若要選擇退出 Statsig 遙測，請設定 `DISABLE_TELEMETRY` 環境變數。
+Claude Code 從使用者的機器連接到 Anthropic 以記錄延遲、可靠性和使用模式等操作指標。此記錄不包括任何程式碼或檔案路徑。資料在傳輸中和靜止時都經過加密。若要選擇退出遙測，請設定 `DISABLE_TELEMETRY` 環境變數。
 
 Claude Code 從使用者的機器連接到 Sentry 進行操作錯誤記錄。資料在傳輸中使用 TLS 加密，在靜止時使用 256 位 AES 加密。在 [Sentry 安全文件](https://sentry.io/security/)中閱讀更多資訊。若要選擇退出錯誤記錄，請設定 `DISABLE_ERROR_REPORTING` 環境變數。
 
@@ -103,19 +103,19 @@ Claude Code 從使用者的機器連接到 Sentry 進行操作錯誤記錄。資
 
 ## 按 API 提供者的預設行為
 
-根據預設，當使用 Bedrock、Vertex 或 Foundry 時，錯誤報告、遙測和錯誤報告會停用。工作階段品質調查和 WebFetch 網域安全檢查是例外，無論提供者為何都會執行。您可以透過設定 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 一次選擇退出所有非必要流量，包括調查。此變數不會影響 WebFetch 檢查，該檢查有其自己的選擇退出。以下是完整的預設行為：
+根據預設，當使用 Bedrock、Vertex、Foundry 或 Claude Platform on AWS 時，錯誤報告、遙測和錯誤報告會停用。工作階段品質調查和 WebFetch 網域安全檢查是例外，無論提供者為何都會執行。您可以透過設定 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 一次選擇退出所有非必要流量，包括調查。此變數不會影響 WebFetch 檢查，該檢查有其自己的選擇退出。以下是完整的預設行為：
 
-| 服務                             | Claude API                                                            | Vertex API                                                            | Bedrock API                                                           | Foundry API                                                           |
-| ------------------------------ | --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| **Statsig（指標）**                | 預設開啟。<br />`DISABLE_TELEMETRY=1` 以停用。                                 | 預設關閉。<br />`CLAUDE_CODE_USE_VERTEX` 必須為 1。                            | 預設關閉。<br />`CLAUDE_CODE_USE_BEDROCK` 必須為 1。                           | 預設關閉。<br />`CLAUDE_CODE_USE_FOUNDRY` 必須為 1。                           |
-| **Sentry（錯誤）**                 | 預設開啟。<br />`DISABLE_ERROR_REPORTING=1` 以停用。                           | 預設關閉。<br />`CLAUDE_CODE_USE_VERTEX` 必須為 1。                            | 預設關閉。<br />`CLAUDE_CODE_USE_BEDROCK` 必須為 1。                           | 預設關閉。<br />`CLAUDE_CODE_USE_FOUNDRY` 必須為 1。                           |
-| **Claude API（`/feedback` 報告）** | 預設開啟。<br />`DISABLE_FEEDBACK_COMMAND=1` 以停用。                          | 預設關閉。<br />`CLAUDE_CODE_USE_VERTEX` 必須為 1。                            | 預設關閉。<br />`CLAUDE_CODE_USE_BEDROCK` 必須為 1。                           | 預設關閉。<br />`CLAUDE_CODE_USE_FOUNDRY` 必須為 1。                           |
-| **工作階段品質調查**                   | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。               | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。               | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。               | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。               |
-| **WebFetch 網域安全檢查**            | 預設開啟。<br />[設定](/zh-TW/settings)中的 `skipWebFetchPreflight: true` 以停用。 | 預設開啟。<br />[設定](/zh-TW/settings)中的 `skipWebFetchPreflight: true` 以停用。 | 預設開啟。<br />[設定](/zh-TW/settings)中的 `skipWebFetchPreflight: true` 以停用。 | 預設開啟。<br />[設定](/zh-TW/settings)中的 `skipWebFetchPreflight: true` 以停用。 |
+| 服務                             | Claude API                                                            | Vertex API                                                            | Bedrock API                                                           | Foundry API                                                           | Claude Platform on AWS                                                |
+| ------------------------------ | --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| **Anthropic（指標）**              | 預設開啟。<br />`DISABLE_TELEMETRY=1` 以停用。                                 | 預設關閉。<br />`CLAUDE_CODE_USE_VERTEX` 必須為 1。                            | 預設關閉。<br />`CLAUDE_CODE_USE_BEDROCK` 必須為 1。                           | 預設關閉。<br />`CLAUDE_CODE_USE_FOUNDRY` 必須為 1。                           | 預設關閉。<br />`CLAUDE_CODE_USE_ANTHROPIC_AWS` 必須為 1。                     |
+| **Sentry（錯誤）**                 | 預設開啟。<br />`DISABLE_ERROR_REPORTING=1` 以停用。                           | 預設關閉。<br />`CLAUDE_CODE_USE_VERTEX` 必須為 1。                            | 預設關閉。<br />`CLAUDE_CODE_USE_BEDROCK` 必須為 1。                           | 預設關閉。<br />`CLAUDE_CODE_USE_FOUNDRY` 必須為 1。                           | 預設關閉。<br />`CLAUDE_CODE_USE_ANTHROPIC_AWS` 必須為 1。                     |
+| **Claude API（`/feedback` 報告）** | 預設開啟。<br />`DISABLE_FEEDBACK_COMMAND=1` 以停用。                          | 預設關閉。<br />`CLAUDE_CODE_USE_VERTEX` 必須為 1。                            | 預設關閉。<br />`CLAUDE_CODE_USE_BEDROCK` 必須為 1。                           | 預設關閉。<br />`CLAUDE_CODE_USE_FOUNDRY` 必須為 1。                           | 預設關閉。<br />`CLAUDE_CODE_USE_ANTHROPIC_AWS` 必須為 1。                     |
+| **工作階段品質調查**                   | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。               | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。               | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。               | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。               | 預設開啟。<br />`CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` 以停用。               |
+| **WebFetch 網域安全檢查**            | 預設開啟。<br />[設定](/zh-TW/settings)中的 `skipWebFetchPreflight: true` 以停用。 | 預設開啟。<br />[設定](/zh-TW/settings)中的 `skipWebFetchPreflight: true` 以停用。 | 預設開啟。<br />[設定](/zh-TW/settings)中的 `skipWebFetchPreflight: true` 以停用。 | 預設開啟。<br />[設定](/zh-TW/settings)中的 `skipWebFetchPreflight: true` 以停用。 | 預設開啟。<br />[設定](/zh-TW/settings)中的 `skipWebFetchPreflight: true` 以停用。 |
 
 所有環境變數都可以簽入 `settings.json`（請參閱[設定參考](/zh-TW/settings)）。
 
-自 v2.1.126 起，當主機平台設定 `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST` 時，Statsig 指標在 Vertex、Bedrock 和 Foundry 上預設為開啟，並遵循標準 `DISABLE_TELEMETRY` 選擇退出。Sentry 錯誤報告和 `/feedback` 報告在這些提供者上仍預設為關閉。
+自 v2.1.126 起，當主機平台設定 `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST` 時，Vertex、Bedrock 和 Foundry 上的指標預設為開啟，並遵循標準 `DISABLE_TELEMETRY` 選擇退出。Sentry 錯誤報告和 `/feedback` 報告在這些提供者上仍預設為關閉。
 
 ### WebFetch 網域安全檢查
 

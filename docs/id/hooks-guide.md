@@ -864,7 +864,7 @@ Untuk opsi konfigurasi lengkap dan penanganan respons, lihat [HTTP hooks](/id/ho
 
 ### Keterbatasan
 
-* Hook perintah berkomunikasi melalui stdout, stderr, dan kode keluar saja. Mereka tidak dapat memicu perintah `/` atau panggilan alat secara langsung. Teks yang dikembalikan melalui `additionalContext` disuntikkan sebagai pengingat sistem yang Claude baca sebagai teks biasa. HTTP hooks berkomunikasi melalui badan respons sebagai gantinya.
+* Hook perintah berkomunikasi melalui stdout, stderr, dan kode keluar saja. Mereka tidak dapat memicu perintah `/` atau panggilan alat. Teks yang dikembalikan melalui `additionalContext` disuntikkan sebagai pengingat sistem yang Claude baca sebagai teks biasa. HTTP hooks berkomunikasi melalui badan respons sebagai gantinya.
 * Timeout hook adalah 10 menit secara default, dapat dikonfigurasi per hook dengan bidang `timeout` (dalam detik).
 * Hook `PostToolUse` tidak dapat membatalkan tindakan karena alat sudah dieksekusi.
 * Hook `PermissionRequest` tidak aktif dalam [non-interactive mode](/id/headless) (`-p`). Gunakan hook `PreToolUse` untuk keputusan izin otomatis.
@@ -895,7 +895,7 @@ Anda melihat pesan seperti "PreToolUse hook error: ..." dalam transkrip.
   echo '{"tool_name":"Bash","tool_input":{"command":"ls"}}' | ./my-hook.sh
   echo $?  # Check the exit code
   ```
-* Jika Anda melihat "command not found", gunakan jalur absolut atau `$CLAUDE_PROJECT_DIR` untuk mereferensikan skrip
+* Jika Anda melihat "command not found", gunakan jalur absolut atau `${CLAUDE_PROJECT_DIR}` untuk mereferensikan skrip. Untuk menghindari quoting shell sepenuhnya, tambahkan `"args": []` untuk beralih ke [exec form](/id/hooks#exec-form-and-shell-form), yang menelurkan skrip secara langsung tanpa shell
 * Jika Anda melihat "jq: command not found", instal `jq` atau gunakan Python/Node.js untuk parsing JSON
 * Jika skrip tidak berjalan sama sekali, buat dapat dieksekusi: `chmod +x ./my-hook.sh`
 
@@ -911,7 +911,7 @@ Anda mengedit file pengaturan tetapi hooks tidak muncul dalam menu.
 
 Claude terus bekerja dalam loop tak terbatas daripada berhenti.
 
-Skrip Stop hook Anda perlu memeriksa apakah sudah memicu kelanjutan. Parsing bidang `stop_hook_active` dari input JSON dan keluar lebih awal jika `true`:
+Skrip Stop hook Anda perlu memeriksa apakah sudah memicu kelanjutan. Parse bidang `stop_hook_active` dari input JSON dan keluar lebih awal jika `true`:
 
 ```bash theme={null}
 #!/bin/bash
@@ -926,7 +926,7 @@ fi
 
 Claude Code menampilkan kesalahan parsing JSON meskipun skrip hook Anda mengeluarkan JSON yang valid.
 
-Ketika Claude Code menjalankan hook, ia menelurkan shell yang bersumber dari profil Anda (`~/.zshrc` atau `~/.bashrc`). Jika profil Anda berisi pernyataan `echo` tanpa syarat, output itu ditambahkan ke JSON hook Anda:
+Ketika Claude Code menjalankan hook perintah bentuk shell (satu tanpa `args`), ia menelurkan `sh -c` pada macOS dan Linux atau Git Bash pada Windows secara default. Shell ini non-interaktif, tetapi Git Bash dan beberapa konfigurasi (seperti `BASH_ENV` menunjuk ke `~/.bashrc`) masih bersumber dari profil Anda. Jika profil itu berisi pernyataan `echo` tanpa syarat, output itu ditambahkan ke JSON hook Anda:
 
 ```text theme={null}
 Shell ready on arm64

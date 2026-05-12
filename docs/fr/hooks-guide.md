@@ -864,7 +864,7 @@ Pour les options de configuration complètes et la gestion des réponses, consul
 
 ### Limitations
 
-* Les hooks de commande communiquent uniquement via stdout, stderr et les codes de sortie. Ils ne peuvent pas déclencher directement des commandes `/` ou des appels d'outils. Le texte retourné via `additionalContext` est injecté comme un rappel système que Claude lit en tant que texte brut. Les hooks HTTP communiquent via le corps de la réponse à la place.
+* Les hooks de commande communiquent uniquement via stdout, stderr et les codes de sortie. Ils ne peuvent pas déclencher des commandes `/` ou des appels d'outils. Le texte retourné via `additionalContext` est injecté comme un rappel système que Claude lit en tant que texte brut. Les hooks HTTP communiquent via le corps de la réponse à la place.
 * Le délai d'expiration du hook est de 10 minutes par défaut, configurable par hook avec le champ `timeout` (en secondes).
 * Les hooks `PostToolUse` ne peuvent pas annuler les actions puisque l'outil a déjà été exécuté.
 * Les hooks `PermissionRequest` ne se déclenchent pas en [mode non-interactif](/fr/headless) (`-p`). Utilisez les hooks `PreToolUse` pour les décisions de permission automatisées.
@@ -895,7 +895,7 @@ Vous voyez un message comme « PreToolUse hook error : ... » dans la transcript
   echo '{"tool_name":"Bash","tool_input":{"command":"ls"}}' | ./my-hook.sh
   echo $?  # Check the exit code
   ```
-* Si vous voyez « command not found », utilisez des chemins absolus ou `$CLAUDE_PROJECT_DIR` pour référencer les scripts
+* Si vous voyez « command not found », utilisez des chemins absolus ou `${CLAUDE_PROJECT_DIR}` pour référencer les scripts. Pour éviter complètement les guillemets du shell, ajoutez `"args": []` pour basculer vers la [forme exec](/fr/hooks#exec-form-and-shell-form), qui génère le script directement sans shell
 * Si vous voyez « jq: command not found », installez `jq` ou utilisez Python/Node.js pour l'analyse JSON
 * Si le script ne s'exécute pas du tout, rendez-le exécutable : `chmod +x ./my-hook.sh`
 
@@ -926,7 +926,7 @@ fi
 
 Claude Code affiche une erreur d'analyse JSON même si votre script de hook produit du JSON valide.
 
-Lorsque Claude Code exécute un hook, il génère un shell qui source votre profil (`~/.zshrc` ou `~/.bashrc`). Si votre profil contient des instructions `echo` inconditionnelles, cette sortie est ajoutée au début de votre JSON du hook :
+Lorsque Claude Code exécute un hook de commande sous forme de shell (un sans `args`), il génère `sh -c` sur macOS et Linux ou Git Bash sur Windows par défaut. Ce shell est non-interactif, mais Git Bash et certaines configurations (comme `BASH_ENV` pointant vers `~/.bashrc`) sourcent toujours votre profil. Si ce profil contient des instructions `echo` inconditionnelles, la sortie est ajoutée au début de votre JSON du hook :
 
 ```text theme={null}
 Shell ready on arm64

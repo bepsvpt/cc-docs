@@ -279,9 +279,9 @@ review my changes and suggest improvements
 
 <AccordionGroup>
   <Accordion title="對您的請求要具體">
-    不要這樣做：'修復錯誤'
+    不要這樣做："修復錯誤"
 
-    試試這樣：'修復登入錯誤，使用者輸入錯誤認證後看到空白畫面'
+    試試這樣："修復登入錯誤，使用者輸入錯誤認證後看到空白畫面"
   </Accordion>
 
   <Accordion title="使用逐步說明">
@@ -307,10 +307,10 @@ review my changes and suggest improvements
   </Accordion>
 
   <Accordion title="使用快捷方式節省時間">
-    * 按 `?` 查看所有可用的快捷鍵
+    * 輸入 `/` 查看所有命令和 skills
     * 使用 Tab 進行命令完成
     * 按 ↑ 查看命令歷史
-    * 輸入 `/` 查看所有命令和 skills
+    * 按 `Shift+Tab` 循環切換權限模式
   </Accordion>
 </AccordionGroup>
 

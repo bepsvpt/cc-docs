@@ -247,7 +247,7 @@ Ecco alcuni server MCP comunemente utilizzati che puoi connettere a Claude Code:
 
 ## Installazione dei server MCP
 
-I server MCP possono essere configurati in tre modi diversi a seconda delle tue esigenze:
+I server MCP possono essere configurati in tre modi diversi a seconda delle vostre esigenze:
 
 ### Opzione 1: Aggiungi un server HTTP remoto
 
@@ -287,7 +287,11 @@ claude mcp add --transport sse private-api https://api.company.com/sse \
 
 ### Opzione 3: Aggiungi un server stdio locale
 
-I server stdio vengono eseguiti come processi locali sulla tua macchina. Sono ideali per strumenti che necessitano di accesso diretto al sistema o script personalizzati.
+I server stdio vengono eseguiti come processi locali sulla vostra macchina. Sono ideali per strumenti che necessitano di accesso diretto al sistema o script personalizzati.
+
+Claude Code imposta `CLAUDE_PROJECT_DIR` nell'ambiente del server generato alla radice del progetto, in modo che il vostro server possa risolvere i percorsi relativi al progetto senza dipendere dalla directory di lavoro. Questa è la stessa directory che gli hook ricevono nella loro variabile `CLAUDE_PROJECT_DIR`. Leggetela dall'interno del vostro processo server, ad esempio `process.env.CLAUDE_PROJECT_DIR` in Node o `os.environ["CLAUDE_PROJECT_DIR"]` in Python. Il vostro server può anche chiamare la richiesta MCP `roots/list`, che restituisce la directory da cui Claude Code è stato avviato.
+
+Questa variabile è impostata nell'ambiente del server, non nell'ambiente di Claude Code stesso, quindi farvi riferimento tramite l'espansione `${VAR}` in un `.mcp.json` con ambito progetto o utente `command` o `args` richiede un valore predefinito come `${CLAUDE_PROJECT_DIR:-.}`. Le configurazioni MCP fornite da plugin sostituiscono `${CLAUDE_PROJECT_DIR}` direttamente e non hanno bisogno del valore predefinito.
 
 ```bash theme={null}
 # Sintassi di base
@@ -311,9 +315,9 @@ claude mcp add --transport stdio --env AIRTABLE_API_KEY=YOUR_KEY airtable \
   Questo previene conflitti tra i flag di Claude e i flag del server.
 </Note>
 
-### Gestione dei tuoi server
+### Gestione dei vostri server
 
-Una volta configurati, puoi gestire i tuoi server MCP con questi comandi:
+Una volta configurati, potete gestire i vostri server MCP con questi comandi:
 
 ```bash theme={null}
 # Elenca tutti i server configurati
@@ -331,7 +335,7 @@ claude mcp remove github
 
 Il pannello `/mcp` mostra il conteggio degli strumenti accanto a ogni server connesso e contrassegna i server che pubblicizzano la capacità degli strumenti ma non espongono alcuno strumento.
 
-Il nome del server `workspace` è riservato per uso interno. Se la tua configurazione definisce un server con quel nome, Claude Code lo salta al momento del caricamento e mostra un avviso chiedendoti di rinominarlo.
+Il nome del server `workspace` è riservato per uso interno. Se la vostra configurazione definisce un server con quel nome, Claude Code lo salta al momento del caricamento e mostra un avviso chiedendovi di rinominarlo.
 
 ### Aggiornamenti dinamici degli strumenti
 
@@ -339,21 +343,21 @@ Claude Code supporta le notifiche `list_changed` di MCP, consentendo ai server M
 
 ### Riconnessione automatica
 
-Se un server HTTP o SSE si disconnette durante una sessione, Claude Code si riconnette automaticamente con backoff esponenziale: fino a cinque tentativi, a partire da un ritardo di un secondo e raddoppiando ogni volta. Il server appare come in sospeso in `/mcp` mentre la riconnessione è in corso. Dopo cinque tentativi falliti il server è contrassegnato come non riuscito e puoi riprovare manualmente da `/mcp`. I server stdio sono processi locali e non vengono riconnessi automaticamente.
+Se un server HTTP o SSE si disconnette durante una sessione, Claude Code si riconnette automaticamente con backoff esponenziale: fino a cinque tentativi, a partire da un ritardo di un secondo e raddoppiando ogni volta. Il server appare come in sospeso in `/mcp` mentre la riconnessione è in corso. Dopo cinque tentativi falliti il server è contrassegnato come non riuscito e potete riprovare manualmente da `/mcp`. I server stdio sono processi locali e non vengono riconnessi automaticamente.
 
 Lo stesso backoff si applica quando un server HTTP o SSE non riesce la sua connessione iniziale all'avvio. A partire dalla v2.1.121, Claude Code ritenta la connessione iniziale fino a tre volte su errori transitori come una risposta 5xx, una connessione rifiutata o un timeout, quindi contrassegna il server come non riuscito se ancora non riesce a connettersi. Gli errori di autenticazione e di non trovato non vengono ritentati perché richiedono una modifica della configurazione per essere risolti.
 
 ### Invia messaggi con canali
 
-Un server MCP può anche inviare messaggi direttamente nella tua sessione in modo che Claude possa reagire a eventi esterni come risultati CI, avvisi di monitoraggio o messaggi di chat. Per abilitare questa funzionalità, il tuo server dichiara la capacità `claude/channel` e tu la abiliti con il flag `--channels` all'avvio. Vedi [Canali](/it/channels) per utilizzare un canale ufficialmente supportato, oppure [Riferimento canali](/it/channels-reference) per costruire il tuo.
+Un server MCP può anche inviare messaggi direttamente nella vostra sessione in modo che Claude possa reagire a eventi esterni come risultati CI, avvisi di monitoraggio o messaggi di chat. Per abilitare questa funzionalità, il vostro server dichiara la capacità `claude/channel` e voi la abilitate con il flag `--channels` all'avvio. Vedi [Canali](/it/channels) per utilizzare un canale ufficialmente supportato, oppure [Riferimento canali](/it/channels-reference) per costruire il vostro.
 
 <Tip>
   Suggerimenti:
 
   * Utilizza il flag `--scope` per specificare dove viene archiviata la configurazione:
-    * `local` (predefinito): Disponibile solo per te nel progetto corrente (era chiamato `project` nelle versioni precedenti)
+    * `local` (predefinito): Disponibile solo per voi nel progetto corrente (era chiamato `project` nelle versioni precedenti)
     * `project`: Condiviso con tutti nel progetto tramite il file `.mcp.json`
-    * `user`: Disponibile per te in tutti i progetti (era chiamato `global` nelle versioni precedenti)
+    * `user`: Disponibile per voi in tutti i progetti (era chiamato `global` nelle versioni precedenti)
   * Imposta le variabili di ambiente con i flag `--env` (per esempio, `--env KEY=value`)
   * Configura il timeout di avvio del server MCP utilizzando la variabile di ambiente MCP\_TIMEOUT (per esempio, `MCP_TIMEOUT=10000 claude` imposta un timeout di 10 secondi)
   * Claude Code visualizzerà un avviso quando l'output dello strumento MCP supera 10.000 token. Per aumentare questo limite, imposta la variabile di ambiente `MAX_MCP_OUTPUT_TOKENS` (per esempio, `MAX_MCP_OUTPUT_TOKENS=50000`)
@@ -405,8 +409,8 @@ O inline in `plugin.json`:
 
 **Funzionalità MCP del plugin**:
 
-* **Ciclo di vita automatico**: All'avvio della sessione, i server per i plugin abilitati si connettono automaticamente. Se abiliti o disabiliti un plugin durante una sessione, esegui `/reload-plugins` per connettere o disconnettere i suoi server MCP
-* **Variabili di ambiente**: Utilizza `${CLAUDE_PLUGIN_ROOT}` per i file del plugin raggruppati e `${CLAUDE_PLUGIN_DATA}` per lo [stato persistente](/it/plugins-reference#persistent-data-directory) che sopravvive agli aggiornamenti del plugin
+* **Ciclo di vita automatico**: All'avvio della sessione, i server per i plugin abilitati si connettono automaticamente. Se abilitate o disabilitate un plugin durante una sessione, eseguite `/reload-plugins` per connettere o disconnettere i suoi server MCP
+* **Variabili di ambiente**: Utilizza `${CLAUDE_PLUGIN_ROOT}` per i file del plugin raggruppati, `${CLAUDE_PLUGIN_DATA}` per lo [stato persistente](/it/plugins-reference#persistent-data-directory) che sopravvive agli aggiornamenti del plugin, e `${CLAUDE_PROJECT_DIR}` per la radice stabile del progetto
 * **Accesso alle variabili di ambiente dell'utente**: Accesso alle stesse variabili di ambiente dei server configurati manualmente
 * **Tipi di trasporto multipli**: Supporto per trasporti stdio, SSE e HTTP (il supporto del trasporto può variare a seconda del server)
 
@@ -645,6 +649,8 @@ Trova i clienti che non hanno effettuato un acquisto negli ultimi 90 giorni
 ## Autenticazione con server MCP remoti
 
 Molti server MCP basati su cloud richiedono l'autenticazione. Claude Code supporta OAuth 2.0 per connessioni sicure.
+
+Claude Code contrassegna un server remoto come richiedente autenticazione quando il server risponde con `401 Unauthorized` e un'intestazione `WWW-Authenticate` che punta al suo server di autorizzazione. Qualsiasi server personalizzato che restituisce quella risposta ottiene lo stesso flusso di autenticazione `/mcp` di qualsiasi altro server remoto.
 
 <Steps>
   <Step title="Aggiungi il server che richiede l'autenticazione">

@@ -11,7 +11,7 @@ Les sous-agents sont des assistants IA spécialisés qui gèrent des types de t�
 Chaque sous-agent s'exécute dans sa propre fenêtre de contexte avec une invite système personnalisée, un accès à des outils spécifiques et des permissions indépendantes. Lorsque Claude rencontre une tâche qui correspond à la description d'un sous-agent, il délègue à ce sous-agent, qui fonctionne indépendamment et retourne les résultats. Pour voir les économies de contexte en pratique, la [visualisation de la fenêtre de contexte](/fr/context-window) vous guide à travers une session où un sous-agent gère la recherche dans sa propre fenêtre séparée.
 
 <Note>
-  Si vous avez besoin de plusieurs agents travaillant en parallèle et communiquant entre eux, consultez plutôt [les équipes d'agents](/fr/agent-teams). Les sous-agents fonctionnent au sein d'une seule session ; les équipes d'agents coordonnent les sessions séparées.
+  Les sous-agents fonctionnent au sein d'une seule session. Pour exécuter de nombreuses sessions indépendantes en parallèle et les surveiller depuis un seul endroit, consultez [les agents en arrière-plan](/fr/agent-view). Pour les sessions qui communiquent entre elles, consultez [les équipes d'agents](/fr/agent-teams).
 </Note>
 
 Les sous-agents vous aident à :
@@ -158,7 +158,7 @@ La commande `/agents` ouvre une interface à onglets pour gérer les sous-agents
 
 C'est la méthode recommandée pour créer et gérer les sous-agents. Pour la création manuelle ou l'automatisation, vous pouvez également ajouter des fichiers de sous-agent directement.
 
-Pour lister tous les sous-agents configurés à partir de la ligne de commande sans démarrer une session interactive, exécutez `claude agents`. Cela affiche les agents groupés par source et indique lesquels sont remplacés par des définitions de priorité plus élevée.
+Pour lister tous les sous-agents configurés à partir de la ligne de commande sans ouvrir la [vue agent](/fr/agent-view), redirigez la sortie de `claude agents`. Par exemple, `claude agents | cat` affiche les agents groupés par source et indique lesquels sont remplacés par des définitions de priorité plus élevée.
 
 ### Choisir la portée du sous-agent
 
@@ -260,7 +260,7 @@ Les champs suivants peuvent être utilisés dans le frontmatter YAML. Seuls `nam
 
 | Champ             | Obligatoire | Description                                                                                                                                                                                                                                                                                                                                                                                    |
 | :---------------- | :---------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`            | Oui         | Identifiant unique utilisant des lettres minuscules et des tirets                                                                                                                                                                                                                                                                                                                              |
+| `name`            | Oui         | Identifiant unique utilisant des lettres minuscules et des tirets. Les [Hooks](/fr/hooks#subagentstart) reçoivent cette valeur comme `agent_type`. Le nom du fichier n'a pas besoin de correspondre                                                                                                                                                                                            |
 | `description`     | Oui         | Quand Claude doit déléguer à ce sous-agent                                                                                                                                                                                                                                                                                                                                                     |
 | `tools`           | Non         | [Outils](#available-tools) que le sous-agent peut utiliser. Hérite de tous les outils s'il est omis. Pour précharger les Skills dans le contexte, utilisez le champ `skills` plutôt que de lister `Skill` ici                                                                                                                                                                                  |
 | `disallowedTools` | Non         | Outils à refuser, supprimés de la liste héritée ou spécifiée                                                                                                                                                                                                                                                                                                                                   |
@@ -666,8 +666,8 @@ Le drapeau CLI remplace le paramètre si les deux sont présents.
 
 Les sous-agents peuvent s'exécuter au premier plan (bloquant) ou en arrière-plan (concurrent) :
 
-* **Les sous-agents au premier plan** bloquent la conversation principale jusqu'à la fin. Les invites de permission et les questions de clarification (comme [`AskUserQuestion`](/fr/tools-reference)) vous sont transmises.
-* **Les sous-agents en arrière-plan** s'exécutent simultanément pendant que vous continuez à travailler. Avant le lancement, Claude Code vous demande les permissions d'outils dont le sous-agent aura besoin, en s'assurant qu'il a les approbations nécessaires à l'avance. Une fois en cours d'exécution, le sous-agent hérite de ces permissions et auto-refuse tout ce qui n'est pas pré-approuvé. Si un sous-agent en arrière-plan doit poser des questions de clarification, cet appel d'outil échoue mais le sous-agent continue.
+* **Les sous-agents au premier plan** bloquent la conversation principale jusqu'à la fin. Les invites de permission vous sont transmises au fur et à mesure qu'elles se produisent.
+* **Les sous-agents en arrière-plan** s'exécutent simultanément pendant que vous continuez à travailler. Ils s'exécutent avec les permissions déjà accordées dans la session et auto-refusent tout appel d'outil qui sinon demanderait une permission. Si un sous-agent en arrière-plan doit poser des questions de clarification, cet appel d'outil échoue mais le sous-agent continue.
 
 Si un sous-agent en arrière-plan échoue en raison de permissions manquantes, vous pouvez démarrer un nouveau sous-agent au premier plan avec la même tâche pour réessayer avec des invites interactives.
 
@@ -678,7 +678,7 @@ Claude décide si les sous-agents s'exécutent au premier plan ou en arrière-pl
 
 Pour désactiver toute la fonctionnalité de tâche en arrière-plan, définissez la variable d'environnement `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` sur `1`. Consultez [Variables d'environnement](/fr/env-vars).
 
-Lorsque le [mode fork](#fork-the-current-conversation) est activé, chaque génération de sous-agent s'exécute en arrière-plan indépendamment du champ `background`. Les forks affichent toujours les invites de permission dans votre terminal au fur et à mesure qu'elles se produisent au lieu de pré-approuver ; les sous-agents nommés suivent le flux de pré-approbation ci-dessus.
+Lorsque le [mode fork](#fork-the-current-conversation) est activé, chaque génération de sous-agent s'exécute en arrière-plan indépendamment du champ `background`. Les forks affichent toujours les invites de permission dans votre terminal au fur et à mesure qu'elles se produisent ; les sous-agents nommés auto-refusent tout ce qui sinon demanderait une permission, comme décrit ci-dessus.
 
 ### Modèles courants
 
@@ -823,13 +823,13 @@ Les forks en cours d'exécution apparaissent dans un panneau sous l'entrée d'in
 
 Un fork hérite de tout ce que la session principale a au moment où il se génère. Un sous-agent nommé démarre à partir de sa propre définition.
 
-|                          | Fork                                        | Sous-agent nommé                                                                                    |
-| :----------------------- | :------------------------------------------ | :-------------------------------------------------------------------------------------------------- |
-| Contexte                 | Historique de conversation complet          | Contexte frais avec l'invite que vous transmettez                                                   |
-| Invite système et outils | Identique à la session principale           | À partir du [fichier de définition](#write-subagent-files) du sous-agent                            |
-| Modèle                   | Identique à la session principale           | À partir du champ `model` du sous-agent                                                             |
-| Permissions              | Les invites s'affichent dans votre terminal | [Pré-approuvées](#run-subagents-in-foreground-or-background) avant le lancement, puis auto-refusées |
-| Cache d'invite           | Partagé avec la session principale          | Cache séparé                                                                                        |
+|                          | Fork                                        | Sous-agent nommé                                                                                |
+| :----------------------- | :------------------------------------------ | :---------------------------------------------------------------------------------------------- |
+| Contexte                 | Historique de conversation complet          | Contexte frais avec l'invite que vous transmettez                                               |
+| Invite système et outils | Identique à la session principale           | À partir du [fichier de définition](#write-subagent-files) du sous-agent                        |
+| Modèle                   | Identique à la session principale           | À partir du champ `model` du sous-agent                                                         |
+| Permissions              | Les invites s'affichent dans votre terminal | [Auto-refusées](#run-subagents-in-foreground-or-background) lors de l'exécution en arrière-plan |
+| Cache d'invite           | Partagé avec la session principale          | Cache séparé                                                                                    |
 
 Parce que l'invite système d'un fork et les définitions d'outils sont identiques au parent, sa première demande réutilise le cache d'invite du parent. Cela rend le forking moins cher que la génération d'un sous-agent frais pour les tâches qui ont besoin du même contexte.
 

@@ -99,6 +99,7 @@ Jika organisasi Anda memiliki persyaratan infrastruktur khusus, bandingkan opsi 
       <th>Claude for Teams/Enterprise</th>
       <th>Anthropic Console</th>
       <th>Amazon Bedrock</th>
+      <th>Claude Platform on AWS</th>
       <th>Google Vertex AI</th>
       <th>Microsoft Foundry</th>
     </tr>
@@ -110,6 +111,7 @@ Jika organisasi Anda memiliki persyaratan infrastruktur khusus, bandingkan opsi 
       <td>Sebagian besar organisasi (direkomendasikan)</td>
       <td>Pengembang individual</td>
       <td>Penyebaran native AWS</td>
+      <td>Penagihan AWS Marketplace dengan fitur Claude API</td>
       <td>Penyebaran native GCP</td>
       <td>Penyebaran native Azure</td>
     </tr>
@@ -119,6 +121,7 @@ Jika organisasi Anda memiliki persyaratan infrastruktur khusus, bandingkan opsi 
       <td><strong>Teams:</strong> \$150/seat (Premium) dengan PAYG tersedia<br /><strong>Enterprise:</strong> <a href="https://claude.com/contact-sales?utm_source=claude_code&utm_medium=docs&utm_content=third_party_enterprise">Hubungi Penjualan</a></td>
       <td>PAYG</td>
       <td>PAYG melalui AWS</td>
+      <td>PAYG melalui AWS Marketplace</td>
       <td>PAYG melalui GCP</td>
       <td>PAYG melalui Azure</td>
     </tr>
@@ -128,12 +131,14 @@ Jika organisasi Anda memiliki persyaratan infrastruktur khusus, bandingkan opsi 
       <td>[Negara](https://www.anthropic.com/supported-countries) yang didukung</td>
       <td>[Negara](https://www.anthropic.com/supported-countries) yang didukung</td>
       <td>[Wilayah](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html) AWS yang beragam</td>
+      <td>Wilayah AWS yang beragam</td>
       <td>[Wilayah](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations) GCP yang beragam</td>
       <td>[Wilayah](https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/) Azure yang beragam</td>
     </tr>
 
     <tr>
       <td>Prompt caching</td>
+      <td>Diaktifkan secara default</td>
       <td>Diaktifkan secara default</td>
       <td>Diaktifkan secara default</td>
       <td>Diaktifkan secara default</td>
@@ -146,6 +151,7 @@ Jika organisasi Anda memiliki persyaratan infrastruktur khusus, bandingkan opsi 
       <td>Claude.ai SSO atau email</td>
       <td>Kunci API</td>
       <td>Kunci API atau kredensial AWS</td>
+      <td>Kunci API atau kredensial AWS</td>
       <td>Kredensial GCP</td>
       <td>Kunci API atau Microsoft Entra ID</td>
     </tr>
@@ -154,6 +160,7 @@ Jika organisasi Anda memiliki persyaratan infrastruktur khusus, bandingkan opsi 
       <td>Pelacakan biaya</td>
       <td>Dashboard penggunaan</td>
       <td>Dashboard penggunaan</td>
+      <td>AWS Cost Explorer</td>
       <td>AWS Cost Explorer</td>
       <td>GCP Billing</td>
       <td>Azure Cost Management</td>
@@ -166,12 +173,14 @@ Jika organisasi Anda memiliki persyaratan infrastruktur khusus, bandingkan opsi 
       <td>Tidak</td>
       <td>Tidak</td>
       <td>Tidak</td>
+      <td>Tidak</td>
     </tr>
 
     <tr>
       <td>Fitur enterprise</td>
       <td>Manajemen tim, SSO, pemantauan penggunaan</td>
       <td>Tidak ada</td>
+      <td>Kebijakan IAM, CloudTrail</td>
       <td>Kebijakan IAM, CloudTrail</td>
       <td>Peran IAM, Cloud Audit Logs</td>
       <td>Kebijakan RBAC, Azure Monitor</td>
@@ -184,6 +193,7 @@ Pilih opsi penyebaran untuk melihat instruksi setup:
 * [Claude for Teams atau Enterprise](/id/authentication#claude-for-teams-or-enterprise)
 * [Anthropic Console](/id/authentication#claude-console-authentication)
 * [Amazon Bedrock](/id/amazon-bedrock)
+* [Claude Platform on AWS](/id/claude-platform-on-aws)
 * [Google Vertex AI](/id/google-vertex-ai)
 * [Microsoft Foundry](/id/microsoft-foundry)
 
@@ -192,7 +202,7 @@ Pilih opsi penyebaran untuk melihat instruksi setup:
 Sebagian besar organisasi dapat menggunakan penyedia cloud secara langsung tanpa konfigurasi tambahan. Namun, Anda mungkin perlu mengonfigurasi proxy perusahaan atau gateway LLM jika organisasi Anda memiliki persyaratan jaringan atau manajemen khusus. Ini adalah konfigurasi berbeda yang dapat digunakan bersama:
 
 * **Corporate proxy**: Merutekan lalu lintas melalui proxy HTTP/HTTPS. Gunakan ini jika organisasi Anda memerlukan semua lalu lintas keluar untuk melewati server proxy untuk pemantauan keamanan, kepatuhan, atau penegakan kebijakan jaringan. Konfigurasi dengan variabel lingkungan `HTTPS_PROXY` atau `HTTP_PROXY`. Pelajari lebih lanjut di [Konfigurasi jaringan enterprise](/id/network-config).
-* **LLM Gateway**: Layanan yang berada di antara Claude Code dan penyedia cloud untuk menangani autentikasi dan perutean. Gunakan ini jika Anda memerlukan pelacakan penggunaan terpusat di seluruh tim, pembatasan laju kustom atau anggaran, atau manajemen autentikasi terpusat. Konfigurasi dengan variabel lingkungan `ANTHROPIC_BASE_URL`, `ANTHROPIC_BEDROCK_BASE_URL`, atau `ANTHROPIC_VERTEX_BASE_URL`. Pelajari lebih lanjut di [Konfigurasi gateway LLM](/id/llm-gateway).
+* **LLM Gateway**: Layanan yang berada di antara Claude Code dan penyedia cloud untuk menangani autentikasi dan perutean. Gunakan ini jika Anda memerlukan pelacakan penggunaan terpusat di seluruh tim, pembatasan laju kustom atau anggaran, atau manajemen autentikasi terpusat. Konfigurasi dengan variabel lingkungan `ANTHROPIC_BASE_URL`, `ANTHROPIC_BEDROCK_BASE_URL`, `ANTHROPIC_AWS_BASE_URL`, atau `ANTHROPIC_VERTEX_BASE_URL`. Pelajari lebih lanjut di [Konfigurasi gateway LLM](/id/llm-gateway).
 
 Contoh berikut menunjukkan variabel lingkungan yang harus diatur di shell atau profil shell Anda (`.bashrc`, `.zshrc`). Lihat [Pengaturan](/id/settings) untuk metode konfigurasi lainnya.
 
@@ -313,7 +323,7 @@ Dorong pengguna baru untuk mencoba Claude Code untuk Q\&A basis kode, atau pada 
 
 ### Versi model pin untuk penyedia cloud
 
-Jika Anda menyebarkan melalui [Bedrock](/id/amazon-bedrock), [Vertex AI](/id/google-vertex-ai), atau [Foundry](/id/microsoft-foundry), pin versi model tertentu menggunakan `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, dan `ANTHROPIC_DEFAULT_HAIKU_MODEL`. Tanpa pinning, alias model menyelesaikan versi terbaru, yang mungkin belum diaktifkan di akun Anda ketika Anthropic merilis pembaruan. Pinning memungkinkan Anda mengontrol kapan pengguna Anda pindah ke model baru. Lihat [Konfigurasi model](/id/model-config#pin-models-for-third-party-deployments) untuk apa yang dilakukan setiap penyedia ketika versi terbaru tidak tersedia.
+Jika Anda menyebarkan melalui [Bedrock](/id/amazon-bedrock), [Vertex AI](/id/google-vertex-ai), [Foundry](/id/microsoft-foundry), atau [Claude Platform on AWS](/id/claude-platform-on-aws), pin versi model tertentu menggunakan `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, dan `ANTHROPIC_DEFAULT_HAIKU_MODEL`. Tanpa pinning, alias model menyelesaikan versi terbaru, yang mungkin belum diaktifkan di akun Anda ketika Anthropic merilis pembaruan. Pinning memungkinkan Anda mengontrol kapan pengguna Anda pindah ke model baru. Lihat [Konfigurasi model](/id/model-config#pin-models-for-third-party-deployments) untuk apa yang dilakukan setiap penyedia ketika versi terbaru tidak tersedia.
 
 ### Konfigurasi kebijakan keamanan
 

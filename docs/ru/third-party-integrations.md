@@ -99,6 +99,7 @@ export const ContactSalesCard = ({surface}) => {
       <th>Claude for Teams/Enterprise</th>
       <th>Anthropic Console</th>
       <th>Amazon Bedrock</th>
+      <th>Claude Platform on AWS</th>
       <th>Google Vertex AI</th>
       <th>Microsoft Foundry</th>
     </tr>
@@ -110,6 +111,7 @@ export const ContactSalesCard = ({surface}) => {
       <td>Большинства организаций (рекомендуется)</td>
       <td>Отдельных разработчиков</td>
       <td>Развертываний, собственных для AWS</td>
+      <td>Выставление счетов AWS Marketplace с функциями Claude API</td>
       <td>Развертываний, собственных для GCP</td>
       <td>Развертываний, собственных для Azure</td>
     </tr>
@@ -119,6 +121,7 @@ export const ContactSalesCard = ({surface}) => {
       <td><strong>Teams:</strong> \$150/место (Premium) с доступной оплатой по мере использования<br /><strong>Enterprise:</strong> <a href="https://claude.com/contact-sales?utm_source=claude_code&utm_medium=docs&utm_content=third_party_enterprise">Свяжитесь с отделом продаж</a></td>
       <td>Оплата по мере использования</td>
       <td>Оплата по мере использования через AWS</td>
+      <td>Оплата по мере использования через AWS Marketplace</td>
       <td>Оплата по мере использования через GCP</td>
       <td>Оплата по мере использования через Azure</td>
     </tr>
@@ -128,12 +131,14 @@ export const ContactSalesCard = ({surface}) => {
       <td>Поддерживаемые [страны](https://www.anthropic.com/supported-countries)</td>
       <td>Поддерживаемые [страны](https://www.anthropic.com/supported-countries)</td>
       <td>Несколько AWS [регионов](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html)</td>
+      <td>Несколько регионов AWS</td>
       <td>Несколько GCP [регионов](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations)</td>
       <td>Несколько Azure [регионов](https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/)</td>
     </tr>
 
     <tr>
-      <td>prompt caching</td>
+      <td>Prompt caching</td>
+      <td>Включено по умолчанию</td>
       <td>Включено по умолчанию</td>
       <td>Включено по умолчанию</td>
       <td>Включено по умолчанию</td>
@@ -146,6 +151,7 @@ export const ContactSalesCard = ({surface}) => {
       <td>Claude.ai SSO или электронная почта</td>
       <td>API ключ</td>
       <td>API ключ или учетные данные AWS</td>
+      <td>API ключ или учетные данные AWS</td>
       <td>Учетные данные GCP</td>
       <td>API ключ или Microsoft Entra ID</td>
     </tr>
@@ -154,6 +160,7 @@ export const ContactSalesCard = ({surface}) => {
       <td>Отслеживание затрат</td>
       <td>Панель использования</td>
       <td>Панель использования</td>
+      <td>AWS Cost Explorer</td>
       <td>AWS Cost Explorer</td>
       <td>GCP Billing</td>
       <td>Azure Cost Management</td>
@@ -166,12 +173,14 @@ export const ContactSalesCard = ({surface}) => {
       <td>Нет</td>
       <td>Нет</td>
       <td>Нет</td>
+      <td>Нет</td>
     </tr>
 
     <tr>
       <td>Функции Enterprise</td>
       <td>Управление командой, SSO, мониторинг использования</td>
       <td>Нет</td>
+      <td>Политики IAM, CloudTrail</td>
       <td>Политики IAM, CloudTrail</td>
       <td>Роли IAM, Cloud Audit Logs</td>
       <td>Политики RBAC, Azure Monitor</td>
@@ -184,6 +193,7 @@ export const ContactSalesCard = ({surface}) => {
 * [Claude for Teams или Enterprise](/ru/authentication#claude-for-teams-or-enterprise)
 * [Anthropic Console](/ru/authentication#claude-console-authentication)
 * [Amazon Bedrock](/ru/amazon-bedrock)
+* [Claude Platform on AWS](/ru/claude-platform-on-aws)
 * [Google Vertex AI](/ru/google-vertex-ai)
 * [Microsoft Foundry](/ru/microsoft-foundry)
 
@@ -192,7 +202,7 @@ export const ContactSalesCard = ({surface}) => {
 Большинство организаций могут использовать поставщика облачных услуг напрямую без дополнительной конфигурации. Однако вам может потребоваться настроить корпоративный прокси или шлюз LLM, если ваша организация имеет специфические требования к сети или управлению. Это разные конфигурации, которые можно использовать вместе:
 
 * **Корпоративный прокси**: маршрутизирует трафик через прокси HTTP/HTTPS. Используйте это, если ваша организация требует, чтобы весь исходящий трафик проходил через прокси-сервер для мониторинга безопасности, соответствия требованиям или обеспечения политики сети. Настройте с помощью переменных окружения `HTTPS_PROXY` или `HTTP_PROXY`. Узнайте больше в разделе [Конфигурация корпоративной сети](/ru/network-config).
-* **Шлюз LLM**: сервис, который находится между Claude Code и поставщиком облачных услуг для обработки аутентификации и маршрутизации. Используйте это, если вам нужно централизованное отслеживание использования между командами, пользовательское ограничение скорости или бюджеты, или централизованное управление аутентификацией. Настройте с помощью переменных окружения `ANTHROPIC_BASE_URL`, `ANTHROPIC_BEDROCK_BASE_URL` или `ANTHROPIC_VERTEX_BASE_URL`. Узнайте больше в разделе [Конфигурация шлюза LLM](/ru/llm-gateway).
+* **Шлюз LLM**: сервис, который находится между Claude Code и поставщиком облачных услуг для обработки аутентификации и маршрутизации. Используйте это, если вам нужно централизованное отслеживание использования между командами, пользовательское ограничение скорости или бюджеты, или централизованное управление аутентификацией. Настройте с помощью переменных окружения `ANTHROPIC_BASE_URL`, `ANTHROPIC_BEDROCK_BASE_URL`, `ANTHROPIC_AWS_BASE_URL` или `ANTHROPIC_VERTEX_BASE_URL`. Узнайте больше в разделе [Конфигурация шлюза LLM](/ru/llm-gateway).
 
 Следующие примеры показывают переменные окружения для установки в вашей оболочке или профиле оболочки (`.bashrc`, `.zshrc`). См. раздел [Параметры](/ru/settings) для других методов конфигурации.
 
@@ -313,7 +323,7 @@ export const ContactSalesCard = ({surface}) => {
 
 ### Закрепите версии моделей для поставщиков облачных услуг
 
-Если вы развертываете через [Bedrock](/ru/amazon-bedrock), [Vertex AI](/ru/google-vertex-ai) или [Foundry](/ru/microsoft-foundry), закрепите конкретные версии моделей, используя `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL` и `ANTHROPIC_DEFAULT_HAIKU_MODEL`. Без закрепления, псевдонимы моделей разрешаются на последнюю версию, что может быть недоступно в вашей учетной записи, когда Anthropic выпускает обновление. Закрепление позволяет вам контролировать, когда ваши пользователи переходят на новую модель. См. раздел [Конфигурация модели](/ru/model-config#pin-models-for-third-party-deployments) для получения информации о том, что делает каждый поставщик, когда последняя версия недоступна.
+Если вы развертываете через [Bedrock](/ru/amazon-bedrock), [Vertex AI](/ru/google-vertex-ai), [Foundry](/ru/microsoft-foundry) или [Claude Platform on AWS](/ru/claude-platform-on-aws), закрепите конкретные версии моделей, используя `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL` и `ANTHROPIC_DEFAULT_HAIKU_MODEL`. Без закрепления, псевдонимы моделей разрешаются на последнюю версию, что может быть недоступно в вашей учетной записи, когда Anthropic выпускает обновление. Закрепление позволяет вам контролировать, когда ваши пользователи переходят на новую модель. См. раздел [Конфигурация модели](/ru/model-config#pin-models-for-third-party-deployments) для получения информации о том, что делает каждый поставщик, когда последняя версия недоступна.
 
 ### Настройте политики безопасности
 
@@ -321,7 +331,7 @@ export const ContactSalesCard = ({surface}) => {
 
 ### Используйте MCP для интеграций
 
-MCP — это отличный способ предоставить Claude Code больше информации, например подключение к системам управления билетами или журналам ошибок. Мы рекомендуем, чтобы одна центральная команда настроила MCP servers и проверила конфигурацию `.mcp.json` в кодовую базу, чтобы все пользователи получали выгоду. [Узнайте больше](/ru/mcp).
+MCP — это отличный способ предоставить Claude Code больше информации, такую как подключение к системам управления билетами или журналам ошибок. Мы рекомендуем, чтобы одна центральная команда настроила MCP servers и проверила конфигурацию `.mcp.json` в кодовую базу, чтобы все пользователи получали выгоду. [Узнайте больше](/ru/mcp).
 
 В Anthropic мы доверяем Claude Code для питания разработки во всех кодовых базах Anthropic. Мы надеемся, что вам понравится использовать Claude Code так же, как и нам.
 

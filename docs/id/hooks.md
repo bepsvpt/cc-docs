@@ -70,7 +70,8 @@ Untuk melihat bagaimana potongan-potongan ini cocok bersama, pertimbangkan hook 
           {
             "type": "command",
             "if": "Bash(rm *)",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-rm.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-rm.sh",
+            "args": []
           }
         ]
       }
@@ -306,12 +307,52 @@ Bidang `if` menyimpan tepat satu aturan izin. Tidak ada sintaks `&&`, `||`, atau
 
 Selain [bidang umum](#common-fields), command hooks menerima bidang-bidang ini:
 
-| Bidang        | Diperlukan | Deskripsi                                                                                                                                                                                                                                                                           |
-| :------------ | :--------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `command`     | ya         | Perintah shell untuk dijalankan                                                                                                                                                                                                                                                     |
-| `async`       | tidak      | Jika `true`, dijalankan di latar belakang tanpa memblokir. Lihat [Run hooks in the background](#run-hooks-in-the-background)                                                                                                                                                        |
-| `asyncRewake` | tidak      | Jika `true`, dijalankan di latar belakang dan membangunkan Claude pada kode keluar 2. Menyiratkan `async`. stderr hook, atau stdout jika stderr kosong, ditampilkan ke Claude sebagai pengingat sistem sehingga dapat bereaksi terhadap kegagalan latar belakang yang berjalan lama |
-| `shell`       | tidak      | Shell untuk digunakan untuk hook ini. Menerima `"bash"` (default) atau `"powershell"`. Menetapkan `"powershell"` menjalankan perintah melalui PowerShell di Windows. Tidak memerlukan `CLAUDE_CODE_USE_POWERSHELL_TOOL` karena hooks spawn PowerShell secara langsung               |
+| Bidang        | Diperlukan | Deskripsi                                                                                                                                                                                                                                                                                             |
+| :------------ | :--------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `command`     | ya         | Perintah shell untuk dijalankan. Dengan `args`, executable untuk spawn secara langsung. Lihat [Exec form dan shell form](#exec-form-and-shell-form)                                                                                                                                                   |
+| `args`        | tidak      | Daftar argumen. Ketika ada, `command` diselesaikan sebagai executable dan di-spawn secara langsung dengan `args` sebagai vektor argumen, tanpa shell yang terlibat. Lihat [Exec form dan shell form](#exec-form-and-shell-form)                                                                       |
+| `async`       | tidak      | Jika `true`, dijalankan di latar belakang tanpa memblokir. Lihat [Run hooks in the background](#run-hooks-in-the-background)                                                                                                                                                                          |
+| `asyncRewake` | tidak      | Jika `true`, dijalankan di latar belakang dan membangunkan Claude pada kode keluar 2. Menyiratkan `async`. stderr hook, atau stdout jika stderr kosong, ditampilkan ke Claude sebagai pengingat sistem sehingga dapat bereaksi terhadap kegagalan latar belakang yang berjalan lama                   |
+| `shell`       | tidak      | Shell untuk digunakan untuk hook ini. Menerima `"bash"` (default) atau `"powershell"`. Menetapkan `"powershell"` menjalankan perintah melalui PowerShell di Windows. Tidak memerlukan `CLAUDE_CODE_USE_POWERSHELL_TOOL` karena hooks spawn PowerShell secara langsung. Diabaikan ketika `args` diatur |
+
+<a id="exec-form-and-shell-form" />
+
+##### Exec form dan shell form
+
+Hook command dijalankan sebagai exec form ketika `args` diatur, dan shell form ketika `args` dihilangkan. Atur `args` setiap kali hook mereferensikan [path placeholder](#reference-scripts-by-path), karena setiap elemen dilewatkan sebagai satu argumen tanpa quoting. Hilangkan `args` ketika Anda memerlukan fitur shell seperti pipes atau `&&`, atau ketika tidak ada kekhawatiran yang berlaku.
+
+**Exec form** dijalankan ketika `args` ada. Claude Code menyelesaikan `command` sebagai executable di `PATH` dan spawn-nya secara langsung dengan `args` sebagai vektor argumen. Tidak ada shell, jadi setiap elemen `args` adalah satu argumen persis seperti yang ditulis, dan path placeholders seperti `${CLAUDE_PLUGIN_ROOT}` disubstitusi ke dalam `command` dan ke dalam setiap elemen `args` sebagai string biasa. Karakter khusus seperti apostrophe, `$`, dan backticks melewati verbatim karena tidak ada shell untuk menginterpretasinya. Tidak ada tokenisasi shell yang terjadi di platform apa pun.
+
+**Shell form** dijalankan ketika `args` tidak ada. String `command` dilewatkan ke shell: `sh -c` di macOS dan Linux, Git Bash di Windows, atau PowerShell ketika Git Bash tidak diinstal. Atur bidang `shell` untuk memilih secara eksplisit. Shell melakukan tokenisasi string, memperluas variabel, dan menginterpretasi pipes, `&&`, redirects, dan globs.
+
+<Note>
+  Di Windows, exec form memerlukan `command` untuk diselesaikan ke executable nyata seperti `.exe`. Shim `.cmd` dan `.bat` yang npm, npx, eslint, dan tools lainnya instal di `node_modules/.bin` bukan executables dan tidak dapat di-spawn tanpa shell. Untuk menjalankannya dalam exec form, panggil skrip yang mendasar dengan `node` secara langsung, misalnya `"command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/node_modules/eslint/bin/eslint.js"]`. Pola `node` plus script-path bekerja di setiap platform karena `node.exe` adalah binary nyata. Untuk menjalankan shim `.cmd` atau `.bat` berdasarkan nama, gunakan shell form.
+</Note>
+
+Contoh ini menjalankan skrip Node yang dibundel dengan plugin. Exec form melewatkan path skrip yang diselesaikan sebagai satu argumen tanpa quoting:
+
+```json theme={null}
+{
+  "type": "command",
+  "command": "node",
+  "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/format.js", "--fix"]
+}
+```
+
+Shell form yang setara memerlukan quoting untuk menangani paths dengan spasi atau karakter khusus:
+
+```json theme={null}
+{
+  "type": "command",
+  "command": "node \"${CLAUDE_PLUGIN_ROOT}\"/scripts/format.js --fix"
+}
+```
+
+Kedua form mendukung [path placeholders](#reference-scripts-by-path) yang sama, dan keduanya mengekspornya sebagai variabel lingkungan `CLAUDE_PROJECT_DIR`, `CLAUDE_PLUGIN_ROOT`, dan `CLAUDE_PLUGIN_DATA` pada proses yang di-spawn, jadi skrip dapat membaca `process.env.CLAUDE_PLUGIN_ROOT` terlepas dari bagaimana itu diluncurkan. Plugin hooks juga mensubstitusi nilai `${user_config.*}`; lihat [User configuration](/id/plugins-reference#user-configuration).
+
+<Note>
+  Dalam exec form, `command` adalah nama executable atau path saja. Jika `command` adalah nama bare tanpa path separator dan berisi whitespace bersama `args`, Claude Code mencatat warning karena spawn akan gagal: tidak ada executable bernama `node script.js`. Pindahkan token ekstra ke dalam `args`. Path absolut dengan spasi, seperti `C:\Program Files\nodejs\node.exe`, adalah executable tunggal yang valid dan tidak memicu warning.
+</Note>
 
 #### Bidang HTTP hook
 
@@ -397,19 +438,21 @@ Selain [bidang umum](#common-fields), prompt dan agent hooks menerima bidang-bid
 | `prompt` | ya         | Teks prompt untuk dikirim ke model. Gunakan `$ARGUMENTS` sebagai placeholder untuk JSON input hook |
 | `model`  | tidak      | Model untuk digunakan untuk evaluasi. Default ke model cepat                                       |
 
-Semua matching hooks dijalankan secara paralel, dan handler identik dideduplikasi secara otomatis. Command hooks dideduplikasi berdasarkan string perintah, dan HTTP hooks dideduplikasi berdasarkan URL. Handlers dijalankan di direktori saat ini dengan lingkungan Claude Code. Variabel lingkungan `$CLAUDE_CODE_REMOTE` diatur ke `"true"` di lingkungan web jarak jauh dan tidak diatur di CLI lokal.
+Semua matching hooks dijalankan secara paralel, dan handler identik dideduplikasi secara otomatis. Command hooks dideduplikasi berdasarkan string perintah dan `args`, dan HTTP hooks dideduplikasi berdasarkan URL. Handlers dijalankan di direktori saat ini dengan lingkungan Claude Code. Variabel lingkungan `$CLAUDE_CODE_REMOTE` diatur ke `"true"` di lingkungan web jarak jauh dan tidak diatur di CLI lokal.
 
 ### Referensi skrip berdasarkan path
 
-Gunakan variabel lingkungan untuk mereferensikan skrip hook relatif terhadap akar proyek atau plugin, terlepas dari direktori kerja saat hook dijalankan:
+Gunakan placeholders ini untuk mereferensikan skrip hook relatif terhadap akar proyek atau plugin, terlepas dari direktori kerja saat hook dijalankan:
 
-* `$CLAUDE_PROJECT_DIR`: akar proyek. Bungkus dalam tanda kutip untuk menangani path dengan spasi.
+* `${CLAUDE_PROJECT_DIR}`: akar proyek.
 * `${CLAUDE_PLUGIN_ROOT}`: direktori instalasi plugin, untuk skrip yang dibundel dengan [plugin](/id/plugins). Berubah pada setiap pembaruan plugin.
 * `${CLAUDE_PLUGIN_DATA}`: [direktori data persisten](/id/plugins-reference#persistent-data-directory) plugin, untuk dependensi dan status yang harus bertahan pembaruan plugin.
 
+Lebih suka [exec form](#exec-form-and-shell-form) untuk hook apa pun yang mereferensikan path placeholder. Exec form melewatkan setiap elemen `args` sebagai satu argumen tanpa tokenisasi shell, jadi paths dengan spasi atau karakter khusus tidak memerlukan quoting. Dalam shell form, bungkus setiap placeholder dalam tanda kutip ganda.
+
 <Tabs>
   <Tab title="Skrip proyek">
-    Contoh ini menggunakan `$CLAUDE_PROJECT_DIR` untuk menjalankan pemeriksa gaya dari direktori `.claude/hooks/` proyek setelah pemanggilan tool `Write` atau `Edit` apa pun:
+    Contoh ini menggunakan `${CLAUDE_PROJECT_DIR}` untuk menjalankan pemeriksa gaya dari direktori `.claude/hooks/` proyek setelah pemanggilan tool `Write` atau `Edit` apa pun:
 
     ```json theme={null}
     {
@@ -420,7 +463,8 @@ Gunakan variabel lingkungan untuk mereferensikan skrip hook relatif terhadap aka
             "hooks": [
               {
                 "type": "command",
-                "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check-style.sh"
+                "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/check-style.sh",
+                "args": []
               }
             ]
           }
@@ -446,6 +490,7 @@ Gunakan variabel lingkungan untuk mereferensikan skrip hook relatif terhadap aka
               {
                 "type": "command",
                 "command": "${CLAUDE_PLUGIN_ROOT}/scripts/format.sh",
+                "args": [],
                 "timeout": 30
               }
             ]
@@ -509,7 +554,7 @@ Pengaturan `disableAllHooks` menghormati hierarki pengaturan terkelola. Jika adm
 
 Pengeditan langsung ke hooks dalam file pengaturan biasanya diambil secara otomatis oleh file watcher.
 
-## Hook input dan output
+## Input dan output hook
 
 Command hooks menerima data JSON melalui stdin dan mengkomunikasikan hasil melalui kode keluar, stdout, dan stderr. HTTP hooks menerima JSON yang sama sebagai badan permintaan POST dan mengkomunikasikan hasil melalui badan respons HTTP. Bagian ini mencakup bidang dan perilaku yang umum untuk semua events. Setiap bagian event di bawah [Hook events](#hook-events) mencakup skema input spesifiknya dan opsi kontrol keputusan.
 
@@ -528,10 +573,12 @@ Hook events menerima bidang-bidang ini sebagai JSON, selain bidang spesifik even
 
 Saat berjalan dengan `--agent` atau di dalam subagent, dua bidang tambahan disertakan:
 
-| Bidang       | Deskripsi                                                                                                                                                                                                          |
-| :----------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `agent_id`   | Pengenal unik untuk subagent. Hadir hanya ketika hook dijalankan di dalam pemanggilan subagent. Gunakan ini untuk membedakan pemanggilan hook subagent dari pemanggilan thread utama.                              |
-| `agent_type` | Nama agent (misalnya, `"Explore"` atau `"security-reviewer"`). Hadir ketika sesi menggunakan `--agent` atau hook dijalankan di dalam subagent. Untuk subagents, tipe subagent mengambil alih nilai `--agent` sesi. |
+| Bidang       | Deskripsi                                                                                                                                                                                                                                                                                                                      |
+| :----------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `agent_id`   | Pengenal unik untuk subagent. Hadir hanya ketika hook dijalankan di dalam pemanggilan subagent. Gunakan ini untuk membedakan pemanggilan hook subagent dari pemanggilan thread utama.                                                                                                                                          |
+| `agent_type` | Nama agent (misalnya, `"Explore"` atau `"security-reviewer"`). Hadir ketika sesi menggunakan `--agent` atau hook dijalankan di dalam subagent. Untuk subagents, tipe subagent mengambil alih nilai `--agent` sesi. Untuk [custom subagents](/id/sub-agents), ini adalah bidang `name` dari frontmatter agent, bukan nama file. |
+
+Hanya hooks [`SessionStart`](#sessionstart) yang menerima bidang `model`. Tidak ada variabel lingkungan `$CLAUDE_MODEL`. Proses hook mewarisi lingkungan induk, jadi dapat membaca `$ANTHROPIC_MODEL` jika Anda menetapkannya di shell Anda, tetapi nilai itu tidak berubah ketika Anda beralih model dengan `/model` selama sesi.
 
 Misalnya, hook `PreToolUse` untuk perintah Bash menerima ini di stdin:
 
@@ -1153,6 +1200,18 @@ Mengajukan pertanyaan multiple-choice satu hingga empat kepada pengguna.
 | `questions` | array  | `[{"question": "Which framework?", "header": "Framework", "options": [{"label": "React"}], "multiSelect": false}]` | Pertanyaan untuk disajikan, masing-masing dengan string `question`, `header` pendek, array `options`, dan flag `multiSelect` opsional                                                                                       |
 | `answers`   | object | `{"Which framework?": "React"}`                                                                                    | Opsional. Memetakan teks pertanyaan ke label opsi yang dipilih. Jawaban multi-select menggabungkan label dengan koma. Claude tidak menetapkan bidang ini; sediakan melalui `updatedInput` untuk menjawab secara programatis |
 
+##### ExitPlanMode
+
+Menyajikan rencana dan meminta pengguna untuk menyetujuinya sebelum Claude meninggalkan [plan mode](/id/permission-modes#analyze-before-you-edit-with-plan-mode). Claude menulis rencana ke file di disk sebelum memanggil tool, jadi `tool_input` literal dari model hanya membawa `allowedPrompts`. Claude Code menyuntikkan konten rencana dan path file sebelum meneruskan input ke hooks.
+
+| Bidang           | Tipe   | Contoh                                      | Deskripsi                                                                                                                                                              |
+| :--------------- | :----- | :------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plan`           | string | `"## Refactor auth\n1. Extract..."`         | Konten rencana dalam Markdown. Disuntikkan dari file rencana di disk                                                                                                   |
+| `planFilePath`   | string | `"/Users/.../plans/refactor-auth.md"`       | Path ke file rencana. Disuntikkan                                                                                                                                      |
+| `allowedPrompts` | array  | `[{"tool": "Bash", "prompt": "run tests"}]` | Opsional. Izin berbasis prompt yang diminta Claude untuk mengimplementasikan rencana, masing-masing dengan nama `tool` dan `prompt` yang menjelaskan kategori tindakan |
+
+Dalam `PostToolUse`, `tool_response` adalah objek dengan bidang `plan` dan `filePath` yang menyimpan rencana yang disetujui, ditambah flag status internal. Baca `tool_response.plan` untuk konten rencana daripada membaca ulang file dari disk.
+
 #### Kontrol keputusan PreToolUse
 
 Hooks `PreToolUse` dapat mengontrol apakah pemanggilan tool dilanjutkan. Tidak seperti hooks lain yang menggunakan bidang `decision` tingkat atas, PreToolUse mengembalikan keputusannya di dalam objek `hookSpecificOutput`. Ini memberikannya kontrol yang lebih kaya: empat hasil (izinkan, tolak, tanya, atau tunda) ditambah kemampuan untuk memodifikasi input tool sebelum eksekusi.
@@ -1357,13 +1416,13 @@ Hooks `PostToolUse` dijalankan setelah tool sudah dijalankan dengan sukses. Inpu
 
 Hooks `PostToolUse` dapat memberikan umpan balik ke Claude setelah eksekusi tool. Selain [bidang output JSON](#json-output) yang tersedia untuk semua hooks, skrip hook Anda dapat mengembalikan bidang spesifik event ini:
 
-| Bidang                 | Deskripsi                                                                                                                 |
-| :--------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `decision`             | `"block"` menambahkan `reason` di sebelah hasil tool. Hilangkan untuk mengizinkan tindakan dilanjutkan                    |
-| `reason`               | Penjelasan ditampilkan ke Claude saat `decision` adalah `"block"`                                                         |
-| `additionalContext`    | String ditambahkan ke konteks Claude bersama hasil tool. Lihat [Tambahkan konteks untuk Claude](#add-context-for-claude)  |
-| `updatedToolOutput`    | Mengganti output tool dengan nilai yang disediakan sebelum dikirim ke Claude. Nilai harus cocok dengan bentuk output tool |
-| `updatedMCPToolOutput` | Mengganti output untuk [MCP tools](#match-mcp-tools) saja. Lebih suka `updatedToolOutput`, yang bekerja untuk semua tools |
+| Bidang                 | Deskripsi                                                                                                                               |
+| :--------------------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
+| `decision`             | `"block"` menambahkan `reason` di sebelah hasil tool. Claude masih melihat output asli; untuk menggantinya, gunakan `updatedToolOutput` |
+| `reason`               | Penjelasan ditampilkan ke Claude saat `decision` adalah `"block"`                                                                       |
+| `additionalContext`    | String ditambahkan ke konteks Claude bersama hasil tool. Lihat [Tambahkan konteks untuk Claude](#add-context-for-claude)                |
+| `updatedToolOutput`    | Mengganti output tool dengan nilai yang disediakan sebelum dikirim ke Claude. Nilai harus cocok dengan bentuk output tool               |
+| `updatedMCPToolOutput` | Mengganti output untuk [MCP tools](#match-mcp-tools) saja. Lebih suka `updatedToolOutput`, yang bekerja untuk semua tools               |
 
 Contoh di bawah mengganti output pemanggilan `Bash`. Nilai pengganti cocok dengan bentuk output tool `Bash`:
 
@@ -1596,7 +1655,7 @@ Notification hooks tidak dapat memblokir atau memodifikasi notifikasi. Mereka di
 
 ### SubagentStart
 
-Dijalankan ketika subagent Claude Code dispawn melalui tool Agent. Mendukung matchers untuk memfilter berdasarkan nama tipe agent (agent bawaan seperti `general-purpose`, `Explore`, `Plan`, atau nama agent kustom dari `.claude/agents/`).
+Dijalankan ketika subagent Claude Code dispawn melalui tool Agent. Mendukung matchers untuk memfilter berdasarkan nama tipe agent. Untuk agent bawaan, ini adalah nama agent seperti `general-purpose`, `Explore`, atau `Plan`. Untuk [custom subagents](/id/sub-agents), ini adalah bidang `name` dari frontmatter agent, bukan nama file.
 
 #### Input SubagentStart
 
@@ -1651,7 +1710,7 @@ Selain [bidang input umum](#common-input-fields), SubagentStop hooks menerima `s
 }
 ```
 
-SubagentStop hooks menggunakan format kontrol keputusan yang sama seperti [Stop hooks](#stop-decision-control).
+SubagentStop hooks menggunakan format kontrol keputusan yang sama seperti [Stop hooks](#stop-decision-control). Mereka tidak mendukung `additionalContext`. Mengembalikan `decision: "block"` dengan `reason` membuat subagent tetap berjalan dan mengirimkan `reason` ke subagent sebagai instruksi berikutnya. Untuk menyuntikkan konteks ke sesi induk setelah subagent kembali, gunakan hook [`PostToolUse`](#posttooluse) pada tool `Agent` sebagai gantinya.
 
 ### TaskCreated
 
@@ -1767,6 +1826,10 @@ exit 0
 ### Stop
 
 Dijalankan ketika agent Claude Code utama telah selesai merespons. Tidak dijalankan jika penghentian terjadi karena interupsi pengguna. Kesalahan API menjalankan [StopFailure](#stopfailure) sebagai gantinya.
+
+<Tip>
+  Perintah [`/goal`](/id/goal) adalah pintasan bawaan untuk hook Stop berbasis prompt yang bersifat sesi. Gunakan ketika Anda ingin Claude terus bekerja sampai kondisi terpenuhi tanpa menulis konfigurasi hook.
+</Tip>
 
 #### Input Stop
 
@@ -1901,7 +1964,8 @@ Contoh ini mencatat semua perubahan konfigurasi untuk audit keamanan:
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/audit-config-change.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/audit-config-change.sh",
+            "args": []
           }
         ]
       }
@@ -2389,12 +2453,13 @@ Hook `Stop` ini meminta LLM untuk mengevaluasi apakah semua tugas selesai sebelu
 }
 ```
 
-| Bidang    | Diperlukan | Deskripsi                                                                                                                                                       |
-| :-------- | :--------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`    | ya         | Harus `"prompt"`                                                                                                                                                |
-| `prompt`  | ya         | Teks prompt untuk dikirim ke LLM. Gunakan `$ARGUMENTS` sebagai placeholder untuk JSON input hook. Jika `$ARGUMENTS` tidak ada, JSON input ditambahkan ke prompt |
-| `model`   | tidak      | Model untuk digunakan untuk evaluasi. Default ke model cepat                                                                                                    |
-| `timeout` | tidak      | Timeout dalam detik. Default: 30                                                                                                                                |
+| Bidang            | Diperlukan | Deskripsi                                                                                                                                                                                                                                                                                      |
+| :---------------- | :--------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`            | ya         | Harus `"prompt"`                                                                                                                                                                                                                                                                               |
+| `prompt`          | ya         | Teks prompt untuk dikirim ke LLM. Gunakan `$ARGUMENTS` sebagai placeholder untuk JSON input hook. Jika `$ARGUMENTS` tidak ada, JSON input ditambahkan ke prompt                                                                                                                                |
+| `model`           | tidak      | Model untuk digunakan untuk evaluasi. Default ke model cepat                                                                                                                                                                                                                                   |
+| `timeout`         | tidak      | Timeout dalam detik. Default: 30                                                                                                                                                                                                                                                               |
+| `continueOnBlock` | tidak      | Ketika prompt mengembalikan `ok: false`, umpankan alasan kembali ke Claude dan lanjutkan giliran alih-alih berhenti. Default: `false`. Diimplementasikan sebagai `continue: true` pada `decision: "block"` yang dihasilkan. Lihat [Response schema](#response-schema) untuk perilaku per-event |
 
 ### Skema respons
 
@@ -2407,16 +2472,17 @@ LLM harus merespons dengan JSON yang berisi:
 }
 ```
 
-| Bidang   | Deskripsi                                                                            |
-| :------- | :----------------------------------------------------------------------------------- |
-| `ok`     | `true` untuk mengizinkan, `false` untuk memblokir. Lihat perilaku per-event di bawah |
-| `reason` | Diperlukan saat `ok` adalah `false`. Penjelasan untuk keputusan                      |
+| Bidang   | Deskripsi                                                                                             |
+| :------- | :---------------------------------------------------------------------------------------------------- |
+| `ok`     | `true` untuk mengizinkan. `false` menghasilkan `decision: "block"`. Lihat perilaku per-event di bawah |
+| `reason` | Diperlukan saat `ok` adalah `false`. Digunakan sebagai alasan blokir                                  |
 
 Apa yang terjadi pada `ok: false` tergantung pada event:
 
 * `Stop` dan `SubagentStop`: alasan diumpankan kembali ke Claude sebagai instruksi berikutnya dan giliran berlanjut
-* `PreToolUse`: panggilan tool ditolak dan alasan dikembalikan ke Claude sebagai kesalahan tool, setara dengan command hook's `permissionDecision: "deny"`
-* `PostToolUse`, `PostToolBatch`, `UserPromptSubmit`, dan `UserPromptExpansion`: giliran berakhir dan alasan muncul dalam chat sebagai baris peringatan, setara dengan mengembalikan `"continue": false` dari command hook
+* `PreToolUse`: panggilan tool ditolak dan alasan dikembalikan ke Claude sebagai kesalahan tool, setara dengan `permissionDecision: "deny"` dari command hook
+* `PostToolUse`: secara default giliran berakhir dan alasan muncul dalam chat sebagai baris peringatan. Atur `continueOnBlock: true` untuk umpankan alasan kembali ke Claude dan lanjutkan giliran alih-alih
+* `PostToolBatch`, `UserPromptSubmit`, dan `UserPromptExpansion`: giliran berakhir dan alasan muncul sebagai baris peringatan. Events ini mengakhiri giliran pada `decision: "block"` terlepas dari `continue`
 * `PostToolUseFailure`, `TaskCreated`, dan `TaskCompleted`: alasan dikembalikan ke Claude sebagai kesalahan tool, mirip dengan `PreToolUse`
 * `PermissionRequest`: `ok: false` tidak berpengaruh. Untuk menolak persetujuan dari hook, gunakan [command hook](#command-hook-fields) yang mengembalikan `hookSpecificOutput.decision.behavior: "deny"`
 
@@ -2575,7 +2641,8 @@ Kemudian tambahkan konfigurasi ini ke `.claude/settings.json` dalam akar proyek 
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/run-tests-async.sh",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/run-tests-async.sh",
+            "args": [],
             "async": true,
             "timeout": 300
           }
@@ -2612,7 +2679,7 @@ Ingat praktik-praktik ini saat menulis hooks:
 * **Validasi dan sanitasi input**: jangan pernah mempercayai data input secara membabi buta
 * **Selalu kutip variabel shell**: gunakan `"$VAR"` bukan `$VAR`
 * **Blokir path traversal**: periksa `..` dalam path file
-* **Gunakan path absolut**: tentukan path lengkap untuk skrip, menggunakan `"$CLAUDE_PROJECT_DIR"` untuk akar proyek
+* **Gunakan path absolut**: tentukan path lengkap untuk skrip. Dalam bentuk exec, gunakan `${CLAUDE_PROJECT_DIR}` dan path tidak perlu dikutip. Dalam bentuk shell, bungkus dengan tanda kutip ganda
 * **Lewati file sensitif**: hindari `.env`, `.git/`, keys, dll.
 
 ## Windows PowerShell tool

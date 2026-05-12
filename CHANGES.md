@@ -1,5 +1,515 @@
 # Documentation Changes
 
+## 2026-05-12
+
+266 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **CLI-Referenz** (`cli-reference.md`): 7 lines added, 1 removed
+- **Häufige Workflows** (`common-workflows.md`): 89 lines added, 593 removed
+  - New section: "## Prompt-Rezepte"
+  - New section: "### Neue Codebases verstehen"
+  - New section: "#### Schnelle Codebase-Übersicht erhalten"
+  - New section: "#### Relevanten Code finden"
+  - New section: "### Fehler effizient beheben"
+- **Datennutzung** (`data-usage.md`): 11 lines added, 11 removed
+- **Automatisieren Sie Workflows mit Hooks** (`hooks-guide.md`): 4 lines added, 4 removed
+- **Hooks-Referenz** (`hooks.md`): 101 lines added, 34 removed
+  - New section: "##### Exec-Form und Shell-Form"
+  - New section: "### Skripte nach Pfad referenzieren"
+  - New section: "##### ExitPlanMode"
+- **Interaktiver Modus** (`interactive-mode.md`): 24 lines added, 21 removed
+- **Tastaturkürzel anpassen** (`keybindings.md`): 1 lines added, 1 removed
+- **LLM-Gateway-Konfiguration** (`llm-gateway.md`): 19 lines added, 4 removed
+  - New section: "##### Claude Platform auf AWS über ein Gateway"
+- **Claude Code mit Tools über MCP verbinden** (`mcp.md`): 7 lines added, 1 removed
+- **Wie Claude sich Ihr Projekt merkt** (`memory.md`): 17 lines added, 1 removed
+- **Modellkonfiguration** (`model-config.md`): 5 lines added, 3 removed
+- **Überwachung** (`monitoring-usage.md`): 85 lines added, 34 removed
+  - New section: "#### Plugin-Geladen-Ereignis"
+  - New section: "#### Hook-Registriert-Ereignis"
+- **Ausgabestile** (`output-styles.md`): 3 lines added, 1 removed
+- **Berechtigungen konfigurieren** (`permissions.md`): 6 lines added, 2 removed
+- **Plugins-Referenz** (`plugins-reference.md`): 69 lines added, 9 removed
+  - New section: "### Dateien innerhalb eines Marktplatzes mit Symlinks freigeben"
+  - New section: "### plugin details"
+- **Schnellstart** (`quickstart.md`): 2 lines added, 2 removed
+- **Prompts nach Zeitplan ausführen** (`scheduled-tasks.md`): 5 lines added, 3 removed
+- **Claude Code-Einstellungen** (`settings.md`): 2 lines added, 0 removed
+- **Benutzerdefinierte Subagenten erstellen** (`sub-agents.md`): 13 lines added, 13 removed
+- **Übersicht zur Enterprise-Bereitstellung** (`third-party-integrations.md`): 12 lines added, 2 removed
+- **Claude Code in VS Code verwenden** (`vs-code.md`): 17 lines added, 16 removed
+  - New section: "## Einstellungen konfigurieren"
+
+### English
+
+
+**Modified**
+
+- **Changelog** (`changelog.md`): 53 lines added, 0 removed
+- **CLI reference** (`cli-reference.md`): 7 lines added, 1 removed
+- **Commands** (`commands.md`): 7 lines added, 1 removed
+- **Common workflows** (`common-workflows.md`): 1 lines added, 1 removed
+- **Data usage** (`data-usage.md`): 9 lines added, 9 removed
+- **Environment variables** (`env-vars.md`): 12 lines added, 5 removed
+- **Claude Code on Google Vertex AI** (`google-vertex-ai.md`): 1 lines added, 1 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 2 lines added, 2 removed
+- **Hooks reference** (`hooks.md`): 99 lines added, 32 removed
+  - New section: "##### Exec form and shell form"
+  - New section: "##### ExitPlanMode"
+- **Interactive mode** (`interactive-mode.md`): 24 lines added, 21 removed
+- **Customize keyboard shortcuts** (`keybindings.md`): 1 lines added, 1 removed
+- **LLM gateway configuration** (`llm-gateway.md`): 19 lines added, 4 removed
+  - New section: "##### Claude Platform on AWS through a gateway"
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 15 lines added, 9 removed
+- **How Claude remembers your project** (`memory.md`): 17 lines added, 1 removed
+- **Model configuration** (`model-config.md`): 4 lines added, 2 removed
+- **Monitoring** (`monitoring-usage.md`): 57 lines added, 6 removed
+  - New section: "#### Plugin loaded event"
+  - New section: "#### Hook registered event"
+- **Output styles** (`output-styles.md`): 8 lines added, 2 removed
+- **Claude Code overview** (`overview.md`): 1 lines added, 1 removed
+- **Configure permissions** (`permissions.md`): 6 lines added, 2 removed
+- **Plugins reference** (`plugins-reference.md`): 70 lines added, 10 removed
+  - New section: "### Share files within a marketplace with symlinks"
+  - New section: "### plugin details"
+- **Quickstart** (`quickstart.md`): 2 lines added, 2 removed
+- **Run prompts on a schedule** (`scheduled-tasks.md`): 3 lines added, 1 removed
+- **Claude Code settings** (`settings.md`): 2 lines added, 0 removed
+- **Create custom subagents** (`sub-agents.md`): 13 lines added, 13 removed
+- **Enterprise deployment overview** (`third-party-integrations.md`): 12 lines added, 2 removed
+- **Tools reference** (`tools-reference.md`): 207 lines added, 41 removed
+  - New section: "## Configure tools with permission rules and hooks"
+  - New section: "## Agent tool behavior"
+  - New section: "## Edit tool behavior"
+  - New section: "## Glob tool behavior"
+  - New section: "## Grep tool behavior"
+- **Use Claude Code in VS Code** (`vs-code.md`): 28 lines added, 26 removed
+
+### Español
+
+
+**Modified**
+
+- **Referencia de CLI** (`cli-reference.md`): 7 lines added, 1 removed
+- **Flujos de trabajo comunes** (`common-workflows.md`): 85 lines added, 589 removed
+  - New section: "## Recetas de indicaciones"
+  - New section: "### Comprender nuevas bases de código"
+  - New section: "#### Obtener una descripción general rápida de la base de código"
+  - New section: "#### Encontrar código relevante"
+  - New section: "### Corregir errores de manera eficiente"
+- **Uso de datos** (`data-usage.md`): 12 lines added, 12 removed
+- **Automatizar flujos de trabajo con hooks** (`hooks-guide.md`): 2 lines added, 2 removed
+- **Referencia de hooks** (`hooks.md`): 101 lines added, 34 removed
+  - New section: "##### Exec form y shell form"
+  - New section: "##### ExitPlanMode"
+- **Modo interactivo** (`interactive-mode.md`): 24 lines added, 21 removed
+- **Personalizar atajos de teclado** (`keybindings.md`): 1 lines added, 1 removed
+- **Configuración de la puerta de enlace LLM** (`llm-gateway.md`): 21 lines added, 6 removed
+  - New section: "##### Plataforma Claude en AWS a través de una puerta de enlace"
+- **Conectar Claude Code a herramientas mediante MCP** (`mcp.md`): 8 lines added, 2 removed
+- **Cómo Claude recuerda su proyecto** (`memory.md`): 17 lines added, 1 removed
+- **Configuración del modelo** (`model-config.md`): 2 lines added, 2 removed
+- **Monitoreo** (`monitoring-usage.md`): 84 lines added, 33 removed
+  - New section: "#### Evento de plugin cargado"
+  - New section: "#### Evento de hook registrado"
+- **Estilos de salida** (`output-styles.md`): 3 lines added, 1 removed
+- **Descripción general de Claude Code** (`overview.md`): 1 lines added, 1 removed
+- **Configurar permisos** (`permissions.md`): 6 lines added, 2 removed
+- **Referencia de plugins** (`plugins-reference.md`): 70 lines added, 10 removed
+  - New section: "### Compartir archivos dentro de un marketplace con enlaces simbólicos"
+  - New section: "### plugin details"
+- **Inicio rápido** (`quickstart.md`): 4 lines added, 4 removed
+- **Ejecutar prompts en un horario** (`scheduled-tasks.md`): 5 lines added, 3 removed
+- **Configuración de Claude Code** (`settings.md`): 2 lines added, 0 removed
+- **Crear subagentes personalizados** (`sub-agents.md`): 13 lines added, 13 removed
+- **Descripción general de implementación empresarial** (`third-party-integrations.md`): 12 lines added, 2 removed
+- **Usar Claude Code en VS Code** (`vs-code.md`): 28 lines added, 26 removed
+
+### Français
+
+
+**Modified**
+
+- **Référence CLI** (`cli-reference.md`): 7 lines added, 1 removed
+- **Flux de travail courants** (`common-workflows.md`): 86 lines added, 590 removed
+  - New section: "## Recettes de prompts"
+  - New section: "### Comprendre les nouvelles bases de code"
+  - New section: "#### Obtenir un aperçu rapide de la base de code"
+  - New section: "#### Trouver du code pertinent"
+  - New section: "### Corriger les bogues efficacement"
+- **Utilisation des données** (`data-usage.md`): 12 lines added, 12 removed
+- **Automatiser les workflows avec les hooks** (`hooks-guide.md`): 3 lines added, 3 removed
+- **Référence des hooks** (`hooks.md`): 99 lines added, 33 removed
+  - New section: "##### Forme exec et forme shell"
+  - New section: "##### ExitPlanMode"
+- **Mode interactif** (`interactive-mode.md`): 24 lines added, 21 removed
+- **Personnaliser les raccourcis clavier** (`keybindings.md`): 1 lines added, 1 removed
+- **Configuration de la passerelle LLM** (`llm-gateway.md`): 19 lines added, 4 removed
+  - New section: "##### Claude Platform sur AWS via une passerelle"
+- **Connecter Claude Code aux outils via MCP** (`mcp.md`): 7 lines added, 1 removed
+- **Comment Claude se souvient de votre projet** (`memory.md`): 16 lines added, 0 removed
+- **Configuration du modèle** (`model-config.md`): 4 lines added, 2 removed
+- **Surveillance** (`monitoring-usage.md`): 85 lines added, 34 removed
+  - New section: "#### Événement de plugin chargé"
+  - New section: "#### Événement de hook enregistré"
+- **Styles de sortie** (`output-styles.md`): 3 lines added, 1 removed
+- **Aperçu de Claude Code** (`overview.md`): 1 lines added, 1 removed
+- **Configurer les autorisations** (`permissions.md`): 6 lines added, 2 removed
+- **Référence des plugins** (`plugins-reference.md`): 70 lines added, 10 removed
+  - New section: "### Partager des fichiers au sein d'une marketplace avec des liens symboliques"
+  - New section: "### plugin details"
+- **Démarrage rapide** (`quickstart.md`): 2 lines added, 2 removed
+- **Exécuter des prompts selon un calendrier** (`scheduled-tasks.md`): 4 lines added, 2 removed
+- **Paramètres Claude Code** (`settings.md`): 2 lines added, 0 removed
+- **Créer des sous-agents personnalisés** (`sub-agents.md`): 13 lines added, 13 removed
+- **Aperçu du déploiement en entreprise** (`third-party-integrations.md`): 12 lines added, 2 removed
+- **Utiliser Claude Code dans VS Code** (`vs-code.md`): 28 lines added, 26 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Referensi CLI** (`cli-reference.md`): 7 lines added, 1 removed
+- **Alur kerja umum** (`common-workflows.md`): 85 lines added, 589 removed
+  - New section: "## Resep prompt"
+  - New section: "### Pahami basis kode baru"
+  - New section: "#### Dapatkan gambaran umum basis kode dengan cepat"
+  - New section: "#### Temukan kode yang relevan"
+  - New section: "### Perbaiki bug secara efisien"
+- **Penggunaan data** (`data-usage.md`): 11 lines added, 11 removed
+- **Otomatisasi alur kerja dengan hooks** (`hooks-guide.md`): 4 lines added, 4 removed
+- **Referensi hooks** (`hooks.md`): 108 lines added, 41 removed
+  - New section: "##### Exec form dan shell form"
+  - New section: "## Input dan output hook"
+  - New section: "##### ExitPlanMode"
+- **Mode interaktif** (`interactive-mode.md`): 26 lines added, 23 removed
+- **Sesuaikan pintasan keyboard** (`keybindings.md`): 1 lines added, 1 removed
+- **Konfigurasi LLM gateway** (`llm-gateway.md`): 19 lines added, 4 removed
+  - New section: "##### Claude Platform on AWS melalui gateway"
+- **Hubungkan Claude Code ke alat melalui MCP** (`mcp.md`): 7 lines added, 1 removed
+- **Bagaimana Claude mengingat proyek Anda** (`memory.md`): 18 lines added, 2 removed
+- **Konfigurasi model** (`model-config.md`): 7 lines added, 3 removed
+- **Pemantauan** (`monitoring-usage.md`): 84 lines added, 33 removed
+  - New section: "#### Acara plugin dimuat"
+  - New section: "#### Acara hook terdaftar"
+- **Output styles** (`output-styles.md`): 10 lines added, 4 removed
+  - New section: "## Gaya output bawaan"
+- **Ikhtisar Claude Code** (`overview.md`): 1 lines added, 1 removed
+- **Konfigurasi izin** (`permissions.md`): 6 lines added, 2 removed
+- **Referensi Plugins** (`plugins-reference.md`): 69 lines added, 9 removed
+  - New section: "### Bagikan file dalam marketplace dengan symlinks"
+  - New section: "### plugin details"
+- **Panduan Cepat** (`quickstart.md`): 2 lines added, 2 removed
+- **Jalankan prompt sesuai jadwal** (`scheduled-tasks.md`): 5 lines added, 3 removed
+- **Pengaturan Claude Code** (`settings.md`): 2 lines added, 0 removed
+- **Buat subagent khusus** (`sub-agents.md`): 9 lines added, 7 removed
+- **Ikhtisar penyebaran enterprise** (`third-party-integrations.md`): 12 lines added, 2 removed
+- **Gunakan Claude Code di VS Code** (`vs-code.md`): 28 lines added, 26 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Riferimento CLI** (`cli-reference.md`): 7 lines added, 1 removed
+- **Flussi di lavoro comuni** (`common-workflows.md`): 85 lines added, 589 removed
+  - New section: "## Ricette di prompt"
+  - New section: "### Comprendere nuove basi di codice"
+  - New section: "#### Ottenere una rapida panoramica della base di codice"
+  - New section: "#### Trovare codice rilevante"
+  - New section: "### Correggere bug in modo efficiente"
+- **Utilizzo dei dati** (`data-usage.md`): 11 lines added, 11 removed
+- **Automatizzare i flussi di lavoro con hooks** (`hooks-guide.md`): 2 lines added, 2 removed
+- **Riferimento dei hooks** (`hooks.md`): 100 lines added, 33 removed
+  - New section: "##### Exec form e shell form"
+  - New section: "##### ExitPlanMode"
+- **Modalità interattiva** (`interactive-mode.md`): 24 lines added, 21 removed
+- **Personalizzare le scorciatoie da tastiera** (`keybindings.md`): 1 lines added, 1 removed
+- **Configurazione del gateway LLM** (`llm-gateway.md`): 19 lines added, 4 removed
+  - New section: "##### Claude Platform su AWS attraverso un gateway"
+- **Connetti Claude Code ai tuoi strumenti tramite MCP** (`mcp.md`): 17 lines added, 11 removed
+  - New section: "### Gestione dei vostri server"
+- **Come Claude ricorda il tuo progetto** (`memory.md`): 17 lines added, 1 removed
+- **Configurazione del modello** (`model-config.md`): 2 lines added, 2 removed
+- **Monitoraggio** (`monitoring-usage.md`): 84 lines added, 33 removed
+  - New section: "#### Evento di plugin caricato"
+  - New section: "#### Evento di hook registrato"
+- **Output styles** (`output-styles.md`): 3 lines added, 1 removed
+- **Panoramica di Claude Code** (`overview.md`): 1 lines added, 1 removed
+- **Configurare le autorizzazioni** (`permissions.md`): 6 lines added, 2 removed
+- **Riferimento dei plugin** (`plugins-reference.md`): 69 lines added, 9 removed
+  - New section: "### Condividere file all'interno di un marketplace con symlink"
+  - New section: "### plugin details"
+- **Guida rapida** (`quickstart.md`): 2 lines added, 2 removed
+- **Eseguire prompt in base a una pianificazione** (`scheduled-tasks.md`): 5 lines added, 3 removed
+- **Impostazioni di Claude Code** (`settings.md`): 2 lines added, 0 removed
+- **Creare subagent personalizzati** (`sub-agents.md`): 13 lines added, 13 removed
+- **Panoramica della distribuzione aziendale** (`third-party-integrations.md`): 14 lines added, 4 removed
+  - New section: "## Best practices for organizations"
+- **Usa Claude Code in VS Code** (`vs-code.md`): 28 lines added, 26 removed
+
+### 日本語
+
+
+**Modified**
+
+- **CLI リファレンス** (`cli-reference.md`): 7 lines added, 1 removed
+- **一般的なワークフロー** (`common-workflows.md`): 90 lines added, 594 removed
+  - New section: "## プロンプトレシピ"
+  - New section: "### 新しいコードベースを理解する"
+  - New section: "#### コードベースの概要を素早く把握する"
+  - New section: "#### 関連するコードを見つける"
+  - New section: "### バグを効率的に修正する"
+- **データ使用** (`data-usage.md`): 12 lines added, 12 removed
+- **hooks でワークフローを自動化する** (`hooks-guide.md`): 3 lines added, 3 removed
+- **Hooks リファレンス** (`hooks.md`): 100 lines added, 33 removed
+  - New section: "##### Exec フォームとシェル フォーム"
+  - New section: "##### ExitPlanMode"
+- **インタラクティブモード** (`interactive-mode.md`): 24 lines added, 21 removed
+- **キーボードショートカットのカスタマイズ** (`keybindings.md`): 1 lines added, 1 removed
+- **LLM gateway設定** (`llm-gateway.md`): 38 lines added, 23 removed
+  - New section: "### 基本的な LiteLLM セットアップ"
+  - New section: "##### 静的 API キー"
+  - New section: "# または Claude Code 設定で"
+  - New section: "##### ヘルパーを使用した動的 API キー"
+  - New section: "# 例：vault からキーを取得"
+- **MCP を使用して Claude Code をツールに接続する** (`mcp.md`): 8 lines added, 2 removed
+- **Claude があなたのプロジェクトを記憶する方法** (`memory.md`): 18 lines added, 2 removed
+- **モデル設定** (`model-config.md`): 4 lines added, 4 removed
+- **監視** (`monitoring-usage.md`): 63 lines added, 12 removed
+  - New section: "#### プラグイン読み込みイベント"
+  - New section: "#### フック登録イベント"
+- **出力スタイル** (`output-styles.md`): 3 lines added, 1 removed
+- **Claude Code の概要** (`overview.md`): 1 lines added, 1 removed
+- **権限を設定する** (`permissions.md`): 6 lines added, 2 removed
+- **プラグインリファレンス** (`plugins-reference.md`): 69 lines added, 9 removed
+  - New section: "### マーケットプレイス内でシンボリックリンクを使用してファイルを共有"
+  - New section: "### plugin details"
+- **クイックスタート** (`quickstart.md`): 2 lines added, 2 removed
+- **スケジュールに従ってプロンプトを実行する** (`scheduled-tasks.md`): 6 lines added, 4 removed
+- **Claude Code の設定** (`settings.md`): 2 lines added, 0 removed
+- **カスタムサブエージェントの作成** (`sub-agents.md`): 7 lines added, 7 removed
+- **エンタープライズデプロイメント概要** (`third-party-integrations.md`): 14 lines added, 4 removed
+- **VS Code で Claude Code を使用する** (`vs-code.md`): 29 lines added, 27 removed
+
+### 한국어
+
+
+**Modified**
+
+- **CLI 참조** (`cli-reference.md`): 7 lines added, 1 removed
+- **일반적인 워크플로우** (`common-workflows.md`): 85 lines added, 589 removed
+  - New section: "## 프롬프트 레시피"
+  - New section: "### 새로운 코드베이스 이해하기"
+  - New section: "#### 코드베이스의 빠른 개요 얻기"
+  - New section: "#### 관련 코드 찾기"
+  - New section: "### 효율적으로 버그 수정하기"
+- **데이터 사용** (`data-usage.md`): 11 lines added, 11 removed
+- **hooks를 사용하여 워크플로우 자동화** (`hooks-guide.md`): 13 lines added, 13 removed
+  - New section: "# ... hook 로직의 나머지"
+  - New section: "# ~/.zshrc 또는 ~/.bashrc에서"
+- **Hooks 참조** (`hooks.md`): 101 lines added, 34 removed
+  - New section: "##### Exec 형식 및 셸 형식"
+  - New section: "##### ExitPlanMode"
+- **대화형 모드** (`interactive-mode.md`): 24 lines added, 21 removed
+- **키보드 단축키 사용자 정의** (`keybindings.md`): 1 lines added, 1 removed
+- **LLM gateway 구성** (`llm-gateway.md`): 18 lines added, 3 removed
+  - New section: "##### AWS를 통한 Claude Platform 게이트웨이"
+- **MCP를 통해 Claude Code를 도구에 연결하기** (`mcp.md`): 8 lines added, 2 removed
+- **Claude가 프로젝트를 기억하는 방법** (`memory.md`): 17 lines added, 1 removed
+- **모델 구성** (`model-config.md`): 2 lines added, 2 removed
+- **모니터링** (`monitoring-usage.md`): 61 lines added, 10 removed
+  - New section: "#### 플러그인 로드됨 이벤트"
+  - New section: "#### 훅 등록됨 이벤트"
+- **출력 스타일** (`output-styles.md`): 4 lines added, 1 removed
+- **Claude Code 개요** (`overview.md`): 1 lines added, 1 removed
+- **권한 구성** (`permissions.md`): 13 lines added, 2 removed
+- **플러그인 참조** (`plugins-reference.md`): 69 lines added, 9 removed
+  - New section: "### 마켓플레이스 내에서 심볼릭 링크를 사용하여 파일 공유"
+  - New section: "### plugin details"
+- **빠른 시작** (`quickstart.md`): 2 lines added, 2 removed
+- **일정에 따라 프롬프트 실행하기** (`scheduled-tasks.md`): 5 lines added, 3 removed
+- **Claude Code 설정** (`settings.md`): 2 lines added, 0 removed
+- **사용자 정의 subagent 만들기** (`sub-agents.md`): 17 lines added, 15 removed
+- **엔터프라이즈 배포 개요** (`third-party-integrations.md`): 12 lines added, 2 removed
+- **VS Code에서 Claude Code 사용하기** (`vs-code.md`): 28 lines added, 26 removed
+
+### Português
+
+
+**Modified**
+
+- **Referência de CLI** (`cli-reference.md`): 7 lines added, 1 removed
+- **Fluxos de trabalho comuns** (`common-workflows.md`): 85 lines added, 589 removed
+  - New section: "## Receitas de prompt"
+  - New section: "### Entender novas bases de código"
+  - New section: "#### Obter uma visão geral rápida da base de código"
+  - New section: "#### Encontrar código relevante"
+  - New section: "### Corrigir bugs com eficiência"
+- **Uso de dados** (`data-usage.md`): 12 lines added, 12 removed
+- **Automatizar fluxos de trabalho com hooks** (`hooks-guide.md`): 2 lines added, 2 removed
+- **Referência de hooks** (`hooks.md`): 102 lines added, 35 removed
+  - New section: "##### Forma exec e forma shell"
+  - New section: "##### ExitPlanMode"
+- **Modo interativo** (`interactive-mode.md`): 24 lines added, 21 removed
+- **Personalizar atalhos de teclado** (`keybindings.md`): 1 lines added, 1 removed
+- **Configuração do gateway LLM** (`llm-gateway.md`): 19 lines added, 4 removed
+  - New section: "##### Claude Platform on AWS através de um gateway"
+- **Conectar Claude Code a ferramentas via MCP** (`mcp.md`): 7 lines added, 1 removed
+- **Como Claude se lembra do seu projeto** (`memory.md`): 17 lines added, 1 removed
+- **Configuração de modelo** (`model-config.md`): 2 lines added, 2 removed
+- **Monitoramento** (`monitoring-usage.md`): 151 lines added, 39 removed
+  - New section: "#### Evento de plugin carregado"
+  - New section: "#### Evento de hook registrado"
+  - New section: "## Eventos de auditoria de segurança"
+  - New section: "### Atribuir ações a usuários"
+  - New section: "### Auditoria de atividade MCP"
+- **Estilos de saída** (`output-styles.md`): 3 lines added, 1 removed
+- **Visão geral do Claude Code** (`overview.md`): 1 lines added, 1 removed
+- **Configurar permissões** (`permissions.md`): 6 lines added, 2 removed
+- **Referência de plugins** (`plugins-reference.md`): 70 lines added, 10 removed
+  - New section: "### Compartilhar arquivos dentro de um marketplace com symlinks"
+  - New section: "### plugin details"
+- **Guia de Início Rápido** (`quickstart.md`): 9 lines added, 9 removed
+- **Executar prompts em um cronograma** (`scheduled-tasks.md`): 5 lines added, 3 removed
+- **Configurações do Claude Code** (`settings.md`): 2 lines added, 0 removed
+- **Criar subagentes personalizados** (`sub-agents.md`): 13 lines added, 13 removed
+- **Visão geral da implantação empresarial** (`third-party-integrations.md`): 12 lines added, 2 removed
+- **Use Claude Code in VS Code** (`vs-code.md`): 28 lines added, 26 removed
+
+### Русский
+
+
+**Modified**
+
+- **Справочник CLI** (`cli-reference.md`): 7 lines added, 1 removed
+- **Распространённые рабочие процессы** (`common-workflows.md`): 86 lines added, 590 removed
+  - New section: "## Рецепты подсказок"
+  - New section: "### Понимание новых кодовых баз"
+  - New section: "#### Получение быстрого обзора кодовой базы"
+  - New section: "#### Поиск релевантного кода"
+  - New section: "### Эффективное исправление ошибок"
+- **Использование данных** (`data-usage.md`): 11 lines added, 11 removed
+- **Автоматизация рабочих процессов с помощью hooks** (`hooks-guide.md`): 3 lines added, 3 removed
+- **Справочник по hooks** (`hooks.md`): 107 lines added, 41 removed
+  - New section: "##### Exec form and shell form"
+  - New section: "##### ExitPlanMode"
+  - New section: "## Запуск hooks в фоне"
+  - New section: "### Настройка асинхронного hook"
+  - New section: "### Как выполняются асинхронные hooks"
+- **Интерактивный режим** (`interactive-mode.md`): 30 lines added, 27 removed
+- **Настройка сочетаний клавиш** (`keybindings.md`): 1 lines added, 1 removed
+- **Конфигурация LLM gateway** (`llm-gateway.md`): 18 lines added, 3 removed
+  - New section: "##### Claude Platform on AWS через шлюз"
+- **Подключите Claude Code к инструментам через MCP** (`mcp.md`): 7 lines added, 1 removed
+- **Как Claude запоминает ваш проект** (`memory.md`): 17 lines added, 1 removed
+- **Конфигурация модели** (`model-config.md`): 2 lines added, 2 removed
+- **Мониторинг** (`monitoring-usage.md`): 84 lines added, 33 removed
+  - New section: "#### Событие загрузки плагина"
+  - New section: "#### Событие регистрации hook"
+- **Output styles** (`output-styles.md`): 3 lines added, 1 removed
+- **Настройка разрешений** (`permissions.md`): 6 lines added, 2 removed
+- **Справочник по плагинам** (`plugins-reference.md`): 70 lines added, 10 removed
+  - New section: "### Совместное использование файлов в маркетплейсе с помощью символических ссылок"
+  - New section: "### plugin details"
+- **Быстрый старт** (`quickstart.md`): 9 lines added, 9 removed
+- **Запуск подсказок по расписанию** (`scheduled-tasks.md`): 5 lines added, 3 removed
+- **Параметры Claude Code** (`settings.md`): 2 lines added, 0 removed
+- **Создание пользовательских subagents** (`sub-agents.md`): 13 lines added, 13 removed
+- **Обзор корпоративного развертывания** (`third-party-integrations.md`): 14 lines added, 4 removed
+- **Использование Claude Code в VS Code** (`vs-code.md`): 28 lines added, 26 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **CLI 参考** (`cli-reference.md`): 7 lines added, 1 removed
+- **常见工作流程** (`common-workflows.md`): 85 lines added, 589 removed
+  - New section: "## 提示工作流程"
+  - New section: "### 理解新的代码库"
+  - New section: "#### 快速获取代码库概览"
+  - New section: "#### 查找相关代码"
+  - New section: "### 高效修复错误"
+- **数据使用** (`data-usage.md`): 12 lines added, 12 removed
+- **使用 hooks 自动化工作流** (`hooks-guide.md`): 2 lines added, 2 removed
+- **Hooks 参考** (`hooks.md`): 98 lines added, 32 removed
+  - New section: "##### Exec 形式和 shell 形式"
+  - New section: "##### ExitPlanMode"
+- **交互模式** (`interactive-mode.md`): 24 lines added, 21 removed
+- **自定义快捷键** (`keybindings.md`): 1 lines added, 1 removed
+- **LLM gateway 配置** (`llm-gateway.md`): 18 lines added, 3 removed
+  - New section: "##### 通过网关的 AWS 上的 Claude Platform"
+- **通过 MCP 将 Claude Code 连接到工具** (`mcp.md`): 7 lines added, 1 removed
+- **Claude 如何记住你的项目** (`memory.md`): 16 lines added, 0 removed
+- **模型配置** (`model-config.md`): 2 lines added, 2 removed
+- **监控** (`monitoring-usage.md`): 122 lines added, 10 removed
+  - New section: "#### 插件已加载事件"
+  - New section: "#### Hook 已注册事件"
+  - New section: "## 审计安全事件"
+  - New section: "### 将属性操作归属于用户"
+  - New section: "### 审计 MCP 活动"
+- **输出样式** (`output-styles.md`): 3 lines added, 1 removed
+- **Claude Code 概述** (`overview.md`): 1 lines added, 1 removed
+- **配置权限** (`permissions.md`): 6 lines added, 2 removed
+- **Plugins 参考** (`plugins-reference.md`): 77 lines added, 17 removed
+  - New section: "### 使用符号链接在市场内共享文件"
+  - New section: "### plugin details"
+- **快速开始** (`quickstart.md`): 4 lines added, 4 removed
+- **按计划运行提示词** (`scheduled-tasks.md`): 5 lines added, 3 removed
+- **Claude Code 设置** (`settings.md`): 2 lines added, 0 removed
+- **创建自定义 subagents** (`sub-agents.md`): 13 lines added, 13 removed
+- **企业部署概览** (`third-party-integrations.md`): 12 lines added, 2 removed
+- **在 VS Code 中使用 Claude Code** (`vs-code.md`): 28 lines added, 26 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **CLI 參考** (`cli-reference.md`): 7 lines added, 1 removed
+- **常見工作流程** (`common-workflows.md`): 87 lines added, 591 removed
+  - New section: "## 提示食譜"
+  - New section: "### 了解新的程式碼庫"
+  - New section: "#### 快速取得程式碼庫概覽"
+  - New section: "#### 尋找相關程式碼"
+  - New section: "### 有效地修復錯誤"
+- **資料使用** (`data-usage.md`): 11 lines added, 11 removed
+- **使用 hooks 自動化工作流程** (`hooks-guide.md`): 2 lines added, 2 removed
+- **Hooks 參考** (`hooks.md`): 99 lines added, 32 removed
+  - New section: "##### Exec 形式和 shell 形式"
+  - New section: "##### ExitPlanMode"
+- **互動模式** (`interactive-mode.md`): 24 lines added, 21 removed
+- **自訂鍵盤快捷鍵** (`keybindings.md`): 1 lines added, 1 removed
+- **LLM gateway 配置** (`llm-gateway.md`): 19 lines added, 4 removed
+  - New section: "##### 通過網關的 AWS 上的 Claude Platform"
+- **透過 MCP 將 Claude Code 連接到工具** (`mcp.md`): 8 lines added, 2 removed
+- **Claude 如何記住您的專案** (`memory.md`): 16 lines added, 0 removed
+- **模型配置** (`model-config.md`): 2 lines added, 2 removed
+- **監控** (`monitoring-usage.md`): 61 lines added, 10 removed
+  - New section: "#### Plugin 已載入事件"
+  - New section: "#### Hook 已註冊事件"
+- **輸出樣式** (`output-styles.md`): 3 lines added, 1 removed
+- **設定權限** (`permissions.md`): 6 lines added, 2 removed
+- **Plugins 參考** (`plugins-reference.md`): 69 lines added, 9 removed
+  - New section: "### 使用 symlinks 在 marketplace 內共享檔案"
+  - New section: "### plugin details"
+- **快速入門** (`quickstart.md`): 4 lines added, 4 removed
+- **按排程執行提示** (`scheduled-tasks.md`): 5 lines added, 3 removed
+- **Claude Code 設定** (`settings.md`): 2 lines added, 0 removed
+- **建立自訂 subagents** (`sub-agents.md`): 15 lines added, 15 removed
+- **企業部署概述** (`third-party-integrations.md`): 12 lines added, 2 removed
+- **在 VS Code 中使用 Claude Code** (`vs-code.md`): 28 lines added, 26 removed
+
+---
+
 ## 2026-05-11
 
 36 pages modified

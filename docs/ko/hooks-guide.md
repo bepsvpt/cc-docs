@@ -862,9 +862,9 @@ HTTP hooks는 웹 서버, 클라우드 함수 또는 외부 서비스가 hook �
 ### 제한 사항
 
 * 명령 hooks는 stdout, stderr 및 종료 코드를 통해서만 통신합니다. 직접 `/` 명령이나 도구 호출을 트리거할 수 없습니다. `additionalContext`를 통해 반환된 텍스트는 Claude가 일반 텍스트로 읽는 시스템 알림으로 주입됩니다. HTTP hooks는 응답 본문을 통해 통신합니다.
-* Hook 타임아웃은 기본적으로 10분이며 `timeout` 필드 (초 단위)로 hook당 구성 가능합니다.
+* Hook 타임아웃은 기본적으로 10분이며 `timeout` 필드(초 단위)로 hook당 구성 가능합니다.
 * `PostToolUse` hooks는 도구가 이미 실행되었으므로 작업을 취소할 수 없습니다.
-* `PermissionRequest` hooks는 [비대화형 모드](/ko/headless) (`-p`)에서 발생하지 않습니다. 자동화된 권한 결정을 위해 `PreToolUse` hooks를 사용합니다.
+* `PermissionRequest` hooks는 [비대화형 모드](/ko/headless)(`-p`)에서 발생하지 않습니다. 자동화된 권한 결정을 위해 `PreToolUse` hooks를 사용합니다.
 * `Stop` hooks는 작업 완료 시에만이 아니라 Claude가 응답을 완료할 때마다 발생합니다. 사용자 중단 시에는 발생하지 않습니다. API 오류는 대신 [StopFailure](/ko/hooks#stopfailure)를 발생시킵니다.
 * 여러 PreToolUse hooks가 [`updatedInput`](/ko/hooks#pretooluse)을 반환하여 도구의 인수를 다시 쓸 때 마지막으로 완료된 것이 우승합니다. Hooks는 병렬로 실행되므로 순서는 비결정적입니다. 동일한 도구의 입력을 수정하는 hook이 두 개 이상 있는 것을 피합니다.
 
@@ -879,9 +879,9 @@ PreToolUse hooks는 모든 권한 모드 확인 전에 발생합니다. `permiss
 Hook이 구성되었지만 실행되지 않습니다.
 
 * `/hooks`를 실행하고 hook이 올바른 이벤트 아래에 나타나는지 확인합니다
-* Matcher 패턴이 도구 이름과 정확히 일치하는지 확인합니다 (matchers는 대소문자 구분)
-* 올바른 이벤트 유형을 트리거하는지 확인합니다 (예: `PreToolUse`는 도구 실행 전에 발생하고 `PostToolUse`는 후에 발생)
-* 비대화형 모드 (`-p`)에서 `PermissionRequest` hooks를 사용하는 경우 대신 `PreToolUse`로 전환합니다
+* Matcher 패턴이 도구 이름과 정확히 일치하는지 확인합니다(matchers는 대소문자 구분)
+* 올바른 이벤트 유형을 트리거하는지 확인합니다(예: `PreToolUse`는 도구 실행 전에 발생하고 `PostToolUse`는 후에 발생)
+* 비대화형 모드(`-p`)에서 `PermissionRequest` hooks를 사용하는 경우 대신 `PreToolUse`로 전환합니다
 
 ### 출력에 Hook 오류
 
@@ -890,9 +890,9 @@ Hook이 구성되었지만 실행되지 않습니다.
 * 스크립트가 예기치 않게 0이 아닌 코드로 종료되었습니다. 샘플 JSON을 파이프하여 수동으로 테스트합니다:
   ```bash theme={null}
   echo '{"tool_name":"Bash","tool_input":{"command":"ls"}}' | ./my-hook.sh
-  echo $?  // 종료 코드 확인
+  echo $?  # 종료 코드 확인
   ```
-* "command not found"가 표시되면 절대 경로를 사용하거나 `$CLAUDE_PROJECT_DIR`을 사용하여 스크립트를 참조합니다
+* "command not found"가 표시되면 절대 경로를 사용하거나 `${CLAUDE_PROJECT_DIR}`을 사용하여 스크립트를 참조합니다. 셸 인용을 완전히 피하려면 `"args": []`를 추가하여 [exec form](/ko/hooks#exec-form-and-shell-form)으로 전환하면 셸 없이 스크립트를 직접 생성합니다
 * "jq: command not found"가 표시되면 `jq`를 설치하거나 JSON 구문 분석을 위해 Python/Node.js를 사용합니다
 * 스크립트가 실행되지 않으면 실행 가능하게 만듭니다: `chmod +x ./my-hook.sh`
 
@@ -901,7 +901,7 @@ Hook이 구성되었지만 실행되지 않습니다.
 설정 파일을 편집했지만 hooks가 메뉴에 나타나지 않습니다.
 
 * 파일 편집은 일반적으로 자동으로 선택됩니다. 몇 초 후에 나타나지 않으면 파일 감시자가 변경을 놓쳤을 수 있습니다: 세션을 다시 시작하여 강제로 다시 로드합니다.
-* JSON이 유효한지 확인합니다 (후행 쉼표 및 주석은 허용되지 않음)
+* JSON이 유효한지 확인합니다(후행 쉼표 및 주석은 허용되지 않음)
 * 설정 파일이 올바른 위치에 있는지 확인합니다: 프로젝트 hooks의 경우 `.claude/settings.json`, 전역 hooks의 경우 `~/.claude/settings.json`
 
 ### Stop hook이 무한 실행됨
@@ -914,16 +914,16 @@ Stop hook 스크립트는 이미 트리거되었는지 확인해야 합니다. J
 #!/bin/bash
 INPUT=$(cat)
 if [ "$(echo "$INPUT" | jq -r '.stop_hook_active')" = "true" ]; then
-  exit 0  // Claude가 중지되도록 허용
+  exit 0  # Claude가 중지되도록 허용
 fi
-// ... hook 로직의 나머지
+# ... hook 로직의 나머지
 ```
 
 ### JSON 검증 실패
 
 Hook 스크립트가 유효한 JSON을 출력하더라도 Claude Code에 JSON 구문 분석 오류가 표시됩니다.
 
-Claude Code가 hook을 실행할 때 프로필 (`~/.zshrc` 또는 `~/.bashrc`)을 소싱하는 셸을 생성합니다. 프로필에 무조건적인 `echo` 문이 포함되어 있으면 해당 출력이 hook의 JSON에 앞에 붙습니다:
+Claude Code가 셸 형식 명령 hook(args 없는 hook)을 실행할 때 macOS 및 Linux에서는 기본적으로 `sh -c`를 생성하거나 Windows에서는 Git Bash를 생성합니다. 이 셸은 비대화형이지만 Git Bash 및 일부 구성(예: `BASH_ENV`가 `~/.bashrc`를 가리킴)은 여전히 프로필을 소싱합니다. 해당 프로필에 무조건적인 `echo` 문이 포함되어 있으면 출력이 hook의 JSON에 앞에 붙습니다:
 
 ```text theme={null}
 Shell ready on arm64
@@ -933,7 +933,7 @@ Shell ready on arm64
 Claude Code는 이를 JSON으로 구문 분석하려고 하고 실패합니다. 이를 수정하려면 셸 프로필의 echo 문을 래핑하여 대화형 셸에서만 실행되도록 합니다:
 
 ```bash theme={null}
-// ~/.zshrc 또는 ~/.bashrc에서
+# ~/.zshrc 또는 ~/.bashrc에서
 if [[ $- == *i* ]]; then
   echo "Shell ready"
 fi
@@ -945,7 +945,7 @@ fi
 
 트랜스크립트 보기는 `Ctrl+O`로 전환되며 발생한 각 hook에 대해 한 줄 요약을 표시합니다: 성공은 자동으로 표시되고, 차단 오류는 stderr를 표시하며, 차단하지 않는 오류는 `<hook name> hook error` 공지를 표시한 후 stderr의 첫 번째 줄을 표시합니다.
 
-전체 실행 세부 정보 (일치한 hooks, 종료 코드, stdout 및 stderr 포함)는 디버그 로그를 읽습니다. `claude --debug-file /tmp/claude.log`로 Claude Code를 시작하여 알려진 경로에 쓰거나 다른 터미널에서 `tail -f /tmp/claude.log`를 실행합니다. 해당 플래그 없이 시작한 경우 세션 중에 `/debug`를 실행하여 로깅을 활성화하고 로그 경로를 찾습니다.
+전체 실행 세부 정보(일치한 hooks, 종료 코드, stdout 및 stderr 포함)는 디버그 로그를 읽습니다. `claude --debug-file /tmp/claude.log`로 Claude Code를 시작하여 알려진 경로에 쓰거나 다른 터미널에서 `tail -f /tmp/claude.log`를 실행합니다. 해당 플래그 없이 시작한 경우 세션 중에 `/debug`를 실행하여 로깅을 활성화하고 로그 경로를 찾습니다.
 
 ## 자세히 알아보기
 

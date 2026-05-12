@@ -10,7 +10,7 @@
   Geplante Aufgaben erfordern Claude Code v2.1.72 oder später. Überprüfen Sie Ihre Version mit `claude --version`.
 </Note>
 
-Geplante Aufgaben ermöglichen es Claude, einen Prompt automatisch in regelmäßigen Abständen erneut auszuführen. Verwenden Sie sie, um eine Bereitstellung abzurufen, einen PR zu überwachen, einen langwierigen Build zu überprüfen oder sich später in der Sitzung an etwas zu erinnern. Um auf Ereignisse zu reagieren, während sie geschehen, anstatt abzurufen, siehe [Kanäle](/de/channels): Ihr CI kann den Fehler direkt in die Sitzung übertragen.
+Geplante Aufgaben ermöglichen es Claude, einen Prompt automatisch in regelmäßigen Abständen erneut auszuführen. Verwenden Sie sie, um eine Bereitstellung abzurufen, einen PR zu überwachen, einen langwierigen Build zu überprüfen oder sich später in der Sitzung an etwas zu erinnern. Um auf Ereignisse zu reagieren, während sie geschehen, anstatt abzurufen, siehe [Kanäle](/de/channels): Ihr CI kann den Fehler direkt in die Sitzung übertragen. Um die Sitzung Zug um Zug weiterarbeiten zu lassen, bis eine Bedingung erfüllt ist, anstatt in einem Intervall, siehe [`/goal`](/de/goal).
 
 Aufgaben sind sitzungsbezogen: Sie existieren im aktuellen Gespräch und werden beendet, wenn Sie ein neues starten. Das Fortsetzen mit `--resume` oder `--continue` bringt alle Aufgaben zurück, die nicht [abgelaufen sind](#seven-day-expiry): eine wiederkehrende Aufgabe, die in den letzten 7 Tagen erstellt wurde, oder eine einmalige Aufgabe, deren geplante Zeit noch nicht vergangen ist. Für Planung, die unabhängig von einer Sitzung bestehen bleibt, verwenden Sie [Routinen](/de/routines), [Desktop-geplante Aufgaben](/de/desktop-scheduled-tasks) oder [GitHub Actions](/de/github-actions).
 
@@ -122,6 +122,8 @@ quiet, say so in one line.
 
 Um eine `/loop` zu stoppen, während sie auf die nächste Iteration wartet, drücken Sie `Esc`. Dies löscht den ausstehenden Wakeup, sodass die Schleife nicht erneut läuft. Aufgaben, die Sie durch [direktes Fragen an Claude](#manage-scheduled-tasks) geplant haben, sind nicht von `Esc` betroffen und bleiben bestehen, bis Sie sie löschen.
 
+In [selbstgesteuertem Modus](#let-claude-choose-the-interval) kann Claude die Schleife auch selbst beenden, indem es die nächste Wakeup nicht plant, sobald die Aufgabe nachweislich abgeschlossen ist. Schleifen nach einem festen Intervall laufen weiter, bis Sie sie stoppen oder [sieben Tage vergehen](#seven-day-expiry).
+
 ## Setzen Sie eine einmalige Erinnerung
 
 Für einmalige Erinnerungen beschreiben Sie, was Sie möchten, in natürlicher Sprache, anstatt `/loop` zu verwenden. Claude plant eine einmalige Aufgabe, die sich nach der Ausführung selbst löscht.
@@ -166,9 +168,9 @@ Alle Zeiten werden in Ihrer lokalen Zeitzone interpretiert. Ein Cron-Ausdruck wi
 
 ### Jitter
 
-Um zu vermeiden, dass jede Sitzung die API zum gleichen Wanduhrzeitpunkt trifft, fügt der Scheduler einen kleinen deterministischen Offset zu Ausführungszeiten hinzu:
+Um zu vermeiden, dass jede Sitzung die API zum gleichen Wanduhrzeitpunkt trifft, fügt der Scheduler einen deterministischen Offset zu Ausführungszeiten hinzu:
 
-* Wiederkehrende Aufgaben laufen bis zu 10% ihrer Periode zu spät, begrenzt auf 15 Minuten. Ein stündlicher Job könnte überall von `:00` bis `:06` laufen.
+* Wiederkehrende Aufgaben laufen bis zu 30 Minuten nach der geplanten Zeit (oder bis zu der Hälfte des Intervalls für Aufgaben, die häufiger als stündlich ausgeführt werden). Ein stündlicher Job, der für `:00` geplant ist, kann überall bis `:30` laufen.
 * Einmalige Aufgaben, die für die Ober- oder Unterseite der Stunde geplant sind, laufen bis zu 90 Sekunden früh.
 
 Der Offset wird von der Aufgaben-ID abgeleitet, daher erhält die gleiche Aufgabe immer den gleichen Offset. Wenn genaue Zeitangaben wichtig sind, wählen Sie eine Minute, die nicht `:00` oder `:30` ist, zum Beispiel `3 9 * * *` statt `0 9 * * *`, und der einmalige Jitter wird nicht angewendet.

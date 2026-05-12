@@ -10,7 +10,7 @@
   Les tâches planifiées nécessitent Claude Code v2.1.72 ou version ultérieure. Vérifiez votre version avec `claude --version`.
 </Note>
 
-Les tâches planifiées permettent à Claude de réexécuter automatiquement un prompt à intervalles réguliers. Utilisez-les pour interroger un déploiement, surveiller une PR, vérifier une compilation longue ou vous rappeler de faire quelque chose plus tard dans la session. Pour réagir aux événements au fur et à mesure qu'ils se produisent au lieu d'interroger, consultez [Channels](/fr/channels) : votre CI peut pousser l'échec directement dans la session.
+Les tâches planifiées permettent à Claude de réexécuter automatiquement un prompt à intervalles réguliers. Utilisez-les pour interroger un déploiement, surveiller une PR, vérifier une compilation longue ou vous rappeler de faire quelque chose plus tard dans la session. Pour réagir aux événements au fur et à mesure qu'ils se produisent au lieu d'interroger, consultez [Channels](/fr/channels) : votre CI peut pousser l'échec directement dans la session. Pour maintenir la session en fonctionnement tour après tour jusqu'à ce qu'une condition soit remplie plutôt que sur un intervalle, consultez [`/goal`](/fr/goal).
 
 Les tâches sont limitées à la session : elles vivent dans la conversation actuelle et s'arrêtent quand vous en commencez une nouvelle. La reprise avec `--resume` ou `--continue` ramène toute tâche qui n'a pas [expiré](#seven-day-expiry) : une tâche récurrente créée au cours des 7 derniers jours, ou une tâche ponctuelle dont l'heure planifiée n'a pas encore passé. Pour une planification qui survit indépendamment de toute session, utilisez [Routines](/fr/routines), [Tâches planifiées sur le bureau](/fr/desktop-scheduled-tasks) ou [GitHub Actions](/fr/github-actions).
 
@@ -122,6 +122,8 @@ Les modifications apportées à `loop.md` prennent effet à la prochaine itérat
 
 Pour arrêter un `/loop` pendant qu'il attend la prochaine itération, appuyez sur `Esc`. Cela efface le réveil en attente afin que la boucle ne se déclenche pas à nouveau. Les tâches que vous avez planifiées en [demandant directement à Claude](#manage-scheduled-tasks) ne sont pas affectées par `Esc` et restent en place jusqu'à ce que vous les supprimiez.
 
+En [mode autonome](#let-claude-choose-the-interval), Claude peut également terminer la boucle de lui-même en ne planifiant pas le prochain réveil une fois que la tâche est manifestement terminée. Les boucles selon un intervalle fixe continuent de s'exécuter jusqu'à ce que vous les arrêtiez ou que [sept jours s'écoulent](#seven-day-expiry).
+
 ## Définir un rappel ponctuel
 
 Pour les rappels ponctuels, décrivez ce que vous voulez en langage naturel au lieu d'utiliser `/loop`. Claude planifie une tâche à usage unique qui se supprime après son exécution.
@@ -168,7 +170,7 @@ Tous les horaires sont interprétés dans votre fuseau horaire local. Une expres
 
 Pour éviter que chaque session ne frappe l'API au même moment mural, le planificateur ajoute un petit décalage déterministe aux heures d'exécution :
 
-* Les tâches récurrentes s'exécutent jusqu'à 10 % de leur période en retard, plafonnées à 15 minutes. Une tâche horaire peut s'exécuter n'importe où de `:00` à `:06`.
+* Les tâches récurrentes s'exécutent jusqu'à 30 minutes après l'heure planifiée (ou jusqu'à la moitié de l'intervalle, pour les tâches qui s'exécutent plus souvent qu'une fois par heure). Une tâche horaire planifiée pour `:00` peut s'exécuter n'importe où jusqu'à `:30`.
 * Les tâches ponctuelles planifiées pour le haut ou le bas de l'heure s'exécutent jusqu'à 90 secondes plus tôt.
 
 Le décalage est dérivé de l'ID de la tâche, donc la même tâche obtient toujours le même décalage. Si le timing exact est important, choisissez une minute qui n'est pas `:00` ou `:30`, par exemple `3 9 * * *` au lieu de `0 9 * * *`, et la gigue ponctuelle ne s'appliquera pas.

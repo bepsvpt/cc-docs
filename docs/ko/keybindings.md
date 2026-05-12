@@ -104,7 +104,7 @@ keybindings 구성 파일은 `bindings` 배열이 있는 객체입니다. 각 �
 | `chat:cancel`         | Escape                   | 현재 입력 취소                                                                                                       |
 | `chat:clearInput`     | Ctrl+L                   | 입력을 유지하면서 전체 화면을 다시 그리기 강제합니다. [전체 화면 렌더링](/ko/fullscreen#clear-the-conversation)에서 2초 이내에 두 번 누르면 `/clear` 실행 |
 | `chat:clearScreen`    | Cmd+K                    | [전체 화면 렌더링](/ko/fullscreen#clear-the-conversation)에서 2초 이내에 두 번 누르면 `/clear` 실행                                |
-| `chat:killAgents`     | Ctrl+X Ctrl+K            | 모든 백그라운드 에이전트 종료                                                                                               |
+| `chat:killAgents`     | Ctrl+X Ctrl+K            | 이 세션의 모든 실행 중인 [백그라운드 서브에이전트](/ko/sub-agents#run-subagents-in-foreground-or-background) 종료                     |
 | `chat:cycleMode`      | Shift+Tab\*              | 권한 모드 순환                                                                                                       |
 | `chat:modelPicker`    | Meta+P                   | 모델 선택기 열기                                                                                                      |
 | `chat:fastMode`       | Meta+O                   | 빠른 모드 전환                                                                                                       |

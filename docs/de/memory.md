@@ -26,7 +26,7 @@ Claude Code hat zwei komplementäre Memory-Systeme. Beide werden zu Beginn jeder
 | :------------------ | :---------------------------------------------- | :-------------------------------------------------------------------- |
 | **Wer schreibt es** | Sie                                             | Claude                                                                |
 | **Was es enthält**  | Anweisungen und Regeln                          | Erkenntnisse und Muster                                               |
-| **Umfang**          | Projekt, Benutzer oder Organisation             | Pro Worktree                                                          |
+| **Umfang**          | Projekt, Benutzer oder Organisation             | Pro Repository, gemeinsam über Worktrees hinweg                       |
 | **Geladen in**      | Jede Sitzung                                    | Jede Sitzung (erste 200 Zeilen oder 25 KB)                            |
 | **Verwenden für**   | Coding-Standards, Workflows, Projektarchitektur | Build-Befehle, Debugging-Erkenntnisse, Vorlieben, die Claude entdeckt |
 
@@ -271,6 +271,22 @@ Organisationen können eine zentral verwaltete CLAUDE.md bereitstellen, die für
     Verwenden Sie MDM, Group Policy, Ansible oder ähnliche Tools, um die Datei über Entwicklermaschinen zu verteilen. Weitere Informationen finden Sie unter [verwaltete Einstellungen](/de/permissions#managed-settings) für andere organisationsweite Konfigurationsoptionen.
   </Step>
 </Steps>
+
+Der Schlüssel `claudeMd` ermöglicht es Ihnen, verwaltete CLAUDE.md-Inhalte direkt in `managed-settings.json` zu platzieren, statt eine separate Datei bereitzustellen.
+
+**Umfang**: jede Claude Code-Sitzung auf dem Computer, in jedem Repository. Für Repository-spezifische Anleitung committen Sie stattdessen eine Projekt-CLAUDE.md.
+
+**Vorrang**: gleich wie eine verwaltete CLAUDE.md-Datei. Wird vor Benutzer- und Projekt-CLAUDE.md geladen.
+
+**Wo es berücksichtigt wird**: nur verwaltete und Richtlinien-Einstellungen. Das Setzen von `claudeMd` in Benutzer-, Projekt- oder lokalen Einstellungen hat keine Auswirkung.
+
+Das folgende Beispiel fügt Verhaltensanweisungen direkt in eine verwaltete Einstellungsdatei ein:
+
+```json theme={null}
+{
+  "claudeMd": "Always run `make lint` before committing.\nNever push directly to main."
+}
+```
 
 Eine verwaltete CLAUDE.md und [verwaltete Einstellungen](/de/settings#settings-files) dienen unterschiedlichen Zwecken. Verwenden Sie Einstellungen für technische Durchsetzung und CLAUDE.md für Verhaltensanleitung:
 

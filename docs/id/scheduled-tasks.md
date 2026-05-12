@@ -10,7 +10,7 @@
   Tugas terjadwal memerlukan Claude Code v2.1.72 atau lebih baru. Periksa versi Anda dengan `claude --version`.
 </Note>
 
-Tugas terjadwal memungkinkan Claude menjalankan kembali prompt secara otomatis pada interval tertentu. Gunakan untuk polling deployment, mengawasi PR, memeriksa build yang berjalan lama, atau mengingatkan diri sendiri untuk melakukan sesuatu nanti dalam sesi. Untuk bereaksi terhadap peristiwa saat terjadi daripada polling, lihat [Channels](/id/channels): CI Anda dapat mendorong kegagalan ke dalam sesi secara langsung.
+Tugas terjadwal memungkinkan Claude menjalankan kembali prompt secara otomatis pada interval tertentu. Gunakan untuk polling deployment, mengawasi PR, memeriksa build yang berjalan lama, atau mengingatkan diri sendiri untuk melakukan sesuatu nanti dalam sesi. Untuk bereaksi terhadap peristiwa saat terjadi daripada polling, lihat [Channels](/id/channels): CI Anda dapat mendorong kegagalan ke dalam sesi secara langsung. Untuk menjaga sesi tetap bekerja giliran demi giliran sampai kondisi terpenuhi daripada pada interval, lihat [`/goal`](/id/goal).
 
 Tugas bersifat session-scoped: mereka hidup dalam percakapan saat ini dan berhenti saat Anda memulai yang baru. Melanjutkan dengan `--resume` atau `--continue` membawa kembali tugas apa pun yang belum [kedaluwarsa](#seven-day-expiry): tugas berulang yang dibuat dalam 7 hari terakhir, atau tugas sekali jalan yang waktu terjadwalnya belum berlalu. Untuk penjadwalan yang bertahan secara independen dari sesi apa pun, gunakan [Routines](/id/routines), [Desktop scheduled tasks](/id/desktop-scheduled-tasks), atau [GitHub Actions](/id/github-actions).
 
@@ -122,6 +122,8 @@ Edit ke `loop.md` berlaku pada iterasi berikutnya, jadi Anda dapat menyempurnaka
 
 Untuk menghentikan `/loop` saat menunggu iterasi berikutnya, tekan `Esc`. Ini menghapus wakeup yang tertunda sehingga loop tidak berjalan lagi. Tugas yang Anda jadwalkan dengan [meminta Claude secara langsung](#manage-scheduled-tasks) tidak terpengaruh oleh `Esc` dan tetap ada sampai Anda menghapusnya.
 
+Dalam [mode self-paced](#let-claude-choose-the-interval), Claude juga dapat mengakhiri loop dengan sendirinya dengan tidak menjadwalkan wakeup berikutnya setelah tugas terbukti selesai. Loop pada interval tetap terus berjalan sampai Anda menghentikannya atau [tujuh hari berlalu](#seven-day-expiry).
+
 ## Atur pengingat sekali jalan
 
 Untuk pengingat sekali jalan, jelaskan apa yang Anda inginkan dalam bahasa alami daripada menggunakan `/loop`. Claude menjadwalkan tugas single-fire yang menghapus dirinya sendiri setelah berjalan.
@@ -166,9 +168,9 @@ Semua waktu ditafsirkan dalam zona waktu lokal Anda. Ekspresi cron seperti `0 9 
 
 ### Jitter
 
-Untuk menghindari setiap sesi mengenai API pada momen dinding jam yang sama, penjadwal menambahkan offset deterministik kecil untuk waktu berjalan:
+Untuk menghindari setiap sesi mengenai API pada momen dinding jam yang sama, penjadwal menambahkan offset deterministik untuk waktu berjalan:
 
-* Tugas berulang berjalan hingga 10% dari periode mereka terlambat, dibatasi pada 15 menit. Job per jam mungkin berjalan di mana saja dari `:00` hingga `:06`.
+* Tugas berulang berjalan hingga 30 menit setelah waktu terjadwal (atau hingga setengah interval, untuk tugas yang berjalan lebih sering daripada per jam). Job per jam yang dijadwalkan untuk `:00` dapat berjalan di mana saja hingga `:30`.
 * Tugas sekali jalan yang dijadwalkan untuk bagian atas atau bawah jam berjalan hingga 90 detik lebih awal.
 
 Offset berasal dari ID tugas, jadi tugas yang sama selalu mendapatkan offset yang sama. Jika waktu yang tepat penting, pilih menit yang bukan `:00` atau `:30`, misalnya `3 9 * * *` daripada `0 9 * * *`, dan jitter sekali jalan tidak akan berlaku.

@@ -97,7 +97,7 @@ Plugins dapat menyediakan event handlers yang merespons peristiwa Claude Code se
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/format-code.sh"
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/format-code.sh"
           }
         ]
       }
@@ -289,7 +289,7 @@ Plugin monitors menggunakan mekanisme yang sama seperti [Monitor tool](/id/tools
 [
   {
     "name": "deploy-status",
-    "command": "${CLAUDE_PLUGIN_ROOT}/scripts/poll-deploy.sh ${user_config.api_endpoint}",
+    "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/poll-deploy.sh ${user_config.api_endpoint}",
     "description": "Deployment status changes"
   },
   {
@@ -317,7 +317,7 @@ Untuk mendeklarasikan monitors inline, atur `experimental.monitors` di `plugin.j
 | :----- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `when` | Mengontrol kapan monitor dimulai. `"always"` memulainya saat startup sesi dan pada reload plugin, dan merupakan default. `"on-skill-invoke:<skill-name>"` memulainya pertama kali skill bernama dalam plugin ini dikirim |
 
-Nilai `command` mendukung [substitusi variabel](#environment-variables) yang sama seperti konfigurasi MCP dan LSP server: `${CLAUDE_PLUGIN_ROOT}`, `${CLAUDE_PLUGIN_DATA}`, `${user_config.*}`, dan `${ENV_VAR}` apa pun dari lingkungan. Awali perintah dengan `cd "${CLAUDE_PLUGIN_ROOT}" && ` jika script perlu berjalan dari direktori plugin itu sendiri.
+Nilai `command` mendukung [substitusi variabel](#environment-variables) yang sama seperti konfigurasi MCP dan LSP server: `${CLAUDE_PLUGIN_ROOT}`, `${CLAUDE_PLUGIN_DATA}`, `${CLAUDE_PROJECT_DIR}`, `${user_config.*}`, dan `${ENV_VAR}` apa pun dari lingkungan. Awali perintah dengan `cd "${CLAUDE_PLUGIN_ROOT}" && ` jika script perlu berjalan dari direktori plugin itu sendiri.
 
 Menonaktifkan plugin di tengah sesi tidak menghentikan monitors yang sudah berjalan. Mereka berhenti saat sesi berakhir.
 
@@ -540,13 +540,15 @@ Untuk semua field jalur:
 
 ### Variabel lingkungan
 
-Claude Code menyediakan dua variabel untuk mereferensikan jalur plugin. Keduanya disubstitusi inline di mana pun mereka muncul dalam konten skill, konten agent, perintah hook, perintah monitor, dan konfigurasi MCP atau LSP server. Keduanya juga diekspor sebagai variabel lingkungan ke proses hook dan subprocess MCP atau LSP server.
+Claude Code menyediakan tiga variabel untuk mereferensikan jalur. Semuanya disubstitusi inline di mana pun mereka muncul dalam konten skill, konten agent, perintah hook, perintah monitor, dan konfigurasi MCP atau LSP server. Semuanya juga diekspor sebagai variabel lingkungan ke proses hook dan subprocess MCP atau LSP server.
 
-**`${CLAUDE_PLUGIN_ROOT}`**: jalur absolut ke direktori instalasi plugin Anda. Gunakan ini untuk mereferensikan scripts, binaries, dan file konfigurasi yang disertakan dengan plugin. Jalur ini berubah saat plugin diperbarui. Direktori versi sebelumnya tetap berada di disk selama sekitar tujuh hari setelah update sebelum pembersihan, tetapi perlakukan sebagai ephemeral dan jangan tulis state di sini.
+**`${CLAUDE_PLUGIN_ROOT}`**: jalur absolut ke direktori instalasi plugin Anda. Gunakan ini untuk mereferensikan scripts, binaries, dan file konfigurasi yang disertakan dengan plugin. Dalam perintah hook, gunakan [exec form](/id/hooks#exec-form-and-shell-form) dengan `args` sehingga jalur dilewatkan sebagai satu argumen tanpa quoting. Dalam hook bentuk shell dan perintah monitor, bungkus dalam tanda kutip ganda, seperti `"${CLAUDE_PLUGIN_ROOT}"`. Jalur ini berubah saat plugin diperbarui. Direktori versi sebelumnya tetap berada di disk selama sekitar tujuh hari setelah update sebelum pembersihan, tetapi perlakukan sebagai ephemeral dan jangan tulis state di sini.
 
 Saat plugin diperbarui di tengah sesi, perintah hook, monitor, MCP server, dan LSP server terus menggunakan jalur versi sebelumnya. Jalankan `/reload-plugins` untuk mengalihkan hooks, MCP server, dan LSP server ke jalur baru; monitor memerlukan restart sesi.
 
 **`${CLAUDE_PLUGIN_DATA}`**: direktori persisten untuk state plugin yang bertahan setelah updates. Gunakan ini untuk dependensi yang dipasang seperti `node_modules` atau Python virtual environments, kode yang dihasilkan, caches, dan file lainnya yang harus bertahan di seluruh versi plugin. Direktori dibuat secara otomatis pertama kali variabel ini direferensikan.
+
+**`${CLAUDE_PROJECT_DIR}`**: root proyek. Ini adalah direktori yang sama yang diterima hooks di variabel `CLAUDE_PROJECT_DIR` mereka. Gunakan ini untuk mereferensikan scripts atau file konfigurasi lokal proyek. Bungkus dalam tanda kutip untuk menangani jalur dengan spasi, misalnya `"${CLAUDE_PROJECT_DIR}/scripts/server.sh"`. MCP server juga dapat memanggil permintaan MCP `roots/list`, yang mengembalikan direktori tempat Claude Code diluncurkan.
 
 ```json theme={null}
 {
@@ -556,7 +558,7 @@ Saat plugin diperbarui di tengah sesi, perintah hook, monitor, MCP server, dan L
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/process.sh"
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/process.sh"
           }
         ]
       }
@@ -629,12 +631,20 @@ Tools Glob dan Grep Claude melewati direktori versi orphaned selama pencarian, j
 
 Plugin yang dipasang tidak dapat mereferensikan file di luar direktorinya. Jalur yang melintasi di luar root plugin (seperti `../shared-utils`) tidak akan berfungsi setelah instalasi karena file eksternal tersebut tidak disalin ke cache.
 
-### Bekerja dengan dependensi eksternal
+### Bagikan file dalam marketplace dengan symlinks
 
-Jika plugin Anda perlu mengakses file di luar direktorinya, Anda dapat membuat symbolic links ke file eksternal dalam direktori plugin Anda. Symlinks dipertahankan dalam cache daripada didereferensikan, dan mereka diselesaikan ke target mereka saat runtime. Perintah berikut membuat link dari dalam direktori plugin Anda ke lokasi utilitas bersama:
+Jika plugin Anda perlu berbagi file dengan bagian lain dari marketplace yang sama, Anda dapat membuat symbolic links di dalam direktori plugin Anda. Cara symlink ditangani saat plugin disalin ke cache tergantung pada di mana targetnya diselesaikan:
+
+* **Dalam direktori plugin itu sendiri:** symlink dipertahankan sebagai symlink relatif dalam cache, sehingga terus diselesaikan ke target yang disalin saat runtime.
+* **Di tempat lain dalam marketplace yang sama:** symlink didereferensikan. Konten target disalin ke cache di tempatnya. Ini memungkinkan direktori `skills/` meta-plugin untuk menghubungkan ke skills yang ditentukan oleh plugins lain dalam marketplace.
+* **Di luar marketplace:** symlink dilewati untuk keamanan. Ini mencegah plugins dari menarik file host arbitrer seperti jalur sistem ke dalam cache.
+
+Untuk plugins yang dipasang dengan `--plugin-dir` atau dari jalur lokal, hanya symlinks yang diselesaikan dalam direktori plugin itu sendiri yang dipertahankan. Semua yang lain dilewati.
+
+Perintah berikut membuat link dari dalam plugin marketplace ke skill bersama yang ditentukan oleh plugin sibling. Di Windows, gunakan `mklink /D` dari Command Prompt yang ditingkatkan atau aktifkan Developer Mode:
 
 ```bash theme={null}
-ln -s /path/to/shared-utils ./shared-utils
+ln -s ../../shared-plugin/skills/foo ./skills/foo
 ```
 
 Ini memberikan fleksibilitas sambil mempertahankan manfaat keamanan dari sistem caching.
@@ -874,6 +884,56 @@ claude plugin list [options]
 | `--json`      | Output sebagai JSON                                                 |         |
 | `--available` | Sertakan plugin yang tersedia dari marketplace. Memerlukan `--json` |         |
 | `-h, --help`  | Tampilkan bantuan untuk perintah                                    |         |
+
+### plugin details
+
+Tampilkan inventaris komponen plugin dan perkiraan biaya token. Output mencantumkan semua komponen yang disumbangkan plugin, dikelompokkan sebagai Skills (skills dan commands), Agents, Hooks, dan MCP servers, bersama dengan perkiraan berapa banyak token yang ditambahkannya ke setiap sesi.
+
+```bash theme={null}
+claude plugin details <name>
+```
+
+**Argumen:**
+
+* `<name>`: Nama plugin atau `plugin-name@marketplace-name`
+
+**Opsi:**
+
+| Opsi         | Deskripsi                        | Default |
+| :----------- | :------------------------------- | :------ |
+| `-h, --help` | Tampilkan bantuan untuk perintah |         |
+
+Output menampilkan dua angka biaya untuk setiap komponen:
+
+* **Always-on:** token yang ditambahkan ke setiap sesi oleh teks daftar plugin, seperti deskripsi skill, deskripsi agent, dan nama perintah, terlepas dari apakah ada komponen yang diaktifkan.
+* **On-invoke:** token yang dihabiskan komponen saat diaktifkan. Ditampilkan per komponen, bukan sebagai total plugin, karena sesi khas hanya mengaktifkan subset komponen.
+
+Contoh ini menunjukkan seperti apa output untuk plugin dengan dua skill:
+
+```
+security-guidance 1.2.0
+  Real-time security analysis for Claude Code sessions
+  Source: security-guidance@claude-code-marketplace
+
+Component inventory
+  Skills (2)  scan-dependencies, review-changes
+  Agents (0)
+  Hooks (1)  (harness-only — no model context cost)
+  MCP servers (0)
+
+Projected token cost
+  Always-on:   ~180 tok   added to every session
+
+Per-component (rounded)
+  component            always-on  on-invoke
+  scan-dependencies        ~100      ~2400
+  review-changes            ~80      ~1800
+
+  On-invoke cost is paid each time a skill or agent fires.
+  Token counts are estimates and may differ from actual usage.
+```
+
+Total always-on dihitung melalui API `count_tokens` untuk model aktif Anda. Angka per-komponen diskalakan secara proporsional dari total tersebut. Jika API tidak dapat dijangkau, perintah kembali ke perkiraan berbasis karakter.
 
 ### plugin tag
 

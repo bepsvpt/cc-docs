@@ -70,7 +70,8 @@ Hook은 Claude Code 세션 중 특정 지점에서 실행됩니다. 이벤트가
           {
             "type": "command",
             "if": "Bash(rm *)",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-rm.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-rm.sh",
+            "args": []
           }
         ]
       }
@@ -306,12 +307,52 @@ MCP 도구는 `mcp__<server>__<tool>` 명명 패턴을 따릅니다. 예를 들�
 
 [공통 필드](#common-fields) 외에도 명령 hook은 이러한 필드를 허용합니다:
 
-| 필드            | 필수  | 설명                                                                                                                                                                                             |
-| :------------ | :-- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `command`     | 예   | 실행할 셸 명령                                                                                                                                                                                       |
-| `async`       | 아니오 | `true`인 경우 차단하지 않고 백그라운드에서 실행됩니다. [백그라운드에서 hook 실행](#run-hooks-in-the-background) 참조                                                                                                           |
-| `asyncRewake` | 아니오 | `true`인 경우 백그라운드에서 실행되고 종료 코드 2에서 Claude를 깨웁니다. `async`를 의미합니다. hook의 stderr 또는 stderr이 비어 있으면 stdout이 Claude에 시스템 알림으로 표시되므로 장기 실행 백그라운드 실패에 반응할 수 있습니다                                       |
-| `shell`       | 아니오 | 이 hook에 사용할 셸. `"bash"` (기본값) 또는 `"powershell"`을 허용합니다. `"powershell"`을 설정하면 Windows에서 PowerShell을 통해 명령을 실행합니다. `CLAUDE_CODE_USE_POWERSHELL_TOOL`이 필요하지 않습니다. hook이 PowerShell을 직접 생성하기 때문입니다 |
+| 필드            | 필수  | 설명                                                                                                                                                                                                                 |
+| :------------ | :-- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `command`     | 예   | 실행할 셸 명령. `args`와 함께 직접 생성할 실행 파일입니다. [Exec 형식 및 셸 형식](#exec-form-and-shell-form) 참조                                                                                                                               |
+| `args`        | 아니오 | 인수 목록. 존재할 때 `command`는 실행 파일로 해결되고 `args`를 인수 벡터로 하여 직접 생성되며 셸이 관여하지 않습니다. [Exec 형식 및 셸 형식](#exec-form-and-shell-form) 참조                                                                                         |
+| `async`       | 아니오 | `true`인 경우 차단하지 않고 백그라운드에서 실행됩니다. [백그라운드에서 hook 실행](#run-hooks-in-the-background) 참조                                                                                                                               |
+| `asyncRewake` | 아니오 | `true`인 경우 백그라운드에서 실행되고 종료 코드 2에서 Claude를 깨웁니다. `async`를 의미합니다. hook의 stderr 또는 stderr이 비어 있으면 stdout이 Claude에 시스템 알림으로 표시되므로 장기 실행 백그라운드 실패에 반응할 수 있습니다                                                           |
+| `shell`       | 아니오 | 이 hook에 사용할 셸. `"bash"` (기본값) 또는 `"powershell"`을 허용합니다. `"powershell"`을 설정하면 Windows에서 PowerShell을 통해 명령을 실행합니다. `CLAUDE_CODE_USE_POWERSHELL_TOOL`이 필요하지 않습니다. hook이 PowerShell을 직접 생성하기 때문입니다. `args`가 설정되면 무시됩니다 |
+
+<a id="exec-form-and-shell-form" />
+
+##### Exec 형식 및 셸 형식
+
+명령 hook은 `args`가 설정되면 exec 형식으로 실행되고 `args`가 생략되면 셸 형식으로 실행됩니다. hook이 [경로 자리 표시자](#reference-scripts-by-path)를 참조할 때마다 `args`를 설정하세요. 각 요소는 따옴표 없이 하나의 인수로 전달됩니다. 파이프 또는 `&&`와 같은 셸 기능이 필요하거나 두 가지 우려 사항이 모두 적용되지 않을 때 `args`를 생략합니다.
+
+**Exec 형식**은 `args`가 있을 때 실행됩니다. Claude Code는 `command`를 `PATH`의 실행 파일로 해결하고 `args`를 인수 벡터로 하여 직접 생성합니다. 셸이 없으므로 각 `args` 요소는 작성된 그대로 정확히 하나의 인수이며 `${CLAUDE_PLUGIN_ROOT}`와 같은 경로 자리 표시자는 `command` 및 각 `args` 요소로 일반 문자열로 대체됩니다. 아포스트로피, `$`, 백틱과 같은 특수 문자는 해석할 셸이 없으므로 그대로 전달됩니다. 어떤 플랫폼에서도 셸 토큰화가 발생하지 않습니다.
+
+**셸 형식**은 `args`가 없을 때 실행됩니다. `command` 문자열은 셸로 전달됩니다: macOS 및 Linux에서는 `sh -c`, Windows에서는 Git Bash, Git Bash가 설치되지 않았을 때는 PowerShell입니다. `shell` 필드를 설정하여 명시적으로 선택합니다. 셸은 문자열을 토큰화하고 변수를 확장하며 파이프, `&&`, 리다이렉트, 글로브를 해석합니다.
+
+<Note>
+  Windows에서 exec 형식은 `.exe`와 같은 실제 실행 파일로 해결되는 `command`를 필요로 합니다. npm, npx, eslint 및 기타 도구가 `node_modules/.bin`에 설치하는 `.cmd` 및 `.bat` shim은 실행 파일이 아니며 셸 없이 생성될 수 없습니다. exec 형식으로 실행하려면 기본 스크립트를 `node`로 직접 호출합니다. 예를 들어 `"command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/node_modules/eslint/bin/eslint.js"]`. `node` 더하기 스크립트 경로 패턴은 `node.exe`가 실제 바이너리이므로 모든 플랫폼에서 작동합니다. `.cmd` 또는 `.bat` shim을 이름으로 실행하려면 셸 형식을 사용합니다.
+</Note>
+
+이 예제는 plugin과 함께 번들된 Node 스크립트를 실행합니다. Exec 형식은 해결된 스크립트 경로를 따옴표 없이 하나의 인수로 전달합니다:
+
+```json theme={null}
+{
+  "type": "command",
+  "command": "node",
+  "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/format.js", "--fix"]
+}
+```
+
+동등한 셸 형식은 공백이나 특수 문자가 있는 경로를 처리하기 위해 따옴표가 필요합니다:
+
+```json theme={null}
+{
+  "type": "command",
+  "command": "node \"${CLAUDE_PLUGIN_ROOT}\"/scripts/format.js --fix"
+}
+```
+
+두 형식 모두 동일한 [경로 자리 표시자](#reference-scripts-by-path)를 지원하며 생성된 프로세스에서 환경 변수 `CLAUDE_PROJECT_DIR`, `CLAUDE_PLUGIN_ROOT`, `CLAUDE_PLUGIN_DATA`로 내보내므로 스크립트는 시작 방식과 관계없이 `process.env.CLAUDE_PLUGIN_ROOT`를 읽을 수 있습니다. Plugin hook은 추가로 `${user_config.*}` 값을 대체합니다. [사용자 구성](/ko/plugins-reference#user-configuration)을 참조하세요.
+
+<Note>
+  Exec 형식에서 `command`는 실행 파일 이름 또는 경로만입니다. `command`가 경로 구분자가 없는 bare 이름이고 `args`와 함께 공백을 포함하면 Claude Code는 경고를 기록합니다. 생성이 실패하기 때문입니다: `node script.js`라는 이름의 실행 파일이 없습니다. 추가 토큰을 `args`로 이동합니다. `C:\Program Files\nodejs\node.exe`와 같은 공백이 있는 절대 경로는 단일 유효한 실행 파일이며 경고를 트리거하지 않습니다.
+</Note>
 
 #### HTTP hook 필드
 
@@ -397,19 +438,21 @@ MCP 도구 hook은 Claude Code가 MCP 서버에 연결한 후 모든 hook 이벤
 | `prompt` | 예   | 모델에 전송할 프롬프트 텍스트. hook 입력 JSON에 대한 자리 표시자로 `$ARGUMENTS` 사용 |
 | `model`  | 아니오 | 평가에 사용할 모델. 기본값은 빠른 모델                                     |
 
-일치하는 모든 hook은 병렬로 실행되며 동일한 핸들러는 자동으로 중복 제거됩니다. 명령 hook은 명령 문자열로 중복 제거되고 HTTP hook은 URL로 중복 제거됩니다. 핸들러는 현재 디렉토리에서 Claude Code의 환경으로 실행됩니다. `$CLAUDE_CODE_REMOTE` 환경 변수는 원격 웹 환경에서 `"true"`로 설정되고 로컬 CLI에서는 설정되지 않습니다.
+일치하는 모든 hook은 병렬로 실행되며 동일한 핸들러는 자동으로 중복 제거됩니다. 명령 hook은 명령 문자열과 `args`로 중복 제거되고 HTTP hook은 URL로 중복 제거됩니다. 핸들러는 현재 디렉토리에서 Claude Code의 환경으로 실행됩니다. `$CLAUDE_CODE_REMOTE` 환경 변수는 원격 웹 환경에서 `"true"`로 설정되고 로컬 CLI에서는 설정되지 않습니다.
 
 ### 경로별로 스크립트 참조
 
-프로젝트 또는 plugin 루트를 기준으로 hook 스크립트를 참조하려면 환경 변수를 사용하세요. hook이 실행될 때의 작업 디렉토리와 관계없이:
+프로젝트 또는 plugin 루트를 기준으로 hook 스크립트를 참조하려면 이러한 자리 표시자를 사용합니다. hook이 실행될 때의 작업 디렉토리와 관계없이:
 
-* `$CLAUDE_PROJECT_DIR`: 프로젝트 루트. 공백이 있는 경로를 처리하려면 따옴표로 감싸세요.
+* `${CLAUDE_PROJECT_DIR}`: 프로젝트 루트.
 * `${CLAUDE_PLUGIN_ROOT}`: plugin의 설치 디렉토리, [plugin](/ko/plugins)과 함께 번들된 스크립트의 경우. plugin 업데이트 시마다 변경됩니다.
 * `${CLAUDE_PLUGIN_DATA}`: plugin의 [지속적 데이터 디렉토리](/ko/plugins-reference#persistent-data-directory), plugin 업데이트를 거쳐 유지되어야 하는 종속성 및 상태의 경우.
 
+경로 자리 표시자를 참조하는 모든 hook에 대해 [exec 형식](#exec-form-and-shell-form)을 선호합니다. Exec 형식은 각 `args` 요소를 셸 토큰화 없이 하나의 인수로 전달하므로 공백이나 특수 문자가 있는 경로는 따옴표가 필요하지 않습니다. 셸 형식에서는 각 자리 표시자를 큰따옴표로 감싸세요.
+
 <Tabs>
   <Tab title="프로젝트 스크립트">
-    이 예제는 `$CLAUDE_PROJECT_DIR`을 사용하여 `Write` 또는 `Edit` 도구 호출 후 프로젝트의 `.claude/hooks/` 디렉토리에서 스타일 검사기를 실행합니다:
+    이 예제는 `${CLAUDE_PROJECT_DIR}`을 사용하여 `Write` 또는 `Edit` 도구 호출 후 프로젝트의 `.claude/hooks/` 디렉토리에서 스타일 검사기를 실행합니다:
 
     ```json theme={null}
     {
@@ -420,7 +463,8 @@ MCP 도구 hook은 Claude Code가 MCP 서버에 연결한 후 모든 hook 이벤
             "hooks": [
               {
                 "type": "command",
-                "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check-style.sh"
+                "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/check-style.sh",
+                "args": []
               }
             ]
           }
@@ -446,6 +490,7 @@ MCP 도구 hook은 Claude Code가 MCP 서버에 연결한 후 모든 hook 이벤
               {
                 "type": "command",
                 "command": "${CLAUDE_PLUGIN_ROOT}/scripts/format.sh",
+                "args": [],
                 "timeout": 30
               }
             ]
@@ -528,10 +573,12 @@ Hook 이벤트는 각 [hook 이벤트](#hook-events) 섹션에서 문서화된 �
 
 `--agent`로 실행하거나 subagent 내부에서 실행할 때 두 개의 추가 필드가 포함됩니다:
 
-| 필드           | 설명                                                                                                                                                           |
-| :----------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `agent_id`   | subagent의 고유 식별자. hook이 subagent 호출 내부에서 발생할 때만 존재합니다. 이를 사용하여 subagent hook 호출을 메인 스레드 호출과 구별합니다.                                                           |
-| `agent_type` | 에이전트 이름 (예: `"Explore"` 또는 `"security-reviewer"`). 세션이 `--agent`를 사용하거나 hook이 subagent 내부에서 발생할 때 존재합니다. subagent의 경우 subagent의 유형이 세션의 `--agent` 값보다 우선합니다. |
+| 필드           | 설명                                                                                                                                                                                                                                               |
+| :----------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `agent_id`   | subagent의 고유 식별자. hook이 subagent 호출 내부에서 발생할 때만 존재합니다. 이를 사용하여 subagent hook 호출을 메인 스레드 호출과 구별합니다.                                                                                                                                               |
+| `agent_type` | 에이전트 이름 (예: `"Explore"` 또는 `"security-reviewer"`). 세션이 `--agent`를 사용하거나 hook이 subagent 내부에서 발생할 때 존재합니다. subagent의 경우 subagent의 유형이 세션의 `--agent` 값보다 우선합니다. [사용자 정의 subagent](/ko/sub-agents)의 경우 이는 에이전트의 frontmatter에서 `name` 필드이며 파일명이 아닙니다. |
+
+`SessionStart` hook만 `model` 필드를 받습니다. `$CLAUDE_MODEL` 환경 변수는 없습니다. hook 프로세스는 부모 환경을 상속하므로 셸에서 설정한 경우 `$ANTHROPIC_MODEL`을 읽을 수 있지만 세션 중에 `/model`로 모델을 전환할 때 해당 값은 변경되지 않습니다.
 
 예를 들어 Bash 명령에 대한 `PreToolUse` hook은 stdin에서 다음을 받습니다:
 
@@ -1153,6 +1200,18 @@ glob 패턴과 일치하는 파일을 찾습니다.
 | `questions` | 배열 | `[{"question": "Which framework?", "header": "Framework", "options": [{"label": "React"}], "multiSelect": false}]` | 제시할 질문, 각각 `question` 문자열, 짧은 `header`, `options` 배열, 선택적 `multiSelect` 플래그                                                |
 | `answers`   | 객체 | `{"Which framework?": "React"}`                                                                                    | 선택적. 질문 텍스트를 선택한 옵션 레이블로 매핑합니다. 다중 선택 답변은 쉼표로 레이블을 결합합니다. Claude는 이 필드를 설정하지 않습니다. `updatedInput`을 통해 프로그래밍 방식으로 답변을 제공하세요 |
 
+##### ExitPlanMode
+
+Claude가 [plan 모드](/ko/permission-modes#analyze-before-you-edit-with-plan-mode)를 떠나기 전에 계획을 제시하고 사용자에게 승인을 요청합니다. Claude는 도구를 호출하기 전에 계획을 파일에 디스크에 작성하므로 모델의 리터럴 `tool_input`은 `allowedPrompts`만 전달합니다. Claude Code는 hook에 전달하기 전에 계획 내용과 파일 경로를 주입합니다.
+
+| 필드               | 유형  | 예제                                          | 설명                                                                             |
+| :--------------- | :-- | :------------------------------------------ | :----------------------------------------------------------------------------- |
+| `plan`           | 문자열 | `"## Refactor auth\n1. Extract..."`         | Markdown의 계획 내용. 디스크의 계획 파일에서 주입됨                                              |
+| `planFilePath`   | 문자열 | `"/Users/.../plans/refactor-auth.md"`       | 계획 파일의 경로. 주입됨                                                                 |
+| `allowedPrompts` | 배열  | `[{"tool": "Bash", "prompt": "run tests"}]` | 선택적. Claude가 계획을 구현하기 위해 요청하는 prompt 기반 권한, 각각 `tool` 이름과 작업 범주를 설명하는 `prompt` |
+
+`PostToolUse`에서 `tool_response`는 승인된 계획을 보유하는 `plan` 및 `filePath` 필드가 있는 객체이며, 내부 상태 플래그도 있습니다. 디스크에서 파일을 다시 읽는 대신 `tool_response.plan`에서 계획 내용을 읽으세요.
+
 #### PreToolUse 결정 제어
 
 `PreToolUse` hook은 도구 호출 진행 여부를 제어할 수 있습니다. 최상위 `decision` 필드를 사용하는 다른 hook과 달리 PreToolUse는 `hookSpecificOutput` 객체 내에 결정을 반환합니다. 이는 더 풍부한 제어를 제공합니다: 네 가지 결과 (허용, 거부, 요청 또는 연기) 및 실행 전에 도구 입력을 수정하는 기능.
@@ -1596,11 +1655,11 @@ Notification hook은 알림을 차단하거나 수정할 수 없습니다. 이�
 
 ### SubagentStart
 
-Agent 도구를 통해 Claude Code subagent가 생성될 때 실행됩니다. 에이전트 유형 이름으로 필터링할 matcher를 지원합니다 (Bash, Explore, Plan과 같은 기본 제공 에이전트 또는 `.claude/agents/`의 사용자 정의 에이전트 이름).
+Agent 도구를 통해 Claude Code subagent가 생성될 때 실행됩니다. 에이전트 유형 이름으로 필터링할 matcher를 지원합니다. 기본 제공 에이전트의 경우 이는 `general-purpose`, `Explore`, `Plan`과 같은 에이전트 이름입니다. [사용자 정의 subagent](/ko/sub-agents)의 경우 이는 파일명이 아닌 에이전트의 frontmatter의 `name` 필드입니다.
 
 #### SubagentStart 입력
 
-[공통 입력 필드](#common-input-fields) 외에도 SubagentStart hook은 subagent의 고유 식별자가 있는 `agent_id`와 에이전트 이름이 있는 `agent_type` (Bash, Explore, Plan과 같은 기본 제공 에이전트 또는 사용자 정의 에이전트 이름)을 받습니다.
+[공통 입력 필드](#common-input-fields) 외에도 SubagentStart hook은 subagent의 고유 식별자가 있는 `agent_id`와 에이전트 이름이 있는 `agent_type` (`general-purpose`, `Explore`, `Plan`과 같은 기본 제공 에이전트 또는 사용자 정의 에이전트 이름)을 받습니다.
 
 ```json theme={null}
 {
@@ -1651,7 +1710,7 @@ Claude Code subagent가 응답을 마쳤을 때 실행됩니다. 에이전트 �
 }
 ```
 
-SubagentStop hook은 [Stop hook](#stop-decision-control)과 동일한 결정 제어 형식을 사용합니다.
+SubagentStop hook은 [Stop hook](#stop-decision-control)과 동일한 결정 제어 형식을 사용합니다. 이들은 `additionalContext`를 지원하지 않습니다. `decision: "block"`을 `reason`과 함께 반환하면 subagent가 계속 실행되고 `reason`이 subagent의 다음 명령으로 전달됩니다. subagent가 반환한 후 부모 세션에 컨텍스트를 주입하려면 `Agent` 도구에서 [`PostToolUse`](#posttooluse) hook을 대신 사용합니다.
 
 ### TaskCreated
 
@@ -1767,6 +1826,10 @@ exit 0
 ### Stop
 
 메인 Claude Code 에이전트가 응답을 마쳤을 때 실행됩니다. 중지가 사용자 중단으로 인해 발생한 경우 실행되지 않습니다. API 오류는 [StopFailure](#stopfailure) 대신 발생합니다.
+
+<Tip>
+  [`/goal`](/ko/goal) 명령은 세션 범위 prompt 기반 Stop hook의 기본 제공 바로 가기입니다. 조건이 유지될 때까지 Claude가 계속 작동하도록 하되 hook 구성을 작성하지 않으려는 경우 사용합니다.
+</Tip>
 
 #### Stop 입력
 
@@ -1901,7 +1964,8 @@ matcher는 구성 소스에서 필터링합니다:
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/audit-config-change.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/audit-config-change.sh",
+            "args": []
           }
         ]
       }
@@ -2387,12 +2451,13 @@ matcher 필드는 MCP 서버 이름과 일치합니다.
 }
 ```
 
-| 필드        | 필수  | 설명                                                                                                   |
-| :-------- | :-- | :--------------------------------------------------------------------------------------------------- |
-| `type`    | 예   | `"prompt"`여야 합니다                                                                                     |
-| `prompt`  | 예   | LLM으로 전송할 프롬프트 텍스트. hook 입력 JSON에 대한 자리 표시자로 `$ARGUMENTS` 사용. `$ARGUMENTS`가 없으면 입력 JSON이 프롬프트에 추가됩니다 |
-| `model`   | 아니오 | 평가에 사용할 모델. 기본값은 빠른 모델                                                                               |
-| `timeout` | 아니오 | 초 단위 시간 초과. 기본값: 30                                                                                  |
+| 필드                | 필수  | 설명                                                                                                                                                                         |
+| :---------------- | :-- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`            | 예   | `"prompt"`여야 합니다                                                                                                                                                           |
+| `prompt`          | 예   | LLM으로 전송할 프롬프트 텍스트. hook 입력 JSON에 대한 자리 표시자로 `$ARGUMENTS` 사용. `$ARGUMENTS`가 없으면 입력 JSON이 프롬프트에 추가됩니다                                                                       |
+| `model`           | 아니오 | 평가에 사용할 모델. 기본값은 빠른 모델                                                                                                                                                     |
+| `timeout`         | 아니오 | 초 단위 시간 초과. 기본값: 30                                                                                                                                                        |
+| `continueOnBlock` | 아니오 | 프롬프트가 `ok: false`를 반환할 때 이유를 Claude에 다시 피드백하고 중지하는 대신 턴을 계속합니다. 기본값: `false`. 결과 `decision: "block"`에서 `continue: true`로 구현됩니다. 이벤트별 동작은 [응답 스키마](#response-schema)를 참조하세요 |
 
 ### 응답 스키마
 
@@ -2405,16 +2470,17 @@ LLM은 다음을 포함하는 JSON으로 응답해야 합니다:
 }
 ```
 
-| 필드       | 설명                                                  |
-| :------- | :-------------------------------------------------- |
-| `ok`     | `true`는 작업을 허용하고 `false`는 방지합니다. 아래의 이벤트별 동작을 참조하세요 |
-| `reason` | `ok`가 `false`일 때 필수입니다. 결정에 대한 설명                   |
+| 필드       | 설명                                                                       |
+| :------- | :----------------------------------------------------------------------- |
+| `ok`     | `true`는 작업을 허용하고 `false`는 `decision: "block"`을 생성합니다. 아래의 이벤트별 동작을 참조하세요 |
+| `reason` | `ok`가 `false`일 때 필수입니다. 차단 이유로 사용됩니다                                     |
 
 `ok: false`에서 발생하는 상황은 이벤트에 따라 다릅니다:
 
 * `Stop` 및 `SubagentStop`: 이유는 Claude의 다음 명령으로 피드백되며 턴이 계속됩니다
 * `PreToolUse`: tool 호출이 거부되고 이유는 Claude에 tool 오류로 반환되며, 이는 명령 hook의 `permissionDecision: "deny"`와 동일합니다
-* `PostToolUse`, `PostToolBatch`, `UserPromptSubmit` 및 `UserPromptExpansion`: 턴이 끝나고 이유는 채팅에 경고 줄로 나타나며, 이는 명령 hook에서 `"continue": false`를 반환하는 것과 동일합니다
+* `PostToolUse`: 기본적으로 턴이 끝나고 이유는 채팅에 경고 줄로 나타납니다. `continueOnBlock: true`를 설정하여 이유를 Claude에 다시 피드백하고 턴을 계속하는 대신 사용합니다
+* `PostToolBatch`, `UserPromptSubmit` 및 `UserPromptExpansion`: 턴이 끝나고 이유는 경고 줄로 나타납니다. 이러한 이벤트는 `continue`에 관계없이 `decision: "block"`에서 턴을 종료합니다
 * `PostToolUseFailure`, `TaskCreated` 및 `TaskCompleted`: 이유는 Claude에 tool 오류로 반환되며, `PreToolUse`와 유사합니다
 * `PermissionRequest`: `ok: false`는 효과가 없습니다. hook에서 승인을 거부하려면 `hookSpecificOutput.decision.behavior: "deny"`를 반환하는 [명령 hook](#command-hook-fields)을 사용합니다
 
@@ -2573,7 +2639,8 @@ fi
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/run-tests-async.sh",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/run-tests-async.sh",
+            "args": [],
             "async": true,
             "timeout": 300
           }
@@ -2610,8 +2677,8 @@ hook을 작성할 때 이러한 사례를 염두에 두세요:
 * **입력 검증 및 살균**: 입력 데이터를 맹목적으로 신뢰하지 마세요
 * **항상 셸 변수를 따옴표로 감싸세요**: `$VAR` 대신 `"$VAR"` 사용
 * **경로 순회 차단**: 파일 경로에서 `..` 확인
-* **절대 경로 사용**: `"$CLAUDE_PROJECT_DIR"`을 사용하여 프로젝트 루트에 대한 전체 경로를 지정합니다
-* **민감한 파일 건너뛰기**: `.env`, `.git/`, 키 등을 피합니다
+* **절대 경로 사용**: 스크립트의 전체 경로를 지정하세요. exec 형식에서는 `${CLAUDE_PROJECT_DIR}`을 사용하고 경로는 따옴표가 필요하지 않습니다. shell 형식에서는 큰따옴표로 감싸세요
+* **민감한 파일 건너뛰기**: `.env`, `.git/`, 키 등을 피하세요
 
 ## Windows PowerShell 도구
 

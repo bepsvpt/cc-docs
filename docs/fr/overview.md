@@ -172,7 +172,7 @@ Voici quelques-unes des façons dont vous pouvez utiliser Claude Code :
   <Accordion title="Exécuter des équipes d'agents et créer des agents personnalisés" icon="users">
     Lancez [plusieurs agents Claude Code](/fr/sub-agents) qui travaillent sur différentes parties d'une tâche simultanément. Un agent principal coordonne le travail, assigne les sous-tâches et fusionne les résultats.
 
-    Pour les flux de travail entièrement personnalisés, le [Agent SDK](/fr/agent-sdk/overview) vous permet de créer vos propres agents alimentés par les outils et capacités de Claude Code, avec un contrôle total sur l'orchestration, l'accès aux outils et les permissions.
+    Pour exécuter plusieurs sessions complètes en parallèle et les regarder depuis un seul écran, utilisez les [agents en arrière-plan](/fr/agent-view). Pour les flux de travail entièrement personnalisés, le [Agent SDK](/fr/agent-sdk/overview) vous permet de créer vos propres agents alimentés par les outils et capacités de Claude Code, avec un contrôle total sur l'orchestration, l'accès aux outils et les permissions.
   </Accordion>
 
   <Accordion title="Piping, scripts et automatisation avec le CLI" icon="terminal">

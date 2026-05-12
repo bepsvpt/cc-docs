@@ -279,9 +279,9 @@ Claude Code 将：
 
 <AccordionGroup>
   <Accordion title="对您的请求要具体">
-    不要说：'修复错误'
+    不要说："修复错误"
 
-    尝试：'修复登录错误，用户输入错误凭证后看到空白屏幕'
+    尝试："修复登录错误，用户输入错误凭证后看到空白屏幕"
   </Accordion>
 
   <Accordion title="使用分步说明">
@@ -307,10 +307,10 @@ Claude Code 将：
   </Accordion>
 
   <Accordion title="使用快捷方式节省时间">
-    * 按 `?` 查看所有可用的快捷键
+    * 输入 `/` 查看所有命令和 skills
     * 使用 Tab 进行命令补全
     * 按 ↑ 查看命令历史
-    * 输入 `/` 查看所有命令和 skills
+    * 按 `Shift+Tab` 循环切换权限模式
   </Accordion>
 </AccordionGroup>
 

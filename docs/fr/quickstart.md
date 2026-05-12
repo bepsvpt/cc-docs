@@ -307,10 +307,10 @@ Pour plus d'informations, voir [les meilleures pratiques](/fr/best-practices) et
   </Accordion>
 
   <Accordion title="Gagnez du temps avec les raccourcis">
-    * Appuyez sur `?` pour voir tous les raccourcis clavier disponibles
+    * Tapez `/` pour voir toutes les commandes et skills
     * Utilisez Tab pour la complétion des commandes
     * Appuyez sur ↑ pour l'historique des commandes
-    * Tapez `/` pour voir toutes les commandes et skills
+    * Appuyez sur `Shift+Tab` pour parcourir les modes de permission
   </Accordion>
 </AccordionGroup>
 

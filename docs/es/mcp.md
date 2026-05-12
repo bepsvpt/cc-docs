@@ -289,6 +289,10 @@ claude mcp add --transport sse private-api https://api.company.com/sse \
 
 Los servidores stdio se ejecutan como procesos locales en su máquina. Son ideales para herramientas que necesitan acceso directo al sistema o scripts personalizados.
 
+Claude Code establece `CLAUDE_PROJECT_DIR` en el entorno del servidor generado a la raíz del proyecto, por lo que su servidor puede resolver rutas relativas al proyecto sin depender del directorio de trabajo. Este es el mismo directorio que los hooks reciben en su variable `CLAUDE_PROJECT_DIR`. Léalo desde dentro de su proceso de servidor, por ejemplo `process.env.CLAUDE_PROJECT_DIR` en Node o `os.environ["CLAUDE_PROJECT_DIR"]` en Python. Su servidor también puede llamar a la solicitud MCP `roots/list`, que devuelve el directorio desde el cual se lanzó Claude Code.
+
+Esta variable se establece en el entorno del servidor, no en el entorno propio de Claude Code, por lo que hacer referencia a ella mediante la expansión `${VAR}` en un archivo `.mcp.json` con alcance de proyecto o usuario en `command` o `args` requiere un valor predeterminado como `${CLAUDE_PROJECT_DIR:-.}`. Las configuraciones MCP proporcionadas por plugins sustituyen `${CLAUDE_PROJECT_DIR}` directamente y no necesitan el valor predeterminado.
+
 ```bash theme={null}
 # Sintaxis básica
 claude mcp add [options] <name> -- <command> [args...]
@@ -406,7 +410,7 @@ O en línea en `plugin.json`:
 **Características de MCP de plugins**:
 
 * **Ciclo de vida automático**: Al iniciar la sesión, los servidores de los plugins habilitados se conectan automáticamente. Si habilita o deshabilita un plugin durante una sesión, ejecute `/reload-plugins` para conectar o desconectar sus servidores MCP
-* **Variables de entorno**: Use `${CLAUDE_PLUGIN_ROOT}` para archivos agrupados en el plugin y `${CLAUDE_PLUGIN_DATA}` para [estado persistente](/es/plugins-reference#persistent-data-directory) que sobrevive a las actualizaciones de plugins
+* **Variables de entorno**: Use `${CLAUDE_PLUGIN_ROOT}` para archivos agrupados en el plugin, `${CLAUDE_PLUGIN_DATA}` para [estado persistente](/es/plugins-reference#persistent-data-directory) que sobrevive a las actualizaciones de plugins, y `${CLAUDE_PROJECT_DIR}` para la raíz del proyecto estable
 * **Acceso a variables de entorno del usuario**: Acceso a las mismas variables de entorno que los servidores configurados manualmente
 * **Múltiples tipos de transporte**: Soporte para transportes stdio, SSE e HTTP (el soporte de transporte puede variar según el servidor)
 
@@ -646,6 +650,8 @@ Encuentre clientes que no han realizado una compra en 90 días
 
 Muchos servidores MCP basados en la nube requieren autenticación. Claude Code admite OAuth 2.0 para conexiones seguras.
 
+Claude Code marca un servidor remoto como que requiere autenticación cuando el servidor responde con `401 Unauthorized` y un encabezado `WWW-Authenticate` que apunta a su servidor de autorización. Cualquier servidor personalizado que devuelva esa respuesta obtiene el mismo flujo de autenticación `/mcp` que cualquier otro servidor remoto.
+
 <Steps>
   <Step title="Agregar el servidor que requiere autenticación">
     Por ejemplo:
@@ -762,7 +768,7 @@ Algunos servidores MCP no admiten configuración automática de OAuth mediante R
 
 ### Anular el descubrimiento de metadatos de OAuth
 
-Apunte Claude Code a una URL de metadatos de servidor de autorización OAuth específica para omitir la cadena de descubrimiento predeterminada. De forma predeterminada, Claude Code primero verifica los Metadatos de Recursos Protegidos RFC 9728 en `/.well-known/oauth-protected-resource`, luego recurre a los metadatos del servidor de autorización RFC 8414 en `/.well-known/oauth-authorization-server`.
+Apunte Claude Code a una URL de metadatos de servidor de autorización OAuth específica para omitir la cadena de descubrimiento predeterminada. Establezca `authServerMetadataUrl` cuando los puntos finales estándar del servidor MCP generen errores, o cuando desee enrutar el descubrimiento a través de un proxy interno. De forma predeterminada, Claude Code primero verifica los Metadatos de Recursos Protegidos RFC 9728 en `/.well-known/oauth-protected-resource`, luego recurre a los metadatos del servidor de autorización RFC 8414 en `/.well-known/oauth-authorization-server`.
 
 Establezca `authServerMetadataUrl` en el objeto `oauth` de la configuración de su servidor en `.mcp.json`:
 

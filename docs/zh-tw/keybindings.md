@@ -104,7 +104,7 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 | `chat:cancel`         | Escape                    | 取消目前輸入                                                                                    |
 | `chat:clearInput`     | Ctrl+L                    | 強制進行完整螢幕重新繪製，保留輸入。在[全螢幕渲染](/zh-TW/fullscreen#clear-the-conversation)中，在兩秒內按兩次以執行 `/clear` |
 | `chat:clearScreen`    | Cmd+K                     | 在[全螢幕渲染](/zh-TW/fullscreen#clear-the-conversation)中，在兩秒內按兩次以執行 `/clear`                   |
-| `chat:killAgents`     | Ctrl+X Ctrl+K             | 終止所有背景代理                                                                                  |
+| `chat:killAgents`     | Ctrl+X Ctrl+K             | 終止此工作階段中所有執行中的[背景子代理](/zh-TW/sub-agents#run-subagents-in-foreground-or-background)        |
 | `chat:cycleMode`      | Shift+Tab\*               | 循環權限模式                                                                                    |
 | `chat:modelPicker`    | Meta+P                    | 開啟模型選擇器                                                                                   |
 | `chat:fastMode`       | Meta+O                    | 切換快速模式                                                                                    |
