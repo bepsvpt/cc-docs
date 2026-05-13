@@ -129,6 +129,8 @@ Crea un team con 4 compagni di team per refactorizzare questi moduli in parallel
 Usa Sonnet per ogni compagno di team.
 ```
 
+I compagni di team non ereditano la selezione `/model` del lead per impostazione predefinita. Per modificare il modello utilizzato quando il prompt non ne specifica uno, impostate **Default teammate model** in `/config`. Scegliete **Default (leader's model)** per fare in modo che i compagni di team seguano il modello attuale del lead.
+
 ### Richiedere l'approvazione del piano per i compagni di team
 
 Per compiti complessi o rischiosi, potete richiedere ai compagni di team di pianificare prima di implementare. Il compagno di team lavora in modalità piano di sola lettura fino a quando il lead approva il loro approccio:

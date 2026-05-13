@@ -97,9 +97,9 @@ Wenn Skills auf verschiedenen Ebenen denselben Namen haben, gewinnt Unternehmen 
 
 Claude Code überwacht Skill-Verzeichnisse auf Dateiänderungen. Das Hinzufügen, Bearbeiten oder Entfernen eines Skills unter `~/.claude/skills/`, dem Projekt `.claude/skills/` oder einem `.claude/skills/` in einem `--add-dir`-Verzeichnis wird in der aktuellen Sitzung wirksam, ohne Claude Code neu zu starten. Das Erstellen eines Skill-Verzeichnisses auf oberster Ebene, das nicht vorhanden war, als die Sitzung gestartet wurde, erfordert einen Neustart von Claude Code, damit das neue Verzeichnis überwacht werden kann.
 
-#### Automatische Erkennung aus verschachtelten Verzeichnissen
+#### Automatische Erkennung aus übergeordneten und verschachtelten Verzeichnissen
 
-Wenn Sie mit Dateien in Unterverzeichnissen arbeiten, erkennt Claude Code automatisch Skills aus verschachtelten `.claude/skills/`-Verzeichnissen. Wenn Sie beispielsweise eine Datei in `packages/frontend/` bearbeiten, sucht Claude Code auch nach Skills in `packages/frontend/.claude/skills/`. Dies unterstützt Monorepo-Setups, bei denen Pakete ihre eigenen Skills haben.
+Projekt-Skills werden aus `.claude/skills/` in Ihrem Startverzeichnis und in jedem übergeordneten Verzeichnis bis zur Repository-Root geladen, sodass das Starten von Claude in einem Unterverzeichnis immer noch Skills erfasst, die in der Root definiert sind. Wenn Sie mit Dateien in Unterverzeichnissen unter Ihrem Startverzeichnis arbeiten, erkennt Claude Code auch Skills aus verschachtelten `.claude/skills/`-Verzeichnissen bei Bedarf. Wenn Sie beispielsweise eine Datei in `packages/frontend/` bearbeiten, sucht Claude Code auch nach Skills in `packages/frontend/.claude/skills/`. Dies unterstützt Monorepo-Setups, bei denen Pakete ihre eigenen Skills haben.
 
 Jeder Skill ist ein Verzeichnis mit `SKILL.md` als Einstiegspunkt:
 

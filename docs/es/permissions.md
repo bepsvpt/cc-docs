@@ -138,7 +138,7 @@ Los envoltorios exec como `watch`, `setsid`, `ionice` y `flock` siempre solicita
 
 #### Comandos de solo lectura
 
-Claude Code reconoce un conjunto integrado de comandos Bash como de solo lectura y los ejecuta sin un aviso de permisos en cada modo. Estos incluyen `ls`, `cat`, `head`, `tail`, `grep`, `find`, `wc`, `diff`, `stat`, `du`, `cd` y formas de solo lectura de `git`. El conjunto no es configurable; para requerir un aviso para uno de estos comandos, agregue una regla `ask` o `deny` para él.
+Claude Code reconoce un conjunto integrado de comandos Bash como de solo lectura y los ejecuta sin un aviso de permisos en cada modo. Estos incluyen `ls`, `cat`, `echo`, `pwd`, `head`, `tail`, `grep`, `find`, `wc`, `which`, `diff`, `stat`, `du`, `cd` y formas de solo lectura de `git`. El conjunto no es configurable; para requerir un aviso para uno de estos comandos, agregue una regla `ask` o `deny` para él.
 
 Los patrones glob sin comillas se permiten para comandos cuya cada bandera es de solo lectura, por lo que `ls *.ts` y `wc -l src/*.py` se ejecutan sin un aviso. Los comandos con banderas capaces de escritura o ejecución, como `find`, `sort`, `sed` y `git`, aún solicitan cuando un glob sin comillas está presente porque el glob podría expandirse a una bandera como `-delete`.
 
@@ -290,9 +290,9 @@ Los siguientes tipos de configuración se cargan desde directorios `--add-dir`:
 | Configuración de plugins en `.claude/settings.json`                    | Solo `enabledPlugins` y `extraKnownMarketplaces`                                                                                                                                     |
 | Archivos [CLAUDE.md](/es/memory), `.claude/rules/` y `CLAUDE.local.md` | Solo cuando `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` está establecido. `CLAUDE.local.md` además requiere la fuente de configuración `local`, que está habilitada por defecto |
 
-Todo lo demás, incluyendo subagents, comandos, estilos de salida, hooks y otras configuraciones, se descubre solo desde el directorio de trabajo actual y sus padres, su directorio de usuario en `~/.claude/` y configuración administrada. Para compartir esa configuración entre proyectos, use uno de estos enfoques:
+Los subagentes, comandos y estilos de salida se descubren desde el directorio de trabajo actual y sus directorios padres, su directorio de usuario en `~/.claude/`, y configuración administrada. Los hooks y otras claves de `settings.json` se cargan desde la carpeta `.claude/` del directorio de trabajo actual sin recurso a directorios padres, junto con su `~/.claude/settings.json` de usuario y configuración administrada. Para compartir esa configuración entre proyectos, use uno de estos enfoques:
 
-* **Configuración a nivel de usuario**: coloque archivos en `~/.claude/agents/`, `~/.claude/output-styles/` o `~/.claude/settings.json` para hacerlos disponibles en cada proyecto
+* **Configuración a nivel de usuario**: coloque archivos en `~/.claude/agents/`, `~/.claude/output-styles/`, o `~/.claude/settings.json` para hacerlos disponibles en cada proyecto
 * **Plugins**: empaquete y distribuya configuración como un [plugin](/es/plugins) que los equipos pueden instalar
 * **Lanzar desde el directorio de configuración**: ejecute Claude Code desde el directorio que contiene la configuración `.claude/` que desea
 
@@ -341,7 +341,7 @@ Las siguientes configuraciones solo se leen desde configuración administrada. C
   En planes Team y Enterprise, un administrador habilita o deshabilita [Remote Control](/es/remote-control) y [sesiones web](/es/claude-code-on-the-web) en toda la organización en [configuración de administrador de Claude Code](https://claude.ai/admin-settings/claude-code). Remote Control puede deshabilitarse adicionalmente por dispositivo con la configuración administrada [`disableRemoteControl`](/es/settings#available-settings). Las sesiones web no tienen clave de configuración administrada por dispositivo.
 </Note>
 
-## Configuración de precedencia
+## Precedencia de configuración
 
 Las reglas de permisos siguen la misma [precedencia de configuración](/es/settings#settings-precedence) que todas las demás configuraciones de Claude Code:
 
@@ -352,6 +352,8 @@ Las reglas de permisos siguen la misma [precedencia de configuración](/es/setti
 5. **Configuración de usuario** (`~/.claude/settings.json`)
 
 Si una herramienta se deniega en cualquier nivel, ningún otro nivel puede permitirla. Por ejemplo, una negación de configuración administrada no puede ser anulada por `--allowedTools`, y `--disallowedTools` puede agregar restricciones más allá de lo que define la configuración administrada.
+
+Los hosts de inserción pueden proporcionar política administrada adicional a través de la opción `managedSettings` del SDK cuando [`parentSettingsBehavior`](/es/settings#settings-precedence) se establece en `"merge"`; los valores del integrador pueden restringir la política pero no flexibilizarla.
 
 Si un permiso se permite en configuración de usuario pero se deniega en configuración de proyecto, la configuración de proyecto tiene prioridad y el permiso se bloquea.
 

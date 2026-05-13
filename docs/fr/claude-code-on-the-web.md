@@ -32,10 +32,14 @@ Cette page couvre :
 
 Les sessions cloud ont besoin d'accès à vos référentiels GitHub pour cloner le code et pousser les branches. Vous pouvez accorder l'accès de deux façons :
 
-| Méthode                | Comment ça marche                                                                                                                                                        | Idéal pour                                                         |
-| :--------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------- |
-| **Application GitHub** | Installez l'application Claude GitHub sur des référentiels spécifiques lors de [l'intégration web](/fr/web-quickstart). L'accès est limité par référentiel.              | Les équipes qui veulent une autorisation explicite par référentiel |
-| **`/web-setup`**       | Exécutez `/web-setup` dans votre terminal pour synchroniser votre jeton CLI `gh` local vers votre compte Claude. L'accès correspond à ce que votre jeton `gh` peut voir. | Les développeurs individuels qui utilisent déjà `gh`               |
+| Méthode                | Comment ça marche                                                                                                | Idéal pour                                                                |
+| :--------------------- | :--------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------ |
+| **Application GitHub** | Autorisez l'application Claude GitHub lors de [l'intégration web](/fr/web-quickstart).                           | Intégration web ; équipes qui veulent [Auto-fix](#auto-fix-pull-requests) |
+| **`/web-setup`**       | Exécutez `/web-setup` dans votre terminal pour synchroniser votre jeton CLI `gh` local vers votre compte Claude. | Développeurs individuels qui utilisent déjà `gh`                          |
+
+<Note>
+  Avec l'une ou l'autre méthode, une session cloud peut accéder à n'importe quel référentiel que le compte GitHub connecté peut voir, pas seulement les référentiels sur lesquels l'application Claude GitHub est installée. L'installation de l'application active les webhooks PR pour [Auto-fix](#auto-fix-pull-requests) ; ce n'est pas un contrôle d'accès au niveau de la session. Pour restreindre les référentiels que votre équipe peut atteindre à partir des sessions cloud, restreignez l'accès sur GitHub lui-même, par exemple en limitant l'appartenance à l'équipe ou au référentiel pour les comptes GitHub connectés.
+</Note>
 
 L'une ou l'autre méthode fonctionne. [`/schedule`](/fr/routines) vérifie l'une ou l'autre forme d'accès et vous invite à exécuter `/web-setup` si aucune n'est configurée. Consultez [Connecter depuis votre terminal](/fr/web-quickstart#connect-from-your-terminal) pour la procédure pas à pas de `/web-setup`.
 
@@ -739,6 +743,8 @@ Il existe plusieurs façons d'activer auto-fix selon d'où provient la PR et que
 * **À partir de l'application mobile** : dites à Claude de corriger automatiquement la PR, par exemple « regardez cette PR et corrigez les défaillances CI ou les commentaires d'examen »
 * **N'importe quelle PR existante** : collez l'URL de la PR dans une session et dites à Claude de la corriger automatiquement
 
+Auto-fix est un bouton bascule par PR. Pour arrêter la surveillance, ouvrez la barre d'état CI dans la session web et désactivez le bouton bascule **Auto-fix**, ou dites à Claude d'arrêter de surveiller la PR.
+
 ### Comment Claude répond à l'activité PR
 
 Lorsque auto-fix est actif, Claude reçoit les événements GitHub pour la PR, y compris les nouveaux commentaires d'examen et les défaillances de vérification CI. Pour chaque événement, Claude enquête et décide comment procéder :
@@ -764,7 +770,7 @@ Chaque session cloud est séparée de votre machine et des autres sessions par p
 
 ## Dépannage
 
-Pour les erreurs d'API d'exécution qui apparaissent dans la conversation comme `API Error : 500`, `529 Overloaded`, `429` ou `Prompt is too long`, consultez la [référence des erreurs](/fr/errors). Ces erreurs et leurs corrections sont partagées avec le CLI et l'application Desktop. Les sections ci-dessous couvrent les problèmes spécifiques aux sessions cloud.
+Pour les erreurs d'API d'exécution qui apparaissent dans la conversation comme `API Error: 500`, `529 Overloaded`, `429` ou `Prompt is too long`, consultez la [référence des erreurs](/fr/errors). Ces erreurs et leurs corrections sont partagées avec le CLI et l'application Desktop. Les sections ci-dessous couvrent les problèmes spécifiques aux sessions cloud.
 
 ### Échec de la création de session
 
@@ -772,7 +778,7 @@ Si une nouvelle session ne démarre pas avec `Session creation failed` ou stagne
 
 * Vérifiez [status.claude.com](https://status.claude.com) pour les incidents de session cloud
 * Réessayez après une minute, car la capacité est mise en service à la demande
-* Confirmez que votre référentiel est accessible. Les référentiels privés nécessitent soit l'application GitHub installée avec accès à ce référentiel, soit un jeton `gh` synchronisé via `/web-setup`. Consultez [Options d'authentification GitHub](#github-authentication-options).
+* Confirmez que votre référentiel est accessible. Le compte GitHub qui se connecte doit avoir accès au référentiel sur GitHub, soit par l'autorisation de l'application Claude GitHub, soit par un jeton `gh` synchronisé via `/web-setup` — l'installation de l'application sur le référentiel n'est pas requise. Consultez [Options d'authentification GitHub](#github-authentication-options).
 
 ### Session Remote Control expirée ou accès refusé
 

@@ -32,14 +32,18 @@
 
 클라우드 세션은 코드를 복제하고 분기를 푸시하기 위해 GitHub 저장소에 액세스해야 합니다. 두 가지 방법으로 액세스 권한을 부여할 수 있습니다:
 
-| 방법               | 작동 방식                                                                                      | 최적 대상                |
-| :--------------- | :----------------------------------------------------------------------------------------- | :------------------- |
-| **GitHub App**   | [웹 온보딩](/ko/web-quickstart) 중에 특정 저장소에 Claude GitHub App을 설치합니다. 액세스는 저장소별로 범위가 지정됩니다.     | 저장소별 명시적 인증을 원하는 팀   |
-| **`/web-setup`** | 터미널에서 `/web-setup`을 실행하여 로컬 `gh` CLI 토큰을 Claude 계정과 동기화합니다. 액세스는 `gh` 토큰이 볼 수 있는 것과 일치합니다. | 이미 `gh`를 사용하는 개별 개발자 |
+| 방법               | 작동 방식                                                       | 최적 대상                                             |
+| :--------------- | :---------------------------------------------------------- | :------------------------------------------------ |
+| **GitHub App**   | [웹 온보딩](/ko/web-quickstart) 중에 Claude GitHub App을 승인합니다.    | 브라우저 온보딩; [자동 수정](#auto-fix-pull-requests)을 원하는 팀 |
+| **`/web-setup`** | 터미널에서 `/web-setup`을 실행하여 로컬 `gh` CLI 토큰을 Claude 계정과 동기화합니다. | 이미 `gh`를 사용하는 개별 개발자                              |
+
+<Note>
+  두 방법 모두에서 클라우드 세션은 Claude GitHub App이 설치된 저장소뿐만 아니라 연결된 GitHub 계정이 볼 수 있는 모든 저장소에 액세스할 수 있습니다. App 설치는 [자동 수정](#auto-fix-pull-requests)을 위한 PR 웹훅을 활성화합니다. 이는 세션 수준의 액세스 제어가 아닙니다. 클라우드 세션에서 팀이 도달할 수 있는 저장소를 제한하려면 GitHub 자체에서 액세스를 제한하세요. 예를 들어 연결된 GitHub 계정의 팀 또는 저장소 멤버십을 제한하면 됩니다.
+</Note>
 
 두 방법 모두 작동합니다. [`/schedule`](/ko/routines)은 두 형태의 액세스를 확인하고 구성되지 않은 경우 `/web-setup`을 실행하라는 메시지를 표시합니다. `/web-setup` 안내는 [터미널에서 연결](/ko/web-quickstart#connect-from-your-terminal)을 참조하세요.
 
-GitHub App은 PR 웹훅을 수신하기 위해 App을 사용하는 [자동 수정](#auto-fix-pull-requests)에 필요합니다. `/web-setup`으로 연결했다가 나중에 자동 수정을 원하면 해당 저장소에 App을 설치하세요.
+GitHub App은 App을 사용하여 PR 웹훅을 수신하는 [자동 수정](#auto-fix-pull-requests)에 필요합니다. `/web-setup`으로 연결했다가 나중에 자동 수정을 원하면 해당 저장소에 App을 설치하세요.
 
 Team 및 Enterprise 관리자는 [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code)의 Quick web setup 토글로 `/web-setup`을 비활성화할 수 있습니다.
 
@@ -739,6 +743,8 @@ PR이 어디에서 왔는지와 어떤 기기를 사용하는지에 따라 자�
 * **모바일 앱에서**: Claude에 PR을 자동 수정하도록 지시합니다. 예를 들어 "watch this PR and fix any CI failures or review comments"
 * **기존 PR**: PR URL을 세션에 붙여넣고 Claude에 자동 수정하도록 지시합니다
 
+자동 수정은 PR별 토글입니다. 모니터링을 중지하려면 웹 세션에서 CI 상태 표시줄을 열고 **Auto-fix** 토글을 해제하거나, Claude에 PR 감시를 중지하도록 지시합니다.
+
 ### Claude가 PR 활동에 응답하는 방식
 
 자동 수정이 활성화되면 Claude는 새 검토 주석 및 CI 검사 실패를 포함한 PR의 GitHub 이벤트를 수신합니다. 각 이벤트에 대해 Claude는 조사하고 진행 방식을 결정합니다:
@@ -772,7 +778,7 @@ Claude는 GitHub의 검토 주석 스레드에 회신할 수 있습니다. 이�
 
 * [status.claude.com](https://status.claude.com)에서 클라우드 세션 인시던트를 확인하세요
 * 용량이 온디맨드로 프로비저닝되므로 1분 후 다시 시도하세요
-* 저장소에 도달할 수 있는지 확인하세요. 개인 저장소는 해당 저장소에 액세스할 수 있는 GitHub App이 설치되어 있거나 `/web-setup`을 통해 동기화된 `gh` 토큰이 필요합니다. [GitHub 인증 옵션](#github-authentication-options)을 참조하세요.
+* 저장소에 도달할 수 있는지 확인하세요. 연결하는 GitHub 계정은 Claude GitHub App 인증 또는 `/web-setup`을 통해 동기화된 `gh` 토큰을 통해 GitHub의 저장소에 액세스할 수 있어야 합니다. 저장소에 App을 설치할 필요는 없습니다. [GitHub 인증 옵션](#github-authentication-options)을 참조하세요.
 
 ### Remote Control 세션 만료 또는 액세스 거부
 

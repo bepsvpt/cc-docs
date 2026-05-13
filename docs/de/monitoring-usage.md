@@ -905,6 +905,24 @@ Protokolliert, wenn die Konversationskompaktierung abgeschlossen ist.
 * `post_tokens`: Ungefähre Token-Anzahl nach Kompaktierung
 * `error`: Fehlermeldung, wenn Kompaktierung fehlgeschlagen ist
 
+#### Feedback-Umfrage-Ereignis
+
+Protokolliert, wenn eine Sitzungsqualitäts-Umfrage angezeigt oder beantwortet wird. Siehe [Sitzungsqualitäts-Umfragen](/de/data-usage#session-quality-surveys) für das, was die Umfragen erfassen und wie Sie sie steuern.
+
+**Ereignisname**: `claude_code.feedback_survey`
+
+**Attribute**:
+
+* Alle [Standardattribute](#standardattribute)
+* `event.name`: `"feedback_survey"`
+* `event.timestamp`: ISO 8601-Zeitstempel
+* `event.sequence`: monoton steigende Zähler zur Sortierung von Ereignissen innerhalb einer Sitzung
+* `event_type`: Umfrage-Lebenszyklusereignis, zum Beispiel `"appeared"`, `"responded"` oder `"transcript_prompt_appeared"`
+* `appearance_id`: Eindeutige ID, die die Ereignisse verknüpft, die für eine Umfrage-Instanz ausgegeben werden
+* `survey_type`: Welche Umfrage das Ereignis erzeugt hat. `"session"` ist die Aufforderung "Wie macht sich Claude?" Bewertung
+* `response`: Die Auswahl des Benutzers bei `responded` Ereignissen
+* `enabled_via_override`: `true`, wenn [`CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL`](/de/env-vars) gesetzt ist. Wird als boolescher Wert ausgegeben, nicht als Zeichenkette. Vorhanden bei `session` Umfrage-Ereignissen. Filtern Sie nach diesem Attribut, um zu bestätigen, dass die Überschreibung über eine Flotte angewendet wird
+
 ## Interpretation von Metriken- und Ereignisdaten
 
 Die exportierten Metriken und Ereignisse unterstützen eine Reihe von Analysen:

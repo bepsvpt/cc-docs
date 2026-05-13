@@ -97,9 +97,9 @@ Ketika skills berbagi nama yang sama di berbagai level, enterprise menggantikan 
 
 Claude Code memantau direktori skill untuk perubahan file. Menambahkan, mengedit, atau menghapus skill di bawah `~/.claude/skills/`, proyek `.claude/skills/`, atau `.claude/skills/` di dalam direktori `--add-dir` berlaku dalam sesi saat ini tanpa memulai ulang. Membuat direktori skills tingkat atas yang tidak ada saat sesi dimulai memerlukan memulai ulang Claude Code sehingga direktori baru dapat dipantau.
 
-#### Penemuan otomatis dari direktori bersarang
+#### Penemuan otomatis dari direktori induk dan bersarang
 
-Saat Anda bekerja dengan file di subdirektori, Claude Code secara otomatis menemukan skills dari direktori `.claude/skills/` bersarang. Misalnya, jika Anda mengedit file di `packages/frontend/`, Claude Code juga mencari skills di `packages/frontend/.claude/skills/`. Ini mendukung pengaturan monorepo di mana paket memiliki skills mereka sendiri.
+Project skills memuat dari `.claude/skills/` di direktori awal Anda dan di setiap direktori induk hingga akar repositori, jadi memulai Claude di subdirektori masih mengambil skills yang ditentukan di akar. Saat Anda bekerja dengan file di subdirektori di bawah direktori awal Anda, Claude Code juga menemukan skills dari direktori `.claude/skills/` bersarang sesuai permintaan. Misalnya, jika Anda mengedit file di `packages/frontend/`, Claude Code juga mencari skills di `packages/frontend/.claude/skills/`. Ini mendukung pengaturan monorepo di mana paket memiliki skills mereka sendiri.
 
 Setiap skill adalah direktori dengan `SKILL.md` sebagai titik masuk:
 

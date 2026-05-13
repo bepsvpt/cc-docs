@@ -516,6 +516,8 @@ manifest 是選用的。如果省略，Claude Code 會自動探索[預設位置]
 * **新增到預設值**：`skills`。預設 `skills/` 目錄始終被掃描，`skills` 中列出的目錄與其一起載入
 * **自有合併規則**：[hooks](#hooks)、[MCP servers](#mcp-servers) 和 [LSP servers](#lsp-servers)。請參閱每個部分以了解多個來源如何組合
 
+當 plugin 同時具有預設資料夾和相符的 manifest 金鑰時，Claude Code v2.1.140 及更新版本會在 `/doctor`、`claude plugin list` 和 `/plugin` 詳細檢視中標記被忽略的資料夾。plugin 仍會使用 manifest 路徑載入。當 manifest 金鑰指向預設資料夾時不會顯示警告，例如 `"commands": ["./commands/deploy.md"]`，因為在這種情況下資料夾是明確定址的。
+
 對於所有路徑欄位：
 
 * 所有路徑必須相對於 plugin 根目錄，並以 `./` 開頭

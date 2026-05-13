@@ -364,6 +364,8 @@ Claude Code 可以在启动时自动更新市场及其已安装的插件。为�
 
 官方 Anthropic 市场默认启用自动更新。第三方和本地开发市场默认禁用自动更新。
 
+管理员还可以在托管设置中的每个 [`extraKnownMarketplaces`](/zh-CN/settings#extraknownmarketplaces) 条目上设置 `"autoUpdate": true` 以为组织市场启用自动更新，而无需每个用户都切换它。
+
 要完全禁用 Claude Code 和所有插件的所有自动更新，请设置 `DISABLE_AUTOUPDATER` 环境变量。有关详细信息，请参阅[自动更新](/zh-CN/setup#auto-updates)。
 
 要在禁用 Claude Code 自动更新的同时保持插件自动更新启用，请设置 `FORCE_AUTOUPDATE_PLUGINS=1` 以及 `DISABLE_AUTOUPDATER`：

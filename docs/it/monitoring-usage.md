@@ -663,7 +663,7 @@ Registrato quando viene presa una decisione di autorizzazione dello strumento (a
 
 #### Evento di cambio della modalità di autorizzazione
 
-Registrato quando la modalità di autorizzazione cambia, ad esempio da ciclo Shift+Tab, uscita dalla modalità piano, o un controllo del gate della modalità automatica.
+Registrato quando la modalità di autorizzazione cambia, ad esempio da ciclo Shift+Tab, uscita dalla Plan Mode, o un controllo del gate della modalità automatica.
 
 **Nome evento**: `claude_code.permission_mode_changed`
 
@@ -904,6 +904,24 @@ Registrato quando la compattazione della conversazione si completa.
 * `pre_tokens`: Conteggio approssimativo dei token prima della compattazione
 * `post_tokens`: Conteggio approssimativo dei token dopo la compattazione
 * `error`: Messaggio di errore quando la compattazione non è riuscita
+
+#### Evento di sondaggio di feedback
+
+Registrato quando viene mostrato o risposto a un sondaggio sulla qualità della sessione. Vedi [Sondaggi sulla qualità della sessione](/it/data-usage#session-quality-surveys) per sapere cosa raccolgono i sondaggi e come controllarli.
+
+**Nome evento**: `claude_code.feedback_survey`
+
+**Attributi**:
+
+* Tutti gli [attributi standard](#standard-attributes)
+* `event.name`: `"feedback_survey"`
+* `event.timestamp`: Timestamp ISO 8601
+* `event.sequence`: Contatore monotonicamente crescente per ordinare gli eventi all'interno di una sessione
+* `event_type`: Evento del ciclo di vita del sondaggio, ad esempio `"appeared"`, `"responded"`, o `"transcript_prompt_appeared"`
+* `appearance_id`: ID univoco che collega gli eventi emessi per un'istanza di sondaggio
+* `survey_type`: Quale sondaggio ha prodotto l'evento. `"session"` è il prompt di valutazione "Come sta andando Claude?"
+* `response`: La selezione dell'utente su eventi `responded`
+* `enabled_via_override`: `true` quando [`CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL`](/it/env-vars) è impostato. Emesso come booleano, non come stringa. Presente su eventi di sondaggio `session`. Filtra su questo attributo per confermare che l'override è applicato in tutta la flotta
 
 ## Interpretazione dei dati di metriche e eventi
 

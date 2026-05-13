@@ -364,6 +364,8 @@ Alterne la actualización automática para mercados individuales a través de la
 
 Los mercados oficiales de Anthropic tienen la actualización automática habilitada por defecto. Los mercados de terceros y de desarrollo local tienen la actualización automática deshabilitada por defecto.
 
+Los administradores también pueden establecer `"autoUpdate": true` en cada entrada [`extraKnownMarketplaces`](/es/settings#extraknownmarketplaces) en la configuración administrada para habilitar la actualización automática para un mercado de la organización sin requerir que cada usuario la active.
+
 Para deshabilitar todas las actualizaciones automáticas completamente tanto para Claude Code como para todos los plugins, establezca la variable de entorno `DISABLE_AUTOUPDATER`. Consulte [Auto updates](/es/setup#auto-updates) para obtener detalles.
 
 Para mantener las actualizaciones automáticas de plugins habilitadas mientras se deshabilitan las actualizaciones automáticas de Claude Code, establezca `FORCE_AUTOUPDATE_PLUGINS=1` junto con `DISABLE_AUTOUPDATER`:

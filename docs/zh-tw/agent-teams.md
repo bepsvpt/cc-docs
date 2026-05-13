@@ -129,6 +129,8 @@ Create a team with 4 teammates to refactor these modules in parallel.
 Use Sonnet for each teammate.
 ```
 
+隊友預設不會繼承主管的 `/model` 選擇。若要變更在提示未指定模型時使用的模型，請在 `/config` 中設定**預設隊友模型**。選擇\*\*預設（主管的模型）\*\*以讓隊友遵循主管的目前模型。
+
 ### 要求隊友的計畫批准
 
 對於複雜或有風險的任務，您可以要求隊友在實施前進行計畫。隊友在唯讀計畫模式下工作，直到主管批准其方法：

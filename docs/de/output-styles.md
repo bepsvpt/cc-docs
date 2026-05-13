@@ -90,11 +90,13 @@ Ausgabestil-Dateien unterstützen Frontmatter zum Angeben von Metadaten:
 
 ### Ausgabestile vs. CLAUDE.md vs. --append-system-prompt
 
-Ausgabestile schalten die Teile der Standard-Systemaufforderung von Claude Code, die spezifisch für Softwareentwicklung sind, vollständig aus. Weder CLAUDE.md noch `--append-system-prompt` bearbeiten die Standard-Systemaufforderung von Claude Code. CLAUDE.md fügt den Inhalt als Benutzernachricht *nach* der Standard-Systemaufforderung von Claude Code hinzu. `--append-system-prompt` hängt den Inhalt an die Systemaufforderung an.
+Wählen Sie basierend darauf, ob Claude seine Rolle als Coding-Assistent aufgeben oder seine Standardrolle behalten und mehr lernen soll. Ausgabestile ersetzen die Softwareentwicklungsteile von Claude Codes Systemaufforderung durch Ihre eigene Rolle und Stimme, verwenden Sie also einen, wenn Claude eine andere Identität annehmen soll, wie ein Schreib-Editor oder ein Datenanalyse-Assistent. CLAUDE.md und `--append-system-prompt` behalten beide Claude Codes Standardidentität bei und ergänzen sie, verwenden Sie sie also, wenn Claude ein Coding-Assistent bleiben soll, der auch Ihre Projektkonventionen oder zusätzliche Anweisungen befolgt.
+
+Die Mechanismen unterscheiden sich ebenfalls. Ausgabestile bearbeiten die Systemaufforderung direkt. CLAUDE.md fügt seinen Inhalt als Benutzernachricht nach der Systemaufforderung hinzu. `--append-system-prompt` hängt Inhalte an das Ende der Systemaufforderung an, ohne etwas zu entfernen.
 
 ### Ausgabestile vs. [Agents](/de/sub-agents)
 
-Ausgabestile beeinflussen direkt die Hauptagentenschleife und beeinflussen nur die Systemaufforderung. Agents werden aufgerufen, um bestimmte Aufgaben zu bewältigen, und können zusätzliche Einstellungen wie das zu verwendende Modell, die verfügbaren Tools und einen Kontext darüber enthalten, wann der Agent verwendet werden soll.
+Verwenden Sie einen Ausgabestil, um zu ändern, wie die Hauptkonversation in jeder Sitzung antwortet. Verwenden Sie einen [Subagent](/de/sub-agents), wenn Sie einen separat definierten Helper möchten, an den die Hauptkonversation delegiert. Ausgabestile beeinflussen nur die Systemaufforderung der Hauptagentenschleife. Agents bewältigen spezifische Aufgaben und können ihr eigenes Modell, Tools und einen Kontext darüber haben, wann sie aufgerufen werden sollen.
 
 ### Ausgabestile vs. [Skills](/de/skills)
 

@@ -231,7 +231,7 @@ Opus 4.7 始终使用自适应推理。固定思考预算模式和 `CLAUDE_CODE_
 
 Opus 4.7、Opus 4.6 和 Sonnet 4.6 支持[100 万令牌上下文窗口](https://platform.claude.com/docs/zh-CN/build-with-claude/context-windows#1m-token-context-window)用于包含大型代码库的长会话。
 
-可用性因模型和计划而异。在 Max、Team 和 Enterprise 计划上，Opus 会自动升级到 1M 上下文，无需额外配置。这适用于 Team Standard 和 Team Premium 席位。
+可用性因模型和计划而异。在 Max、Team 和 Enterprise 计划上，Opus 会自动升级到 1M 上下文，无需额外配置。这适用于 Team Standard 和 Team Premium 席位。Sonnet with 1M context 不是自动升级的一部分，需要在每个订阅计划上[额外使用](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans)，包括 Max。
 
 | 计划                    | Opus with 1M context                                                                        | Sonnet with 1M context                                                                      |
 | --------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |

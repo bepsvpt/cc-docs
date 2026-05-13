@@ -124,7 +124,9 @@ Claude Code fornisce quattro flag per personalizzare il prompt di sistema. Tutti
 
 `--system-prompt` e `--system-prompt-file` si escludono a vicenda. I flag di aggiunta possono essere combinati con uno qualsiasi dei flag di sostituzione.
 
-Per la maggior parte dei casi d'uso, usa un flag di aggiunta. L'aggiunta preserva le capacità integrate di Claude Code mentre aggiunge i tuoi requisiti. Usa un flag di sostituzione solo quando hai bisogno del controllo completo sul prompt di sistema.
+Scegli in base al fatto che l'identità predefinita di Claude Code si adatti ancora al tuo compito. Usa un flag di aggiunta quando Claude dovrebbe rimanere un assistente di codifica che segue anche le tue regole aggiuntive: istruzioni per invocazione, formattazione dell'output o contesto di dominio per uno script `-p`. L'aggiunta preserva la guida predefinita degli strumenti, le istruzioni di sicurezza e le convenzioni di codifica, quindi fornisci solo ciò che differisce. Usa un flag di sostituzione quando la superficie, l'identità o il modello di autorizzazione differisce da quello di Claude Code, come un agent non di codifica in una pipeline che nessun umano osserva. La sostituzione elimina l'intero prompt predefinito, inclusa la guida degli strumenti e le istruzioni di sicurezza, quindi assumi la responsabilità di qualunque cosa il tuo compito abbia ancora bisogno.
+
+Questi flag si applicano solo all'invocazione corrente. Per persone persistenti che puoi alternare e condividere in un progetto, usa [output styles](/it/output-styles). Per convenzioni di progetto che Claude dovrebbe sempre seguire, usa [CLAUDE.md](/it/memory). La [guida Agent SDK sui prompt di sistema](/it/agent-sdk/modifying-system-prompts#decide-on-a-starting-point) copre la stessa decisione in maggiore profondità.
 
 ## Vedi anche
 

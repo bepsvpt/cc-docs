@@ -32,10 +32,14 @@ Esta página cubre:
 
 Las sesiones en la nube necesitan acceso a sus repositorios de GitHub para clonar código e insertar ramas. Puede otorgar acceso de dos formas:
 
-| Método           | Cómo funciona                                                                                                                                              | Mejor para                                                |
-| :--------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------- |
-| **GitHub App**   | Instale la aplicación Claude GitHub en repositorios específicos durante la [incorporación web](/es/web-quickstart). El acceso se limita por repositorio.   | Equipos que desean autorización explícita por repositorio |
-| **`/web-setup`** | Ejecute `/web-setup` en su terminal para sincronizar su token local de CLI `gh` a su cuenta Claude. El acceso coincide con lo que su token `gh` puede ver. | Desarrolladores individuales que ya usan `gh`             |
+| Método           | Cómo funciona                                                                                       | Mejor para                                                                                         |
+| :--------------- | :-------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------- |
+| **GitHub App**   | Autorice la aplicación Claude GitHub durante la [incorporación web](/es/web-quickstart).            | Incorporación en navegador; equipos que desean [Correcciones automáticas](#auto-fix-pull-requests) |
+| **`/web-setup`** | Ejecute `/web-setup` en su terminal para sincronizar su token local de CLI `gh` a su cuenta Claude. | Desarrolladores individuales que ya usan `gh`                                                      |
+
+<Note>
+  Con cualquiera de los dos métodos, una sesión en la nube puede acceder a cualquier repositorio que la cuenta de GitHub conectada pueda ver, no solo los repositorios en los que está instalada la aplicación Claude GitHub. La instalación de la aplicación habilita webhooks de PR para [Correcciones automáticas](#auto-fix-pull-requests); no es un control de acceso a nivel de sesión. Para restringir qué repositorios puede alcanzar su equipo desde sesiones en la nube, restrinja el acceso en GitHub mismo, por ejemplo limitando la membresía de equipo o repositorio para las cuentas de GitHub conectadas.
+</Note>
 
 Cualquiera de los dos métodos funciona. [`/schedule`](/es/routines) verifica cualquiera de las dos formas de acceso y le solicita que ejecute `/web-setup` si ninguna está configurada. Consulte [Conectar desde su terminal](/es/web-quickstart#connect-from-your-terminal) para el tutorial de `/web-setup`.
 
@@ -739,6 +743,8 @@ Hay algunas formas de activar correcciones automáticas dependiendo de dónde pr
 * **Desde la aplicación móvil**: dígale a Claude que corrija automáticamente la PR, por ejemplo "observa esta PR y corrige cualquier fallo de CI o comentario de revisión"
 * **Cualquier PR existente**: pegue la URL de la PR en una sesión y dígale a Claude que la corrija automáticamente
 
+Las correcciones automáticas son un control por PR. Para dejar de monitorear, abra la barra de estado de CI en la sesión web y desactive el control **Correcciones automáticas**, o dígale a Claude que deje de observar la PR.
+
 ### Cómo Claude responde a la actividad de PR
 
 Cuando las correcciones automáticas están activas, Claude recibe eventos de GitHub para la PR incluyendo nuevos comentarios de revisión y fallos de verificación de CI. Para cada evento, Claude investiga y decide cómo proceder:
@@ -772,7 +778,7 @@ Si una nueva sesión no se inicia con `Session creation failed` o se detiene en 
 
 * Verifique [status.claude.com](https://status.claude.com) para incidentes de sesión en la nube
 * Reintente después de un minuto, ya que la capacidad se aprovisiona bajo demanda
-* Confirme que su repositorio es accesible. Los repositorios privados requieren que la aplicación GitHub esté instalada con acceso a ese repositorio, o un token `gh` sincronizado a través de `/web-setup`. Consulte [Opciones de autenticación de GitHub](#github-authentication-options).
+* Confirme que su repositorio es accesible. La cuenta de GitHub que se conecta debe tener acceso al repositorio en GitHub, ya sea a través de la autorización de la aplicación Claude GitHub o un token `gh` sincronizado a través de `/web-setup` — no es necesario instalar la aplicación en el repositorio. Consulte [Opciones de autenticación de GitHub](#github-authentication-options).
 
 ### Sesión de Control Remoto expirada o acceso denegado
 

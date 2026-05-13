@@ -299,6 +299,12 @@ Utilisez le drapeau `--plugin-dir` pour tester les plugins pendant le développe
 claude --plugin-dir ./my-plugin
 ```
 
+Le drapeau accepte également une archive `.zip` du répertoire du plugin, qui nécessite Claude Code v2.1.128 ou ultérieur.
+
+```bash theme={null}
+claude --plugin-dir ./my-plugin.zip
+```
+
 Quand un plugin `--plugin-dir` a le même nom qu'un plugin marketplace installé, la copie locale prend la priorité pour cette session. Cela vous permet de tester les modifications d'un plugin que vous avez déjà installé sans le désinstaller d'abord. Les plugins marketplace forcément activés par les paramètres gérés sont la seule exception et ne peuvent pas être remplacés.
 
 À mesure que vous apportez des modifications à votre plugin, exécutez `/reload-plugins` pour récupérer les mises à jour sans redémarrer. Cela recharge les plugins, les skills, les agents, les hooks, les serveurs MCP du plugin et les serveurs LSP du plugin. Testez vos composants de plugin :

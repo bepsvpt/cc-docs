@@ -516,6 +516,8 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `experimental.monit
 * **기본값에 추가**: `skills`. 기본 `skills/` 디렉토리는 항상 스캔되며, `skills`에 나열된 디렉토리는 함께 로드됩니다.
 * **자체 병합 규칙**: [hooks](#hooks), [MCP servers](#mcp-servers) 및 [LSP servers](#lsp-servers). 각 섹션에서 여러 소스가 어떻게 결합되는지 참조하세요.
 
+플러그인에 기본 폴더와 일치하는 매니페스트 키가 모두 있으면 Claude Code v2.1.140 이상은 `/doctor`, `claude plugin list` 및 `/plugin` 상세 보기에서 무시된 폴더에 플래그를 지정합니다. 플러그인은 여전히 매니페스트 경로를 사용하여 로드됩니다. 매니페스트 키가 기본 폴더를 가리킬 때는 경고가 표시되지 않습니다 (예: `"commands": ["./commands/deploy.md"]`). 이 경우 폴더가 명시적으로 처리되기 때문입니다.
+
 모든 경로 필드의 경우:
 
 * 모든 경로는 플러그인 루트에 상대적이어야 하며 `./`로 시작해야 합니다.

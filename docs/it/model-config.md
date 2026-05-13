@@ -231,7 +231,7 @@ L'output del pensiero è compresso per impostazione predefinita. Premere `Ctrl+O
 
 Opus 4.7, Opus 4.6 e Sonnet 4.6 supportano una [finestra di contesto di 1 milione di token](https://platform.claude.com/docs/it/build-with-claude/context-windows#1m-token-context-window) per sessioni lunghe con basi di codice di grandi dimensioni.
 
-La disponibilità varia in base al modello e al piano. Nei piani Max, Team ed Enterprise, Opus viene automaticamente aggiornato al contesto 1M senza configurazione aggiuntiva. Questo si applica sia ai posti Team Standard che Team Premium.
+La disponibilità varia in base al modello e al piano. Nei piani Max, Team ed Enterprise, Opus viene automaticamente aggiornato al contesto 1M senza configurazione aggiuntiva. Questo si applica sia ai posti Team Standard che Team Premium. Sonnet con contesto 1M non fa parte dell'aggiornamento automatico e richiede [utilizzo extra](https://support.claude.com/it/articles/12429409-extra-usage-for-paid-claude-plans) su ogni piano di abbonamento, incluso Max.
 
 | Piano                              | Opus con contesto 1M                                                                                         | Sonnet con contesto 1M                                                                                       |
 | ---------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |

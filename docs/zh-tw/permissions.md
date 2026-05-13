@@ -138,7 +138,7 @@ Exec 包裝器如 `watch`、`setsid`、`ionice` 和 `flock` 始終提示，無�
 
 #### 唯讀命令
 
-Claude Code 將一組內建的 Bash 命令識別為唯讀，並在每種模式中無需權限提示即可執行它們。這些包括 `ls`、`cat`、`head`、`tail`、`grep`、`find`、`wc`、`diff`、`stat`、`du`、`cd` 和 `git` 的唯讀形式。該集合不可設定；若要要求其中一個命令的提示，請為其新增 `ask` 或 `deny` 規則。
+Claude Code 將一組內建的 Bash 命令識別為唯讀，並在每種模式中無需權限提示即可執行它們。這些包括 `ls`、`cat`、`echo`、`pwd`、`head`、`tail`、`grep`、`find`、`wc`、`which`、`diff`、`stat`、`du`、`cd` 和 `git` 的唯讀形式。該集合不可設定；若要要求其中一個命令的提示，請為其新增 `ask` 或 `deny` 規則。
 
 對於每個旗標都是唯讀的命令，允許未引用的 glob 模式，所以 `ls *.ts` 和 `wc -l src/*.py` 無需提示即可執行。具有寫入能力或執行能力旗標的命令，如 `find`、`sort`、`sed` 和 `git`，在存在未引用的 glob 時仍會提示，因為 glob 可能會擴展為像 `-delete` 這樣的旗標。
 
@@ -290,7 +290,7 @@ Hook 決定不會繞過權限規則。Deny 和 ask 規則在 hook 返回 `"allow
 | `.claude/settings.json` 中的外掛設定                                     | 僅 `enabledPlugins` 和 `extraKnownMarketplaces`                                                    |
 | [CLAUDE.md](/zh-TW/memory) 檔案、`.claude/rules/` 和 `CLAUDE.local.md` | 僅當設定 `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` 時。`CLAUDE.local.md` 另外需要 `local` 設定來源，預設啟用 |
 
-其他所有內容，包括 subagents、命令、輸出樣式、hooks 和其他設定，僅從目前工作目錄及其父目錄、您在 `~/.claude/` 的使用者目錄和受管理設定發現。若要在專案間共享該設定，請使用以下方法之一：
+Subagents、命令和輸出樣式是從目前工作目錄及其父目錄、您在 `~/.claude/` 的使用者目錄和受管理設定發現的。Hooks 和其他 `settings.json` 金鑰從目前工作目錄的 `.claude/` 資料夾載入，沒有父目錄回退，同時也從您的使用者 `~/.claude/settings.json` 和受管理設定載入。若要在專案間共享該設定，請使用以下方法之一：
 
 * **使用者級別設定**：將檔案放在 `~/.claude/agents/`、`~/.claude/output-styles/` 或 `~/.claude/settings.json` 中，使其在每個專案中可用
 * **外掛**：將設定打包並分發為 [plugin](/zh-TW/plugins)，供團隊安裝
@@ -352,6 +352,8 @@ Hook 決定不會繞過權限規則。Deny 和 ask 規則在 hook 返回 `"allow
 5. **使用者設定** (`~/.claude/settings.json`)
 
 如果工具在任何級別被拒絕，沒有其他級別可以允許它。例如，受管理設定 deny 無法被 `--allowedTools` 覆蓋，`--disallowedTools` 可以新增超出受管理設定定義的限制。
+
+嵌入主機可以在 [`parentSettingsBehavior`](/zh-TW/settings#settings-precedence) 設定為 `"merge"` 時，透過 SDK `managedSettings` 選項提供額外的受管理原則；嵌入器值可以收緊原則但不能放寬它。
 
 如果權限在使用者設定中被允許但在專案設定中被拒絕，專案設定優先，權限被阻止。
 

@@ -905,6 +905,24 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * `post_tokens`：壓縮後的近似權杖計數
 * `error`：壓縮失敗時的錯誤訊息
 
+#### 回饋調查事件
+
+當顯示或回答工作階段品質調查時記錄。詳見[工作階段品質調查](/zh-TW/data-usage#session-quality-surveys)以了解調查收集的內容以及如何控制它們。
+
+**事件名稱**：`claude_code.feedback_survey`
+
+**屬性**：
+
+* 所有[標準屬性](#standard-attributes)
+* `event.name`：`"feedback_survey"`
+* `event.timestamp`：ISO 8601 時間戳
+* `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
+* `event_type`：調查生命週期事件，例如 `"appeared"`、`"responded"` 或 `"transcript_prompt_appeared"`
+* `appearance_id`：唯一 ID，連結為一個調查實例發出的事件
+* `survey_type`：哪個調查產生了事件。`"session"` 是「Claude 表現如何？」評分提示
+* `response`：使用者在 `responded` 事件上的選擇
+* `enabled_via_override`：當設定 [`CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL`](/zh-TW/env-vars) 時為 `true`。作為布林值而非字串發出。存在於 `session` 調查事件上。篩選此屬性以確認覆蓋在整個環境中應用
+
 ## 解釋指標和事件資料
 
 匯出的指標和事件支援一系列分析：

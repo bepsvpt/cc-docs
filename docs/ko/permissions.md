@@ -138,7 +138,7 @@ Bash 규칙을 일치시키기 전에 Claude Code는 고정된 프로세스 래�
 
 #### 읽기 전용 명령
 
-Claude Code는 기본 제공 Bash 명령 집합을 읽기 전용으로 인식하고 모든 모드에서 권한 프롬프트 없이 실행합니다. 여기에는 `ls`, `cat`, `head`, `tail`, `grep`, `find`, `wc`, `diff`, `stat`, `du`, `cd` 및 `git`의 읽기 전용 형식이 포함됩니다. 집합은 구성할 수 없습니다. 이러한 명령 중 하나에 대해 프롬프트를 요구하려면 `ask` 또는 `deny` 규칙을 추가합니다.
+Claude Code는 기본 제공 Bash 명령 집합을 읽기 전용으로 인식하고 모든 모드에서 권한 프롬프트 없이 실행합니다. 여기에는 `ls`, `cat`, `echo`, `pwd`, `head`, `tail`, `grep`, `find`, `wc`, `which`, `diff`, `stat`, `du`, `cd` 및 `git`의 읽기 전용 형식이 포함됩니다. 집합은 구성할 수 없습니다. 이러한 명령 중 하나에 대해 프롬프트를 요구하려면 `ask` 또는 `deny` 규칙을 추가합니다.
 
 따옴표 없는 glob 패턴은 모든 플래그가 읽기 전용인 명령에 대해 허용되므로 `ls *.ts` 및 `wc -l src/*.py`는 프롬프트 없이 실행됩니다. `find`, `sort`, `sed` 및 `git`과 같이 쓰기 가능하거나 실행 가능한 플래그가 있는 명령은 glob이 `-delete`와 같은 플래그로 확장될 수 있으므로 따옴표 없는 glob이 있을 때 여전히 프롬프트합니다.
 
@@ -290,7 +290,7 @@ Claude가 심볼릭 링크에 액세스할 때 권한 규칙은 두 경로를 �
 | `.claude/settings.json`의 플러그인 설정                                 | `enabledPlugins` 및 `extraKnownMarketplaces`만                                                                            |
 | [CLAUDE.md](/ko/memory) 파일, `.claude/rules/` 및 `CLAUDE.local.md` | `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1`이 설정된 경우에만. `CLAUDE.local.md`는 추가로 `local` 설정 소스가 필요하며, 이는 기본적으로 활성화됩니다 |
 
-서브에이전트, 명령, 출력 스타일, 훅 및 기타 설정을 포함한 다른 모든 것은 현재 작업 디렉토리 및 해당 부모, `~/.claude/`의 사용자 디렉토리 및 관리형 설정에서만 발견됩니다. 프로젝트 전체에서 해당 구성을 공유하려면 다음 방법 중 하나를 사용합니다:
+서브에이전트, 명령, 출력 스타일은 현재 작업 디렉토리 및 해당 부모, `~/.claude/`의 사용자 디렉토리 및 관리형 설정에서 발견됩니다. 훅 및 기타 `settings.json` 키는 현재 작업 디렉토리의 `.claude/` 폴더에서 로드되며 부모 디렉토리 폴백이 없고, 사용자 `~/.claude/settings.json` 및 관리형 설정과 함께 로드됩니다. 프로젝트 전체에서 해당 구성을 공유하려면 다음 방법 중 하나를 사용합니다:
 
 * **사용자 수준 구성**: `~/.claude/agents/`, `~/.claude/output-styles/` 또는 `~/.claude/settings.json`에 파일을 배치하여 모든 프로젝트에서 사용 가능하게 합니다
 * **플러그인**: 팀이 설치할 수 있는 [플러그인](/ko/plugins)으로 구성을 패키징하고 배포합니다
@@ -352,6 +352,8 @@ Claude Code 구성에 대한 중앙 집중식 제어가 필요한 조직의 경�
 5. **사용자 설정** (`~/.claude/settings.json`)
 
 도구가 어느 수준에서든 거부되면 다른 수준은 이를 허용할 수 없습니다. 예를 들어, 관리형 설정 deny는 `--allowedTools`로 재정의할 수 없으며, `--disallowedTools`는 관리형 설정이 정의하는 것 이상의 제한을 추가할 수 있습니다.
+
+Embedding hosts는 [`parentSettingsBehavior`](/ko/settings#settings-precedence)가 `"merge"`로 설정되어 있을 때 SDK `managedSettings` 옵션을 통해 추가 관리형 정책을 제공할 수 있습니다. Embedder 값은 정책을 강화할 수 있지만 완화할 수는 없습니다.
 
 권한이 사용자 설정에서 허용되지만 프로젝트 설정에서 거부되면, 프로젝트 설정이 우선이며 권한이 차단됩니다.
 

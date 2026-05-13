@@ -4,15 +4,15 @@
 
 # 使用快速模式加快响应速度
 
-> 通过切换快速模式在 Claude Code 中获得更快的 Opus 4.6 响应。
+> 通过切换快速模式在 Claude Code 中获得更快的 Opus 响应。
 
 <Note>
   快速模式处于[研究预览](#research-preview)阶段。该功能、定价和可用性可能会根据反馈而改变。
 </Note>
 
-快速模式是 Claude Opus 4.6 的高速配置，使模型速度提高 2.5 倍，但每个令牌的成本更高。当您需要速度进行交互式工作（如快速迭代或实时调试）时，使用 `/fast` 将其打开，当成本比延迟更重要时，将其关闭。
+快速模式是 Claude Opus 的高速配置，使模型速度提高 2.5 倍，但每个令牌的成本更高。当您需要速度进行交互式工作（如快速迭代或实时调试）时，使用 `/fast` 将其打开，当成本比延迟更重要时，将其关闭。
 
-快速模式不是一个不同的模型。它使用相同的 Opus 4.6，但采用不同的 API 配置，优先考虑速度而不是成本效率。您获得相同的质量和功能，只是响应速度更快。
+快速模式不是一个不同的模型。它使用 Claude Opus，但采用不同的 API 配置，优先考虑速度而不是成本效率。您获得相同的质量和功能，只是响应速度更快。快速模式在 Opus 4.6 和 Opus 4.7 上受支持。它在 Sonnet、Haiku 或其他模型上不可用。
 
 <Note>
   快速模式需要 Claude Code v2.1.36 或更高版本。使用 `claude --version` 检查您的版本。
@@ -21,11 +21,12 @@
 需要了解的内容：
 
 * 使用 `/fast` 在 Claude Code CLI 中切换快速模式。也可通过 Claude Code VS Code 扩展中的 `/fast` 使用。
-* Opus 4.6 快速模式定价从 \$30/150 MTok 开始。快速模式在所有计划上享受 50% 折扣，直到太平洋时间 2 月 16 日晚上 11:59。
+* 默认情况下，`/fast` 在 Opus 4.6 上运行。要改为在 Opus 4.7 上运行快速模式，请设置 [`CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`](#use-fast-mode-on-opus-4-7) 环境变量。
+* 快速模式定价在 Opus 4.6 和 Opus 4.7 上都是 \$30/150 MTok。
 * 可供订阅计划（Pro/Max/Team/Enterprise）上的所有 Claude Code 用户和 Claude 控制台使用。
 * 对于订阅计划（Pro/Max/Team/Enterprise）上的 Claude Code 用户，快速模式仅通过额外使用提供，不包含在订阅速率限制中。
 
-本页涵盖如何[切换快速模式](#toggle-fast-mode)、其[成本权衡](#understand-the-cost-tradeoff)、[何时使用](#decide-when-to-use-fast-mode)、[要求](#requirements)、[每个会话选择加入](#require-per-session-opt-in)和[速率限制行为](#handle-rate-limits)。
+本页涵盖如何[切换快速模式](#toggle-fast-mode)、[在 Opus 4.7 上使用快速模式](#use-fast-mode-on-opus-4-7)、[成本权衡](#understand-the-cost-tradeoff)、[何时使用](#decide-when-to-use-fast-mode)、[要求](#requirements)、[每个会话选择加入](#require-per-session-opt-in)和[速率限制行为](#handle-rate-limits)。
 
 ## 切换快速模式
 
@@ -40,23 +41,57 @@
 
 启用快速模式时：
 
-* 如果您使用的是不同的模型，Claude Code 会自动切换到 Opus 4.6
+* 如果您使用的是不同的模型，Claude Code 会自动切换到快速模式模型：默认为 Opus 4.6，或在设置 [`CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`](#use-fast-mode-on-opus-4-7) 时为 Opus 4.7。
 * 您将看到确认消息："Fast mode ON"
 * 快速模式处于活动状态时，提示旁边会出现一个小的 `↯` 图标
 * 随时再次运行 `/fast` 以检查快速模式是否打开或关闭
 
-当您再次使用 `/fast` 禁用快速模式时，您仍然保持在 Opus 4.6 上。模型不会恢复到您之前的模型。要切换到不同的模型，请使用 `/model`。
+当您再次使用 `/fast` 禁用快速模式时，您仍然保持在快速模式运行的同一 Opus 版本上。模型不会恢复到您之前的模型。要切换到不同的模型，请使用 `/model`。
+
+## 在 Opus 4.7 上使用快速模式
+
+<Note>
+  Opus 4.7 上的快速模式需要 Claude Code v2.1.139 或更高版本。
+</Note>
+
+Claude Opus 4.7 的快速模式处于研究预览阶段。它以与 Opus 4.6 快速模式相同的 2.5 倍速度和相同的价格运行，没有其他行为变化。
+
+<Note>
+  在 2026 年 5 月 14 日，Opus 4.7 成为默认的快速模式模型。在此之前，通过设置 `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1` 选择加入。
+</Note>
+
+要选择加入，在启动 Claude Code 之前设置 `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1`。设置了该变量后，`/fast` 在 Opus 4.7 上运行。没有它，`/fast` 继续在 Opus 4.6 上运行。
+
+您可以将该变量设置为 shell 导出：
+
+```bash theme={null}
+export CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1
+```
+
+或在任何 Claude Code [设置文件](/zh-CN/settings#settings-files)中，包括用户、项目和托管设置，以限定选择加入的范围：
+
+```json theme={null}
+{
+  "env": {
+    "CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE": "1"
+  }
+}
+```
+
+Opus 4.6 的快速模式仍然可与 Opus 4.7 一起使用。两者共享相同的快速模式速率限制池：任一模型上的使用都会从相同的限制中扣除。
+
+要将快速模式明确固定到 Opus 4.6，设置 `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE=1`。此变量优先级最高，因此无论是否设置了 `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`，快速模式都会在 Opus 4.6 上运行。
 
 ## 了解成本权衡
 
-快速模式的每个令牌定价高于标准 Opus 4.6：
+快速模式的每个令牌定价高于标准 Opus：
 
-| 模式                       | 输入 (MTok) | 输出 (MTok) |
-| ------------------------ | --------- | --------- |
-| Opus 4.6 上的快速模式 (\<200K) | \$30      | \$150     |
-| Opus 4.6 上的快速模式 (>200K)  | \$60      | \$225     |
+| 模式              | 输入 (MTok) | 输出 (MTok) |
+| --------------- | --------- | --------- |
+| Opus 4.6 上的快速模式 | \$30      | \$150     |
+| Opus 4.7 上的快速模式 | \$30      | \$150     |
 
-快速模式与 1M 令牌扩展上下文窗口兼容。
+快速模式定价在整个 1M 令牌上下文窗口中是固定的。
 
 当您在对话中途切换到快速模式时，您需要为整个对话上下文支付完整的快速模式未缓存输入令牌价格。这比从一开始就启用快速模式的成本更高。
 
@@ -125,9 +160,9 @@
 
 ## 处理速率限制
 
-快速模式与标准 Opus 4.6 有单独的速率限制。当您达到快速模式速率限制或用完额外使用额度时：
+快速模式与标准 Opus 有单独的速率限制。Opus 4.6 和 Opus 4.7 的快速模式共享相同的速率限制池：任一模型上的使用都会从相同的限制中扣除。当您达到快速模式速率限制或用完额外使用额度时：
 
-1. 快速模式自动回退到标准 Opus 4.6
+1. 快速模式自动回退到同一 Opus 版本上的标准速度
 2. `↯` 图标变灰以指示冷却
 3. 您继续以标准速度和定价工作
 4. 冷却过期时，快速模式自动重新启用

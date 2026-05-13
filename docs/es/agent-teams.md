@@ -130,6 +130,8 @@ Crea un equipo con 4 compañeros de equipo para refactorizar estos módulos en p
 Usa Sonnet para cada compañero de equipo.
 ```
 
+Los compañeros de equipo no heredan la selección `/model` del líder de forma predeterminada. Para cambiar el modelo utilizado cuando el indicador no especifica uno, configure **Modelo de compañero de equipo predeterminado** en `/config`. Seleccione **Predeterminado (modelo del líder)** para que los compañeros de equipo sigan el modelo actual del líder.
+
 ### Requerir aprobación de plan para compañeros de equipo
 
 Para tareas complejas o riesgosas, puede requerir que los compañeros de equipo planifiquen antes de implementar. El compañero de equipo trabaja en modo de plan de solo lectura hasta que el líder apruebe su enfoque:

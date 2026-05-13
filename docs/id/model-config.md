@@ -235,7 +235,7 @@ Output pemikiran dilipat secara default. Tekan `Ctrl+O` untuk toggle verbose mod
 
 Opus 4.7, Opus 4.6, dan Sonnet 4.6 mendukung [jendela konteks 1 juta token](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window) untuk sesi panjang dengan basis kode besar.
 
-Ketersediaan bervariasi menurut model dan paket. Di paket Max, Team, dan Enterprise, Opus secara otomatis ditingkatkan ke konteks 1M tanpa konfigurasi tambahan. Ini berlaku untuk kedua kursi Team Standard dan Team Premium.
+Ketersediaan bervariasi menurut model dan paket. Di paket Max, Team, dan Enterprise, Opus secara otomatis ditingkatkan ke konteks 1M tanpa konfigurasi tambahan. Ini berlaku untuk kedua kursi Team Standard dan Team Premium. Sonnet dengan konteks 1M bukan bagian dari peningkatan otomatis dan memerlukan [penggunaan tambahan](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) di setiap paket langganan, termasuk Max.
 
 | Paket                     | Opus dengan konteks 1M                                                                                              | Sonnet dengan konteks 1M                                                                                            |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |

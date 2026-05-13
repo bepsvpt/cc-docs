@@ -299,6 +299,12 @@ Use a flag `--plugin-dir` para testar plugins durante o desenvolvimento. Isso ca
 claude --plugin-dir ./my-plugin
 ```
 
+A flag também aceita um arquivo `.zip` do diretório do plugin, que requer Claude Code v2.1.128 ou posterior.
+
+```bash theme={null}
+claude --plugin-dir ./my-plugin.zip
+```
+
 Quando um plugin `--plugin-dir` tem o mesmo nome que um plugin marketplace instalado, a cópia local tem precedência para essa sessão. Isso permite que você teste mudanças em um plugin que você já tem instalado sem desinstalá-lo primeiro. Plugins marketplace forçadamente habilitados por configurações gerenciadas são a única exceção e não podem ser substituídos.
 
 Conforme você faz mudanças no seu plugin, execute `/reload-plugins` para pegar as atualizações sem reiniciar. Isso recarrega plugins, skills, agents, hooks, MCP servers do plugin e LSP servers do plugin. Teste seus componentes de plugin:

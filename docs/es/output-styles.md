@@ -90,11 +90,13 @@ Los archivos de estilo de salida admiten frontmatter para especificar metadatos:
 
 ### Estilos de salida vs. CLAUDE.md vs. --append-system-prompt
 
-Los estilos de salida "apagan" completamente las partes del mensaje del sistema predeterminado de Claude Code específicas de la ingeniería de software. Ni CLAUDE.md ni `--append-system-prompt` editan el mensaje del sistema predeterminado de Claude Code. CLAUDE.md agrega el contenido como un mensaje de usuario *después* del mensaje del sistema predeterminado de Claude Code. `--append-system-prompt` agrega el contenido al mensaje del sistema.
+Elija según si Claude debe dejar de actuar como asistente de codificación o mantener su rol predeterminado y aprender más. Los estilos de salida reemplazan las partes de ingeniería de software del mensaje del sistema de Claude Code con su propio rol y voz, así que use uno cuando Claude deba adoptar una identidad diferente, como un editor de escritura o un asistente de análisis de datos. CLAUDE.md y `--append-system-prompt` mantienen la identidad predeterminada de Claude Code y se agregan a ella, así que úselos cuando Claude deba seguir siendo un asistente de codificación que también sigue sus convenciones de proyecto o instrucciones adicionales.
+
+Los mecanismos también difieren. Los estilos de salida editan el mensaje del sistema directamente. CLAUDE.md agrega su contenido como un mensaje de usuario después del mensaje del sistema. `--append-system-prompt` agrega contenido al final del mensaje del sistema sin eliminar nada.
 
 ### Estilos de salida vs. [Agents](/es/sub-agents)
 
-Los estilos de salida afectan directamente el bucle del agente principal y solo afectan el mensaje del sistema. Los agentes se invocan para manejar tareas específicas y pueden incluir configuraciones adicionales como el modelo a usar, las herramientas disponibles y algo de contexto sobre cuándo usar el agente.
+Use un estilo de salida para cambiar cómo responde la conversación principal en cada sesión. Use un [subagent](/es/sub-agents) cuando desee un ayudante con alcance separado al que la conversación principal delegue. Los estilos de salida afectan solo el mensaje del sistema del bucle del agente principal. Los agentes manejan tareas específicas y pueden llevar su propio modelo, herramientas y contexto sobre cuándo invocarlos.
 
 ### Estilos de salida vs. [Skills](/es/skills)
 

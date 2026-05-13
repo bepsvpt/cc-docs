@@ -124,7 +124,9 @@ Claude Code menyediakan empat flag untuk menyesuaikan prompt sistem. Keempat fla
 
 `--system-prompt` dan `--system-prompt-file` saling eksklusif. Flag append dapat dikombinasikan dengan flag penggantian apa pun.
 
-Untuk sebagian besar kasus penggunaan, gunakan flag append. Menambahkan mempertahankan kemampuan bawaan Claude Code sambil menambahkan persyaratan Anda. Gunakan flag penggantian hanya ketika Anda memerlukan kontrol penuh atas prompt sistem.
+Pilih berdasarkan apakah identitas default Claude Code masih sesuai dengan tugas Anda. Gunakan flag append ketika Claude harus tetap menjadi asisten coding yang juga mengikuti aturan tambahan Anda: instruksi per-invocation, pemformatan output, atau konteks domain untuk skrip `-p`. Menambahkan mempertahankan panduan tool default, instruksi keamanan, dan konvensi coding, jadi Anda hanya menyediakan apa yang berbeda. Gunakan flag penggantian ketika permukaan, identitas, atau model izin berbeda dari Claude Code, seperti agen non-coding dalam pipeline yang tidak ada manusia yang menonton. Mengganti menghilangkan seluruh prompt default, termasuk panduan tool dan instruksi keamanan, jadi Anda bertanggung jawab atas apa pun yang masih dibutuhkan tugas Anda.
+
+Flag ini hanya berlaku untuk invocation saat ini. Untuk persona persisten yang dapat Anda alihkan dan bagikan di seluruh proyek, gunakan [output styles](/id/output-styles). Untuk konvensi proyek yang harus selalu diikuti Claude, gunakan [CLAUDE.md](/id/memory). [Panduan Agent SDK tentang system prompts](/id/agent-sdk/modifying-system-prompts#decide-on-a-starting-point) mencakup keputusan yang sama dengan lebih mendalam.
 
 ## Lihat juga
 

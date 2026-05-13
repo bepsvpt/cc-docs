@@ -253,11 +253,12 @@ Claude Code 使用**範圍系統**來決定設定的適用位置和共享對象�
   v2.1.119 之前的版本也會在此處儲存 `autoScrollEnabled`、`editorMode`、`showTurnDuration`、`teammateMode` 和 `terminalProgressBarEnabled`，而不是在 `settings.json` 中。
 </Note>
 
-| 金鑰                        | 說明                                                                                                                                                                                    | 範例      |
-| :------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------ |
-| `autoConnectIde`          | 當 Claude Code 從外部終端機啟動時自動連線到執行中的 IDE。預設：`false`。在 VS Code 或 JetBrains 終端機外執行時在 `/config` 中顯示為**自動連線到 IDE（外部終端機）**。[`CLAUDE_CODE_AUTO_CONNECT_IDE`](/zh-TW/env-vars) 環境變數在設定時會覆蓋此設定    | `true`  |
-| `autoInstallIdeExtension` | 從 VS Code 終端機執行時自動安裝 Claude Code IDE 擴充功能。預設：`true`。在 VS Code 或 JetBrains 終端機內執行時在 `/config` 中顯示為**自動安裝 IDE 擴充功能**。您也可以設定 [`CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`](/zh-TW/env-vars) 環境變數 | `false` |
-| `externalEditorContext`   | 當您使用 `Ctrl+G` 開啟外部編輯器時，將 Claude 的前一個回應作為 `#` 註解內容前置。預設：`false`。在 `/config` 中顯示為**在外部編輯器中顯示最後回應**                                                                                      | `true`  |
+| 金鑰                        | 說明                                                                                                                                                                                    | 範例         |
+| :------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :--------- |
+| `autoConnectIde`          | 當 Claude Code 從外部終端機啟動時自動連線到執行中的 IDE。預設：`false`。在 VS Code 或 JetBrains 終端機外執行時在 `/config` 中顯示為**自動連線到 IDE（外部終端機）**。[`CLAUDE_CODE_AUTO_CONNECT_IDE`](/zh-TW/env-vars) 環境變數在設定時會覆蓋此設定    | `true`     |
+| `autoInstallIdeExtension` | 從 VS Code 終端機執行時自動安裝 Claude Code IDE 擴充功能。預設：`true`。在 VS Code 或 JetBrains 終端機內執行時在 `/config` 中顯示為**自動安裝 IDE 擴充功能**。您也可以設定 [`CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`](/zh-TW/env-vars) 環境變數 | `false`    |
+| `externalEditorContext`   | 當您使用 `Ctrl+G` 開啟外部編輯器時，將 Claude 的前一個回應作為 `#` 註解內容前置。預設：`false`。在 `/config` 中顯示為**在外部編輯器中顯示最後回應**                                                                                      | `true`     |
+| `teammateDefaultModel`    | [agent team](/zh-TW/agent-teams) 隊友在生成提示未指定時的預設模型。設定為模型別名（例如 `"sonnet"`），或 `null` 以繼承主管的目前 `/model` 選擇。在 `/config` 中顯示為**預設隊友模型**                                                     | `"sonnet"` |
 
 ### Worktree 設定
 
@@ -267,7 +268,7 @@ Claude Code 使用**範圍系統**來決定設定的適用位置和共享對象�
 | :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------ |
 | `worktree.baseRef`            | 新 worktrees 分支的來源 ref。`"fresh"`（預設）從 `origin/<default-branch>` 分支以取得與遠端相符的乾淨樹。`"head"` 從您目前的本機 `HEAD` 分支，因此未推送的提交和功能分支狀態存在於 worktree 中。適用於 `--worktree`、`EnterWorktree` 工具和 subagent 隔離 | `"head"`                              |
 | `worktree.symlinkDirectories` | 要從主儲存庫符號連結到每個 worktree 的目錄，以避免在磁碟上複製大型目錄。預設不符號連結任何目錄                                                                                                                                    | `["node_modules", ".cache"]`          |
-| `worktree.sparsePaths`        | 要在每個 worktree 中透過 git sparse-checkout（cone 模式）簽出的目錄。僅將列出的路徑寫入磁碟，在大型 monorepos 中速度更快                                                                                                     | `["packages/my-app", "shared/utils"]` |
+| `worktree.sparsePaths`        | 要在每個 worktree 中透過 git sparse-checkout 簽出的目錄。僅將列出的目錄加上根層級檔案寫入磁碟，在大型 monorepos 中速度更快                                                                                                      | `["packages/my-app", "shared/utils"]` |
 
 若要將 gitignored 檔案（如 `.env`）複製到新的 worktrees，請改用專案根目錄中的 [`.worktreeinclude` 檔案](/zh-TW/worktrees#copy-gitignored-files-into-worktrees)，而不是設定。
 
@@ -670,6 +671,8 @@ Claude Code 支援 plugin 系統，可讓您使用 skills、agents、hooks 和 M
 * `directory`：本機檔案系統路徑（使用 `path`，僅用於開發）
 * `hostPattern`：正規表達式模式以符合 marketplace 主機（使用 `hostPattern`）
 * `settings`：直接在 settings.json 中宣告的內嵌 marketplace，無需單獨的託管儲存庫（使用 `name` 和 `plugins`）
+
+每個 marketplace 項目也接受選用的 `autoUpdate` 布林值。在 `source` 旁邊設定 `"autoUpdate": true`，使 Claude Code 在啟動時重新整理該 marketplace 並更新其已安裝的 plugins。省略時，官方 Anthropic marketplaces 預設為 `true`，所有其他 marketplaces 預設為 `false`。請參閱[設定自動更新](/zh-TW/discover-plugins#configure-auto-updates)。
 
 使用 `source: 'settings'` 宣告一小組 plugins，無需設定託管 marketplace 儲存庫。此處列出的 Plugins 必須參考外部來源，例如 GitHub 或 npm。您仍需要在 `enabledPlugins` 中分別啟用每個 plugin。
 

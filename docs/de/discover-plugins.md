@@ -312,7 +312,7 @@ Wenn Sie während einer Sitzung Plugins installieren, aktivieren oder deaktivier
 
 Claude Code lädt alle aktiven Plugins neu und zeigt Zählungen für Plugins, skills, Agenten, hooks, Plugin-MCP-Server und Plugin-LSP-Server an.
 
-## Verwalten Sie Marktplätze
+## Marktplätze verwalten
 
 Sie können Marktplätze über die interaktive `/plugin`-Schnittstelle oder mit CLI-Befehlen verwalten.
 
@@ -363,6 +363,8 @@ Schalten Sie die automatische Aktualisierung für einzelne Marktplätze über di
 4. Wählen Sie **Enable auto-update** oder **Disable auto-update**
 
 Offizielle Anthropic-Marktplätze haben die automatische Aktualisierung standardmäßig aktiviert. Marktplätze von Drittanbietern und lokale Entwicklungsmarktplätze haben die automatische Aktualisierung standardmäßig deaktiviert.
+
+Administratoren können auch `"autoUpdate": true` für jeden [`extraKnownMarketplaces`](/de/settings#extraknownmarketplaces)-Eintrag in verwalteten Einstellungen festlegen, um die automatische Aktualisierung für einen Organisationsmarktplatz zu aktivieren, ohne dass jeder Benutzer diese umschalten muss.
 
 Um alle automatischen Updates vollständig für Claude Code und alle Plugins zu deaktivieren, setzen Sie die Umgebungsvariable `DISABLE_AUTOUPDATER`. Siehe [Automatische Updates](/de/setup#auto-updates) für Details.
 

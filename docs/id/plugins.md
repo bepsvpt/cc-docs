@@ -299,6 +299,12 @@ Gunakan flag `--plugin-dir` untuk menguji plugins selama pengembangan. Ini memua
 claude --plugin-dir ./my-plugin
 ```
 
+Flag juga menerima arsip `.zip` dari direktori plugin, yang memerlukan Claude Code v2.1.128 atau lebih baru.
+
+```bash theme={null}
+claude --plugin-dir ./my-plugin.zip
+```
+
 Ketika plugin `--plugin-dir` memiliki nama yang sama dengan plugin marketplace yang diinstal, salinan lokal mengambil prioritas untuk sesi itu. Ini memungkinkan Anda menguji perubahan pada plugin yang sudah Anda instal tanpa mencopot pemasangannya terlebih dahulu. Plugin marketplace yang dipaksa diaktifkan oleh managed settings adalah satu-satunya pengecualian dan tidak dapat ditimpa.
 
 Saat Anda membuat perubahan pada plugin Anda, jalankan `/reload-plugins` untuk mengambil pembaruan tanpa memulai ulang. Ini memuat ulang plugins, skills, agents, hooks, plugin MCP servers, dan plugin LSP servers. Uji komponen plugin Anda:

@@ -115,17 +115,13 @@ File output style mendukung frontmatter untuk menentukan metadata:
 
 ### Output Styles vs. CLAUDE.md vs. --append-system-prompt
 
-Output styles sepenuhnya "mematikan" bagian-bagian dari default system prompt Claude Code
-yang spesifik untuk rekayasa perangkat lunak. Baik CLAUDE.md maupun
-`--append-system-prompt` tidak mengedit default system prompt Claude Code. CLAUDE.md
-menambahkan konten sebagai pesan pengguna *setelah* default system prompt Claude Code. `--append-system-prompt` menambahkan konten ke system prompt.
+Pilih berdasarkan apakah Claude harus berhenti bertindak sebagai asisten pengkodean atau mempertahankan peran defaultnya dan belajar lebih banyak. Output styles menggantikan bagian-bagian rekayasa perangkat lunak dari system prompt Claude Code dengan peran dan suara Anda sendiri, jadi gunakan satu ketika Claude harus mengadopsi identitas yang berbeda, seperti editor penulisan atau asisten analisis data. CLAUDE.md dan `--append-system-prompt` keduanya mempertahankan identitas default Claude Code dan menambahnya, jadi gunakan mereka ketika Claude harus tetap menjadi asisten pengkodean yang juga mengikuti konvensi proyek Anda atau instruksi tambahan.
+
+Mekanismenya juga berbeda. Output styles mengedit system prompt secara langsung. CLAUDE.md menambahkan kontennya sebagai pesan pengguna setelah system prompt. `--append-system-prompt` menambahkan konten ke akhir system prompt tanpa menghapus apa pun.
 
 ### Output Styles vs. [Agents](/id/sub-agents)
 
-Output styles secara langsung mempengaruhi loop agen utama dan hanya mempengaruhi system
-prompt. Agents dipanggil untuk menangani tugas-tugas spesifik dan dapat mencakup pengaturan tambahan
-seperti model yang akan digunakan, tools yang tersedia bagi mereka, dan beberapa konteks
-tentang kapan menggunakan agent.
+Gunakan output style untuk mengubah cara percakapan utama merespons di setiap sesi. Gunakan [subagent](/id/sub-agents) ketika Anda menginginkan helper dengan cakupan terpisah yang didelegasikan oleh percakapan utama. Output styles hanya mempengaruhi system prompt dari loop agen utama. Agents menangani tugas-tugas spesifik dan dapat membawa model mereka sendiri, tools, dan konteks tentang kapan menggunakannya.
 
 ### Output Styles vs. [Skills](/id/skills)
 

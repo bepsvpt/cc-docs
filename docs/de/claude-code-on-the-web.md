@@ -32,10 +32,14 @@ Diese Seite behandelt:
 
 Cloud-Sitzungen benötigen Zugriff auf Ihre GitHub-Repositories, um Code zu klonen und Branches zu pushen. Sie können Zugriff auf zwei Arten gewähren:
 
-| Methode          | Funktionsweise                                                                                                                                                                     | Am besten für                                              |
-| :--------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------- |
-| **GitHub App**   | Installieren Sie die Claude GitHub App auf bestimmten Repositories während des [Web-Onboardings](/de/web-quickstart). Der Zugriff ist pro Repository begrenzt.                     | Teams, die explizite Pro-Repository-Autorisierung wünschen |
-| **`/web-setup`** | Führen Sie `/web-setup` in Ihrem Terminal aus, um Ihr lokales `gh` CLI-Token mit Ihrem Claude-Konto zu synchronisieren. Der Zugriff entspricht dem, was Ihr `gh`-Token sehen kann. | Einzelne Entwickler, die bereits `gh` verwenden            |
+| Methode          | Funktionsweise                                                                                                          | Am besten für                                                              |
+| :--------------- | :---------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------- |
+| **GitHub App**   | Autorisieren Sie die Claude GitHub App während des [Web-Onboardings](/de/web-quickstart).                               | Browser-Onboarding; Teams, die [Auto-fix](#auto-fix-pull-requests) möchten |
+| **`/web-setup`** | Führen Sie `/web-setup` in Ihrem Terminal aus, um Ihr lokales `gh` CLI-Token mit Ihrem Claude-Konto zu synchronisieren. | Einzelne Entwickler, die bereits `gh` verwenden                            |
+
+<Note>
+  Bei beiden Methoden kann eine Cloud-Sitzung auf jedes Repository zugreifen, das das verbundene GitHub-Konto sehen kann, nicht nur auf die Repositories, auf denen die Claude GitHub App installiert ist. Die App-Installation ermöglicht PR-Webhooks für [Auto-fix](#auto-fix-pull-requests); es ist keine Zugriffskontrolle auf Sitzungsebene. Um einzuschränken, welche Repositories Ihr Team von Cloud-Sitzungen aus erreichen kann, beschränken Sie den Zugriff auf GitHub selbst, beispielsweise durch Einschränkung der Team- oder Repository-Mitgliedschaft für die verbundenen GitHub-Konten.
+</Note>
 
 Beide Methoden funktionieren. [`/schedule`](/de/routines) überprüft auf beide Formen des Zugriffs und fordert Sie auf, `/web-setup` auszuführen, wenn keines konfiguriert ist. Siehe [Vom Terminal verbinden](/de/web-quickstart#connect-from-your-terminal) für die `/web-setup`-Anleitung.
 
@@ -739,6 +743,8 @@ Es gibt mehrere Möglichkeiten, Auto-fix zu aktivieren, je nachdem, woher der PR
 * **Von der Mobile-App**: Sagen Sie Claude, den PR zu auto-fixen, zum Beispiel „watch this PR and fix any CI failures or review comments"
 * **Jeder vorhandene PR**: Fügen Sie die PR-URL in eine Sitzung ein und sagen Sie Claude, den PR zu auto-fixen
 
+Auto-fix ist ein Pro-PR-Toggle. Um die Überwachung zu beenden, öffnen Sie die CI-Statusleiste in der Web-Sitzung und deaktivieren Sie den **Auto-fix**-Toggle, oder sagen Sie Claude, die Überwachung des PR zu beenden.
+
 ### Wie Claude auf PR-Aktivität reagiert
 
 Wenn Auto-fix aktiv ist, empfängt Claude GitHub-Events für den PR, einschließlich neuer Review-Kommentare und CI-Check-Fehler. Für jedes Event untersucht Claude das Problem und entscheidet, wie vorgegangen wird:
@@ -772,7 +778,7 @@ Wenn eine neue Sitzung mit `Session creation failed` fehlschlägt oder bei der B
 
 * Überprüfen Sie [status.claude.com](https://status.claude.com) auf Cloud-Sitzungs-Incidents
 * Versuchen Sie es nach einer Minute erneut, da die Kapazität bei Bedarf bereitgestellt wird
-* Bestätigen Sie, dass Ihr Repository erreichbar ist. Private Repositories erfordern entweder die GitHub App, die auf diesem Repository installiert ist, oder ein `gh`-Token, das über `/web-setup` synchronisiert wird. Siehe [GitHub-Authentifizierungsoptionen](#github-authentication-options).
+* Bestätigen Sie, dass Ihr Repository erreichbar ist. Das verbindende GitHub-Konto muss Zugriff auf das Repository auf GitHub haben, entweder durch die Claude GitHub App-Autorisierung oder ein `gh`-Token, das über `/web-setup` synchronisiert wird — die Installation der App auf dem Repository ist nicht erforderlich. Siehe [GitHub-Authentifizierungsoptionen](#github-authentication-options).
 
 ### Remote Control-Sitzung abgelaufen oder Zugriff verweigert
 

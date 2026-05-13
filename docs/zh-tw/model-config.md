@@ -231,7 +231,7 @@ Opus 4.7 始終使用自適應推理。固定思考預算模式和 `CLAUDE_CODE_
 
 Opus 4.7、Opus 4.6 和 Sonnet 4.6 支援[100 萬個 token 的 context window](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window)，用於具有大型程式碼庫的長時間會話。
 
-可用性因模型和計畫而異。在 Max、Team 和 Enterprise 計畫上，Opus 會自動升級到 1M context，無需額外配置。這適用於 Team Standard 和 Team Premium 席位。
+可用性因模型和計畫而異。在 Max、Team 和 Enterprise 計畫上，Opus 會自動升級到 1M context，無需額外配置。這適用於 Team Standard 和 Team Premium 席位。Sonnet 搭配 1M context 不是自動升級的一部分，需要在每個訂閱計畫上進行[額外使用](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans)，包括 Max。
 
 | 計畫                    | Opus 搭配 1M context                                                                          | Sonnet 搭配 1M context                                                                        |
 | --------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |

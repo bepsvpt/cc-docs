@@ -4,15 +4,15 @@
 
 # Percepat respons dengan mode cepat
 
-> Dapatkan respons Opus 4.6 yang lebih cepat di Claude Code dengan mengaktifkan mode cepat.
+> Dapatkan respons Opus yang lebih cepat di Claude Code dengan mengaktifkan mode cepat.
 
 <Note>
   Mode cepat berada dalam [pratinjau penelitian](#research-preview). Fitur, harga, dan ketersediaan dapat berubah berdasarkan umpan balik.
 </Note>
 
-Mode cepat adalah konfigurasi kecepatan tinggi untuk Claude Opus 4.6, membuat model 2,5x lebih cepat dengan biaya per token yang lebih tinggi. Aktifkan dengan `/fast` ketika Anda membutuhkan kecepatan untuk pekerjaan interaktif seperti iterasi cepat atau debugging langsung, dan nonaktifkan ketika biaya lebih penting daripada latensi.
+Mode cepat adalah konfigurasi kecepatan tinggi untuk Claude Opus, membuat model 2,5x lebih cepat dengan biaya per token yang lebih tinggi. Aktifkan dengan `/fast` ketika Anda membutuhkan kecepatan untuk pekerjaan interaktif seperti iterasi cepat atau debugging langsung, dan nonaktifkan ketika biaya lebih penting daripada latensi.
 
-Mode cepat bukan model yang berbeda. Mode ini menggunakan Opus 4.6 yang sama dengan konfigurasi API berbeda yang memprioritaskan kecepatan daripada efisiensi biaya. Anda mendapatkan kualitas dan kemampuan yang identik, hanya respons yang lebih cepat.
+Mode cepat bukan model yang berbeda. Mode ini menggunakan Claude Opus dengan konfigurasi API berbeda yang memprioritaskan kecepatan daripada efisiensi biaya. Anda mendapatkan kualitas dan kemampuan yang identik, hanya respons yang lebih cepat. Mode cepat didukung pada Opus 4.6 dan Opus 4.7. Mode ini tidak tersedia pada Sonnet, Haiku, atau model lainnya.
 
 <Note>
   Mode cepat memerlukan Claude Code v2.1.36 atau lebih baru. Periksa versi Anda dengan `claude --version`.
@@ -21,11 +21,12 @@ Mode cepat bukan model yang berbeda. Mode ini menggunakan Opus 4.6 yang sama den
 Yang perlu diketahui:
 
 * Gunakan `/fast` untuk mengaktifkan mode cepat di Claude Code CLI. Juga tersedia melalui `/fast` di Ekstensi Claude Code VS Code.
-* Harga mode cepat untuk Opus 4.6 dimulai dari \$30/150 MTok. Mode cepat tersedia dengan diskon 50% untuk semua paket hingga 23:59 PT pada 16 Februari.
+* Secara default, `/fast` berjalan pada Opus 4.6. Untuk menjalankan mode cepat pada Opus 4.7 sebagai gantinya, atur variabel lingkungan [`CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`](#use-fast-mode-on-opus-4-7).
+* Harga mode cepat adalah \$30/150 MTok pada Opus 4.6 dan Opus 4.7.
 * Tersedia untuk semua pengguna Claude Code pada paket berlangganan (Pro/Max/Team/Enterprise) dan Claude Console.
 * Untuk pengguna Claude Code pada paket berlangganan (Pro/Max/Team/Enterprise), mode cepat tersedia hanya melalui penggunaan tambahan dan tidak termasuk dalam batas laju penggunaan berlangganan.
 
-Halaman ini mencakup cara [mengaktifkan mode cepat](#toggle-fast-mode), [pertukaran biayanya](#understand-the-cost-tradeoff), [kapan menggunakannya](#decide-when-to-use-fast-mode), [persyaratan](#requirements), [opt-in per sesi](#require-per-session-opt-in), dan [perilaku batas laju](#handle-rate-limits).
+Halaman ini mencakup cara [mengaktifkan mode cepat](#toggle-fast-mode), [menggunakan mode cepat pada Opus 4.7](#use-fast-mode-on-opus-4-7), [pertukaran biayanya](#understand-the-cost-tradeoff), [kapan menggunakannya](#decide-when-to-use-fast-mode), [persyaratan](#requirements), [opt-in per sesi](#require-per-session-opt-in), dan [perilaku batas laju](#handle-rate-limits).
 
 ## Aktifkan mode cepat
 
@@ -40,23 +41,57 @@ Untuk efisiensi biaya terbaik, aktifkan mode cepat di awal sesi daripada beralih
 
 Ketika Anda mengaktifkan mode cepat:
 
-* Jika Anda berada di model yang berbeda, Claude Code secara otomatis beralih ke Opus 4.6
+* Jika Anda berada di model yang berbeda, Claude Code secara otomatis beralih ke model mode cepat: Opus 4.6 secara default, atau Opus 4.7 ketika [`CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`](#use-fast-mode-on-opus-4-7) diatur.
 * Anda akan melihat pesan konfirmasi: "Fast mode ON"
 * Ikon kecil `↯` muncul di sebelah prompt saat mode cepat aktif
 * Jalankan `/fast` lagi kapan saja untuk memeriksa apakah mode cepat aktif atau tidak
 
-Ketika Anda menonaktifkan mode cepat dengan `/fast` lagi, Anda tetap berada di Opus 4.6. Model tidak kembali ke model sebelumnya. Untuk beralih ke model yang berbeda, gunakan `/model`.
+Ketika Anda menonaktifkan mode cepat dengan `/fast` lagi, Anda tetap berada di versi Opus yang sama tempat mode cepat berjalan. Model tidak kembali ke model sebelumnya. Untuk beralih ke model yang berbeda, gunakan `/model`.
+
+## Gunakan mode cepat pada Opus 4.7
+
+<Note>
+  Mode cepat pada Opus 4.7 memerlukan Claude Code v2.1.139 atau lebih baru.
+</Note>
+
+Mode cepat untuk Claude Opus 4.7 berada dalam pratinjau penelitian. Mode ini berjalan dengan kecepatan 2,5x yang sama dan harga yang sama dengan mode cepat untuk Opus 4.6, tanpa perubahan perilaku lainnya.
+
+<Note>
+  Pada 14 Mei 2026, Opus 4.7 menjadi model mode cepat default. Sampai saat itu, opt in dengan menetapkan `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1`.
+</Note>
+
+Untuk opt in, atur `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1` sebelum meluncurkan Claude Code. Dengan variabel yang diatur, `/fast` berjalan pada Opus 4.7. Tanpanya, `/fast` terus berjalan pada Opus 4.6.
+
+Anda dapat mengatur variabel sebagai ekspor shell:
+
+```bash theme={null}
+export CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1
+```
+
+Atau di file [pengaturan](/id/settings#settings-files) Claude Code apa pun, termasuk pengaturan pengguna, proyek, dan terkelola, untuk membatasi opt-in:
+
+```json theme={null}
+{
+  "env": {
+    "CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE": "1"
+  }
+}
+```
+
+Mode cepat untuk Opus 4.6 tetap tersedia bersama Opus 4.7. Keduanya berbagi pool batas laju mode cepat yang sama: penggunaan pada model apa pun menarik dari batas yang sama.
+
+Untuk menetapkan mode cepat ke Opus 4.6 secara eksplisit, atur `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE=1`. Variabel ini memiliki prioritas, jadi mode cepat berjalan pada Opus 4.6 terlepas dari apakah `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE` diatur.
 
 ## Pahami pertukaran biaya
 
-Mode cepat memiliki harga per-token yang lebih tinggi daripada Opus 4.6 standar:
+Mode cepat memiliki harga per-token yang lebih tinggi daripada Opus standar:
 
-| Mode                            | Input (MTok) | Output (MTok) |
-| ------------------------------- | ------------ | ------------- |
-| Mode cepat di Opus 4.6 (\<200K) | \$30         | \$150         |
-| Mode cepat di Opus 4.6 (>200K)  | \$60         | \$225         |
+| Mode                     | Input (MTok) | Output (MTok) |
+| ------------------------ | ------------ | ------------- |
+| Mode cepat pada Opus 4.6 | \$30         | \$150         |
+| Mode cepat pada Opus 4.7 | \$30         | \$150         |
 
-Mode cepat kompatibel dengan jendela konteks yang diperluas 1M token.
+Harga mode cepat datar di seluruh jendela konteks 1M token penuh.
 
 Ketika Anda beralih ke mode cepat di tengah percakapan, Anda membayar harga token input tanpa cache mode cepat penuh untuk seluruh konteks percakapan. Ini lebih mahal daripada jika Anda telah mengaktifkan mode cepat dari awal.
 
@@ -125,9 +160,9 @@ Ini berguna untuk mengontrol biaya di organisasi di mana pengguna menjalankan be
 
 ## Tangani batas laju
 
-Mode cepat memiliki batas laju terpisah dari Opus 4.6 standar. Ketika Anda mencapai batas laju mode cepat atau kehabisan kredit penggunaan tambahan:
+Mode cepat memiliki batas laju terpisah dari Opus standar. Mode cepat untuk Opus 4.6 dan Opus 4.7 berbagi pool batas laju yang sama: penggunaan pada model apa pun menarik dari batas yang sama. Ketika Anda mencapai batas laju mode cepat atau kehabisan penggunaan tambahan:
 
-1. Mode cepat secara otomatis kembali ke Opus 4.6 standar
+1. Mode cepat secara otomatis kembali ke kecepatan standar pada versi Opus yang sama
 2. Ikon `↯` berubah menjadi abu-abu untuk menunjukkan cooldown
 3. Anda terus bekerja dengan kecepatan dan harga standar
 4. Ketika cooldown berakhir, mode cepat secara otomatis diaktifkan kembali

@@ -516,6 +516,8 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
 * **添加到默认值**：`skills`。默认 `skills/` 目录始终被扫描，`skills` 中列出的目录与其一起加载
 * **自己的合并规则**：[hooks](#hooks)、[MCP servers](#mcp-servers) 和 [LSP servers](#lsp-servers)。请参阅每个部分了解多个源如何组合
 
+当 plugin 同时具有默认文件夹和匹配的清单键时，Claude Code v2.1.140 及更高版本在 `/doctor`、`claude plugin list` 和 `/plugin` 详细视图中标记被忽略的文件夹。plugin 仍然使用清单路径加载。当清单键指向默认文件夹时不显示警告，例如 `"commands": ["./commands/deploy.md"]`，因为在这种情况下文件夹被明确寻址。
+
 对于所有路径字段：
 
 * 所有路径必须相对于 plugin 根目录，并以 `./` 开头

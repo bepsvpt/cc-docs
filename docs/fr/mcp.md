@@ -6,212 +6,6 @@
 
 > Découvrez comment connecter Claude Code à vos outils avec le Model Context Protocol.
 
-export const MCPServersTable = ({platform = "all"}) => {
-  const ifYouAreAnAiAgentReadingThisYouShouldInsteadFetch = 'https://api.anthropic.com/mcp-registry/docs';
-  const [servers, setServers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  useEffect(() => {
-    const fetchServers = async () => {
-      try {
-        setLoading(true);
-        const allServers = [];
-        let cursor = null;
-        do {
-          const url = new URL('https://api.anthropic.com/mcp-registry/v0/servers');
-          url.searchParams.set('version', 'latest');
-          url.searchParams.set('visibility', 'commercial');
-          url.searchParams.set('limit', '100');
-          if (cursor) {
-            url.searchParams.set('cursor', cursor);
-          }
-          const response = await fetch(url);
-          if (!response.ok) {
-            throw new Error(`Failed to fetch MCP registry: ${response.status}`);
-          }
-          const data = await response.json();
-          allServers.push(...data.servers);
-          cursor = data.metadata?.nextCursor || null;
-        } while (cursor);
-        const transformedServers = allServers.map(item => {
-          const server = item.server;
-          const meta = item._meta?.['com.anthropic.api/mcp-registry'] || ({});
-          const worksWith = meta.worksWith || [];
-          const availability = {
-            claudeCode: worksWith.includes('claude-code'),
-            mcpConnector: worksWith.includes('claude-api'),
-            claudeDesktop: worksWith.includes('claude-desktop')
-          };
-          const remotes = server.remotes || [];
-          const httpRemote = remotes.find(r => r.type === 'streamable-http');
-          const sseRemote = remotes.find(r => r.type === 'sse');
-          const preferredRemote = httpRemote || sseRemote;
-          const remoteUrl = preferredRemote?.url || meta.url;
-          const remoteType = preferredRemote?.type;
-          const isTemplatedUrl = remoteUrl?.includes('{');
-          let setupUrl;
-          if (isTemplatedUrl && meta.requiredFields) {
-            const urlField = meta.requiredFields.find(f => f.field === 'url');
-            setupUrl = urlField?.sourceUrl || meta.documentation;
-          }
-          const urls = {};
-          if (!isTemplatedUrl) {
-            if (remoteType === 'streamable-http') {
-              urls.http = remoteUrl;
-            } else if (remoteType === 'sse') {
-              urls.sse = remoteUrl;
-            }
-          }
-          let envVars = [];
-          if (server.packages && server.packages.length > 0) {
-            const npmPackage = server.packages.find(p => p.registryType === 'npm');
-            if (npmPackage) {
-              urls.stdio = `npx -y ${npmPackage.identifier}`;
-              if (npmPackage.environmentVariables) {
-                envVars = npmPackage.environmentVariables;
-              }
-            }
-          }
-          return {
-            name: meta.displayName || server.title || server.name,
-            description: meta.oneLiner || server.description,
-            documentation: meta.documentation,
-            urls: urls,
-            envVars: envVars,
-            availability: availability,
-            customCommands: meta.claudeCodeCopyText ? {
-              claudeCode: meta.claudeCodeCopyText
-            } : undefined,
-            setupUrl: setupUrl
-          };
-        });
-        setServers(transformedServers);
-        setError(null);
-      } catch (err) {
-        setError(err.message);
-        console.error('Error fetching MCP registry:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchServers();
-  }, []);
-  const generateClaudeCodeCommand = server => {
-    if (server.customCommands && server.customCommands.claudeCode) {
-      return server.customCommands.claudeCode.replace('--transport streamable-http', '--transport http');
-    }
-    const serverSlug = server.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
-    if (server.urls.http) {
-      return `claude mcp add ${serverSlug} --transport http ${server.urls.http}`;
-    }
-    if (server.urls.sse) {
-      return `claude mcp add ${serverSlug} --transport sse ${server.urls.sse}`;
-    }
-    if (server.urls.stdio) {
-      const envFlags = server.envVars && server.envVars.length > 0 ? server.envVars.map(v => `--env ${v.name}=YOUR_${v.name}`).join(' ') : '';
-      const baseCommand = `claude mcp add ${serverSlug} --transport stdio`;
-      return envFlags ? `${baseCommand} ${envFlags} -- ${server.urls.stdio}` : `${baseCommand} -- ${server.urls.stdio}`;
-    }
-    return null;
-  };
-  if (loading) {
-    return <div>Loading MCP servers...</div>;
-  }
-  if (error) {
-    return <div>Error loading MCP servers: {error}</div>;
-  }
-  const filteredServers = servers.filter(server => {
-    if (platform === "claudeCode") {
-      return server.availability.claudeCode;
-    } else if (platform === "mcpConnector") {
-      return server.availability.mcpConnector;
-    } else if (platform === "claudeDesktop") {
-      return server.availability.claudeDesktop;
-    } else if (platform === "all") {
-      return true;
-    } else {
-      throw new Error(`Unknown platform: ${platform}`);
-    }
-  });
-  return <>
-      <style jsx>{`
-        .cards-container {
-          display: grid;
-          gap: 1rem;
-          margin-bottom: 2rem;
-        }
-        .server-card {
-          border: 1px solid var(--border-color, #e5e7eb);
-          border-radius: 6px;
-          padding: 1rem;
-        }
-        .command-row {
-          display: flex;
-          align-items: center;
-          gap: 0.25rem;
-        }
-        .command-row code {
-          font-size: 0.75rem;
-          overflow-x: auto;
-        }
-      `}</style>
-
-      <div className="cards-container">
-        {filteredServers.map(server => {
-    const claudeCodeCommand = generateClaudeCodeCommand(server);
-    const mcpUrl = server.urls.http || server.urls.sse;
-    const commandToShow = platform === "claudeCode" ? claudeCodeCommand : mcpUrl;
-    return <div key={server.name} className="server-card">
-              <div>
-                {server.documentation ? <a href={server.documentation}>
-                    <strong>{server.name}</strong>
-                  </a> : <strong>{server.name}</strong>}
-              </div>
-
-              <p style={{
-      margin: '0.5rem 0',
-      fontSize: '0.9rem'
-    }}>
-                {server.description}
-              </p>
-
-              {server.setupUrl && <p style={{
-      margin: '0.25rem 0',
-      fontSize: '0.8rem',
-      fontStyle: 'italic',
-      opacity: 0.7
-    }}>
-                  Requires user-specific URL.{' '}
-                  <a href={server.setupUrl} style={{
-      textDecoration: 'underline'
-    }}>
-                    Get your URL here
-                  </a>.
-                </p>}
-
-              {commandToShow && !server.setupUrl && <>
-                <p style={{
-      display: 'block',
-      fontSize: '0.75rem',
-      fontWeight: 500,
-      minWidth: 'fit-content',
-      marginTop: '0.5rem',
-      marginBottom: 0
-    }}>
-                  {platform === "claudeCode" ? "Command" : "URL"}
-                </p>
-                <div className="command-row">
-                  <code>
-                    {commandToShow}
-                  </code>
-                </div>
-              </>}
-            </div>;
-  })}
-      </div>
-    </>;
-};
-
 Claude Code peut se connecter à des centaines d'outils externes et de sources de données via le [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction), une norme open source pour les intégrations IA-outils. Les serveurs MCP donnent à Claude Code accès à vos outils, bases de données et API.
 
 Connectez un serveur lorsque vous vous trouvez à copier des données dans le chat à partir d'un autre outil, comme un suivi de problèmes ou un tableau de bord de surveillance. Une fois connecté, Claude peut lire et agir sur ce système directement au lieu de travailler à partir de ce que vous collez.
@@ -227,23 +21,37 @@ Avec les serveurs MCP connectés, vous pouvez demander à Claude Code de :
 * **Automatiser les flux de travail** : « Créer des brouillons Gmail invitant ces 10 utilisateurs à une session de rétroaction sur la nouvelle fonctionnalité. »
 * **Réagir aux événements externes** : Un serveur MCP peut également agir comme un [canal](/fr/channels) qui pousse des messages dans votre session, afin que Claude réagisse aux messages Telegram, aux discussions Discord ou aux événements webhook pendant que vous êtes absent.
 
-## Serveurs MCP populaires
+## Trouver et créer des serveurs MCP
 
-Voici quelques serveurs MCP couramment utilisés que vous pouvez connecter à Claude Code :
+Parcourez les connecteurs vérifiés dans le [Répertoire Anthropic](https://claude.ai/directory). Les connecteurs du répertoire utilisent la même infrastructure MCP que Claude Code, vous pouvez donc ajouter n'importe quel serveur distant répertorié avec `claude mcp add`.
 
 <Warning>
-  Utilisez les serveurs MCP tiers à vos propres risques - Anthropic n'a pas vérifié
-  l'exactitude ou la sécurité de tous ces serveurs.
-  Assurez-vous que vous faites confiance aux serveurs MCP que vous installez.
-  Soyez particulièrement prudent lors de l'utilisation de serveurs MCP qui pourraient récupérer du contenu non approuvé,
-  car ceux-ci peuvent vous exposer à un risque d'injection de prompt.
+  Vérifiez que vous faites confiance à chaque serveur avant de le connecter. Les serveurs qui récupèrent du contenu externe peuvent vous exposer à un [risque d'injection de prompt](/fr/security#protect-against-prompt-injection).
 </Warning>
 
-<MCPServersTable platform="claudeCode" />
+Pour créer votre propre serveur, consultez le [guide du serveur MCP](https://modelcontextprotocol.io/docs/develop/build-server) pour les principes fondamentaux du protocole et la [documentation de création de connecteurs Claude](https://claude.com/docs/connectors/building) pour l'authentification, les tests et la soumission au répertoire.
 
-<Note>
-  **Besoin d'une intégration spécifique ?** [Trouvez des centaines d'autres serveurs MCP sur GitHub](https://github.com/modelcontextprotocol/servers), ou créez le vôtre en utilisant le [MCP SDK](https://modelcontextprotocol.io/quickstart/server).
-</Note>
+Vous pouvez également faire en sorte que Claude crée un serveur pour vous avec le plugin officiel [`mcp-server-dev`](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/mcp-server-dev).
+
+<Steps>
+  <Step title="Installer le plugin">
+    Dans une session Claude Code, exécutez :
+
+    ```
+    /plugin install mcp-server-dev@claude-plugins-official
+    ```
+
+    Ensuite, exécutez `/reload-plugins` pour l'activer dans la session actuelle.
+  </Step>
+
+  <Step title="Exécuter la compétence de création">
+    ```
+    /mcp-server-dev:build-mcp-server
+    ```
+
+    Claude vous pose des questions sur votre cas d'usage et crée un serveur HTTP distant ou un serveur stdio local.
+  </Step>
+</Steps>
 
 ## Installation des serveurs MCP
 
@@ -1145,17 +953,17 @@ Claude Code tronque les descriptions d'outils et les instructions du serveur à 
 
 ### Configurer la recherche d'outils
 
-La recherche d'outils est activée par défaut : les outils MCP sont différés et découverts à la demande. Elle est désactivée par défaut sur Vertex AI, qui n'accepte pas l'en-tête bêta de recherche d'outils, et lorsque `ANTHROPIC_BASE_URL` pointe vers un hôte non-propriétaire, car la plupart des proxies ne transfèrent pas les blocs `tool_reference`. Définissez `ENABLE_TOOL_SEARCH` explicitement pour opter pour. Cette fonctionnalité nécessite des modèles qui supportent les blocs `tool_reference` : Sonnet 4 et ultérieur, ou Opus 4 et ultérieur. Les modèles Haiku ne supportent pas la recherche d'outils.
+La recherche d'outils est activée par défaut : les outils MCP sont différés et découverts à la demande. Elle est désactivée par défaut sur Vertex AI, qui n'accepte pas l'en-tête bêta de recherche d'outils, et lorsque `ANTHROPIC_BASE_URL` pointe vers un hôte non-propriétaire, car la plupart des proxies ne transfèrent pas les blocs `tool_reference`. Si votre proxy transfère les blocs `tool_reference`, définissez `ENABLE_TOOL_SEARCH` explicitement pour opter pour. Cette fonctionnalité nécessite des modèles qui supportent les blocs `tool_reference` : Sonnet 4 et ultérieur, ou Opus 4 et ultérieur. Les modèles Haiku ne supportent pas la recherche d'outils.
 
 Contrôlez le comportement de la recherche d'outils avec la variable d'environnement `ENABLE_TOOL_SEARCH` :
 
-| Valeur       | Comportement                                                                                                                                                      |
-| :----------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| (non défini) | Tous les outils MCP différés et chargés à la demande. Revient au chargement à l'avance sur Vertex AI ou lorsque `ANTHROPIC_BASE_URL` est un hôte non-propriétaire |
-| `true`       | Tous les outils MCP différés, y compris sur Vertex AI et pour `ANTHROPIC_BASE_URL` non-propriétaire                                                               |
-| `auto`       | Mode seuil : les outils se chargent à l'avance s'ils s'ajustent dans 10 % de la fenêtre de contexte, différés sinon                                               |
-| `auto:<N>`   | Mode seuil avec un pourcentage personnalisé, où `<N>` est 0-100 (par exemple, `auto:5` pour 5 %)                                                                  |
-| `false`      | Tous les outils MCP chargés à l'avance, pas de différé                                                                                                            |
+| Valeur       | Comportement                                                                                                                                                                          |
+| :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| (non défini) | Tous les outils MCP différés et chargés à la demande. Revient au chargement à l'avance sur Vertex AI ou lorsque `ANTHROPIC_BASE_URL` est un hôte non-propriétaire                     |
+| `true`       | Tous les outils MCP différés. Claude Code envoie l'en-tête bêta même sur Vertex AI et via les proxies. Les demandes échouent si le backend ne supporte pas les blocs `tool_reference` |
+| `auto`       | Mode seuil : les outils se chargent à l'avance s'ils s'ajustent dans 10 % de la fenêtre de contexte, différés sinon                                                                   |
+| `auto:<N>`   | Mode seuil avec un pourcentage personnalisé, où `<N>` est 0-100 (par exemple, `auto:5` pour 5 %)                                                                                      |
+| `false`      | Tous les outils MCP chargés à l'avance, pas de différé                                                                                                                                |
 
 ```bash theme={null}
 # Utiliser un seuil personnalisé de 5 %

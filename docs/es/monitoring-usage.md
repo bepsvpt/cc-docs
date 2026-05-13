@@ -654,7 +654,7 @@ Se registra cuando se toma una decisión de permiso de herramienta (aceptar/rech
 * `tool_use_id`: Identificador único para esta invocación de herramienta. Coincide con el `tool_use_id` pasado a hooks, permitiendo correlación entre eventos OTel y datos capturados por hooks.
 * `decision`: Ya sea `"accept"` o `"reject"`
 * `source`: Fuente de decisión:
-  * `"config"`: Decidido automáticamente sin solicitar, basado en configuración del proyecto, política administrada empresarial, banderas `--allowedTools` o `--disallowedTools`, el modo de permiso activo, o porque la herramienta es inherentemente segura. El evento no indica cuál de estas fuentes coincidió.
+  * `"config"`: Decidido automáticamente sin solicitar, basado en configuración del proyecto, reglas de permiso en la configuración personal del usuario, política administrada empresarial, banderas `--allowedTools` o `--disallowedTools`, el modo de permiso activo, una concesión con alcance de sesión de un mensaje anterior en la misma sesión de CLI interactiva, o porque la herramienta es inherentemente segura. El evento no indica cuál de estas fuentes coincidió.
   * `"hook"`: Un hook `PreToolUse` o `PermissionRequest` devolvió la decisión.
   * `"user_permanent"`: Se emite cuando el usuario eligió "Sí, y no preguntes de nuevo para ..." en un mensaje de permiso, que guarda una regla de permiso en su configuración personal. En la CLI interactiva esto se emite solo para esa opción en sí; las llamadas posteriores que coincidan con la regla guardada emiten `"config"` en su lugar. En sesiones del SDK de Agent o no interactivas `-p`, tanto la opción inicial como las coincidencias de regla posteriores emiten `"user_permanent"`. Se trata como una aceptación.
   * `"user_temporary"`: Se emite cuando el usuario eligió "Sí" en un mensaje de permiso para una aprobación única, o eligió una de las opciones "... durante esta sesión" en un mensaje de edición o lectura de archivo. En la CLI interactiva esto se emite solo para la opción en sí; las llamadas posteriores permitidas por esa concesión con alcance de sesión emiten `"config"` en su lugar. En sesiones del SDK de Agent o no interactivas `-p`, tanto la opción como las coincidencias posteriores emiten `"user_temporary"`. Se trata como una aceptación.
@@ -904,6 +904,24 @@ Se registra cuando la compactación de conversación se completa.
 * `pre_tokens`: Recuento aproximado de tokens antes de compactación
 * `post_tokens`: Recuento aproximado de tokens después de compactación
 * `error`: Mensaje de error cuando la compactación falló
+
+#### Evento de encuesta de retroalimentación
+
+Se registra cuando se muestra una encuesta de calidad de sesión o se responde. Consulta [Encuestas de calidad de sesión](/es/data-usage#session-quality-surveys) para saber qué recopilan las encuestas y cómo controlarlas.
+
+**Nombre del Evento**: `claude_code.feedback_survey`
+
+**Atributos**:
+
+* Todos los [atributos estándar](#standard-attributes)
+* `event.name`: `"feedback_survey"`
+* `event.timestamp`: Marca de tiempo ISO 8601
+* `event.sequence`: Contador monotónicamente creciente para ordenar eventos dentro de una sesión
+* `event_type`: Evento del ciclo de vida de la encuesta, por ejemplo `"appeared"`, `"responded"`, o `"transcript_prompt_appeared"`
+* `appearance_id`: ID único que vincula los eventos emitidos para una instancia de encuesta
+* `survey_type`: Qué encuesta produjo el evento. `"session"` es el mensaje de calificación "¿Cómo está Claude?"
+* `response`: La selección del usuario en eventos `responded`
+* `enabled_via_override`: `true` cuando [`CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL`](/es/env-vars) está establecido. Se emite como booleano, no como cadena. Presente en eventos de encuesta `session`. Filtra en este atributo para confirmar que la anulación se aplica en toda una flota
 
 ## Interpretar datos de métricas y eventos
 

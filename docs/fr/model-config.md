@@ -233,7 +233,7 @@ La sortie de réflexion est réduite par défaut. Appuyez sur `Ctrl+O` pour basc
 
 Opus 4.7, Opus 4.6 et Sonnet 4.6 prennent en charge une [fenêtre de contexte de 1 million de tokens](https://platform.claude.com/docs/fr/build-with-claude/context-windows#1m-token-context-window) pour les sessions longues avec de grandes bases de code.
 
-La disponibilité varie selon le modèle et le plan. Sur les plans Max, Team et Enterprise, Opus est automatiquement mis à niveau vers un contexte 1M sans configuration supplémentaire. Cela s'applique aux sièges Team Standard et Team Premium.
+La disponibilité varie selon le modèle et le plan. Sur les plans Max, Team et Enterprise, Opus est automatiquement mis à niveau vers un contexte 1M sans configuration supplémentaire. Cela s'applique aux sièges Team Standard et Team Premium. Sonnet avec contexte 1M ne fait pas partie de la mise à niveau automatique et nécessite une [utilisation supplémentaire](https://support.claude.com/fr/articles/12429409-extra-usage-for-paid-claude-plans) sur tous les plans d'abonnement, y compris Max.
 
 | Plan                            | Opus avec contexte 1M                                                                                                         | Sonnet avec contexte 1M                                                                                                       |
 | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |

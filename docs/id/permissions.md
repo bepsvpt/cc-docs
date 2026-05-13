@@ -138,7 +138,7 @@ Pembungkus exec seperti `watch`, `setsid`, `ionice`, dan `flock` selalu meminta 
 
 #### Perintah hanya baca
 
-Claude Code mengenali serangkaian perintah Bash bawaan sebagai hanya baca dan menjalankannya tanpa prompt izin di setiap mode. Ini termasuk `ls`, `cat`, `head`, `tail`, `grep`, `find`, `wc`, `diff`, `stat`, `du`, `cd`, dan bentuk hanya baca dari `git`. Serangkaian ini tidak dapat dikonfigurasi; untuk memerlukan prompt untuk salah satu perintah ini, tambahkan aturan `ask` atau `deny` untuk itu.
+Claude Code mengenali serangkaian perintah Bash bawaan sebagai hanya baca dan menjalankannya tanpa prompt izin di setiap mode. Ini termasuk `ls`, `cat`, `echo`, `pwd`, `head`, `tail`, `grep`, `find`, `wc`, `which`, `diff`, `stat`, `du`, `cd`, dan bentuk hanya baca dari `git`. Serangkaian ini tidak dapat dikonfigurasi; untuk memerlukan prompt untuk salah satu perintah ini, tambahkan aturan `ask` atau `deny` untuk itu.
 
 Pola glob yang tidak dikutip diizinkan untuk perintah yang setiap flagnya hanya baca, jadi `ls *.ts` dan `wc -l src/*.py` berjalan tanpa prompt. Perintah dengan flag yang mampu menulis atau exec, seperti `find`, `sort`, `sed`, dan `git`, masih meminta ketika glob yang tidak dikutip ada karena glob dapat berkembang menjadi flag seperti `-delete`.
 
@@ -290,7 +290,7 @@ Jenis konfigurasi berikut dimuat dari direktori `--add-dir`:
 | Pengaturan plugin di `.claude/settings.json`                          | `enabledPlugins` dan `extraKnownMarketplaces` saja                                                                                                                |
 | File [CLAUDE.md](/id/memory), `.claude/rules/`, dan `CLAUDE.local.md` | Hanya ketika `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` diatur. `CLAUDE.local.md` juga memerlukan sumber pengaturan `local`, yang diaktifkan secara default |
 
-Segalanya yang lain, termasuk subagents, commands, output styles, hooks, dan pengaturan lainnya, ditemukan hanya dari direktori kerja saat ini dan induknya, direktori pengguna Anda di `~/.claude/`, dan pengaturan terkelola. Untuk berbagi konfigurasi itu di seluruh proyek, gunakan salah satu pendekatan ini:
+Subagents, commands, dan output styles ditemukan dari direktori kerja saat ini dan induknya, direktori pengguna Anda di `~/.claude/`, dan pengaturan terkelola. Hooks dan kunci `settings.json` lainnya dimuat dari folder `.claude/` direktori kerja saat ini tanpa fallback direktori induk, bersama dengan `~/.claude/settings.json` pengguna Anda dan pengaturan terkelola. Untuk berbagi konfigurasi itu di seluruh proyek, gunakan salah satu pendekatan ini:
 
 * **Konfigurasi tingkat pengguna**: tempatkan file di `~/.claude/agents/`, `~/.claude/output-styles/`, atau `~/.claude/settings.json` untuk membuatnya tersedia di setiap proyek
 * **Plugins**: paket dan distribusikan konfigurasi sebagai [plugin](/id/plugins) yang dapat diinstal tim
@@ -351,7 +351,9 @@ Aturan izin mengikuti [prioritas pengaturan](/id/settings#settings-precedence) y
 4. **Pengaturan proyek bersama** (`.claude/settings.json`)
 5. **Pengaturan pengguna** (`~/.claude/settings.json`)
 
-Jika alat ditolak di tingkat mana pun, tidak ada tingkat lain yang dapat mengizinkannya. Misalnya, deny pengaturan terkelola tidak dapat ditimpa oleh `--allowedTools`, dan `--disallowedTools` dapat menambahkan pembatasan di luar apa yang ditentukan pengaturan terkelola.
+Jika alat ditolak di tingkat mana pun, tidak ada tingkat lain yang dapat mengizinkannya. Misalnya, penolakan pengaturan terkelola tidak dapat ditimpa oleh `--allowedTools`, dan `--disallowedTools` dapat menambahkan pembatasan di luar apa yang ditentukan pengaturan terkelola.
+
+Host penyematan dapat menyediakan kebijakan terkelola tambahan melalui opsi SDK `managedSettings` ketika [`parentSettingsBehavior`](/id/settings#settings-precedence) diatur ke `"merge"`; nilai penyemat dapat memperketat kebijakan tetapi tidak dapat melonggarkannya.
 
 Jika izin diizinkan dalam pengaturan pengguna tetapi ditolak dalam pengaturan proyek, pengaturan proyek memiliki prioritas dan izin diblokir.
 

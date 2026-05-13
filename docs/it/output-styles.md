@@ -90,11 +90,13 @@ I file di output style supportano frontmatter per specificare i metadati:
 
 ### Output Styles vs. CLAUDE.md vs. --append-system-prompt
 
-Gli output styles "disattivano" completamente le parti del prompt di sistema predefinito di Claude Code specifiche per l'ingegneria del software. Né CLAUDE.md né `--append-system-prompt` modificano il prompt di sistema predefinito di Claude Code. CLAUDE.md aggiunge i contenuti come messaggio utente *seguendo* il prompt di sistema predefinito di Claude Code. `--append-system-prompt` aggiunge il contenuto al prompt di sistema.
+Scegliete in base al fatto che Claude debba smettere di agire come assistente di codifica o mantenere il suo ruolo predefinito e imparare di più. Gli output styles sostituiscono le parti di ingegneria del software del prompt di sistema di Claude Code con il vostro ruolo e voce personali, quindi utilizzateli quando Claude dovrebbe adottare un'identità diversa, come un editor di testi o un assistente di analisi dei dati. CLAUDE.md e `--append-system-prompt` mantengono entrambi l'identità predefinita di Claude Code e vi aggiungono contenuti, quindi utilizzateli quando Claude dovrebbe rimanere un assistente di codifica che segue anche le convenzioni del vostro progetto o istruzioni aggiuntive.
+
+I meccanismi differiscono inoltre. Gli output styles modificano il prompt di sistema direttamente. CLAUDE.md aggiunge i suoi contenuti come messaggio utente dopo il prompt di sistema. `--append-system-prompt` aggiunge contenuti alla fine del prompt di sistema senza rimuovere nulla.
 
 ### Output Styles vs. [Agents](/it/sub-agents)
 
-Gli output styles influenzano direttamente il loop dell'agente principale e influenzano solo il prompt di sistema. Gli agenti vengono invocati per gestire compiti specifici e possono includere impostazioni aggiuntive come il modello da utilizzare, gli strumenti disponibili e un contesto su quando utilizzare l'agente.
+Utilizzate uno output style per cambiare il modo in cui la conversazione principale risponde in ogni sessione. Utilizzate un [subagent](/it/sub-agents) quando desiderate un helper con ambito separato a cui la conversazione principale delega. Gli output styles influenzano solo il prompt di sistema del loop dell'agente principale. Gli agenti gestiscono compiti specifici e possono avere il loro modello, strumenti e contesto su quando invocarli.
 
 ### Output Styles vs. [Skills](/it/skills)
 

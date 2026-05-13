@@ -362,7 +362,9 @@ Alihkan auto-update untuk marketplace individual melalui UI:
 3. Pilih marketplace dari daftar
 4. Pilih **Enable auto-update** atau **Disable auto-update**
 
-Official Anthropic marketplace memiliki auto-update diaktifkan secara default. Marketplace pihak ketiga dan pengembangan lokal memiliki auto-update dinonaktifkan secara default.
+Marketplace resmi Anthropic memiliki auto-update diaktifkan secara default. Marketplace pihak ketiga dan pengembangan lokal memiliki auto-update dinonaktifkan secara default.
+
+Administrator juga dapat mengatur `"autoUpdate": true` pada setiap entri [`extraKnownMarketplaces`](/id/settings#extraknownmarketplaces) dalam pengaturan terkelola untuk mengaktifkan auto-update untuk marketplace organisasi tanpa memerlukan setiap pengguna untuk mengalihkannya.
 
 Untuk menonaktifkan semua pembaruan otomatis sepenuhnya untuk Claude Code dan semua plugin, atur variabel lingkungan `DISABLE_AUTOUPDATER`. Lihat [Auto updates](/id/setup#auto-updates) untuk detail.
 

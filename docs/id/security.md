@@ -87,7 +87,7 @@ Untuk detail lengkap, silakan tinjau [Commercial Terms of Service](https://www.a
 
 Claude Code memungkinkan pengguna untuk mengonfigurasi server Model Context Protocol (MCP). Daftar server MCP yang diizinkan dikonfigurasi dalam kode sumber Anda, sebagai bagian dari pengaturan Claude Code yang diperiksa insinyur ke dalam kontrol sumber.
 
-Kami mendorong untuk menulis server MCP Anda sendiri atau menggunakan server MCP dari penyedia yang Anda percayai. Anda dapat mengonfigurasi izin Claude Code untuk server MCP. Anthropic tidak mengelola atau mengaudit server MCP apa pun.
+Kami mendorong untuk menulis server MCP Anda sendiri atau menggunakan server MCP dari penyedia yang Anda percayai. Anda dapat mengonfigurasi izin Claude Code untuk server MCP. Anthropic meninjau konektor terhadap [kriteria pendaftarannya](https://claude.com/docs/connectors/building/review-criteria) sebelum menambahkannya ke [Direktori Anthropic](https://claude.ai/directory), tetapi tidak melakukan audit keamanan atau mengelola server MCP apa pun.
 
 ## Keamanan IDE
 

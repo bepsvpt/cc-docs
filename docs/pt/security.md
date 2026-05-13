@@ -85,9 +85,9 @@ Para detalhes completos, consulte nossos [Termos de Serviço Comerciais](https:/
 
 ## Segurança do MCP
 
-Claude Code permite que os usuários configurem servidores Model Context Protocol (MCP). A lista de MCP servers permitidos é configurada no seu código-fonte, como parte das configurações do Claude Code que os engenheiros verificam no controle de versão.
+Claude Code permite que os usuários configurem servidores Model Context Protocol (MCP). A lista de servidores MCP permitidos é configurada no seu código-fonte, como parte das configurações do Claude Code que os engenheiros verificam no controle de versão.
 
-Encorajamos escrever seus próprios MCP servers ou usar MCP servers de provedores em que você confia. Você é capaz de configurar permissões do Claude Code para MCP servers. Anthropic não gerencia ou audita nenhum MCP server.
+Encorajamos escrever seus próprios servidores MCP ou usar servidores MCP de provedores em que você confia. Você é capaz de configurar permissões do Claude Code para servidores MCP. Anthropic analisa conectores em relação aos seus [critérios de listagem](https://claude.com/docs/connectors/building/review-criteria) antes de adicioná-los ao [Diretório Anthropic](https://claude.ai/directory), mas não realiza auditoria de segurança ou gerencia nenhum servidor MCP.
 
 ## Segurança do IDE
 

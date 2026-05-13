@@ -32,14 +32,18 @@ Claude Code 網頁版在 [claude.ai/code](https://claude.ai/code) 上的 Anthrop
 
 雲端工作階段需要存取您的 GitHub 儲存庫以複製程式碼和推送分支。您可以通過兩種方式授予存取權限：
 
-| 方法               | 運作方式                                                                            | 最適合              |
-| :--------------- | :------------------------------------------------------------------------------ | :--------------- |
-| **GitHub App**   | 在[網頁上線](/zh-TW/web-quickstart)期間在特定儲存庫上安裝 Claude GitHub App。存取按儲存庫範圍。           | 想要明確的按儲存庫授權的團隊   |
-| **`/web-setup`** | 在您的終端中執行 `/web-setup` 以將您的本機 `gh` CLI 令牌同步到您的 Claude 帳戶。存取與您的 `gh` 令牌可以看到的內容相符。 | 已經使用 `gh` 的個人開發者 |
+| 方法               | 運作方式                                                     | 最適合                                        |
+| :--------------- | :------------------------------------------------------- | :----------------------------------------- |
+| **GitHub App**   | 在[網頁上線](/zh-TW/web-quickstart)期間授權 Claude GitHub App。    | 瀏覽器上線；想要[自動修復](#auto-fix-pull-requests)的團隊 |
+| **`/web-setup`** | 在您的終端中執行 `/web-setup` 以將您的本機 `gh` CLI 令牌同步到您的 Claude 帳戶。 | 已經使用 `gh` 的個人開發者                           |
+
+<Note>
+  使用任一方法，雲端工作階段都可以存取連接的 GitHub 帳戶可以看到的任何儲存庫，而不僅僅是安裝了 Claude GitHub App 的儲存庫。App 安裝啟用 PR webhooks 以進行[自動修復](#auto-fix-pull-requests)；它不是工作階段級別的存取控制。若要限制您的團隊可以從雲端工作階段存取的儲存庫，請在 GitHub 本身上限制存取，例如通過限制連接的 GitHub 帳戶的團隊或儲存庫成員資格。
+</Note>
 
 任一方法都可以。[`/schedule`](/zh-TW/routines)檢查任一形式的存取，如果都未配置，會提示您執行 `/web-setup`。有關 `/web-setup` 的逐步說明，請參閱[從您的終端連接](/zh-TW/web-quickstart#connect-from-your-terminal)。
 
-[自動修復](#auto-fix-pull-requests)需要 GitHub App，它使用該應用程式接收 PR webhooks。如果您使用 `/web-setup` 連接，稍後想要自動修復，請在這些儲存庫上安裝該應用程式。
+GitHub App 是[自動修復](#auto-fix-pull-requests)所必需的，它使用該應用程式接收 PR webhooks。如果您使用 `/web-setup` 連接，稍後想要自動修復，請在這些儲存庫上安裝該應用程式。
 
 Team 和 Enterprise 管理員可以在 [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code) 使用快速網頁設定切換來禁用 `/web-setup`。
 
@@ -739,6 +743,8 @@ Claude 可以監視拉取請求並自動回應 CI 失敗和審查評論。Claude
 * **從行動應用程式**：告訴 Claude 自動修復 PR，例如「監視此 PR 並修復任何 CI 失敗或審查評論」
 * **任何現有 PR**：將 PR URL 貼到工作階段中並告訴 Claude 自動修復它
 
+自動修復是每個 PR 的切換開關。若要停止監視，請在網頁工作階段中開啟 CI 狀態欄並清除**自動修復**切換，或告訴 Claude 停止監視 PR。
+
 ### Claude 如何回應 PR 活動
 
 當自動修復處於活動狀態時，Claude 會收到 PR 的 GitHub 事件，包括新的審查評論和 CI 檢查失敗。對於每個事件，Claude 會調查並決定如何進行：
@@ -772,7 +778,7 @@ Claude 可能會在 GitHub 上回覆審查評論執行緒作為解決它們的�
 
 * 檢查 [status.claude.com](https://status.claude.com) 以查找雲端工作階段事件
 * 一分鐘後重試，因為容量是按需佈建的
-* 確認您的儲存庫可到達。私人儲存庫需要在該儲存庫上安裝 GitHub App 存取，或通過 `/web-setup` 同步的 `gh` 令牌。請參閱 [GitHub 驗證選項](#github-authentication-options)。
+* 確認您的儲存庫可到達。連接的 GitHub 帳戶必須能夠存取 GitHub 上的儲存庫，可以透過 Claude GitHub App 授權或透過 `/web-setup` 同步的 `gh` 令牌進行存取 — 不需要在儲存庫上安裝 App。請參閱 [GitHub 驗證選項](#github-authentication-options)。
 
 ### 遠端控制工作階段已過期或存取被拒絕
 

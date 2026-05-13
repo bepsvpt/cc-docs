@@ -138,7 +138,7 @@ Exec 包装器，如 `watch`、`setsid`、`ionice` 和 `flock` 总是提示，�
 
 #### 只读命令
 
-Claude Code 将一组内置 Bash 命令识别为只读，并在每种模式下无需权限提示即可运行它们。这些包括 `ls`、`cat`、`head`、`tail`、`grep`、`find`、`wc`、`diff`、`stat`、`du`、`cd` 和 `git` 的只读形式。该集合不可配置；要对其中一个命令要求提示，请为其添加 `ask` 或 `deny` 规则。
+Claude Code 将一组内置 Bash 命令识别为只读，并在每种模式下无需权限提示即可运行它们。这些包括 `ls`、`cat`、`echo`、`pwd`、`head`、`tail`、`grep`、`find`、`wc`、`which`、`diff`、`stat`、`du`、`cd` 和 `git` 的只读形式。该集合不可配置；要对其中一个命令要求提示，请为其添加 `ask` 或 `deny` 规则。
 
 对于每个标志都是只读的命令，允许未引用的 glob 模式，因此 `ls *.ts` 和 `wc -l src/*.py` 无需提示即可运行。带有写入能力或执行能力标志的命令，如 `find`、`sort`、`sed` 和 `git`，在存在未引用的 glob 时仍然提示，因为 glob 可能扩展为像 `-delete` 这样的标志。
 
@@ -290,7 +290,7 @@ Hook 决定不会绕过权限规则。Deny 和 ask 规则在 hook 返回 `"allow
 | `.claude/settings.json` 中的插件设置                                     | 仅 `enabledPlugins` 和 `extraKnownMarketplaces`                                                   |
 | [CLAUDE.md](/zh-CN/memory) 文件、`.claude/rules/` 和 `CLAUDE.local.md` | 仅当设置 `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` 时。`CLAUDE.local.md` 另外需要 `local` 设置源，默认启用 |
 
-其他所有内容，包括子代理、命令、输出样式、hooks 和其他设置，仅从当前工作目录及其父目录、您在 `~/.claude/` 的用户目录和托管设置中发现。要在项目间共享该配置，请使用以下方法之一：
+子代理、命令和输出样式从当前工作目录及其父目录、您在 `~/.claude/` 的用户目录和托管设置中发现。Hooks 和其他 `settings.json` 键从当前工作目录的 `.claude/` 文件夹加载，没有父目录回退，同时从您的用户 `~/.claude/settings.json` 和托管设置加载。要在项目间共享该配置，请使用以下方法之一：
 
 * **用户级配置**：将文件放在 `~/.claude/agents/`、`~/.claude/output-styles/` 或 `~/.claude/settings.json` 中，使其在每个项目中可用
 * **插件**：将配置打包并分发为[插件](/zh-CN/plugins)，团队可以安装
@@ -352,6 +352,8 @@ Hook 决定不会绕过权限规则。Deny 和 ask 规则在 hook 返回 `"allow
 5. **用户设置**（`~/.claude/settings.json`）
 
 如果工具在任何级别被拒绝，没有其他级别可以允许它。例如，托管设置 deny 无法被 `--allowedTools` 覆盖，`--disallowedTools` 可以添加超出托管设置定义的限制。
+
+嵌入主机可以在 [`parentSettingsBehavior`](/zh-CN/settings#settings-precedence) 设置为 `"merge"` 时，通过 SDK `managedSettings` 选项提供额外的托管策略；嵌入器值可以收紧策略但不能放松它。
 
 如果权限在用户设置中被允许但在项目设置中被拒绝，项目设置优先，权限被阻止。
 

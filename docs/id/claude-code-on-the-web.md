@@ -32,12 +32,16 @@ Halaman ini mencakup:
 
 Sesi cloud memerlukan akses ke repositori GitHub Anda untuk mengkloning kode dan mendorong cabang. Anda dapat memberikan akses dengan dua cara:
 
-| Metode           | Cara kerjanya                                                                                                                                                   | Terbaik untuk                                      |
-| :--------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------- |
-| **GitHub App**   | Instal Claude GitHub App di repositori tertentu selama [onboarding web](/id/web-quickstart). Akses dibatasi per repositori.                                     | Tim yang menginginkan otorisasi eksplisit per-repo |
-| **`/web-setup`** | Jalankan `/web-setup` di terminal Anda untuk menyinkronkan token CLI `gh` lokal ke akun Claude Anda. Akses cocok dengan apa yang dapat dilihat token `gh` Anda. | Pengembang individual yang sudah menggunakan `gh`  |
+| Metode           | Cara kerjanya                                                                                        | Terbaik untuk                                                                 |
+| :--------------- | :--------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------- |
+| **GitHub App**   | Otorisasi Claude GitHub App selama [onboarding web](/id/web-quickstart).                             | Onboarding browser; tim yang menginginkan [Auto-fix](#auto-fix-pull-requests) |
+| **`/web-setup`** | Jalankan `/web-setup` di terminal Anda untuk menyinkronkan token CLI `gh` lokal ke akun Claude Anda. | Pengembang individual yang sudah menggunakan `gh`                             |
 
-Kedua metode berfungsi. [`/schedule`](/id/routines) memeriksa salah satu bentuk akses dan meminta Anda menjalankan `/web-setup` jika tidak ada yang dikonfigurasi. Lihat [Hubungkan dari terminal Anda](/id/web-quickstart#connect-from-your-terminal) untuk panduan `/web-setup`.
+<Note>
+  Dengan salah satu metode, sesi cloud dapat mengakses repositori apa pun yang dapat dilihat akun GitHub yang terhubung, bukan hanya repositori tempat Claude GitHub App diinstal. Instalasi App memungkinkan webhook PR untuk [Auto-fix](#auto-fix-pull-requests); ini bukan kontrol akses tingkat sesi. Untuk membatasi repositori mana yang dapat dijangkau tim Anda dari sesi cloud, batasi akses di GitHub itu sendiri, misalnya dengan membatasi keanggotaan tim atau repositori untuk akun GitHub yang terhubung.
+</Note>
+
+Salah satu metode berfungsi. [`/schedule`](/id/routines) memeriksa salah satu bentuk akses dan meminta Anda menjalankan `/web-setup` jika tidak ada yang dikonfigurasi. Lihat [Hubungkan dari terminal Anda](/id/web-quickstart#connect-from-your-terminal) untuk panduan `/web-setup`.
 
 GitHub App diperlukan untuk [Auto-fix](#auto-fix-pull-requests), yang menggunakan App untuk menerima webhook PR. Jika Anda terhubung dengan `/web-setup` dan kemudian menginginkan Auto-fix, instal App di repositori tersebut.
 
@@ -724,7 +728,7 @@ Menghapus sesi secara permanen menghapus sesi dan datanya. Tindakan ini tidak da
 
 Anda akan diminta untuk mengonfirmasi sebelum sesi dihapus.
 
-## Auto-fix pull request
+## Auto-fix pull requests
 
 Claude dapat memantau pull request dan secara otomatis merespons kegagalan CI dan komentar ulasan. Claude berlangganan aktivitas GitHub di PR, dan ketika pemeriksaan gagal atau pengulas meninggalkan komentar, Claude menyelidiki dan mendorong perbaikan jika ada yang jelas.
 
@@ -772,7 +776,7 @@ Jika sesi baru gagal dimulai dengan `Session creation failed` atau macet di prov
 
 * Periksa [status.claude.com](https://status.claude.com) untuk insiden sesi cloud
 * Coba lagi setelah satu menit, karena kapasitas disediakan sesuai permintaan
-* Konfirmasi repositori Anda dapat dijangkau. Repositori pribadi memerlukan GitHub App yang diinstal dengan akses ke repositori itu, atau token `gh` yang disinkronkan melalui `/web-setup`. Lihat [Opsi autentikasi GitHub](#github-authentication-options).
+* Konfirmasi repositori Anda dapat dijangkau. Akun GitHub yang terhubung harus memiliki akses ke repositori di GitHub, baik melalui otorisasi Claude GitHub App atau token `gh` yang disinkronkan melalui `/web-setup` — menginstal App di repositori tidak diperlukan. Lihat [Opsi autentikasi GitHub](#github-authentication-options).
 
 ### Sesi Remote Control kedaluwarsa atau akses ditolak
 

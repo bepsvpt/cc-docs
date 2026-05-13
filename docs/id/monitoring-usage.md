@@ -905,6 +905,24 @@ Dicatat saat pemadatan percakapan selesai.
 * `post_tokens`: Jumlah token perkiraan setelah pemadatan
 * `error`: Pesan kesalahan saat pemadatan gagal
 
+#### Acara survei umpan balik
+
+Dicatat saat survei kualitas sesi ditampilkan atau dijawab. Lihat [Survei kualitas sesi](/id/data-usage#session-quality-surveys) untuk mengetahui apa yang dikumpulkan survei dan cara mengontrolnya.
+
+**Nama Acara**: `claude_code.feedback_survey`
+
+**Atribut**:
+
+* Semua [atribut standar](#standard-attributes)
+* `event.name`: `"feedback_survey"`
+* `event.timestamp`: Stempel waktu ISO 8601
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
+* `event_type`: Acara siklus hidup survei, misalnya `"appeared"`, `"responded"`, atau `"transcript_prompt_appeared"`
+* `appearance_id`: ID unik yang menghubungkan acara yang dipancarkan untuk satu instance survei
+* `survey_type`: Survei mana yang menghasilkan acara. `"session"` adalah prompt rating "Bagaimana Claude melakukannya?"
+* `response`: Pilihan pengguna pada acara `responded`
+* `enabled_via_override`: `true` saat [`CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL`](/id/env-vars) diatur. Dipancarkan sebagai boolean, bukan string. Hadir pada acara survei `session`. Filter pada atribut ini untuk mengkonfirmasi override diterapkan di seluruh armada
+
 ## Menafsirkan data metrik dan acara
 
 Metrik dan acara yang diekspor mendukung berbagai analisis:

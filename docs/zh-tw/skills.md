@@ -99,7 +99,7 @@ Claude Code 監視 skill 目錄以尋找檔案變更。在 `~/.claude/skills/`�
 
 #### 從巢狀目錄自動發現
 
-當您在子目錄中使用檔案時，Claude Code 會自動從巢狀 `.claude/skills/` 目錄發現 skills。例如，如果您正在編輯 `packages/frontend/` 中的檔案，Claude Code 也會在 `packages/frontend/.claude/skills/` 中尋找 skills。這支援 monorepo 設定，其中套件有自己的 skills。
+專案 skills 從您的起始目錄中的 `.claude/skills/` 以及直到儲存庫根目錄的每個父目錄中載入，因此在子目錄中啟動 Claude 仍會拾取在根目錄定義的 skills。當您在起始目錄下方的子目錄中使用檔案時，Claude Code 也會按需從巢狀 `.claude/skills/` 目錄發現 skills。例如，如果您正在編輯 `packages/frontend/` 中的檔案，Claude Code 也會在 `packages/frontend/.claude/skills/` 中尋找 skills。這支援 monorepo 設定，其中套件有自己的 skills。
 
 每個 skill 是一個以 `SKILL.md` 作為進入點的目錄：
 

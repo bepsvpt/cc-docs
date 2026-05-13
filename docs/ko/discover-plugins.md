@@ -364,6 +364,8 @@ UI를 통해 개별 마켓플레이스에 대한 자동 업데이트를 전환�
 
 공식 Anthropic 마켓플레이스는 기본적으로 자동 업데이트가 활성화되어 있습니다. 타사 및 로컬 개발 마켓플레이스는 기본적으로 자동 업데이트가 비활성화되어 있습니다.
 
+관리자는 관리되는 설정에서 각 [`extraKnownMarketplaces`](/ko/settings#extraknownmarketplaces) 항목에 `"autoUpdate": true`를 설정하여 각 사용자가 전환하도록 요구하지 않고 조직 마켓플레이스에 대한 자동 업데이트를 활성화할 수 있습니다.
+
 Claude Code 및 모든 플러그인에 대해 모든 자동 업데이트를 완전히 비활성화하려면 `DISABLE_AUTOUPDATER` 환경 변수를 설정합니다. 자세한 내용은 [자동 업데이트](/ko/setup#auto-updates)를 참조하세요.
 
 Claude Code 자동 업데이트를 비활성화하면서 플러그인 자동 업데이트를 활성화된 상태로 유지하려면 `DISABLE_AUTOUPDATER`와 함께 `FORCE_AUTOUPDATE_PLUGINS=1`을 설정합니다:

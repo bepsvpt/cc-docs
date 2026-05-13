@@ -33,9 +33,9 @@
 * **否**：拒絕而不發送任何內容
 * **不再詢問**：拒絕並停止此後續提問在未來工作階段中出現
 
-除非您明確選擇**是**，否則不會上傳任何內容。具有[零資料保留](/zh-TW/zero-data-retention)的組織，或組織政策停用產品回饋的組織，永遠不會看到此後續提問。您對此調查的回應（包括評分提示後提交的工作階段文字記錄）不會影響您的資料訓練偏好設定，也不能用於訓練我們的 AI 模型。
+除非您明確選擇**是**，否則不會上傳任何內容。具有[零資料保留](/zh-TW/zero-data-retention)的組織，或組織政策停用產品回饋的組織，或設定了 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 的組織，永遠不會看到此後續提問。您對此調查的回應（包括評分提示後提交的工作階段文字記錄）不會影響您的資料訓練偏好設定，也不能用於訓練我們的 AI 模型。
 
-若要停用這些調查，請設定 `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`。當設定 `DISABLE_TELEMETRY` 或 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 時，調查也會停用。若要控制頻率而不是停用，請在您的設定檔中設定 [`feedbackSurveyRate`](/zh-TW/settings#available-settings) 為 `0` 到 `1` 之間的機率。
+若要停用這些調查，請設定 `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`。當設定 `DISABLE_TELEMETRY`、`DO_NOT_TRACK` 或 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 時，調查也會停用。具有[零資料保留](/zh-TW/zero-data-retention)的組織，或組織政策停用產品回饋的組織，或設定了 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 的組織，永遠不會看到此後續提問。阻止非必要流量但透過自己的 [OpenTelemetry 收集器](/zh-TW/monitoring-usage)捕獲調查回應的組織可以透過設定 `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL=1` 選擇重新啟用調查。調查隨後只會將評分記錄到已設定的收集器。文字記錄共享後續提問和所有其他 Anthropic 相關的回饋流量保持停用。若要控制頻率而不是停用，請在您的設定檔中設定 [`feedbackSurveyRate`](/zh-TW/settings#available-settings) 為 `0` 到 `1` 之間的機率。
 
 ### 資料保留
 

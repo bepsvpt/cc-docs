@@ -90,11 +90,13 @@ Os arquivos de estilo de saída suportam frontmatter para especificar metadados:
 
 ### Output Styles vs. CLAUDE.md vs. --append-system-prompt
 
-Os estilos de saída "desligam" completamente as partes do prompt do sistema padrão do Claude Code específicas para engenharia de software. Nem CLAUDE.md nem `--append-system-prompt` editam o prompt do sistema padrão do Claude Code. CLAUDE.md adiciona o conteúdo como uma mensagem do usuário *seguindo* o prompt do sistema padrão do Claude Code. `--append-system-prompt` anexa o conteúdo ao prompt do sistema.
+Escolha com base em se Claude deve parar de agir como um assistente de codificação ou manter seu papel padrão e aprender mais. Os estilos de saída substituem as partes de engenharia de software do prompt do sistema do Claude Code pela sua própria função e voz, então use um quando Claude deve adotar uma identidade diferente, como um editor de redação ou um assistente de análise de dados. CLAUDE.md e `--append-system-prompt` mantêm a identidade padrão do Claude Code e adicionam a ela, então use-os quando Claude deve permanecer um assistente de codificação que também segue suas convenções de projeto ou instruções extras.
+
+Os mecanismos também diferem. Os estilos de saída editam o prompt do sistema diretamente. CLAUDE.md adiciona seu conteúdo como uma mensagem do usuário após o prompt do sistema. `--append-system-prompt` anexa conteúdo ao final do prompt do sistema sem remover nada.
 
 ### Output Styles vs. [Agents](/pt/sub-agents)
 
-Os estilos de saída afetam diretamente o loop do agente principal e apenas afetam o prompt do sistema. Os agentes são invocados para lidar com tarefas específicas e podem incluir configurações adicionais como o modelo a usar, as ferramentas disponíveis e algum contexto sobre quando usar o agente.
+Use um estilo de saída para alterar como a conversa principal responde em cada sessão. Use um [subagente](/pt/sub-agents) quando você quiser um auxiliar com escopo separado para o qual a conversa principal delega. Os estilos de saída afetam apenas o prompt do sistema do loop do agente principal. Os agentes lidam com tarefas específicas e podem ter seu próprio modelo, ferramentas e contexto sobre quando invocá-los.
 
 ### Output Styles vs. [Skills](/pt/skills)
 

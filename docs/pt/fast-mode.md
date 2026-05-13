@@ -4,15 +4,15 @@
 
 # Acelere respostas com modo rápido
 
-> Obtenha respostas mais rápidas do Opus 4.6 no Claude Code alternando o modo rápido.
+> Obtenha respostas mais rápidas do Opus no Claude Code alternando o modo rápido.
 
 <Note>
   O modo rápido está em [visualização de pesquisa](#research-preview). O recurso, preços e disponibilidade podem mudar com base no feedback.
 </Note>
 
-O modo rápido é uma configuração de alta velocidade para Claude Opus 4.6, tornando o modelo 2,5x mais rápido a um custo maior por token. Ative-o com `/fast` quando você precisar de velocidade para trabalho interativo como iteração rápida ou depuração ao vivo, e desative-o quando o custo importa mais do que a latência.
+O modo rápido é uma configuração de alta velocidade para Claude Opus, tornando o modelo 2,5x mais rápido a um custo maior por token. Ative-o com `/fast` quando você precisar de velocidade para trabalho interativo como iteração rápida ou depuração ao vivo, e desative-o quando o custo importa mais do que a latência.
 
-O modo rápido não é um modelo diferente. Ele usa o mesmo Opus 4.6 com uma configuração de API diferente que prioriza a velocidade sobre a eficiência de custo. Você obtém qualidade e capacidades idênticas, apenas respostas mais rápidas.
+O modo rápido não é um modelo diferente. Ele usa Claude Opus com uma configuração de API diferente que prioriza a velocidade sobre a eficiência de custo. Você obtém qualidade e capacidades idênticas, apenas respostas mais rápidas. O modo rápido é suportado no Opus 4.6 e Opus 4.7. Não está disponível no Sonnet, Haiku ou outros modelos.
 
 <Note>
   O modo rápido requer Claude Code v2.1.36 ou posterior. Verifique sua versão com `claude --version`.
@@ -21,11 +21,12 @@ O modo rápido não é um modelo diferente. Ele usa o mesmo Opus 4.6 com uma con
 O que você precisa saber:
 
 * Use `/fast` para alternar o modo rápido no CLI do Claude Code. Também disponível via `/fast` na Extensão Claude Code VS Code.
-* O preço do modo rápido para Opus 4.6 começa em \$30/150 MTok. O modo rápido está disponível com desconto de 50% para todos os planos até 23:59 PT em 16 de fevereiro.
+* Por padrão, `/fast` é executado no Opus 4.6. Para executar o modo rápido no Opus 4.7, defina a variável de ambiente [`CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`](#use-fast-mode-on-opus-4-7).
+* O preço do modo rápido é \$30/150 MTok tanto no Opus 4.6 quanto no Opus 4.7.
 * Disponível para todos os usuários do Claude Code em planos de assinatura (Pro/Max/Team/Enterprise) e Claude Console.
 * Para usuários do Claude Code em planos de assinatura (Pro/Max/Team/Enterprise), o modo rápido está disponível apenas via uso extra e não está incluído nos limites de taxa de assinatura.
 
-Esta página cobre como [alternar o modo rápido](#toggle-fast-mode), seu [tradeoff de custo](#understand-the-cost-tradeoff), [quando usá-lo](#decide-when-to-use-fast-mode), [requisitos](#requirements), [opt-in por sessão](#require-per-session-opt-in) e [comportamento de limite de taxa](#handle-rate-limits).
+Esta página cobre como [alternar o modo rápido](#toggle-fast-mode), [usar o modo rápido no Opus 4.7](#use-fast-mode-on-opus-4-7), o [tradeoff de custo](#understand-the-cost-tradeoff), [quando usá-lo](#decide-when-to-use-fast-mode), [requisitos](#requirements), [opt-in por sessão](#require-per-session-opt-in) e [comportamento de limite de taxa](#handle-rate-limits).
 
 ## Alternar modo rápido
 
@@ -40,23 +41,57 @@ Para melhor eficiência de custo, ative o modo rápido no início de uma sessão
 
 Quando você ativa o modo rápido:
 
-* Se você estiver em um modelo diferente, o Claude Code alterna automaticamente para Opus 4.6
+* Se você estiver em um modelo diferente, o Claude Code alterna automaticamente para o modelo de modo rápido: Opus 4.6 por padrão, ou Opus 4.7 quando [`CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`](#use-fast-mode-on-opus-4-7) está definido.
 * Você verá uma mensagem de confirmação: "Fast mode ON"
 * Um pequeno ícone `↯` aparece ao lado do prompt enquanto o modo rápido está ativo
 * Execute `/fast` novamente a qualquer momento para verificar se o modo rápido está ativado ou desativado
 
-Quando você desativa o modo rápido com `/fast` novamente, você permanece no Opus 4.6. O modelo não reverte para seu modelo anterior. Para alternar para um modelo diferente, use `/model`.
+Quando você desativa o modo rápido com `/fast` novamente, você permanece na mesma versão do Opus que o modo rápido estava executando. O modelo não reverte para seu modelo anterior. Para alternar para um modelo diferente, use `/model`.
+
+## Usar modo rápido no Opus 4.7
+
+<Note>
+  O modo rápido no Opus 4.7 requer Claude Code v2.1.139 ou posterior.
+</Note>
+
+O modo rápido para Claude Opus 4.7 está em visualização de pesquisa. Ele é executado na mesma velocidade 2,5x e no mesmo preço que o modo rápido para Opus 4.6, sem outras mudanças de comportamento.
+
+<Note>
+  Em 14 de maio de 2026, o Opus 4.7 se torna o modelo de modo rápido padrão. Até então, opte por participar definindo `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1`.
+</Note>
+
+Para optar por participar, defina `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1` antes de iniciar o Claude Code. Com a variável definida, `/fast` é executado no Opus 4.7. Sem ela, `/fast` continua a ser executado no Opus 4.6.
+
+Você pode definir a variável como uma exportação de shell:
+
+```bash theme={null}
+export CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1
+```
+
+Ou em qualquer [arquivo de configurações](/pt/settings#settings-files) do Claude Code, incluindo configurações de usuário, projeto e gerenciadas, para definir o escopo da participação:
+
+```json theme={null}
+{
+  "env": {
+    "CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE": "1"
+  }
+}
+```
+
+O modo rápido para Opus 4.6 permanece disponível ao lado do Opus 4.7. Os dois compartilham o mesmo pool de limite de taxa do modo rápido: o uso em qualquer modelo é extraído dos mesmos limites.
+
+Para fixar o modo rápido no Opus 4.6 explicitamente, defina `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE=1`. Esta variável tem precedência, portanto o modo rápido é executado no Opus 4.6 independentemente de `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE` estar definido.
 
 ## Entender o tradeoff de custo
 
-O modo rápido tem preços por token mais altos do que o Opus 4.6 padrão:
+O modo rápido tem preços por token mais altos do que o Opus padrão:
 
-| Modo                             | Entrada (MTok) | Saída (MTok) |
-| -------------------------------- | -------------- | ------------ |
-| Modo rápido no Opus 4.6 (\<200K) | \$30           | \$150        |
-| Modo rápido no Opus 4.6 (>200K)  | \$60           | \$225        |
+| Modo                    | Entrada (MTok) | Saída (MTok) |
+| ----------------------- | -------------- | ------------ |
+| Modo rápido no Opus 4.6 | \$30           | \$150        |
+| Modo rápido no Opus 4.7 | \$30           | \$150        |
 
-O modo rápido é compatível com a janela de contexto estendida de 1M token.
+O preço do modo rápido é fixo em toda a janela de contexto de 1M token.
 
 Quando você alterna para o modo rápido no meio de uma conversa, você paga o preço total do token de entrada não armazenado em cache do modo rápido para todo o contexto da conversa. Isso custa mais do que se você tivesse ativado o modo rápido desde o início.
 
@@ -125,9 +160,9 @@ Isso é útil para controlar custos em organizações onde os usuários executam
 
 ## Lidar com limites de taxa
 
-O modo rápido tem limites de taxa separados do Opus 4.6 padrão. Quando você atinge o limite de taxa do modo rápido ou fica sem créditos de uso extra:
+O modo rápido tem limites de taxa separados do Opus padrão. O modo rápido para Opus 4.6 e Opus 4.7 compartilham o mesmo pool de limite de taxa: o uso em qualquer modelo é extraído dos mesmos limites. Quando você atinge o limite de taxa do modo rápido ou fica sem uso extra:
 
-1. O modo rápido automaticamente volta para Opus 4.6 padrão
+1. O modo rápido automaticamente volta para velocidade padrão na mesma versão do Opus
 2. O ícone `↯` fica cinza para indicar cooldown
 3. Você continua trabalhando com velocidade e preços padrão
 4. Quando o cooldown expira, o modo rápido é automaticamente reativado

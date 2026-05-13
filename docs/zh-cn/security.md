@@ -85,7 +85,7 @@ Claude Code 只拥有您授予它的权限。您负责在批准前审查建议�
 
 Claude Code 允许用户配置 Model Context Protocol (MCP) servers。允许的 MCP servers 列表在您的源代码中配置，作为 Claude Code 设置的一部分，工程师将其检入源代码控制。
 
-我们鼓励编写您自己的 MCP servers 或使用来自您信任的提供商的 MCP servers。您能够为 MCP servers 配置 Claude Code 权限。Anthropic 不管理或审计任何 MCP servers。
+我们鼓励编写您自己的 MCP servers 或使用来自您信任的提供商的 MCP servers。您能够为 MCP servers 配置 Claude Code 权限。Anthropic 在将连接器添加到 [Anthropic Directory](https://claude.ai/directory) 之前，会根据其 [列表标准](https://claude.com/docs/connectors/building/review-criteria) 审查连接器，但不对任何 MCP server 进行安全审计或管理。
 
 ## IDE 安全性
 

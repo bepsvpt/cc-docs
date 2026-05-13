@@ -4,15 +4,15 @@
 
 # 使用快速模式加快回應速度
 
-> 在 Claude Code 中切換快速模式，以獲得更快的 Opus 4.6 回應。
+> 在 Claude Code 中切換快速模式，以獲得更快的 Opus 回應。
 
 <Note>
   快速模式處於[研究預覽](#research-preview)階段。該功能、定價和可用性可能會根據反饋而改變。
 </Note>
 
-快速模式是 Claude Opus 4.6 的高速配置，使模型速度提升 2.5 倍，但每個 token 的成本更高。當您需要速度進行互動式工作（如快速迭代或實時調試）時，使用 `/fast` 切換開啟，當成本比延遲更重要時，切換關閉。
+快速模式是 Claude Opus 的高速配置，使模型速度提升 2.5 倍，但每個 token 的成本更高。當您需要速度進行互動式工作（如快速迭代或實時調試）時，使用 `/fast` 切換開啟，當成本比延遲更重要時，切換關閉。
 
-快速模式不是不同的模型。它使用相同的 Opus 4.6，但採用不同的 API 配置，優先考慮速度而非成本效率。您獲得相同的品質和功能，只是回應速度更快。
+快速模式不是不同的模型。它使用 Claude Opus 搭配不同的 API 配置，優先考慮速度而非成本效率。您獲得相同的品質和功能，只是回應速度更快。快速模式在 Opus 4.6 和 Opus 4.7 上受支援。它在 Sonnet、Haiku 或其他模型上不可用。
 
 <Note>
   快速模式需要 Claude Code v2.1.36 或更新版本。使用 `claude --version` 檢查您的版本。
@@ -21,11 +21,12 @@
 需要了解的事項：
 
 * 使用 `/fast` 在 Claude Code CLI 中切換快速模式。也可在 Claude Code VS Code 擴充功能中透過 `/fast` 使用。
-* Opus 4.6 快速模式定價起價為 \$30/150 MTok。快速模式在 2 月 16 日太平洋時間 11:59pm 之前以 50% 折扣提供給所有方案。
+* 預設情況下，`/fast` 在 Opus 4.6 上執行。要改為在 Opus 4.7 上執行快速模式，請設定 [`CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`](#use-fast-mode-on-opus-4-7) 環境變數。
+* 快速模式定價在 Opus 4.6 和 Opus 4.7 上都是 \$30/150 MTok。
 * 適用於訂閱方案（Pro/Max/Team/Enterprise）上的所有 Claude Code 使用者和 Claude Console。
 * 對於訂閱方案（Pro/Max/Team/Enterprise）上的 Claude Code 使用者，快速模式僅透過額外使用提供，不包含在訂閱速率限制中。
 
-本頁涵蓋如何[切換快速模式](#toggle-fast-mode)、其[成本權衡](#understand-the-cost-tradeoff)、[何時使用](#decide-when-to-use-fast-mode)、[要求](#requirements)、[每個工作階段選擇加入](#require-per-session-opt-in)和[速率限制行為](#handle-rate-limits)。
+本頁涵蓋如何[切換快速模式](#toggle-fast-mode)、[在 Opus 4.7 上使用快速模式](#use-fast-mode-on-opus-4-7)、[成本權衡](#understand-the-cost-tradeoff)、[何時使用](#decide-when-to-use-fast-mode)、[要求](#requirements)、[每個工作階段選擇加入](#require-per-session-opt-in)和[速率限制行為](#handle-rate-limits)。
 
 ## 切換快速模式
 
@@ -40,23 +41,57 @@
 
 當您啟用快速模式時：
 
-* 如果您使用不同的模型，Claude Code 會自動切換到 Opus 4.6
+* 如果您使用不同的模型，Claude Code 會自動切換到快速模式模型：預設為 Opus 4.6，或在設定 [`CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`](#use-fast-mode-on-opus-4-7) 時為 Opus 4.7。
 * 您會看到確認訊息："Fast mode ON"
 * 快速模式啟用時，提示旁會出現一個小的 `↯` 圖示
 * 隨時再次執行 `/fast` 以檢查快速模式是否開啟或關閉
 
-當您再次使用 `/fast` 關閉快速模式時，您仍保持在 Opus 4.6 上。模型不會還原到您之前的模型。要切換到不同的模型，請使用 `/model`。
+當您再次使用 `/fast` 關閉快速模式時，您仍保持在快速模式執行的相同 Opus 版本上。模型不會還原到您之前的模型。要切換到不同的模型，請使用 `/model`。
+
+## 在 Opus 4.7 上使用快速模式
+
+<Note>
+  Opus 4.7 上的快速模式需要 Claude Code v2.1.139 或更新版本。
+</Note>
+
+Claude Opus 4.7 的快速模式處於研究預覽階段。它以相同的 2.5 倍速度和與 Opus 4.6 快速模式相同的價格執行，沒有其他行為變更。
+
+<Note>
+  在 2026 年 5 月 14 日，Opus 4.7 成為預設快速模式模型。在此之前，透過設定 `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1` 選擇加入。
+</Note>
+
+要選擇加入，在啟動 Claude Code 之前設定 `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1`。設定該變數後，`/fast` 在 Opus 4.7 上執行。沒有它，`/fast` 繼續在 Opus 4.6 上執行。
+
+您可以將變數設定為 shell 匯出：
+
+```bash theme={null}
+export CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1
+```
+
+或在任何 Claude Code [設定檔案](/zh-TW/settings#settings-files)中，包括使用者、專案和受管設定，以限定選擇加入的範圍：
+
+```json theme={null}
+{
+  "env": {
+    "CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE": "1"
+  }
+}
+```
+
+Opus 4.6 的快速模式仍可與 Opus 4.7 並行使用。兩者共享相同的快速模式速率限制池：任一模型上的使用都會從相同的限制中扣除。
+
+若要明確將快速模式固定到 Opus 4.6，設定 `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE=1`。此變數優先，因此無論是否設定 `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`，快速模式都會在 Opus 4.6 上執行。
 
 ## 了解成本權衡
 
-快速模式的每個 token 定價高於標準 Opus 4.6：
+快速模式的每個 token 定價高於標準 Opus：
 
-| 模式                       | 輸入 (MTok) | 輸出 (MTok) |
-| ------------------------ | --------- | --------- |
-| Opus 4.6 上的快速模式 (\<200K) | \$30      | \$150     |
-| Opus 4.6 上的快速模式 (>200K)  | \$60      | \$225     |
+| 模式              | 輸入 (MTok) | 輸出 (MTok) |
+| --------------- | --------- | --------- |
+| Opus 4.6 上的快速模式 | \$30      | \$150     |
+| Opus 4.7 上的快速模式 | \$30      | \$150     |
 
-快速模式與 1M token 擴展上下文視窗相容。
+快速模式定價在整個 1M token 上下文視窗中是固定的。
 
 當您在對話中途切換到快速模式時，您需要為整個對話上下文支付完整的快速模式未快取輸入 token 價格。這比從一開始就啟用快速模式的成本更高。
 
@@ -90,13 +125,13 @@
 快速模式需要以下所有條件：
 
 * **第三方雲端提供商上不可用**：快速模式在 Amazon Bedrock、Google Vertex AI 或 Microsoft Azure Foundry 上不可用。快速模式可透過 Anthropic Console API 和使用額外使用的 Claude 訂閱方案取得。
-* **啟用額外使用**：您的帳戶必須啟用額外使用，這允許超出您方案包含使用量的計費。對於個人帳戶，在您的 [Console 計費設定](https://platform.claude.com/settings/organization/billing)中啟用此功能。對於 Teams 和 Enterprise，管理員必須為組織啟用額外使用。
+* **啟用額外使用**：您的帳戶必須啟用額外使用，這允許超出您方案包含使用量的計費。對於個人帳戶，在您的 [Console 計費設定](https://platform.claude.com/settings/organization/billing)中啟用此功能。對於 Team 和 Enterprise，管理員必須為組織啟用額外使用。
 
 <Note>
   快速模式使用直接計費到額外使用，即使您的方案上還有剩餘使用量。這意味著快速模式 token 不計入您方案的包含使用量，並從第一個 token 開始按快速模式費率計費。
 </Note>
 
-* **Teams 和 Enterprise 的管理員啟用**：快速模式預設對 Teams 和 Enterprise 組織禁用。管理員必須明確[啟用快速模式](#enable-fast-mode-for-your-organization)，使用者才能存取它。
+* **Team 和 Enterprise 的管理員啟用**：快速模式預設對 Team 和 Enterprise 組織禁用。管理員必須明確[啟用快速模式](#enable-fast-mode-for-your-organization)，使用者才能存取它。
 
 <Note>
   如果您的管理員尚未為您的組織啟用快速模式，`/fast` 命令將顯示「Fast mode has been disabled by your organization.」
@@ -107,13 +142,13 @@
 管理員可以在以下位置啟用快速模式：
 
 * **Console**（API 客戶）：[Claude Code 偏好設定](https://platform.claude.com/claude-code/preferences)
-* **Claude AI**（Teams 和 Enterprise）：[管理員設定 > Claude Code](https://claude.ai/admin-settings/claude-code)
+* **Claude AI**（Team 和 Enterprise）：[管理員設定 > Claude Code](https://claude.ai/admin-settings/claude-code)
 
 另一個完全禁用快速模式的選項是設定 `CLAUDE_CODE_DISABLE_FAST_MODE=1`。詳見[環境變數](/zh-TW/env-vars)。
 
 ### 要求每個工作階段選擇加入
 
-預設情況下，快速模式在工作階段之間保持：如果使用者啟用快速模式，它在未來工作階段中保持開啟。[Teams](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise) 或 [Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise) 方案上的管理員可以透過在[受管設定](/zh-TW/settings#settings-files)或[伺服器受管設定](/zh-TW/server-managed-settings)中將 `fastModePerSessionOptIn` 設定為 `true` 來防止這種情況。這會導致每個工作階段以快速模式關閉開始，要求使用者使用 `/fast` 明確啟用它。
+預設情況下，快速模式在工作階段之間保持：如果使用者啟用快速模式，它在未來工作階段中保持開啟。[Team](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise) 或 [Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise) 方案上的管理員可以透過在[受管設定](/zh-TW/settings#settings-files)或[伺服器受管設定](/zh-TW/server-managed-settings)中將 `fastModePerSessionOptIn` 設定為 `true` 來防止這種情況。這會導致每個工作階段以快速模式關閉開始，要求使用者使用 `/fast` 明確啟用它。
 
 ```json theme={null}
 {
@@ -125,9 +160,9 @@
 
 ## 處理速率限制
 
-快速模式與標準 Opus 4.6 有不同的速率限制。當您達到快速模式速率限制或用完額外使用額度時：
+快速模式與標準 Opus 有不同的速率限制。Opus 4.6 和 Opus 4.7 的快速模式共享相同的速率限制池：任一模型上的使用都會從相同的限制中扣除。當您達到快速模式速率限制或用完額外使用額度時：
 
-1. 快速模式自動回退到標準 Opus 4.6
+1. 快速模式自動回退到相同 Opus 版本上的標準速度
 2. `↯` 圖示變灰以指示冷卻
 3. 您以標準速度和定價繼續工作
 4. 冷卻期過期時，快速模式自動重新啟用

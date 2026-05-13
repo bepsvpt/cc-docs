@@ -905,6 +905,24 @@ Registrado quando a compactação de conversa é concluída.
 * `post_tokens`: Contagem aproximada de tokens após compactação
 * `error`: Mensagem de erro quando a compactação falhou
 
+#### Evento de pesquisa de feedback
+
+Registrado quando uma pesquisa de qualidade de sessão é mostrada ou respondida. Veja [Pesquisas de qualidade de sessão](/pt/data-usage#session-quality-surveys) para o que as pesquisas coletam e como controlá-las.
+
+**Nome do Evento**: `claude_code.feedback_survey`
+
+**Atributos**:
+
+* Todos os [atributos padrão](#atributos-padrão)
+* `event.name`: `"feedback_survey"`
+* `event.timestamp`: Timestamp ISO 8601
+* `event.sequence`: Contador monotonicamente crescente para ordenar eventos dentro de uma sessão
+* `event_type`: Evento do ciclo de vida da pesquisa, por exemplo `"appeared"`, `"responded"` ou `"transcript_prompt_appeared"`
+* `appearance_id`: ID único vinculando os eventos emitidos para uma instância de pesquisa
+* `survey_type`: Qual pesquisa produziu o evento. `"session"` é o prompt de classificação "Como Claude está se saindo?"
+* `response`: A seleção do usuário em eventos `responded`
+* `enabled_via_override`: `true` quando [`CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL`](/pt/env-vars) está definido. Emitido como um booleano, não uma string. Presente em eventos de pesquisa `session`. Filtre neste atributo para confirmar que a substituição é aplicada em toda a frota
+
 ## Interpretar dados de métricas e eventos
 
 As métricas e eventos exportados suportam uma gama de análises:

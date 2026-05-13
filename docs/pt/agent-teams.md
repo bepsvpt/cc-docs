@@ -129,6 +129,8 @@ Create a team with 4 teammates to refactor these modules in parallel.
 Use Sonnet for each teammate.
 ```
 
+Os companheiros de equipe não herdam a seleção `/model` do líder por padrão. Para alterar o modelo usado quando o prompt não especifica um, defina **Default teammate model** em `/config`. Escolha **Default (leader's model)** para que os companheiros de equipe sigam o modelo atual do líder.
+
 ### Exigir aprovação de plano para companheiros de equipe
 
 Para tarefas complexas ou arriscadas, você pode exigir que os companheiros de equipe planejem antes de implementar. O companheiro de equipe trabalha em modo de plano somente leitura até que o líder aprove sua abordagem:

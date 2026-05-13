@@ -87,7 +87,7 @@ Pour plus de détails, veuillez consulter nos [Conditions commerciales](https://
 
 Claude Code permet aux utilisateurs de configurer les serveurs Model Context Protocol (MCP). La liste des serveurs MCP autorisés est configurée dans votre code source, dans le cadre des paramètres Claude Code que les ingénieurs enregistrent dans le contrôle de source.
 
-Nous vous encourageons à écrire vos propres serveurs MCP ou à utiliser des serveurs MCP de fournisseurs en qui vous avez confiance. Vous pouvez configurer les permissions Claude Code pour les serveurs MCP. Anthropic ne gère ni n'audite aucun serveur MCP.
+Nous vous encourageons à écrire vos propres serveurs MCP ou à utiliser des serveurs MCP de fournisseurs en qui vous avez confiance. Vous pouvez configurer les permissions Claude Code pour les serveurs MCP. Anthropic examine les connecteurs par rapport à ses [critères d'examen](https://claude.com/docs/connectors/building/review-criteria) avant de les ajouter au [Répertoire Anthropic](https://claude.ai/directory), mais n'effectue pas d'audit de sécurité ni ne gère aucun serveur MCP.
 
 ## Sécurité IDE
 

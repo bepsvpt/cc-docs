@@ -1,5 +1,347 @@
 # Documentation Changes
 
+## 2026-05-13
+
+209 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Orchestrieren Sie Teams von Claude Code-Sitzungen** (`agent-teams.md`): 2 lines added, 0 removed
+- **Claude Code im Web verwenden** (`claude-code-on-the-web.md`): 11 lines added, 5 removed
+- **CLI-Referenz** (`cli-reference.md`): 4 lines added, 2 removed
+- **Datennutzung** (`data-usage.md`): 4 lines added, 4 removed
+- **Entdecken und installieren Sie vorgefertigte Plugins über Marktplätze** (`discover-plugins.md`): 3 lines added, 1 removed
+  - New section: "## Marktplätze verwalten"
+- **Beschleunigen Sie Antworten mit dem Schnellmodus** (`fast-mode.md`): 50 lines added, 15 removed
+  - New section: "## Schnellmodus auf Opus 4.7 verwenden"
+- **Claude Code mit Tools über MCP verbinden** (`mcp.md`): 33 lines added, 225 removed
+  - New section: "## MCP-Server finden und erstellen"
+- **Modellkonfiguration** (`model-config.md`): 1 lines added, 1 removed
+- **Überwachung** (`monitoring-usage.md`): 18 lines added, 0 removed
+  - New section: "#### Feedback-Umfrage-Ereignis"
+- **Ausgabestile** (`output-styles.md`): 4 lines added, 2 removed
+- **Berechtigungen konfigurieren** (`permissions.md`): 4 lines added, 2 removed
+- **Plugins-Referenz** (`plugins-reference.md`): 2 lines added, 0 removed
+- **Plugins erstellen** (`plugins.md`): 6 lines added, 0 removed
+- **Sicherheit** (`security.md`): 1 lines added, 1 removed
+- **Serververwaltete Einstellungen konfigurieren** (`server-managed-settings.md`): 9 lines added, 7 removed
+- **Claude Code-Einstellungen** (`settings.md`): 8 lines added, 5 removed
+- **Claude mit Skills erweitern** (`skills.md`): 2 lines added, 2 removed
+  - New section: "#### Automatische Erkennung aus übergeordneten und verschachtelten Verzeichnissen"
+
+### English
+
+
+**Modified**
+
+- **Orchestrate teams of Claude Code sessions** (`agent-teams.md`): 2 lines added, 0 removed
+- **Changelog** (`changelog.md`): 16 lines added, 0 removed
+- **Use Claude Code on the web** (`claude-code-on-the-web.md`): 11 lines added, 5 removed
+- **CLI reference** (`cli-reference.md`): 4 lines added, 2 removed
+- **Commands** (`commands.md`): 1 lines added, 1 removed
+- **Data usage** (`data-usage.md`): 2 lines added, 2 removed
+- **Discover and install prebuilt plugins through marketplaces** (`discover-plugins.md`): 2 lines added, 0 removed
+- **Environment variables** (`env-vars.md`): 6 lines added, 2 removed
+- **Speed up responses with fast mode** (`fast-mode.md`): 46 lines added, 10 removed
+  - New section: "## Use fast mode on Opus 4.7"
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 25 lines added, 217 removed
+  - New section: "## Find and build MCP servers"
+- **Model configuration** (`model-config.md`): 1 lines added, 1 removed
+- **Monitoring** (`monitoring-usage.md`): 18 lines added, 0 removed
+  - New section: "#### Feedback survey event"
+- **Output styles** (`output-styles.md`): 18 lines added, 9 removed
+- **Configure permissions** (`permissions.md`): 4 lines added, 2 removed
+- **Plugins reference** (`plugins-reference.md`): 9 lines added, 7 removed
+- **Create plugins** (`plugins.md`): 6 lines added, 0 removed
+- **Sandboxing** (`sandboxing.md`): 20 lines added, 0 removed
+- **Security** (`security.md`): 1 lines added, 1 removed
+- **Configure server-managed settings** (`server-managed-settings.md`): 9 lines added, 7 removed
+- **Claude Code settings** (`settings.md`): 10 lines added, 6 removed
+- **Extend Claude with skills** (`skills.md`): 2 lines added, 2 removed
+  - New section: "#### Automatic discovery from parent and nested directories"
+- **Tools reference** (`tools-reference.md`): 1 lines added, 1 removed
+
+### Español
+
+
+**Modified**
+
+- **Orquestar equipos de sesiones de Claude Code** (`agent-teams.md`): 2 lines added, 0 removed
+- **Usar Claude Code en la web** (`claude-code-on-the-web.md`): 11 lines added, 5 removed
+- **Referencia de CLI** (`cli-reference.md`): 3 lines added, 1 removed
+- **Uso de datos** (`data-usage.md`): 2 lines added, 2 removed
+- **Descubra e instale plugins pregenerados a través de mercados** (`discover-plugins.md`): 2 lines added, 0 removed
+- **Acelera las respuestas con el modo rápido** (`fast-mode.md`): 50 lines added, 15 removed
+  - New section: "## Usar el modo rápido en Opus 4.7"
+- **Conectar Claude Code a herramientas mediante MCP** (`mcp.md`): 33 lines added, 225 removed
+  - New section: "## Buscar y crear servidores MCP"
+- **Configuración del modelo** (`model-config.md`): 1 lines added, 1 removed
+- **Monitoreo** (`monitoring-usage.md`): 19 lines added, 1 removed
+  - New section: "#### Evento de encuesta de retroalimentación"
+- **Estilos de salida** (`output-styles.md`): 4 lines added, 2 removed
+- **Configurar permisos** (`permissions.md`): 6 lines added, 4 removed
+  - New section: "## Precedencia de configuración"
+- **Referencia de plugins** (`plugins-reference.md`): 2 lines added, 0 removed
+- **Crear plugins** (`plugins.md`): 6 lines added, 0 removed
+- **Seguridad** (`security.md`): 1 lines added, 1 removed
+- **Configurar la configuración administrada por servidor** (`server-managed-settings.md`): 9 lines added, 7 removed
+- **Configuración de Claude Code** (`settings.md`): 9 lines added, 6 removed
+- **Ampliar Claude con skills** (`skills.md`): 2 lines added, 2 removed
+  - New section: "#### Descubrimiento automático desde directorios anidados y padres"
+
+### Français
+
+
+**Modified**
+
+- **Orchestrer des équipes de sessions Claude Code** (`agent-teams.md`): 3 lines added, 1 removed
+- **Utiliser Claude Code sur le web** (`claude-code-on-the-web.md`): 12 lines added, 6 removed
+- **Référence CLI** (`cli-reference.md`): 3 lines added, 1 removed
+- **Utilisation des données** (`data-usage.md`): 2 lines added, 2 removed
+- **Découvrir et installer des plugins prédéfinis via les marketplaces** (`discover-plugins.md`): 2 lines added, 0 removed
+- **Accélérez les réponses avec le mode rapide** (`fast-mode.md`): 50 lines added, 15 removed
+  - New section: "## Utiliser le mode rapide sur Opus 4.7"
+- **Connecter Claude Code aux outils via MCP** (`mcp.md`): 33 lines added, 225 removed
+  - New section: "## Trouver et créer des serveurs MCP"
+- **Configuration du modèle** (`model-config.md`): 1 lines added, 1 removed
+- **Surveillance** (`monitoring-usage.md`): 18 lines added, 0 removed
+  - New section: "#### Événement de sondage de rétroaction"
+- **Styles de sortie** (`output-styles.md`): 5 lines added, 3 removed
+- **Configurer les autorisations** (`permissions.md`): 4 lines added, 2 removed
+- **Référence des plugins** (`plugins-reference.md`): 2 lines added, 0 removed
+- **Créer des plugins** (`plugins.md`): 6 lines added, 0 removed
+- **Sécurité** (`security.md`): 1 lines added, 1 removed
+- **Configurer les paramètres gérés par le serveur** (`server-managed-settings.md`): 9 lines added, 7 removed
+- **Paramètres Claude Code** (`settings.md`): 8 lines added, 5 removed
+- **Étendre Claude avec des skills** (`skills.md`): 2 lines added, 2 removed
+  - New section: "#### Découverte automatique à partir de répertoires parents et imbriqués"
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Koordinasikan tim Claude Code sessions** (`agent-teams.md`): 2 lines added, 0 removed
+- **Gunakan Claude Code di web** (`claude-code-on-the-web.md`): 11 lines added, 7 removed
+  - New section: "## Auto-fix pull requests"
+- **Referensi CLI** (`cli-reference.md`): 3 lines added, 1 removed
+- **Penggunaan data** (`data-usage.md`): 4 lines added, 4 removed
+- **Temukan dan instal plugin yang sudah dibuat melalui marketplace** (`discover-plugins.md`): 3 lines added, 1 removed
+- **Percepat respons dengan mode cepat** (`fast-mode.md`): 50 lines added, 15 removed
+  - New section: "## Gunakan mode cepat pada Opus 4.7"
+- **Hubungkan Claude Code ke alat melalui MCP** (`mcp.md`): 34 lines added, 226 removed
+  - New section: "## Temukan dan bangun server MCP"
+- **Konfigurasi model** (`model-config.md`): 1 lines added, 1 removed
+- **Pemantauan** (`monitoring-usage.md`): 18 lines added, 0 removed
+  - New section: "#### Acara survei umpan balik"
+- **Output styles** (`output-styles.md`): 4 lines added, 8 removed
+- **Konfigurasi izin** (`permissions.md`): 5 lines added, 3 removed
+- **Referensi Plugins** (`plugins-reference.md`): 2 lines added, 0 removed
+- **Buat plugins** (`plugins.md`): 6 lines added, 0 removed
+- **Keamanan** (`security.md`): 1 lines added, 1 removed
+- **Konfigurasi pengaturan yang dikelola server** (`server-managed-settings.md`): 9 lines added, 7 removed
+- **Pengaturan Claude Code** (`settings.md`): 9 lines added, 6 removed
+- **Perluas Claude dengan skills** (`skills.md`): 2 lines added, 2 removed
+  - New section: "#### Penemuan otomatis dari direktori induk dan bersarang"
+
+### Italiano
+
+
+**Modified**
+
+- **Orchestrare team di sessioni Claude Code** (`agent-teams.md`): 2 lines added, 0 removed
+- **Usa Claude Code sul web** (`claude-code-on-the-web.md`): 20 lines added, 14 removed
+- **Riferimento CLI** (`cli-reference.md`): 3 lines added, 1 removed
+- **Utilizzo dei dati** (`data-usage.md`): 4 lines added, 4 removed
+- **Scopri e installa plugin precostruiti tramite marketplace** (`discover-plugins.md`): 2 lines added, 0 removed
+- **Accelera le risposte con la modalità veloce** (`fast-mode.md`): 54 lines added, 19 removed
+  - New section: "## Usa la modalità veloce su Opus 4.7"
+- **Connetti Claude Code ai tuoi strumenti tramite MCP** (`mcp.md`): 33 lines added, 225 removed
+  - New section: "## Trovare e costruire server MCP"
+- **Configurazione del modello** (`model-config.md`): 1 lines added, 1 removed
+- **Monitoraggio** (`monitoring-usage.md`): 19 lines added, 1 removed
+  - New section: "#### Evento di sondaggio di feedback"
+- **Output styles** (`output-styles.md`): 4 lines added, 2 removed
+- **Configurare le autorizzazioni** (`permissions.md`): 4 lines added, 2 removed
+- **Riferimento dei plugin** (`plugins-reference.md`): 2 lines added, 0 removed
+- **Creare plugin** (`plugins.md`): 6 lines added, 0 removed
+- **Sicurezza** (`security.md`): 1 lines added, 1 removed
+- **Configurare le impostazioni gestite dal server** (`server-managed-settings.md`): 9 lines added, 7 removed
+- **Impostazioni di Claude Code** (`settings.md`): 8 lines added, 5 removed
+- **Estendi Claude con skills** (`skills.md`): 2 lines added, 2 removed
+  - New section: "#### Scoperta automatica da directory padre e annidate"
+
+### 日本語
+
+
+**Modified**
+
+- **Claude Code セッションのチームを調整する** (`agent-teams.md`): 2 lines added, 0 removed
+- **ウェブ上の Claude Code を使用する** (`claude-code-on-the-web.md`): 17 lines added, 11 removed
+- **CLI リファレンス** (`cli-reference.md`): 4 lines added, 2 removed
+- **データ使用** (`data-usage.md`): 2 lines added, 2 removed
+- **マーケットプレイスから事前構築されたプラグインを発見してインストールする** (`discover-plugins.md`): 2 lines added, 0 removed
+- **高速モードでレスポンスを高速化** (`fast-mode.md`): 54 lines added, 19 removed
+  - New section: "## Opus 4.7 で高速モードを使用"
+- **MCP を使用して Claude Code をツールに接続する** (`mcp.md`): 33 lines added, 223 removed
+  - New section: "## MCP サーバーを検索してビルドする"
+- **モデル設定** (`model-config.md`): 1 lines added, 1 removed
+- **監視** (`monitoring-usage.md`): 18 lines added, 0 removed
+  - New section: "#### フィードバック調査イベント"
+- **出力スタイル** (`output-styles.md`): 5 lines added, 3 removed
+- **権限を設定する** (`permissions.md`): 13 lines added, 11 removed
+- **プラグインリファレンス** (`plugins-reference.md`): 2 lines added, 0 removed
+- **プラグインを作成する** (`plugins.md`): 6 lines added, 0 removed
+- **セキュリティ** (`security.md`): 1 lines added, 1 removed
+- **サーバー管理設定を構成する** (`server-managed-settings.md`): 9 lines added, 7 removed
+- **Claude Code の設定** (`settings.md`): 8 lines added, 5 removed
+- **スキルで Claude を拡張する** (`skills.md`): 2 lines added, 7 removed
+  - New section: "#### 親ディレクトリとネストされたディレクトリからの自動検出"
+
+### 한국어
+
+
+**Modified**
+
+- **Claude Code 세션 팀 조율하기** (`agent-teams.md`): 2 lines added, 0 removed
+- **웹에서 Claude Code 사용하기** (`claude-code-on-the-web.md`): 12 lines added, 6 removed
+- **CLI 참조** (`cli-reference.md`): 3 lines added, 1 removed
+- **데이터 사용** (`data-usage.md`): 2 lines added, 2 removed
+- **마켓플레이스를 통해 미리 빌드된 플러그인 발견 및 설치** (`discover-plugins.md`): 2 lines added, 0 removed
+- **빠른 모드로 응답 속도 향상** (`fast-mode.md`): 54 lines added, 19 removed
+  - New section: "## Opus 4.7에서 빠른 모드 사용"
+- **MCP를 통해 Claude Code를 도구에 연결하기** (`mcp.md`): 33 lines added, 223 removed
+  - New section: "## MCP 서버 찾기 및 구축"
+- **모델 구성** (`model-config.md`): 1 lines added, 1 removed
+- **모니터링** (`monitoring-usage.md`): 18 lines added, 0 removed
+  - New section: "#### 피드백 설문 이벤트"
+- **출력 스타일** (`output-styles.md`): 4 lines added, 2 removed
+- **권한 구성** (`permissions.md`): 4 lines added, 2 removed
+- **플러그인 참조** (`plugins-reference.md`): 2 lines added, 0 removed
+- **플러그인 만들기** (`plugins.md`): 6 lines added, 0 removed
+- **보안** (`security.md`): 1 lines added, 1 removed
+- **서버 관리 설정 구성** (`server-managed-settings.md`): 9 lines added, 7 removed
+- **Claude Code 설정** (`settings.md`): 9 lines added, 6 removed
+- **Claude를 skills로 확장하기** (`skills.md`): 2 lines added, 2 removed
+  - New section: "#### 상위 및 중첩된 디렉토리에서 자동 검색"
+
+### Português
+
+
+**Modified**
+
+- **Orquestre equipes de sessões Claude Code** (`agent-teams.md`): 2 lines added, 0 removed
+- **Use Claude Code na web** (`claude-code-on-the-web.md`): 11 lines added, 5 removed
+- **Referência de CLI** (`cli-reference.md`): 3 lines added, 1 removed
+- **Uso de dados** (`data-usage.md`): 4 lines added, 4 removed
+- **Descubra e instale plugins pré-construídos através de marketplaces** (`discover-plugins.md`): 2 lines added, 0 removed
+- **Acelere respostas com modo rápido** (`fast-mode.md`): 50 lines added, 15 removed
+  - New section: "## Usar modo rápido no Opus 4.7"
+- **Conectar Claude Code a ferramentas via MCP** (`mcp.md`): 33 lines added, 225 removed
+  - New section: "## Encontre e crie servidores MCP"
+- **Configuração de modelo** (`model-config.md`): 3 lines added, 3 removed
+- **Monitoramento** (`monitoring-usage.md`): 18 lines added, 0 removed
+  - New section: "#### Evento de pesquisa de feedback"
+- **Estilos de saída** (`output-styles.md`): 4 lines added, 2 removed
+- **Configurar permissões** (`permissions.md`): 4 lines added, 2 removed
+- **Referência de plugins** (`plugins-reference.md`): 2 lines added, 0 removed
+- **Criar plugins** (`plugins.md`): 6 lines added, 0 removed
+- **Segurança** (`security.md`): 2 lines added, 2 removed
+- **Configurar configurações gerenciadas pelo servidor** (`server-managed-settings.md`): 9 lines added, 7 removed
+- **Configurações do Claude Code** (`settings.md`): 10 lines added, 7 removed
+- **Estenda Claude com skills** (`skills.md`): 2 lines added, 2 removed
+  - New section: "#### Descoberta automática de diretórios aninhados e pais"
+
+### Русский
+
+
+**Modified**
+
+- **Координируйте команды сеансов Claude Code** (`agent-teams.md`): 2 lines added, 0 removed
+- **Использование Claude Code в веб-интерфейсе** (`claude-code-on-the-web.md`): 11 lines added, 5 removed
+- **Справочник CLI** (`cli-reference.md`): 3 lines added, 1 removed
+- **Использование данных** (`data-usage.md`): 2 lines added, 2 removed
+- **Откройте и установите готовые плагины через маркетплейсы** (`discover-plugins.md`): 6 lines added, 4 removed
+  - New section: "## Управление маркетплейсами"
+  - New section: "### Использование интерактивного интерфейса"
+  - New section: "### Использование команд CLI"
+  - New section: "### Настройка автоматических обновлений"
+- **Ускорьте ответы с помощью быстрого режима** (`fast-mode.md`): 54 lines added, 19 removed
+  - New section: "## Использование быстрого режима на Opus 4.7"
+- **Подключите Claude Code к инструментам через MCP** (`mcp.md`): 33 lines added, 225 removed
+  - New section: "## Поиск и создание MCP servers"
+- **Конфигурация модели** (`model-config.md`): 1 lines added, 1 removed
+- **Мониторинг** (`monitoring-usage.md`): 18 lines added, 0 removed
+  - New section: "#### Событие опроса обратной связи"
+- **Output styles** (`output-styles.md`): 4 lines added, 2 removed
+- **Настройка разрешений** (`permissions.md`): 4 lines added, 2 removed
+- **Справочник по плагинам** (`plugins-reference.md`): 2 lines added, 0 removed
+- **Создание plugins** (`plugins.md`): 6 lines added, 0 removed
+- **Безопасность** (`security.md`): 2 lines added, 2 removed
+- **Настройка параметров, управляемых сервером** (`server-managed-settings.md`): 9 lines added, 7 removed
+- **Параметры Claude Code** (`settings.md`): 8 lines added, 5 removed
+- **Расширьте Claude с помощью skills** (`skills.md`): 2 lines added, 2 removed
+  - New section: "#### Автоматическое обнаружение из родительских и вложенных каталогов"
+
+### 简体中文
+
+
+**Modified**
+
+- **协调 Claude Code 会话团队** (`agent-teams.md`): 2 lines added, 0 removed
+- **在网络上使用 Claude Code** (`claude-code-on-the-web.md`): 13 lines added, 7 removed
+- **CLI 参考** (`cli-reference.md`): 3 lines added, 1 removed
+- **数据使用** (`data-usage.md`): 2 lines added, 2 removed
+- **通过市场发现和安装预构建插件** (`discover-plugins.md`): 2 lines added, 0 removed
+- **使用快速模式加快响应速度** (`fast-mode.md`): 50 lines added, 15 removed
+  - New section: "## 在 Opus 4.7 上使用快速模式"
+- **通过 MCP 将 Claude Code 连接到工具** (`mcp.md`): 33 lines added, 223 removed
+  - New section: "## 查找和构建 MCP 服务器"
+- **模型配置** (`model-config.md`): 1 lines added, 1 removed
+- **监控** (`monitoring-usage.md`): 19 lines added, 1 removed
+  - New section: "#### 反馈调查事件"
+- **输出样式** (`output-styles.md`): 4 lines added, 2 removed
+- **配置权限** (`permissions.md`): 4 lines added, 2 removed
+- **Plugins 参考** (`plugins-reference.md`): 2 lines added, 0 removed
+- **创建插件** (`plugins.md`): 6 lines added, 0 removed
+- **安全性** (`security.md`): 1 lines added, 1 removed
+- **配置服务器管理的设置** (`server-managed-settings.md`): 3 lines added, 1 removed
+- **Claude Code 设置** (`settings.md`): 8 lines added, 5 removed
+- **使用 skills 扩展 Claude** (`skills.md`): 3 lines added, 3 removed
+  - New section: "#### 从父目录和嵌套目录自动发现"
+
+### 繁體中文
+
+
+**Modified**
+
+- **協調 Claude Code 工作階段團隊** (`agent-teams.md`): 2 lines added, 0 removed
+- **在網頁上使用 Claude Code** (`claude-code-on-the-web.md`): 12 lines added, 6 removed
+- **CLI 參考** (`cli-reference.md`): 3 lines added, 1 removed
+- **資料使用** (`data-usage.md`): 2 lines added, 2 removed
+- **透過市場探索和安裝預建外掛程式** (`discover-plugins.md`): 2 lines added, 0 removed
+- **使用快速模式加快回應速度** (`fast-mode.md`): 54 lines added, 19 removed
+  - New section: "## 在 Opus 4.7 上使用快速模式"
+- **透過 MCP 將 Claude Code 連接到工具** (`mcp.md`): 33 lines added, 225 removed
+  - New section: "## 尋找並建立 MCP servers"
+- **模型配置** (`model-config.md`): 1 lines added, 1 removed
+- **監控** (`monitoring-usage.md`): 18 lines added, 0 removed
+  - New section: "#### 回饋調查事件"
+- **輸出樣式** (`output-styles.md`): 4 lines added, 2 removed
+- **設定權限** (`permissions.md`): 4 lines added, 2 removed
+- **Plugins 參考** (`plugins-reference.md`): 2 lines added, 0 removed
+- **建立 plugins** (`plugins.md`): 6 lines added, 0 removed
+- **安全性** (`security.md`): 1 lines added, 1 removed
+- **設定伺服器管理的設定** (`server-managed-settings.md`): 3 lines added, 1 removed
+- **Claude Code 設定** (`settings.md`): 9 lines added, 6 removed
+- **使用 skills 擴展 Claude** (`skills.md`): 1 lines added, 1 removed
+
+---
+
 ## 2026-05-12
 
 266 pages modified

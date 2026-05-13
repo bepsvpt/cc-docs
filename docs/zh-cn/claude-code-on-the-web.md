@@ -32,12 +32,16 @@ Claude Code on the web 在 [claude.ai/code](https://claude.ai/code) 的 Anthropi
 
 云会话需要访问你的 GitHub 存储库来克隆代码和推送分支。你可以通过两种方式授予访问权限：
 
-| 方法               | 工作原理                                                                           | 最适合              |
-| :--------------- | :----------------------------------------------------------------------------- | :--------------- |
-| **GitHub App**   | 在[网络入门](/zh-CN/web-quickstart)期间在特定存储库上安装 Claude GitHub App。访问权限按存储库限定。        | 希望明确的按存储库授权的团队   |
-| **`/web-setup`** | 在终端中运行 `/web-setup` 以将本地 `gh` CLI 令牌同步到你的 Claude 账户。访问权限与你的 `gh` 令牌可以看到的内容相匹配。 | 已经使用 `gh` 的个人开发者 |
+| 方法               | 工作原理                                                  | 最适合                                        |
+| :--------------- | :---------------------------------------------------- | :----------------------------------------- |
+| **GitHub App**   | 在[网络入门](/zh-CN/web-quickstart)期间授权 Claude GitHub App。 | 浏览器入门；想要[自动修复](#auto-fix-pull-requests)的团队 |
+| **`/web-setup`** | 在终端中运行 `/web-setup` 以将本地 `gh` CLI 令牌同步到你的 Claude 账户。  | 已经使用 `gh` 的个人开发者                           |
 
-两种方法都可以。[`/schedule`](/zh-CN/routines)检查任一形式的访问权限，如果都未配置，会提示你运行 `/web-setup`。有关 `/web-setup` 演练，请参阅[从终端连接](/zh-CN/web-quickstart#connect-from-your-terminal)。
+<Note>
+  使用任一方法，云会话都可以访问连接的 GitHub 账户可以看到的任何存储库，而不仅仅是安装了 Claude GitHub App 的存储库。App 安装启用 PR webhooks 用于[自动修复](#auto-fix-pull-requests)；它不是会话级别的访问控制。要限制你的团队可以从云会话访问哪些存储库，请在 GitHub 本身上限制访问，例如通过限制连接的 GitHub 账户的团队或存储库成员资格。
+</Note>
+
+任一方法都可以。[`/schedule`](/zh-CN/routines)检查任一形式的访问权限，如果都未配置，会提示你运行 `/web-setup`。有关 `/web-setup` 演练，请参阅[从终端连接](/zh-CN/web-quickstart#connect-from-your-terminal)。
 
 GitHub App 是[自动修复](#auto-fix-pull-requests)所必需的，它使用该 App 接收 PR webhooks。如果你使用 `/web-setup` 连接，稍后想要自动修复，请在这些存储库上安装该 App。
 
@@ -729,7 +733,7 @@ CCR_FORCE_BUNDLE=1 claude --remote "Run the test suite and fix any failures"
 Claude 可以监视拉取请求并自动响应 CI 失败和审查评论。Claude 订阅 PR 上的 GitHub 活动，当检查失败或审查者留下评论时，Claude 会调查并推送修复（如果有明确的修复）。
 
 <Note>
-  自动修复需要在你的存储库上安装 Claude GitHub App。如果你还没有，请从 [GitHub App 页面](https://github.com/apps/claude)安装它，或在[设置](/zh-CN/web-quickstart#connect-github-and-create-an-environment)期间出现提示时安装。
+  自动修复需要在你的存储库上安装 Claude GitHub App。如果你还没有，请从 [GitHub App 页面](https://github.com/apps/claude) 安装它，或在[设置](/zh-CN/web-quickstart#connect-github-and-create-an-environment)期间出现提示时安装。
 </Note>
 
 根据 PR 来自何处以及你使用的设备，有几种方法可以打开自动修复：
@@ -738,6 +742,8 @@ Claude 可以监视拉取请求并自动响应 CI 失败和审查评论。Claude
 * **从终端**：在 PR 的分支上运行 [`/autofix-pr`](/zh-CN/commands)。Claude Code 使用 `gh` 检测打开的 PR，生成网络会话，并一步启用自动修复
 * **从移动应用**：告诉 Claude 自动修复 PR，例如"监视此 PR 并修复任何 CI 失败或审查评论"
 * **任何现有 PR**：将 PR URL 粘贴到会话中并告诉 Claude 自动修复它
+
+自动修复是按 PR 的切换开关。要停止监视，请在网络会话中打开 CI 状态栏并清除**自动修复**切换，或告诉 Claude 停止监视 PR。
 
 ### Claude 如何响应 PR 活动
 
@@ -772,7 +778,7 @@ Claude 可能会作为解决审查评论线程的一部分在 GitHub 上回复�
 
 * 检查 [status.claude.com](https://status.claude.com) 以了解云会话事件
 * 一分钟后重试，因为容量是按需配置的
-* 确认你的存储库可访问。私有存储库需要在该存储库上安装 GitHub App 并具有访问权限，或通过 `/web-setup` 同步的 `gh` 令牌。请参阅[GitHub 身份验证选项](#github-authentication-options)。
+* 确认你的存储库可访问。连接的 GitHub 账户必须通过 Claude GitHub App 授权或通过 `/web-setup` 同步的 `gh` 令牌在 GitHub 上拥有对存储库的访问权限 — 不需要在存储库上安装该应用。请参阅 [GitHub 身份验证选项](#github-authentication-options)。
 
 ### 远程控制会话已过期或访问被拒绝
 

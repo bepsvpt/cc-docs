@@ -124,7 +124,9 @@ Claude Code fornece quatro sinalizadores para personalizar o prompt do sistema. 
 
 `--system-prompt` e `--system-prompt-file` são mutuamente exclusivos. Os sinalizadores de anexação podem ser combinados com qualquer sinalizador de substituição.
 
-Para a maioria dos casos de uso, use um sinalizador de anexação. Anexar preserva os recursos integrados do Claude Code enquanto adiciona seus requisitos. Use um sinalizador de substituição apenas quando você precisar de controle completo sobre o prompt do sistema.
+Escolha com base em se a identidade padrão do Claude Code ainda se adequa à sua tarefa. Use um sinalizador de anexação quando Claude deve permanecer um assistente de codificação que também segue suas regras extras: instruções por invocação, formatação de saída ou contexto de domínio para um script `-p`. Anexar preserva a orientação de ferramentas padrão, instruções de segurança e convenções de codificação, portanto você fornece apenas o que difere. Use um sinalizador de substituição quando a superfície, identidade ou modelo de permissão diferir do Claude Code, como um agente não codificador em um pipeline que nenhum humano observa. Substituir descarta todo o prompt padrão, incluindo orientação de ferramentas e instruções de segurança, portanto você assume a responsabilidade por tudo o que sua tarefa ainda precisa.
+
+Esses sinalizadores se aplicam apenas à invocação atual. Para personas persistentes que você pode alternar e compartilhar em um projeto, use [estilos de saída](/pt/output-styles). Para convenções de projeto que Claude deve sempre seguir, use [CLAUDE.md](/pt/memory). O [guia do Agent SDK sobre prompts do sistema](/pt/agent-sdk/modifying-system-prompts#decide-on-a-starting-point) cobre a mesma decisão com mais profundidade.
 
 ## Veja também
 

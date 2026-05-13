@@ -364,6 +364,8 @@ Claude Code 可以在啟動時自動更新市場及其已安裝的外掛程式�
 
 官方 Anthropic 市場預設啟用自動更新。第三方和本機開發市場預設停用自動更新。
 
+管理員也可以在受管設定中的每個 [`extraKnownMarketplaces`](/zh-TW/settings#extraknownmarketplaces) 項目上設定 `"autoUpdate": true`，以為組織市場啟用自動更新，而無需每個使用者都切換它。
+
 若要完全停用 Claude Code 和所有外掛程式的所有自動更新，請設定 `DISABLE_AUTOUPDATER` 環境變數。有關詳細資訊，請參閱[自動更新](/zh-TW/setup#auto-updates)。
 
 若要在停用 Claude Code 自動更新的同時保持外掛程式自動更新啟用，請設定 `FORCE_AUTOUPDATE_PLUGINS=1` 以及 `DISABLE_AUTOUPDATER`：

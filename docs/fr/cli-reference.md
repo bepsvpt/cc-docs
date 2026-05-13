@@ -124,7 +124,9 @@ Claude Code fournit quatre drapeaux pour personnaliser l'invite système. Les qu
 
 `--system-prompt` et `--system-prompt-file` s'excluent mutuellement. Les drapeaux d'ajout peuvent être combinés avec l'un ou l'autre drapeau de remplacement.
 
-Pour la plupart des cas d'utilisation, utilisez un drapeau d'ajout. L'ajout préserve les capacités intégrées de Claude Code tout en ajoutant vos exigences. Utilisez un drapeau de remplacement uniquement lorsque vous avez besoin d'un contrôle complet sur l'invite système.
+Choisissez en fonction de la question de savoir si l'identité par défaut de Claude Code convient toujours à votre tâche. Utilisez un drapeau d'ajout lorsque Claude doit rester un assistant de codage qui suit également vos règles supplémentaires : instructions par invocation, formatage de sortie, ou contexte de domaine pour un script `-p`. L'ajout préserve les conseils d'outils par défaut, les instructions de sécurité et les conventions de codage, vous ne fournissez donc que ce qui diffère. Utilisez un drapeau de remplacement lorsque la surface, l'identité ou le modèle de permission diffère de celui de Claude Code, comme un agent non-codage dans un pipeline qu'aucun humain ne regarde. Le remplacement supprime l'intégralité de l'invite par défaut, y compris les conseils d'outils et les instructions de sécurité, vous êtes donc responsable de tout ce que votre tâche nécessite toujours.
+
+Ces drapeaux s'appliquent uniquement à l'invocation actuelle. Pour les personas persistants que vous pouvez basculer et partager dans un projet, utilisez les [styles de sortie](/fr/output-styles). Pour les conventions de projet que Claude doit toujours suivre, utilisez [CLAUDE.md](/fr/memory). Le [guide du SDK Agent sur les invites système](/fr/agent-sdk/modifying-system-prompts#decide-on-a-starting-point) couvre la même décision plus en profondeur.
 
 ## Voir aussi
 

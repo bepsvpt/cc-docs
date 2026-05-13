@@ -905,6 +905,24 @@ API 요청이 두 번 이상 시도 후 실패할 때 한 번 기록됩니다. �
 * `post_tokens`: 압축 후 대략적인 토큰 수
 * `error`: 압축이 실패했을 때 오류 메시지
 
+#### 피드백 설문 이벤트
+
+세션 품질 설문이 표시되거나 답변될 때 기록됩니다. [세션 품질 설문](/ko/data-usage#session-quality-surveys)을 참조하여 설문이 수집하는 내용과 제어 방법을 확인하세요.
+
+**이벤트 이름**: `claude_code.feedback_survey`
+
+**속성**:
+
+* 모든 [표준 속성](#standard-attributes)
+* `event.name`: `"feedback_survey"`
+* `event.timestamp`: ISO 8601 타임스탬프
+* `event.sequence`: 세션 내 이벤트 순서 지정을 위한 단조 증가 카운터
+* `event_type`: 설문 수명 주기 이벤트 (예: `"appeared"`, `"responded"` 또는 `"transcript_prompt_appeared"`)
+* `appearance_id`: 하나의 설문 인스턴스에 대해 내보내진 이벤트를 연결하는 고유 ID
+* `survey_type`: 이벤트를 생성한 설문. `"session"`은 "Claude가 어떻게 하고 있나요?" 평가 프롬프트입니다
+* `response`: `responded` 이벤트에서 사용자의 선택
+* `enabled_via_override`: [`CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL`](/ko/env-vars)이 설정되어 있을 때 `true`. 문자열이 아닌 부울로 내보내집니다. `session` 설문 이벤트에 표시됩니다. 이 속성을 필터링하여 플릿 전체에서 재정의가 적용되었는지 확인합니다
+
 ## 메트릭 및 이벤트 데이터 해석
 
 내보낸 메트릭 및 이벤트는 다양한 분석을 지원합니다:

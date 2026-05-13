@@ -138,7 +138,7 @@ Exec-Wrapper wie `watch`, `setsid`, `ionice` und `flock` fordern immer auf und k
 
 #### Schreibgeschützte Befehle
 
-Claude Code erkennt einen integrierten Satz von Bash-Befehlen als schreibgeschützt und führt sie ohne Berechtigungsaufforderung in jedem Modus aus. Diese umfassen `ls`, `cat`, `head`, `tail`, `grep`, `find`, `wc`, `diff`, `stat`, `du`, `cd` und schreibgeschützte Formen von `git`. Der Satz ist nicht konfigurierbar; um eine Aufforderung für einen dieser Befehle zu erfordern, fügen Sie eine `ask`- oder `deny`-Regel dafür hinzu.
+Claude Code erkennt einen integrierten Satz von Bash-Befehlen als schreibgeschützt und führt sie ohne Berechtigungsaufforderung in jedem Modus aus. Diese umfassen `ls`, `cat`, `echo`, `pwd`, `head`, `tail`, `grep`, `find`, `wc`, `which`, `diff`, `stat`, `du`, `cd` und schreibgeschützte Formen von `git`. Der Satz ist nicht konfigurierbar; um eine Aufforderung für einen dieser Befehle zu erfordern, fügen Sie eine `ask`- oder `deny`-Regel dafür hinzu.
 
 Unquotierte Glob-Muster sind für Befehle zulässig, deren jedes Flag schreibgeschützt ist, daher laufen `ls *.ts` und `wc -l src/*.py` ohne Aufforderung. Befehle mit schreibfähigen oder ausführungsfähigen Flags, wie `find`, `sort`, `sed` und `git`, fordern immer noch auf, wenn ein unquotiertes Glob vorhanden ist, da das Glob zu einem Flag wie `-delete` expandieren könnte.
 
@@ -290,7 +290,7 @@ Die folgenden Konfigurationstypen werden aus `--add-dir`-Verzeichnissen geladen:
 | Plugin-Einstellungen in `.claude/settings.json`                         | Nur `enabledPlugins` und `extraKnownMarketplaces`                                                                                                                             |
 | [CLAUDE.md](/de/memory)-Dateien, `.claude/rules/` und `CLAUDE.local.md` | Nur wenn `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` gesetzt ist. `CLAUDE.local.md` erfordert zusätzlich die `local`-Einstellungsquelle, die standardmäßig aktiviert ist |
 
-Alles andere, einschließlich Subagents, Befehle, Ausgabestile, Hooks und andere Einstellungen, wird nur aus dem aktuellen Arbeitsverzeichnis und seinen übergeordneten Verzeichnissen, Ihrem Benutzerverzeichnis unter `~/.claude/` und verwalteten Einstellungen erkannt. Um diese Konfiguration über Projekte hinweg zu teilen, verwenden Sie einen dieser Ansätze:
+Subagents, Befehle und Ausgabestile werden aus dem aktuellen Arbeitsverzeichnis und seinen übergeordneten Verzeichnissen, Ihrem Benutzerverzeichnis unter `~/.claude/` und verwalteten Einstellungen erkannt. Hooks und andere `settings.json`-Schlüssel werden aus dem `.claude/`-Ordner des aktuellen Arbeitsverzeichnisses ohne Fallback für übergeordnete Verzeichnisse geladen, zusammen mit Ihren Benutzer-`~/.claude/settings.json` und verwalteten Einstellungen. Um diese Konfiguration über Projekte hinweg zu teilen, verwenden Sie einen dieser Ansätze:
 
 * **Benutzergesteuerte Konfiguration**: Platzieren Sie Dateien in `~/.claude/agents/`, `~/.claude/output-styles/` oder `~/.claude/settings.json`, um sie in jedem Projekt verfügbar zu machen
 * **Plugins**: Verpacken und verteilen Sie Konfiguration als [Plugin](/de/plugins), das Teams installieren können
@@ -352,6 +352,8 @@ Berechtigungsregeln folgen der gleichen [Einstellungspriorität](/de/settings#se
 5. **Benutzereinstellungen** (`~/.claude/settings.json`)
 
 Wenn ein Werkzeug auf einer beliebigen Ebene verweigert wird, kann keine andere Ebene es zulassen. Zum Beispiel kann eine verwaltete Einstellungs-Deny nicht durch `--allowedTools` überschrieben werden, und `--disallowedTools` kann Einschränkungen über das hinaus hinzufügen, was verwaltete Einstellungen definieren.
+
+Embedding-Hosts können zusätzliche verwaltete Richtlinien über die SDK-Option `managedSettings` bereitstellen, wenn [`parentSettingsBehavior`](/de/settings#settings-precedence) auf `"merge"` gesetzt ist; Embedder-Werte können die Richtlinie verschärfen, aber nicht lockern.
 
 Wenn eine Berechtigung in Benutzereinstellungen zulässig ist, aber in Projekteinstellungen verweigert wird, hat die Projekteinstellung Vorrang und die Berechtigung wird blockiert.
 

@@ -97,9 +97,9 @@ Claude Code 包括一组捆绑 skills，在每个会话中都可用，包括 `/s
 
 Claude Code 监视 skill 目录的文件变更。在 `~/.claude/skills/`、项目 `.claude/skills/` 或 `--add-dir` 目录内的 `.claude/skills/` 中添加、编辑或删除 skill 会在当前会话中生效，无需重新启动。创建在会话启动时不存在的顶级 skills 目录需要重新启动 Claude Code，以便可以监视新目录。
 
-#### 从嵌套目录自动发现
+#### 从父目录和嵌套目录自动发现
 
-当你在子目录中处理文件时，Claude Code 会自动从嵌套的 `.claude/skills/` 目录中发现 skills。例如，如果你正在编辑 `packages/frontend/` 中的文件，Claude Code 也会在 `packages/frontend/.claude/skills/` 中查找 skills。这支持 monorepo 设置，其中包有自己的 skills。
+项目 skills 从你的起始目录中的 `.claude/skills/` 以及从起始目录到仓库根目录的每个父目录中加载，因此在子目录中启动 Claude 仍然会拾取在根目录定义的 skills。当你在起始目录下方的子目录中处理文件时，Claude Code 也会按需从嵌套的 `.claude/skills/` 目录中发现 skills。例如，如果你正在编辑 `packages/frontend/` 中的文件，Claude Code 也会在 `packages/frontend/.claude/skills/` 中查找 skills。这支持 monorepo 设置，其中包有自己的 skills。
 
 每个 skill 都是一个以 `SKILL.md` 作为入口点的目录：
 
@@ -113,7 +113,7 @@ my-skill/
     └── validate.sh    # Claude 可以执行的脚本
 ```
 
-`SKILL.md` 包含主要说明，是必需的。其他文件是可选的，让你构建更强大的 skills：Claude 要填写的模板、显示预期格式的示例输出、Claude 可以执行的脚本或详细的参考文档。从你的 `SKILL.md` 中引用支持文件，以便 Claude 知道每个文件包含什么以及何时加载它。有关更多详细信息，请参阅[添加支持文件](#add-supporting-files)。
+`SKILL.md` 包含主要说明，是必需的。其他文件是可选的，让你构建更强大的 skills：Claude 要填写的模板、显示预期格式的示例输出、Claude 可以执行的脚本或详细的参考文档。从你的 `SKILL.md` 中引用这些文件，以便 Claude 知道它们包含什么以及何时加载它们。有关更多详细信息，请参阅[添加支持文件](#add-supporting-files)。
 
 <Note>
   `.claude/commands/` 中的文件仍然有效，并支持相同的 [frontmatter](#frontmatter-reference)。建议使用 Skills，因为它们支持额外的功能，如支持文件。

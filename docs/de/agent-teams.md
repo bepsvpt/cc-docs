@@ -129,6 +129,8 @@ Create a team with 4 teammates to refactor these modules in parallel.
 Use Sonnet for each teammate.
 ```
 
+Teammates erben standardmäßig nicht die `/model`-Auswahl des Leads. Um das Modell zu ändern, das verwendet wird, wenn der Prompt keines angibt, setzen Sie **Standard-Teammate-Modell** in `/config`. Wählen Sie **Standard (Modell des Leaders)**, damit Teammates dem aktuellen Modell des Leads folgen.
+
 ### Genehmigung von Plänen für Teammates erforderlich
 
 Für komplexe oder riskante Aufgaben können Sie verlangen, dass Teammates planen, bevor sie implementieren. Der Teammate arbeitet im schreibgeschützten Plan-Modus, bis der Lead seinen Ansatz genehmigt:

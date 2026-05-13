@@ -90,11 +90,13 @@ tasks. [Your custom instructions here...]
 
 ### 輸出樣式 vs. CLAUDE.md vs. --append-system-prompt
 
-輸出樣式完全「關閉」Claude Code 預設系統提示中特定於軟體工程的部分。CLAUDE.md 和 `--append-system-prompt` 都不會編輯 Claude Code 的預設系統提示。CLAUDE.md 將內容添加為 Claude Code 預設系統提示\_之後\_的使用者訊息。`--append-system-prompt` 將內容附加到系統提示。
+根據 Claude 是否應該停止充當編碼助手或保持其預設角色並學習更多內容來選擇。輸出樣式用您自己的角色和聲音替換 Claude Code 系統提示中的軟體工程部分，因此當 Claude 應該採用不同的身份（例如寫作編輯或數據分析助手）時，請使用一個。CLAUDE.md 和 `--append-system-prompt` 都保持 Claude Code 的預設身份並添加到它，因此當 Claude 應該保持編碼助手身份同時遵循您的專案慣例或額外指示時，請使用它們。
+
+機制也不同。輸出樣式直接編輯系統提示。CLAUDE.md 在系統提示之後將其內容添加為使用者訊息。`--append-system-prompt` 將內容附加到系統提示的末尾，而不移除任何內容。
 
 ### 輸出樣式 vs. [Agents](/zh-TW/sub-agents)
 
-輸出樣式直接影響主代理迴圈，僅影響系統提示。Agents 被呼叫以處理特定任務，可以包括其他設定，例如要使用的模型、可用的工具以及有關何時使用代理的一些上下文。
+使用輸出樣式在每個工作階段中改變主對話的回應方式。當您想要一個單獨作用域的幫助程式，由主對話委派給它時，請使用 [subagent](/zh-TW/sub-agents)。輸出樣式僅影響主代理迴圈的系統提示。Agents 處理特定任務，可以攜帶自己的模型、工具和有關何時呼叫它們的上下文。
 
 ### 輸出樣式 vs. [Skills](/zh-TW/skills)
 

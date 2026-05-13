@@ -516,6 +516,8 @@ Ob ein benutzerdefinierter Pfad das Standard-Verzeichnis des Plugins ersetzt ode
 * **Fügt zum Standard hinzu**: `skills`. Das Standard-Verzeichnis `skills/` wird immer gescannt, und Verzeichnisse, die in `skills` aufgelistet sind, werden zusammen mit ihm geladen
 * **Eigene Merge-Regeln**: [hooks](#hooks), [MCP-Server](#mcp-servers) und [LSP-Server](#lsp-servers). Siehe jeden Abschnitt für die Kombinationsweise mehrerer Quellen
 
+Wenn ein Plugin sowohl einen Standard-Ordner als auch den entsprechenden Manifest-Schlüssel hat, kennzeichnet Claude Code v2.1.140 und später den ignorierten Ordner in `/doctor`, `claude plugin list` und der `/plugin` Detailansicht. Das Plugin wird weiterhin mit den Manifest-Pfaden geladen. Es wird keine Warnung angezeigt, wenn der Manifest-Schlüssel auf den Standard-Ordner verweist, beispielsweise `"commands": ["./commands/deploy.md"]`, da der Ordner in diesem Fall explizit adressiert wird.
+
 Für alle Pfadfelder:
 
 * Alle Pfade müssen relativ zum Plugin-Root sein und mit `./` beginnen

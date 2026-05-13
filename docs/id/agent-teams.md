@@ -129,6 +129,8 @@ Buat tim dengan 4 rekan tim untuk refactor modul-modul ini secara paralel.
 Gunakan Sonnet untuk setiap rekan tim.
 ```
 
+Rekan tim tidak mewarisi pilihan `/model` lead secara default. Untuk mengubah model yang digunakan ketika prompt tidak menentukan satu, atur **Default teammate model** di `/config`. Pilih **Default (leader's model)** untuk membuat rekan tim mengikuti model saat ini lead.
+
 ### Perlukan persetujuan rencana untuk rekan tim
 
 Untuk tugas kompleks atau berisiko, Anda dapat memerlukan rekan tim untuk merencanakan sebelum mengimplementasikan. Rekan tim bekerja dalam mode rencana read-only sampai lead menyetujui pendekatan mereka:

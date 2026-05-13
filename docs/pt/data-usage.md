@@ -13,11 +13,11 @@
 **Usuários consumidores (planos Free, Pro e Max)**:
 Oferecemos a você a opção de permitir que seus dados sejam usados para melhorar futuros modelos Claude. Treinaremos novos modelos usando dados de contas Free, Pro e Max quando essa configuração estiver ativada (inclusive quando você usa Claude Code dessas contas).
 
-**Usuários comerciais**: (planos Team e Enterprise, API, plataformas de terceiros e Claude Gov) mantêm as políticas existentes: a Anthropic não treina modelos generativos usando código ou prompts enviados para Claude Code sob termos comerciais, a menos que o cliente tenha optado por fornecer seus dados para melhorias de modelo (por exemplo, o [Development Partner Program](https://support.claude.com/en/articles/11174108-about-the-development-partner-program)).
+**Usuários comerciais**: (planos Team e Enterprise, API, plataformas de terceiros e Claude Gov) mantêm as políticas existentes: a Anthropic não treina modelos generativos usando código ou prompts enviados para Claude Code sob termos comerciais, a menos que o cliente tenha optado por fornecer seus dados para melhorias de modelo (por exemplo, o [Development Partner Program](https://support.claude.com/pt/articles/11174108-about-the-development-partner-program)).
 
 ### Development Partner Program
 
-Se você optar explicitamente por métodos para nos fornecer materiais para treinar, como através do [Development Partner Program](https://support.claude.com/en/articles/11174108-about-the-development-partner-program), podemos usar esses materiais fornecidos para treinar nossos modelos. Um administrador da organização pode optar explicitamente pelo Development Partner Program para sua organização. Observe que este programa está disponível apenas para API de primeira parte da Anthropic, e não para usuários de Bedrock ou Vertex.
+Se você optar explicitamente por métodos para nos fornecer materiais para treinar, como através do [Development Partner Program](https://support.claude.com/pt/articles/11174108-about-the-development-partner-program), podemos usar esses materiais fornecidos para treinar nossos modelos. Um administrador da organização pode optar explicitamente pelo Development Partner Program para sua organização. Observe que este programa está disponível apenas para API de primeira parte da Anthropic, e não para usuários de Bedrock ou Vertex.
 
 ### Feedback usando o comando `/feedback`
 
@@ -33,9 +33,9 @@ Após a pesquisa de classificação, você pode ver uma pergunta de acompanhamen
 * **No** (Não): recusa sem enviar nada
 * **Don't ask again** (Não perguntar novamente): recusa e impede que este acompanhamento apareça em futuras sessões
 
-Nada é carregado a menos que você selecione explicitamente **Yes**. Organizações com [zero data retention](/pt/zero-data-retention), ou onde o feedback de produto é desabilitado pela política da organização, nunca veem este acompanhamento. Suas respostas a esta pesquisa, inclusive transcrições de sessão enviadas após a pesquisa de classificação, não afetam suas preferências de treinamento de dados e não podem ser usadas para treinar nossos modelos de IA.
+Nada é carregado a menos que você selecione explicitamente **Yes**. Organizações com [zero data retention](/pt/zero-data-retention), ou onde o feedback de produto é desabilitado pela política da organização, ou onde `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` está definido, nunca veem este acompanhamento. Suas respostas a esta pesquisa, inclusive transcrições de sessão enviadas após a pesquisa de classificação, não afetam suas preferências de treinamento de dados e não podem ser usadas para treinar nossos modelos de IA.
 
-Para desabilitar essas pesquisas, defina `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`. A pesquisa também é desabilitada quando `DISABLE_TELEMETRY` ou `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` está definido. Para controlar a frequência em vez de desabilitar, defina [`feedbackSurveyRate`](/pt/settings#available-settings) em seu arquivo de configurações para uma probabilidade entre `0` e `1`.
+Para desabilitar essas pesquisas, defina `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`. A pesquisa também é desabilitada quando `DISABLE_TELEMETRY`, `DO_NOT_TRACK`, ou `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` está definido. Organizações que bloqueiam tráfego não essencial, mas capturam respostas de pesquisa através de seu próprio [coletor OpenTelemetry](/pt/monitoring-usage) podem optar pela pesquisa novamente definindo `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL=1`. A pesquisa então registra classificações apenas no coletor configurado. O acompanhamento de compartilhamento de transcrição e todo o outro tráfego de feedback vinculado à Anthropic permanecem desabilitados. Para controlar a frequência em vez de desabilitar, defina [`feedbackSurveyRate`](/pt/settings#available-settings) em seu arquivo de configurações para uma probabilidade entre `0` e `1`.
 
 ### Retenção de dados
 

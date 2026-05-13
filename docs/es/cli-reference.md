@@ -124,7 +124,9 @@ Claude Code proporciona cuatro banderas para personalizar el indicador del siste
 
 `--system-prompt` y `--system-prompt-file` son mutuamente excluyentes. Las banderas de adición se pueden combinar con cualquiera de las banderas de reemplazo.
 
-Para la mayoría de los casos de uso, use una bandera de adición. Agregar preserva las capacidades integradas de Claude Code mientras agrega sus requisitos. Use una bandera de reemplazo solo cuando necesite control completo sobre el indicador del sistema.
+Elija según si la identidad predeterminada de Claude Code aún se ajusta a su tarea. Use una bandera de adición cuando Claude deba seguir siendo un asistente de codificación que también sigue sus reglas adicionales: instrucciones por invocación, formato de salida o contexto de dominio para un script `-p`. Agregar preserva la orientación de herramientas predeterminada, instrucciones de seguridad y convenciones de codificación, por lo que solo proporciona lo que difiere. Use una bandera de reemplazo cuando la superficie, identidad o modelo de permiso difiera del de Claude Code, como un agente no codificador en una canalización que ningún humano observa. Reemplazar elimina todo el indicador predeterminado, incluida la orientación de herramientas e instrucciones de seguridad, por lo que usted es responsable de lo que su tarea aún necesita.
+
+Estas banderas se aplican solo a la invocación actual. Para personas persistentes que puede cambiar y compartir en un proyecto, use [estilos de salida](/es/output-styles). Para convenciones de proyecto que Claude siempre debe seguir, use [CLAUDE.md](/es/memory). La [guía de Agent SDK sobre indicaciones del sistema](/es/agent-sdk/modifying-system-prompts#decide-on-a-starting-point) cubre la misma decisión con más profundidad.
 
 ## Ver también
 

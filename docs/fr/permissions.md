@@ -138,7 +138,7 @@ Les wrappers exec tels que `watch`, `setsid`, `ionice` et `flock` demandent touj
 
 #### Commandes en lecture seule
 
-Claude Code reconnaît un ensemble intégré de commandes Bash comme étant en lecture seule et les exécute sans invite d'autorisation dans tous les modes. Ceux-ci incluent `ls`, `cat`, `head`, `tail`, `grep`, `find`, `wc`, `diff`, `stat`, `du`, `cd` et les formes en lecture seule de `git`. L'ensemble n'est pas configurable ; pour exiger une invite pour l'une de ces commandes, ajoutez une règle `ask` ou `deny` pour celle-ci.
+Claude Code reconnaît un ensemble intégré de commandes Bash comme étant en lecture seule et les exécute sans invite d'autorisation dans tous les modes. Ceux-ci incluent `ls`, `cat`, `echo`, `pwd`, `head`, `tail`, `grep`, `find`, `wc`, `which`, `diff`, `stat`, `du`, `cd` et les formes en lecture seule de `git`. L'ensemble n'est pas configurable ; pour exiger une invite pour l'une de ces commandes, ajoutez une règle `ask` ou `deny` pour celle-ci.
 
 Les modèles glob non cités sont autorisés pour les commandes dont chaque drapeau est en lecture seule, donc `ls *.ts` et `wc -l src/*.py` s'exécutent sans invite. Les commandes avec des drapeaux capables d'écriture ou d'exécution, tels que `find`, `sort`, `sed` et `git`, demandent toujours lorsqu'un glob non cité est présent car le glob pourrait s'étendre à un drapeau comme `-delete`.
 
@@ -290,7 +290,7 @@ Les types de configuration suivants sont chargés à partir des répertoires `--
 | Paramètres de plugin dans `.claude/settings.json`                       | `enabledPlugins` et `extraKnownMarketplaces` uniquement                                                                                                               |
 | Fichiers [CLAUDE.md](/fr/memory), `.claude/rules/` et `CLAUDE.local.md` | Uniquement lorsque `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` est défini. `CLAUDE.local.md` nécessite également le paramètre `local`, qui est activé par défaut |
 
-Tout le reste, y compris les subagents, les commandes, les styles de sortie, les hooks et d'autres paramètres, est découvert uniquement à partir du répertoire de travail actuel et de ses parents, de votre répertoire utilisateur à `~/.claude/` et des paramètres gérés. Pour partager cette configuration entre les projets, utilisez l'une de ces approches :
+Les subagents, les commandes et les styles de sortie sont découverts à partir du répertoire de travail actuel et de ses parents, de votre répertoire utilisateur à `~/.claude/` et des paramètres gérés. Les hooks et d'autres clés `settings.json` se chargent à partir du dossier `.claude/` du répertoire de travail actuel sans secours au répertoire parent, aux côtés de votre `~/.claude/settings.json` utilisateur et des paramètres gérés. Pour partager cette configuration entre les projets, utilisez l'une de ces approches :
 
 * **Configuration au niveau utilisateur** : placez les fichiers dans `~/.claude/agents/`, `~/.claude/output-styles/` ou `~/.claude/settings.json` pour les rendre disponibles dans chaque projet
 * **Plugins** : empaquetez et distribuez la configuration en tant que [plugin](/fr/plugins) que les équipes peuvent installer
@@ -352,6 +352,8 @@ Les règles d'autorisation suivent la même [précédence des paramètres](/fr/s
 5. **Paramètres utilisateur** (`~/.claude/settings.json`)
 
 Si un outil est refusé à n'importe quel niveau, aucun autre niveau ne peut l'autoriser. Par exemple, un refus de paramètres gérés ne peut pas être remplacé par `--allowedTools`, et `--disallowedTools` peut ajouter des restrictions au-delà de ce que les paramètres gérés définissent.
+
+Les hôtes d'intégration peuvent fournir une politique gérée supplémentaire via l'option SDK `managedSettings` lorsque [`parentSettingsBehavior`](/fr/settings#settings-precedence) est défini sur `"merge"` ; les valeurs de l'intégrateur peuvent renforcer la politique mais pas l'assouplir.
 
 Si une autorisation est autorisée dans les paramètres utilisateur mais refusée dans les paramètres de projet, le paramètre de projet prend la priorité et l'autorisation est bloquée.
 

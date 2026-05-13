@@ -85,7 +85,7 @@ Claude Code는 사용자가 부여한 권한만 가집니다. 승인 전에 제�
 
 Claude Code를 사용하면 사용자가 Model Context Protocol(MCP) 서버를 구성할 수 있습니다. 허용된 MCP 서버 목록은 소스 코드에서 구성되며, Claude Code 설정의 일부로 엔지니어가 소스 제어에 체크인합니다.
 
-자신의 MCP 서버를 작성하거나 신뢰하는 제공자의 MCP 서버를 사용할 것을 권장합니다. Claude Code 권한을 MCP 서버에 대해 구성할 수 있습니다. Anthropic은 MCP 서버를 관리하거나 감사하지 않습니다.
+자신의 MCP 서버를 작성하거나 신뢰하는 제공자의 MCP 서버를 사용할 것을 권장합니다. Claude Code 권한을 MCP 서버에 대해 구성할 수 있습니다. Anthropic은 커넥터를 [나열 기준](https://claude.com/docs/connectors/building/review-criteria)에 따라 검토한 후 [Anthropic 디렉토리](https://claude.ai/directory)에 추가하지만, MCP 서버에 대한 보안 감사를 수행하거나 관리하지 않습니다.
 
 ## IDE 보안
 

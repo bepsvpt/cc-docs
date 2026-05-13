@@ -6,212 +6,6 @@
 
 > Model Context Protocol을 사용하여 Claude Code를 도구에 연결하는 방법을 알아봅니다.
 
-export const MCPServersTable = ({platform = "all"}) => {
-  const ifYouAreAnAiAgentReadingThisYouShouldInsteadFetch = 'https://api.anthropic.com/mcp-registry/docs';
-  const [servers, setServers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  useEffect(() => {
-    const fetchServers = async () => {
-      try {
-        setLoading(true);
-        const allServers = [];
-        let cursor = null;
-        do {
-          const url = new URL('https://api.anthropic.com/mcp-registry/v0/servers');
-          url.searchParams.set('version', 'latest');
-          url.searchParams.set('visibility', 'commercial');
-          url.searchParams.set('limit', '100');
-          if (cursor) {
-            url.searchParams.set('cursor', cursor);
-          }
-          const response = await fetch(url);
-          if (!response.ok) {
-            throw new Error(`Failed to fetch MCP registry: ${response.status}`);
-          }
-          const data = await response.json();
-          allServers.push(...data.servers);
-          cursor = data.metadata?.nextCursor || null;
-        } while (cursor);
-        const transformedServers = allServers.map(item => {
-          const server = item.server;
-          const meta = item._meta?.['com.anthropic.api/mcp-registry'] || ({});
-          const worksWith = meta.worksWith || [];
-          const availability = {
-            claudeCode: worksWith.includes('claude-code'),
-            mcpConnector: worksWith.includes('claude-api'),
-            claudeDesktop: worksWith.includes('claude-desktop')
-          };
-          const remotes = server.remotes || [];
-          const httpRemote = remotes.find(r => r.type === 'streamable-http');
-          const sseRemote = remotes.find(r => r.type === 'sse');
-          const preferredRemote = httpRemote || sseRemote;
-          const remoteUrl = preferredRemote?.url || meta.url;
-          const remoteType = preferredRemote?.type;
-          const isTemplatedUrl = remoteUrl?.includes('{');
-          let setupUrl;
-          if (isTemplatedUrl && meta.requiredFields) {
-            const urlField = meta.requiredFields.find(f => f.field === 'url');
-            setupUrl = urlField?.sourceUrl || meta.documentation;
-          }
-          const urls = {};
-          if (!isTemplatedUrl) {
-            if (remoteType === 'streamable-http') {
-              urls.http = remoteUrl;
-            } else if (remoteType === 'sse') {
-              urls.sse = remoteUrl;
-            }
-          }
-          let envVars = [];
-          if (server.packages && server.packages.length > 0) {
-            const npmPackage = server.packages.find(p => p.registryType === 'npm');
-            if (npmPackage) {
-              urls.stdio = `npx -y ${npmPackage.identifier}`;
-              if (npmPackage.environmentVariables) {
-                envVars = npmPackage.environmentVariables;
-              }
-            }
-          }
-          return {
-            name: meta.displayName || server.title || server.name,
-            description: meta.oneLiner || server.description,
-            documentation: meta.documentation,
-            urls: urls,
-            envVars: envVars,
-            availability: availability,
-            customCommands: meta.claudeCodeCopyText ? {
-              claudeCode: meta.claudeCodeCopyText
-            } : undefined,
-            setupUrl: setupUrl
-          };
-        });
-        setServers(transformedServers);
-        setError(null);
-      } catch (err) {
-        setError(err.message);
-        console.error('Error fetching MCP registry:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchServers();
-  }, []);
-  const generateClaudeCodeCommand = server => {
-    if (server.customCommands && server.customCommands.claudeCode) {
-      return server.customCommands.claudeCode.replace('--transport streamable-http', '--transport http');
-    }
-    const serverSlug = server.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
-    if (server.urls.http) {
-      return `claude mcp add ${serverSlug} --transport http ${server.urls.http}`;
-    }
-    if (server.urls.sse) {
-      return `claude mcp add ${serverSlug} --transport sse ${server.urls.sse}`;
-    }
-    if (server.urls.stdio) {
-      const envFlags = server.envVars && server.envVars.length > 0 ? server.envVars.map(v => `--env ${v.name}=YOUR_${v.name}`).join(' ') : '';
-      const baseCommand = `claude mcp add ${serverSlug} --transport stdio`;
-      return envFlags ? `${baseCommand} ${envFlags} -- ${server.urls.stdio}` : `${baseCommand} -- ${server.urls.stdio}`;
-    }
-    return null;
-  };
-  if (loading) {
-    return <div>Loading MCP servers...</div>;
-  }
-  if (error) {
-    return <div>Error loading MCP servers: {error}</div>;
-  }
-  const filteredServers = servers.filter(server => {
-    if (platform === "claudeCode") {
-      return server.availability.claudeCode;
-    } else if (platform === "mcpConnector") {
-      return server.availability.mcpConnector;
-    } else if (platform === "claudeDesktop") {
-      return server.availability.claudeDesktop;
-    } else if (platform === "all") {
-      return true;
-    } else {
-      throw new Error(`Unknown platform: ${platform}`);
-    }
-  });
-  return <>
-      <style jsx>{`
-        .cards-container {
-          display: grid;
-          gap: 1rem;
-          margin-bottom: 2rem;
-        }
-        .server-card {
-          border: 1px solid var(--border-color, #e5e7eb);
-          border-radius: 6px;
-          padding: 1rem;
-        }
-        .command-row {
-          display: flex;
-          align-items: center;
-          gap: 0.25rem;
-        }
-        .command-row code {
-          font-size: 0.75rem;
-          overflow-x: auto;
-        }
-      `}</style>
-
-      <div className="cards-container">
-        {filteredServers.map(server => {
-    const claudeCodeCommand = generateClaudeCodeCommand(server);
-    const mcpUrl = server.urls.http || server.urls.sse;
-    const commandToShow = platform === "claudeCode" ? claudeCodeCommand : mcpUrl;
-    return <div key={server.name} className="server-card">
-              <div>
-                {server.documentation ? <a href={server.documentation}>
-                    <strong>{server.name}</strong>
-                  </a> : <strong>{server.name}</strong>}
-              </div>
-
-              <p style={{
-      margin: '0.5rem 0',
-      fontSize: '0.9rem'
-    }}>
-                {server.description}
-              </p>
-
-              {server.setupUrl && <p style={{
-      margin: '0.25rem 0',
-      fontSize: '0.8rem',
-      fontStyle: 'italic',
-      opacity: 0.7
-    }}>
-                  Requires user-specific URL.{' '}
-                  <a href={server.setupUrl} style={{
-      textDecoration: 'underline'
-    }}>
-                    Get your URL here
-                  </a>.
-                </p>}
-
-              {commandToShow && !server.setupUrl && <>
-                <p style={{
-      display: 'block',
-      fontSize: '0.75rem',
-      fontWeight: 500,
-      minWidth: 'fit-content',
-      marginTop: '0.5rem',
-      marginBottom: 0
-    }}>
-                  {platform === "claudeCode" ? "Command" : "URL"}
-                </p>
-                <div className="command-row">
-                  <code>
-                    {commandToShow}
-                  </code>
-                </div>
-              </>}
-            </div>;
-  })}
-      </div>
-    </>;
-};
-
 Claude Code는 AI 도구 통합을 위한 오픈 소스 표준인 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction)를 통해 수백 개의 외부 도구 및 데이터 소스에 연결할 수 있습니다. MCP 서버는 Claude Code에 도구, 데이터베이스 및 API에 대한 액세스를 제공합니다.
 
 다른 도구(예: 이슈 추적기 또는 모니터링 대시보드)에서 채팅으로 데이터를 복사하는 자신을 발견할 때 서버를 연결하세요. 연결되면 Claude는 붙여넣은 내용에서 작업하는 대신 해당 시스템을 직접 읽고 작동할 수 있습니다.
@@ -227,21 +21,37 @@ MCP 서버가 연결되면 Claude Code에 다음을 요청할 수 있습니다:
 * **워크플로우 자동화**: "이 10명의 사용자를 새로운 기능에 대한 피드백 세션에 초대하는 Gmail 초안을 생성하세요."
 * **외부 이벤트에 반응**: MCP 서버는 [채널](/ko/channels)로도 작동할 수 있으며, 세션에 메시지를 푸시하므로 Claude는 자리를 비운 동안 Telegram 메시지, Discord 채팅 또는 webhook 이벤트에 반응할 수 있습니다.
 
-## 인기 있는 MCP 서버
+## MCP 서버 찾기 및 구축
 
-Claude Code에 연결할 수 있는 일반적으로 사용되는 MCP 서버는 다음과 같습니다:
+[Anthropic Directory](https://claude.ai/directory)에서 검토된 커넥터를 찾아보세요. Directory 커넥터는 Claude Code와 동일한 MCP 인프라를 사용하므로 `claude mcp add`를 사용하여 여기에 나열된 모든 원격 서버를 추가할 수 있습니다.
 
 <Warning>
-  타사 MCP 서버를 사용할 때는 자신의 책임하에 사용하십시오 - Anthropic은 이러한 모든 서버의 정확성이나 보안을 검증하지 않았습니다.
-  설치하는 MCP 서버를 신뢰하는지 확인하세요.
-  신뢰할 수 없는 콘텐츠를 가져올 수 있는 MCP 서버를 사용할 때는 특히 주의하세요. 이러한 서버는 프롬프트 주입 위험에 노출될 수 있습니다.
+  연결하기 전에 각 서버를 신뢰할 수 있는지 확인하세요. 외부 콘텐츠를 가져오는 서버는 [프롬프트 주입 위험](/ko/security#protect-against-prompt-injection)에 노출될 수 있습니다.
 </Warning>
 
-<MCPServersTable platform="claudeCode" />
+자신만의 서버를 구축하려면 프로토콜 기본 사항에 대한 [MCP 서버 가이드](https://modelcontextprotocol.io/docs/develop/build-server)와 인증, 테스트 및 Directory 제출에 대한 [Claude 커넥터 구축 문서](https://claude.com/docs/connectors/building)를 참조하세요.
 
-<Note>
-  **특정 통합이 필요하신가요?** [GitHub에서 수백 개 이상의 MCP 서버를 찾거나](https://github.com/modelcontextprotocol/servers), [MCP SDK](https://modelcontextprotocol.io/quickstart/server)를 사용하여 자신만의 서버를 구축하세요.
-</Note>
+공식 [`mcp-server-dev` 플러그인](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/mcp-server-dev)을 사용하여 Claude가 서버를 스캐폴드하도록 할 수도 있습니다.
+
+<Steps>
+  <Step title="플러그인 설치">
+    Claude Code 세션에서 다음을 실행하세요:
+
+    ```
+    /plugin install mcp-server-dev@claude-plugins-official
+    ```
+
+    그런 다음 `/reload-plugins`를 실행하여 현재 세션에서 활성화하세요.
+  </Step>
+
+  <Step title="빌드 스킬 실행">
+    ```
+    /mcp-server-dev:build-mcp-server
+    ```
+
+    Claude가 사용 사례에 대해 묻고 원격 HTTP 또는 로컬 stdio 서버를 스캐폴드합니다.
+  </Step>
+</Steps>
 
 ## MCP 서버 설치
 
@@ -1143,17 +953,17 @@ Claude Code는 도구 설명 및 서버 지침을 각각 2KB에서 자릅니다.
 
 ### Tool Search 구성
 
-Tool Search는 기본적으로 활성화됩니다: MCP 도구는 연기되고 필요에 따라 검색됩니다. Vertex AI에서는 기본적으로 비활성화되어 있습니다(도구 검색 베타 헤더를 허용하지 않음). `ANTHROPIC_BASE_URL`이 비 자사 호스트를 가리킬 때도 비활성화됩니다(대부분의 프록시가 `tool_reference` 블록을 전달하지 않기 때문). 명시적으로 `ENABLE_TOOL_SEARCH`를 설정하여 옵트인합니다. 이 기능은 `tool_reference` 블록을 지원하는 모델이 필요합니다: Sonnet 4 이상 또는 Opus 4 이상. Haiku 모델은 Tool Search를 지원하지 않습니다.
+Tool Search는 기본적으로 활성화됩니다: MCP 도구는 연기되고 필요에 따라 검색됩니다. Vertex AI에서는 기본적으로 비활성화되어 있습니다(도구 검색 베타 헤더를 허용하지 않음). `ANTHROPIC_BASE_URL`이 비 자사 호스트를 가리킬 때도 비활성화됩니다(대부분의 프록시가 `tool_reference` 블록을 전달하지 않기 때문). 프록시가 `tool_reference` 블록을 전달하는 경우 명시적으로 `ENABLE_TOOL_SEARCH`를 설정하여 폴백을 재정의합니다. 이 기능은 `tool_reference` 블록을 지원하는 모델이 필요합니다: Sonnet 4 이상 또는 Opus 4 이상. Haiku 모델은 Tool Search를 지원하지 않습니다.
 
 `ENABLE_TOOL_SEARCH` 환경 변수로 Tool Search 동작을 제어합니다:
 
-| 값          | 동작                                                                                   |
-| :--------- | :----------------------------------------------------------------------------------- |
-| (설정되지 않음)  | 모든 MCP 도구 연기되고 필요에 따라 로드됨. Vertex AI 또는 `ANTHROPIC_BASE_URL`이 비 자사 호스트일 때 미리 로드로 돌아감 |
-| `true`     | 모든 MCP 도구 연기, Vertex AI 및 비 자사 `ANTHROPIC_BASE_URL` 포함                               |
-| `auto`     | 임계값 모드: 도구가 컨텍스트 윈도우의 10% 이내에 맞으면 미리 로드, 그렇지 않으면 연기                                  |
-| `auto:<N>` | 사용자 정의 백분율을 사용한 임계값 모드, `<N>`은 0-100 (예: `auto:5`는 5%)                               |
-| `false`    | 모든 MCP 도구 미리 로드, 연기 없음                                                               |
+| 값          | 동작                                                                                                          |
+| :--------- | :---------------------------------------------------------------------------------------------------------- |
+| (설정되지 않음)  | 모든 MCP 도구 연기되고 필요에 따라 로드됨. Vertex AI 또는 `ANTHROPIC_BASE_URL`이 비 자사 호스트일 때 미리 로드로 돌아감                        |
+| `true`     | 모든 MCP 도구 연기. Claude Code는 Vertex AI 및 프록시를 통해서도 베타 헤더를 전송합니다. 백엔드가 `tool_reference` 블록을 지원하지 않으면 요청이 실패합니다 |
+| `auto`     | 임계값 모드: 도구가 컨텍스트 윈도우의 10% 이내에 맞으면 미리 로드, 그렇지 않으면 연기                                                         |
+| `auto:<N>` | 사용자 정의 백분율을 사용한 임계값 모드, `<N>`은 0-100 (예: `auto:5`는 5%)                                                      |
+| `false`    | 모든 MCP 도구 미리 로드, 연기 없음                                                                                      |
 
 ```bash theme={null}
 # 사용자 정의 5% 임계값 사용

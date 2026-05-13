@@ -13,11 +13,11 @@
 **Pengguna konsumen (paket Free, Pro, dan Max)**:
 Kami memberi Anda pilihan untuk mengizinkan data Anda digunakan untuk meningkatkan model Claude di masa depan. Kami akan melatih model baru menggunakan data dari akun Free, Pro, dan Max ketika pengaturan ini aktif (termasuk ketika Anda menggunakan Claude Code dari akun-akun ini).
 
-**Pengguna komersial**: (paket Team dan Enterprise, API, platform pihak ketiga, dan Claude Gov) mempertahankan kebijakan yang ada: Anthropic tidak melatih model generatif menggunakan kode atau prompt yang dikirim ke Claude Code berdasarkan syarat komersial, kecuali pelanggan telah memilih untuk memberikan data mereka kepada kami untuk peningkatan model (misalnya, [Program Mitra Pengembang](https://support.claude.com/en/articles/11174108-about-the-development-partner-program)).
+**Pengguna komersial**: (paket Team dan Enterprise, API, platform pihak ketiga, dan Claude Gov) mempertahankan kebijakan yang ada: Anthropic tidak melatih model generatif menggunakan kode atau prompt yang dikirim ke Claude Code berdasarkan syarat komersial, kecuali pelanggan telah memilih untuk memberikan data mereka kepada kami untuk peningkatan model (misalnya, [Program Mitra Pengembang](https://support.claude.com/id/articles/11174108-about-the-development-partner-program)).
 
 ### Program Mitra Pengembang
 
-Jika Anda secara eksplisit memilih untuk memberikan materi kepada kami untuk dilatih, seperti melalui [Program Mitra Pengembang](https://support.claude.com/en/articles/11174108-about-the-development-partner-program), kami dapat menggunakan materi tersebut untuk melatih model kami. Admin organisasi dapat secara tegas memilih untuk bergabung dengan Program Mitra Pengembang untuk organisasi mereka. Perhatikan bahwa program ini hanya tersedia untuk API pihak pertama Anthropic, dan bukan untuk pengguna Bedrock atau Vertex.
+Jika Anda secara eksplisit memilih untuk memberikan materi kepada kami untuk dilatih, seperti melalui [Program Mitra Pengembang](https://support.claude.com/id/articles/11174108-about-the-development-partner-program), kami dapat menggunakan materi tersebut untuk melatih model kami. Admin organisasi dapat secara tegas memilih untuk bergabung dengan Program Mitra Pengembang untuk organisasi mereka. Perhatikan bahwa program ini hanya tersedia untuk API pihak pertama Anthropic, dan bukan untuk pengguna Bedrock atau Vertex.
 
 ### Umpan balik menggunakan perintah `/feedback`
 
@@ -33,9 +33,9 @@ Setelah prompt penilaian, Anda mungkin melihat pertanyaan tindak lanjut terpisah
 * **Tidak**: menolak tanpa mengirim apa pun
 * **Jangan tanya lagi**: menolak dan menghentikan pertanyaan tindak lanjut ini agar tidak muncul di sesi mendatang
 
-Tidak ada yang diunggah kecuali Anda secara eksplisit memilih **Ya**. Organisasi dengan [retensi data nol](/id/zero-data-retention), atau di mana umpan balik produk dinonaktifkan oleh kebijakan organisasi, tidak pernah melihat pertanyaan tindak lanjut ini. Respons Anda terhadap survei ini, termasuk transkrip sesi yang dikirimkan setelah prompt penilaian, tidak mempengaruhi preferensi pelatihan data Anda dan tidak dapat digunakan untuk melatih model AI kami.
+Tidak ada yang diunggah kecuali Anda secara eksplisit memilih **Ya**. Organisasi dengan [retensi data nol](/id/zero-data-retention), atau di mana umpan balik produk dinonaktifkan oleh kebijakan organisasi, atau di mana `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` diatur, tidak pernah melihat pertanyaan tindak lanjut ini. Respons Anda terhadap survei ini, termasuk transkrip sesi yang dikirimkan setelah prompt penilaian, tidak mempengaruhi preferensi pelatihan data Anda dan tidak dapat digunakan untuk melatih model AI kami.
 
-Untuk menonaktifkan survei ini, atur `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`. Survei juga dinonaktifkan ketika `DISABLE_TELEMETRY` atau `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` diatur. Untuk mengontrol frekuensi alih-alih menonaktifkan, atur [`feedbackSurveyRate`](/id/settings#available-settings) dalam file pengaturan Anda ke probabilitas antara `0` dan `1`.
+Untuk menonaktifkan survei ini, atur `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`. Survei juga dinonaktifkan ketika `DISABLE_TELEMETRY`, `DO_NOT_TRACK`, atau `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` diatur. Organisasi yang memblokir lalu lintas nonessensial tetapi menangkap respons survei melalui [pengumpul OpenTelemetry](/id/monitoring-usage) mereka sendiri dapat memilih survei kembali dengan mengatur `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL=1`. Survei kemudian mencatat peringkat ke pengumpul yang dikonfigurasi saja. Tindak lanjut berbagi transkrip dan semua lalu lintas umpan balik lainnya yang terikat ke Anthropic tetap dinonaktifkan. Untuk mengontrol frekuensi alih-alih menonaktifkan, atur [`feedbackSurveyRate`](/id/settings#available-settings) dalam file pengaturan Anda ke probabilitas antara `0` dan `1`.
 
 ### Retensi data
 

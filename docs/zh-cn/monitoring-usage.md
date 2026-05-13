@@ -654,7 +654,7 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * `tool_use_id`：此工具调用的唯一标识符。与传递给 hooks 的 `tool_use_id` 匹配，允许在 OTel 事件和 hook 捕获的数据之间进行关联。
 * `decision`：`"accept"` 或 `"reject"`
 * `source`：决策来源：
-  * `"config"`：基于项目设置、企业托管策略、`--allowedTools` 或 `--disallowedTools` 标志、活跃权限模式或因为工具本身是安全的，自动决策而不提示。事件不指示这些来源中的哪一个匹配。
+  * `"config"`：基于项目设置、用户个人设置中的允许规则、企业托管策略、`--allowedTools` 或 `--disallowedTools` 标志、活跃权限模式、来自同一交互式 CLI 会话中较早提示的会话范围授予或因为工具本身是安全的，自动决策而不提示。事件不指示这些来源中的哪一个匹配。
   * `"hook"`：`PreToolUse` 或 `PermissionRequest` hook 返回了决策。
   * `"user_permanent"`：当用户在权限提示时选择"是，并且不要再问..."时发出，将允许规则保存到其个人设置。在交互式 CLI 中，仅为该选择本身发出；与保存规则匹配的后续调用发出 `"config"`。在 Agent SDK 或非交互式 `-p` 会话中，初始选择和后续规则匹配都发出 `"user_permanent"`。视为接受。
   * `"user_temporary"`：当用户在权限提示时选择"是"，或在文件编辑或读取提示上选择"...仅在此会话期间"选项时发出。在交互式 CLI 中，仅为该选择本身发出；与该会话范围允许匹配的后续调用发出 `"config"`。在 Agent SDK 或非交互式 `-p` 会话中，选择和后续匹配都发出 `"user_temporary"`。视为接受。
@@ -904,6 +904,24 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * `pre_tokens`：压缩前的近似令牌计数
 * `post_tokens`：压缩后的近似令牌计数
 * `error`：压缩失败时的错误消息
+
+#### 反馈调查事件
+
+当显示或回答会话质量调查时记录。请参阅 [会话质量调查](/zh-CN/data-usage#session-quality-surveys) 了解调查收集的内容以及如何控制它们。
+
+**事件名称**：`claude_code.feedback_survey`
+
+**属性**：
+
+* 所有 [标准属性](#standard-attributes)
+* `event.name`：`"feedback_survey"`
+* `event.timestamp`：ISO 8601 时间戳
+* `event.sequence`：单调递增的计数器，用于在会话内排序事件
+* `event_type`：调查生命周期事件，例如 `"appeared"`、`"responded"` 或 `"transcript_prompt_appeared"`
+* `appearance_id`：唯一 ID，链接为一个调查实例发出的事件
+* `survey_type`：哪个调查产生了事件。`"session"` 是"Claude 做得怎么样？"评分提示
+* `response`：用户在 `responded` 事件上的选择
+* `enabled_via_override`：当设置了 [`CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL`](/zh-CN/env-vars) 时为 `true`。作为布尔值而不是字符串发出。在 `session` 调查事件上存在。过滤此属性以确认覆盖在整个队伍中应用
 
 ## 解释指标和事件数据
 

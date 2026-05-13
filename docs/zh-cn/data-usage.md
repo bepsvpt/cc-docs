@@ -33,9 +33,9 @@
 * **否**：拒绝而不发送任何内容
 * **不再询问**：拒绝并停止此后续在未来会话中出现
 
-除非您明确选择**是**，否则不会上传任何内容。具有[零数据保留](/zh-CN/zero-data-retention)的组织，或组织政策禁用产品反馈的组织，永远不会看到此后续。您对此调查的回应（包括评分提示后提交的会话记录）不会影响您的数据训练偏好，也不能用于训练我们的 AI 模型。
+除非您明确选择**是**，否则不会上传任何内容。具有[零数据保留](/zh-CN/zero-data-retention)的组织，或组织政策禁用产品反馈的组织，或设置了 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 的组织，永远不会看到此后续。您对此调查的回应（包括评分提示后提交的会话记录）不会影响您的数据训练偏好，也不能用于训练我们的 AI 模型。
 
-要禁用这些调查，请设置 `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`。当设置 `DISABLE_TELEMETRY` 或 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 时，调查也会被禁用。要控制频率而不是禁用，请在您的设置文件中将 [`feedbackSurveyRate`](/zh-CN/settings#available-settings) 设置为 `0` 到 `1` 之间的概率。
+要禁用这些调查，请设置 `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`。当设置 `DISABLE_TELEMETRY`、`DO_NOT_TRACK` 或 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` 时，调查也会被禁用。具有阻止非必要流量但通过其自己的 [OpenTelemetry 收集器](/zh-CN/monitoring-usage)捕获调查响应的组织可以通过设置 `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL=1` 来选择重新启用调查。然后调查仅将评分记录到配置的收集器。记录共享后续和所有其他 Anthropic 绑定的反馈流量保持禁用。要控制频率而不是禁用，请在您的设置文件中将 [`feedbackSurveyRate`](/zh-CN/settings#available-settings) 设置为 `0` 到 `1` 之间的概率。
 
 ### 数据保留
 

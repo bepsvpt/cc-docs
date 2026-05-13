@@ -516,6 +516,8 @@ Qu'un chemin personnalisé remplace ou étende le répertoire par défaut du plu
 * **S'ajoute au répertoire par défaut** : `skills`. Le répertoire par défaut `skills/` est toujours analysé, et les répertoires listés dans `skills` sont chargés à côté de lui
 * **Règles de fusion propres** : [hooks](#hooks), [Serveurs MCP](#mcp-servers), et [Serveurs LSP](#lsp-servers). Consultez chaque section pour savoir comment plusieurs sources se combinent
 
+Quand un plugin a à la fois un dossier par défaut et la clé de manifeste correspondante, Claude Code v2.1.140 et versions ultérieures signale le dossier ignoré dans `/doctor`, `claude plugin list`, et la vue de détail `/plugin`. Le plugin se charge toujours en utilisant les chemins du manifeste. Aucun avertissement n'est affiché quand la clé de manifeste pointe dans le dossier par défaut, par exemple `"commands": ["./commands/deploy.md"]`, car le dossier est adressé explicitement dans ce cas.
+
 Pour tous les champs de chemin :
 
 * Tous les chemins doivent être relatifs à la racine du plugin et commencer par `./`

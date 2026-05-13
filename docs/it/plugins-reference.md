@@ -516,6 +516,8 @@ Se un percorso personalizzato sostituisce o estende la directory predefinita del
 * **Aggiunge al valore predefinito**: `skills`. La directory predefinita `skills/` viene sempre scansionata e le directory elencate in `skills` vengono caricate insieme ad essa
 * **Regole di merge proprie**: [hooks](#hooks), [MCP servers](#mcp-servers) e [LSP servers](#lsp-servers). Vedi ogni sezione per come più fonti si combinano
 
+Quando un plugin ha sia una cartella predefinita che la chiave manifest corrispondente, Claude Code v2.1.140 e versioni successive contrassegnano la cartella ignorata in `/doctor`, `claude plugin list` e la vista dettagli `/plugin`. Il plugin continua a caricarsi utilizzando i percorsi del manifest. Nessun avviso viene mostrato quando la chiave manifest punta nella cartella predefinita, ad esempio `"commands": ["./commands/deploy.md"]`, perché la cartella è indirizzata esplicitamente in quel caso.
+
 Per tutti i campi del percorso:
 
 * Tutti i percorsi devono essere relativi alla radice del plugin e iniziare con `./`

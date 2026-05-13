@@ -97,9 +97,9 @@ Cuando los skills comparten el mismo nombre en diferentes niveles, enterprise an
 
 Claude Code observa los directorios de skills para detectar cambios de archivos. Añadir, editar o eliminar un skill bajo `~/.claude/skills/`, el proyecto `.claude/skills/`, o un `.claude/skills/` dentro de un directorio `--add-dir` surte efecto dentro de la sesión actual sin reiniciar. Crear un directorio de skills de nivel superior que no existía cuando se inició la sesión requiere reiniciar Claude Code para que el nuevo directorio pueda ser observado.
 
-#### Descubrimiento automático desde directorios anidados
+#### Descubrimiento automático desde directorios anidados y padres
 
-Cuando trabaja con archivos en subdirectorios, Claude Code descubre automáticamente skills de directorios `.claude/skills/` anidados. Por ejemplo, si está editando un archivo en `packages/frontend/`, Claude Code también busca skills en `packages/frontend/.claude/skills/`. Esto admite configuraciones de monorepo donde los paquetes tienen sus propios skills.
+Los skills del proyecto se cargan desde `.claude/skills/` en su directorio de inicio y en cada directorio padre hasta la raíz del repositorio, por lo que iniciar Claude en un subdirectorio sigue recogiendo skills definidos en la raíz. Cuando trabaja con archivos en subdirectorios por debajo de su directorio de inicio, Claude Code también descubre skills desde directorios `.claude/skills/` anidados bajo demanda. Por ejemplo, si está editando un archivo en `packages/frontend/`, Claude Code también busca skills en `packages/frontend/.claude/skills/`. Esto admite configuraciones de monorepo donde los paquetes tienen sus propios skills.
 
 Cada skill es un directorio con `SKILL.md` como punto de entrada:
 

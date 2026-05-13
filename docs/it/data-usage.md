@@ -13,11 +13,11 @@
 **Utenti consumer (piani Free, Pro e Max)**:
 Vi diamo la possibilità di consentire l'utilizzo dei vostri dati per migliorare i futuri modelli Claude. Addestreremo nuovi modelli utilizzando i dati degli account Free, Pro e Max quando questa impostazione è attiva (incluso quando utilizzate Claude Code da questi account).
 
-**Utenti commerciali**: (piani Team ed Enterprise, API, piattaforme di terze parti e Claude Gov) mantengono le politiche esistenti: Anthropic non addestra modelli generativi utilizzando codice o prompt inviati a Claude Code secondo i termini commerciali, a meno che il cliente non abbia scelto di fornirci i propri dati per il miglioramento del modello (ad esempio, il [Development Partner Program](https://support.claude.com/en/articles/11174108-about-the-development-partner-program)).
+**Utenti commerciali**: (piani Team ed Enterprise, API, piattaforme di terze parti e Claude Gov) mantengono le politiche esistenti: Anthropic non addestra modelli generativi utilizzando codice o prompt inviati a Claude Code secondo i termini commerciali, a meno che il cliente non abbia scelto di fornirci i propri dati per il miglioramento del modello (ad esempio, il [Development Partner Program](https://support.claude.com/it/articles/11174108-about-the-development-partner-program)).
 
 ### Development Partner Program
 
-Se vi iscrivete esplicitamente a metodi per fornirci materiali su cui addestrare, come tramite il [Development Partner Program](https://support.claude.com/en/articles/11174108-about-the-development-partner-program), potremmo utilizzare tali materiali forniti per addestrare i nostri modelli. Un amministratore dell'organizzazione può iscriversi esplicitamente al Development Partner Program per la propria organizzazione. Si noti che questo programma è disponibile solo per l'API di Anthropic di prima parte e non per gli utenti di Bedrock o Vertex.
+Se vi iscrivete esplicitamente a metodi per fornirci materiali su cui addestrare, come tramite il [Development Partner Program](https://support.claude.com/it/articles/11174108-about-the-development-partner-program), potremmo utilizzare tali materiali forniti per addestrare i nostri modelli. Un amministratore dell'organizzazione può iscriversi esplicitamente al Development Partner Program per la propria organizzazione. Si noti che questo programma è disponibile solo per l'API di Anthropic di prima parte e non per gli utenti di Bedrock o Vertex.
 
 ### Feedback utilizzando il comando `/feedback`
 
@@ -33,9 +33,9 @@ Dopo il prompt di valutazione, potete vedere una domanda di follow-up separata c
 * **No**: rifiuta senza inviare nulla
 * **Non chiedere più**: rifiuta e impedisce che questo follow-up appaia nelle sessioni future
 
-Nulla viene caricato a meno che non selezioniate esplicitamente **Sì**. Le organizzazioni con [zero data retention](/it/zero-data-retention), o dove il feedback sui prodotti è disabilitato dalla politica dell'organizzazione, non vedono mai questo follow-up. Le vostre risposte a questo sondaggio, inclusi i transcript delle sessioni inviati dopo il prompt di valutazione, non influiscono sulle vostre preferenze di addestramento dei dati e non possono essere utilizzate per addestrare i nostri modelli di IA.
+Nulla viene caricato a meno che non selezioniate esplicitamente **Sì**. Le organizzazioni con [zero data retention](/it/zero-data-retention), o dove il feedback sui prodotti è disabilitato dalla politica dell'organizzazione, o dove `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` è impostato, non vedono mai questo follow-up. Le vostre risposte a questo sondaggio, inclusi i transcript delle sessioni inviati dopo il prompt di valutazione, non influiscono sulle vostre preferenze di addestramento dei dati e non possono essere utilizzate per addestrare i nostri modelli di IA.
 
-Per disabilitare questi sondaggi, impostate `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`. Il sondaggio viene anche disabilitato quando `DISABLE_TELEMETRY` o `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` è impostato. Per controllare la frequenza invece di disabilitare, impostate [`feedbackSurveyRate`](/it/settings#available-settings) nel vostro file di impostazioni su una probabilità tra `0` e `1`.
+Per disabilitare questi sondaggi, impostate `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`. Il sondaggio viene anche disabilitato quando `DISABLE_TELEMETRY`, `DO_NOT_TRACK`, o `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` è impostato. Le organizzazioni che bloccano il traffico non essenziale ma acquisiscono le risposte ai sondaggi tramite il loro [OpenTelemetry collector](/it/monitoring-usage) possono ripristinare il sondaggio impostando `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL=1`. Il sondaggio registra quindi le valutazioni solo al collector configurato. Il follow-up di condivisione dei transcript e tutto il resto del traffico di feedback legato ad Anthropic rimangono disabilitati. Per controllare la frequenza invece di disabilitare, impostate [`feedbackSurveyRate`](/it/settings#available-settings) nel vostro file di impostazioni su una probabilità tra `0` e `1`.
 
 ### Conservazione dei dati
 

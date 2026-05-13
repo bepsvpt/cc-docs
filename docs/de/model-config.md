@@ -233,7 +233,7 @@ Die Thinking-Ausgabe ist standardmäßig zusammengeklappt. Drücken Sie `Ctrl+O`
 
 Opus 4.7, Opus 4.6 und Sonnet 4.6 unterstützen ein [1-Million-Token-Kontextfenster](https://platform.claude.com/docs/de/build-with-claude/context-windows#1m-token-context-window) für lange Sitzungen mit großen Codebases.
 
-Die Verfügbarkeit variiert je nach Modell und Plan. Bei Max-, Team- und Enterprise-Plänen wird Opus automatisch auf 1M-Kontext ohne zusätzliche Konfiguration aktualisiert. Dies gilt für beide Team Standard- und Team Premium-Plätze.
+Die Verfügbarkeit variiert je nach Modell und Plan. Bei Max-, Team- und Enterprise-Plänen wird Opus automatisch auf 1M-Kontext ohne zusätzliche Konfiguration aktualisiert. Dies gilt für beide Team Standard- und Team Premium-Plätze. Sonnet mit 1M-Kontext ist nicht Teil der automatischen Aktualisierung und erfordert [zusätzliche Nutzung](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) bei jedem Abonnementplan, einschließlich Max.
 
 | Plan                     | Opus mit 1M-Kontext                                                                                                | Sonnet mit 1M-Kontext                                                                                              |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |

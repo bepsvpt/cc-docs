@@ -32,10 +32,14 @@ Questa pagina copre:
 
 Le sessioni cloud hanno bisogno di accesso ai tuoi repository GitHub per clonare il codice e inviare i rami. Puoi concedere l'accesso in due modi:
 
-| Metodo           | Come funziona                                                                                                                                                                | Migliore per                                                   |
-| :--------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------- |
-| **GitHub App**   | Installa l'app Claude GitHub su repository specifici durante l'[onboarding web](/it/web-quickstart). L'accesso è limitato per repository.                                    | Team che desiderano un'autorizzazione esplicita per repository |
-| **`/web-setup`** | Esegui `/web-setup` nel tuo terminale per sincronizzare il tuo token CLI `gh` locale al tuo account Claude. L'accesso corrisponde a quello che il tuo token `gh` può vedere. | Sviluppatori individuali che già usano `gh`                    |
+| Metodo           | Come funziona                                                                                               | Migliore per                                                                    |
+| :--------------- | :---------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------ |
+| **GitHub App**   | Autorizza l'app Claude GitHub durante l'[onboarding web](/it/web-quickstart).                               | Onboarding del browser; team che desiderano [Auto-fix](#auto-fix-pull-requests) |
+| **`/web-setup`** | Esegui `/web-setup` nel tuo terminale per sincronizzare il tuo token CLI `gh` locale al tuo account Claude. | Sviluppatori individuali che già usano `gh`                                     |
+
+<Note>
+  Con entrambi i metodi, una sessione cloud può accedere a qualsiasi repository che l'account GitHub connesso può vedere, non solo ai repository su cui è installata l'app Claude GitHub. L'installazione dell'app abilita i webhook PR per [Auto-fix](#auto-fix-pull-requests); non è un controllo di accesso a livello di sessione. Per limitare quali repository il tuo team può raggiungere dalle sessioni cloud, limita l'accesso su GitHub stesso, ad esempio limitando l'appartenenza al team o al repository per gli account GitHub connessi.
+</Note>
 
 Entrambi i metodi funzionano. [`/schedule`](/it/routines) verifica entrambe le forme di accesso e ti chiede di eseguire `/web-setup` se nessuna è configurata. Vedi [Connetti dal tuo terminale](/it/web-quickstart#connect-from-your-terminal) per la procedura dettagliata di `/web-setup`.
 
@@ -729,28 +733,30 @@ Ti verrà chiesto di confermare prima che una sessione venga eliminata.
 Claude può monitorare una pull request e rispondere automaticamente ai fallimenti CI e ai commenti di revisione. Claude si iscrive all'attività GitHub sulla PR e, quando un controllo fallisce o un revisore lascia un commento, Claude indaga e invia una correzione se una è chiara.
 
 <Note>
-  Auto-fix richiede che l'app Claude GitHub sia installata nel tuo repository. Se non l'hai già fatto, installala dalla [pagina dell'app GitHub](https://github.com/apps/claude) o quando richiesto durante la [configurazione](/it/web-quickstart#connect-github-and-create-an-environment).
+  Auto-fix richiede che l'app Claude GitHub sia installata nel vostro repository. Se non l'avete già fatto, installatela dalla [pagina dell'app GitHub](https://github.com/apps/claude) o quando richiesto durante la [configurazione](/it/web-quickstart#connect-github-and-create-an-environment).
 </Note>
 
-Ci sono alcuni modi per attivare auto-fix a seconda da dove proviene la PR e quale dispositivo stai utilizzando:
+Ci sono alcuni modi per attivare auto-fix a seconda da dove proviene la PR e quale dispositivo state utilizzando:
 
-* **PR create in Claude Code sul web**: apri la barra di stato CI e seleziona **Auto-fix**
-* **Dal tuo terminale**: esegui [`/autofix-pr`](/it/commands) mentre sei sul ramo della PR. Claude Code rileva la PR aperta con `gh`, genera una sessione web e attiva auto-fix in un passaggio
-* **Dall'app mobile**: dì a Claude di correggere automaticamente la PR, ad esempio "guarda questa PR e correggi eventuali fallimenti CI o commenti di revisione"
-* **Qualsiasi PR esistente**: incolla l'URL della PR in una sessione e dì a Claude di correggerla automaticamente
+* **PR create in Claude Code sul web**: aprite la barra di stato CI e selezionate **Auto-fix**
+* **Dal vostro terminale**: eseguite [`/autofix-pr`](/it/commands) mentre siete sul ramo della PR. Claude Code rileva la PR aperta con `gh`, genera una sessione web e attiva auto-fix in un passaggio
+* **Dall'app mobile**: dite a Claude di correggere automaticamente la PR, ad esempio "guarda questa PR e correggi eventuali fallimenti CI o commenti di revisione"
+* **Qualsiasi PR esistente**: incollate l'URL della PR in una sessione e dite a Claude di correggerla automaticamente
+
+Auto-fix è un interruttore per PR. Per smettere di monitorare, aprite la barra di stato CI nella sessione web e deselezionate l'interruttore **Auto-fix**, oppure dite a Claude di smettere di monitorare la PR.
 
 ### Come Claude risponde all'attività PR
 
 Quando auto-fix è attivo, Claude riceve eventi GitHub per la PR inclusi nuovi commenti di revisione e fallimenti di controllo CI. Per ogni evento, Claude indaga e decide come procedere:
 
 * **Correzioni chiare**: se Claude è sicuro di una correzione e non entra in conflitto con le istruzioni precedenti, Claude apporta la modifica, la invia e spiega cosa è stato fatto nella sessione
-* **Richieste ambigue**: se il commento di un revisore potrebbe essere interpretato in più modi o coinvolge qualcosa di architettonicamente significativo, Claude ti chiede prima di agire
+* **Richieste ambigue**: se il commento di un revisore potrebbe essere interpretato in più modi o coinvolge qualcosa di architettonicamente significativo, Claude vi chiede prima di agire
 * **Eventi duplicati o senza azione**: se un evento è un duplicato o non richiede modifiche, Claude lo annota nella sessione e continua
 
-Claude potrebbe rispondere ai thread di commenti di revisione su GitHub come parte della loro risoluzione. Queste risposte vengono pubblicate utilizzando il tuo account GitHub, quindi appaiono sotto il tuo nome utente, ma ogni risposta è etichettata come proveniente da Claude Code in modo che i revisori sappiano che è stata scritta dall'agente e non da te direttamente.
+Claude potrebbe rispondere ai thread di commenti di revisione su GitHub come parte della loro risoluzione. Queste risposte vengono pubblicate utilizzando il vostro account GitHub, quindi appaiono sotto il vostro nome utente, ma ogni risposta è etichettata come proveniente da Claude Code in modo che i revisori sappiano che è stata scritta dall'agente e non da voi direttamente.
 
 <Warning>
-  Se il tuo repository utilizza automazione attivata da commenti come Atlantis, Terraform Cloud o GitHub Actions personalizzate che vengono eseguite su eventi `issue_comment`, tieni presente che le risposte di Claude possono attivare questi flussi di lavoro. Rivedi l'automazione del tuo repository prima di abilitare auto-fix e considera di disabilitare auto-fix per i repository in cui un commento PR può distribuire infrastruttura o eseguire operazioni privilegiate.
+  Se il vostro repository utilizza automazione attivata da commenti come Atlantis, Terraform Cloud o GitHub Actions personalizzate che vengono eseguite su eventi `issue_comment`, tenete presente che le risposte di Claude possono attivare questi flussi di lavoro. Rivedete l'automazione del vostro repository prima di abilitare auto-fix e considerate di disabilitare auto-fix per i repository in cui un commento PR può distribuire infrastruttura o eseguire operazioni privilegiate.
 </Warning>
 
 ## Sicurezza e isolamento
@@ -772,7 +778,7 @@ Se una nuova sessione non si avvia con `Session creation failed` o si blocca al 
 
 * Controlla [status.claude.com](https://status.claude.com) per gli incidenti delle sessioni cloud
 * Riprova dopo un minuto, poiché la capacità viene fornita su richiesta
-* Conferma che il tuo repository sia raggiungibile. I repository privati richiedono l'app GitHub installata con accesso a quel repository, o un token `gh` sincronizzato tramite `/web-setup`. Vedi [Opzioni di autenticazione GitHub](#github-authentication-options).
+* Conferma che il tuo repository sia raggiungibile. L'account GitHub che si connette deve avere accesso al repository su GitHub, tramite l'autorizzazione dell'app GitHub di Claude o un token `gh` sincronizzato tramite `/web-setup` — l'installazione dell'app sul repository non è richiesta. Vedi [Opzioni di autenticazione GitHub](#github-authentication-options).
 
 ### Sessione Remote Control scaduta o accesso negato
 

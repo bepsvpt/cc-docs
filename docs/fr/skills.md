@@ -97,9 +97,9 @@ Quand les skills partagent le même nom à différents niveaux, l'entreprise rem
 
 Claude Code surveille les répertoires de skills pour les changements de fichiers. Ajouter, modifier ou supprimer une skill sous `~/.claude/skills/`, le `.claude/skills/` du projet, ou un `.claude/skills/` à l'intérieur d'un répertoire `--add-dir` prend effet dans la session actuelle sans redémarrage. Créer un répertoire de skills de haut niveau qui n'existait pas quand la session a commencé nécessite de redémarrer Claude Code pour que le nouveau répertoire puisse être surveillé.
 
-#### Découverte automatique à partir de répertoires imbriqués
+#### Découverte automatique à partir de répertoires parents et imbriqués
 
-Quand vous travaillez avec des fichiers dans des sous-répertoires, Claude Code découvre automatiquement les skills à partir des répertoires `.claude/skills/` imbriqués. Par exemple, si vous modifiez un fichier dans `packages/frontend/`, Claude Code recherche également les skills dans `packages/frontend/.claude/skills/`. Cela supporte les configurations monorepo où les packages ont leurs propres skills.
+Les skills de projet se chargent à partir de `.claude/skills/` dans votre répertoire de démarrage et dans chaque répertoire parent jusqu'à la racine du référentiel, de sorte que démarrer Claude dans un sous-répertoire récupère toujours les skills définies à la racine. Quand vous travaillez avec des fichiers dans des sous-répertoires en dessous de votre répertoire de démarrage, Claude Code découvre également les skills à partir des répertoires `.claude/skills/` imbriqués à la demande. Par exemple, si vous modifiez un fichier dans `packages/frontend/`, Claude Code recherche également les skills dans `packages/frontend/.claude/skills/`. Cela supporte les configurations monorepo où les packages ont leurs propres skills.
 
 Chaque skill est un répertoire avec `SKILL.md` comme point d'entrée :
 

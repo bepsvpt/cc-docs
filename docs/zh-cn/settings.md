@@ -253,11 +253,12 @@ Claude Code 使用**作用域系统**来确定配置应用的位置以及与谁�
   v2.1.119 之前的版本也在此处而不是在 `settings.json` 中存储 `autoScrollEnabled`、`editorMode`、`showTurnDuration`、`teammateMode` 和 `terminalProgressBarEnabled`。
 </Note>
 
-| 键                         | 描述                                                                                                                                                                              | 示例      |
-| :------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------ |
-| `autoConnectIde`          | 当 Claude Code 从外部终端启动时自动连接到运行的 IDE。默认：`false`。在 VS Code 或 JetBrains 终端外运行时在 `/config` 中显示为**自动连接到 IDE（外部终端）**                                                                   | `true`  |
-| `autoInstallIdeExtension` | 从 VS Code 终端运行时自动安装 Claude Code IDE 扩展。默认：`true`。在 VS Code 或 JetBrains 终端内运行时在 `/config` 中显示为**自动安装 IDE 扩展**。您也可以设置 [`CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`](/zh-CN/env-vars) 环境变量 | `false` |
-| `externalEditorContext`   | 当您使用 `Ctrl+G` 打开外部编辑器时，将 Claude 的上一个响应作为 `#` 注释上下文前置。默认：`false`。在 `/config` 中显示为**在外部编辑器中显示最后响应**                                                                               | `true`  |
+| 键                         | 描述                                                                                                                                                                              | 示例         |
+| :------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :--------- |
+| `autoConnectIde`          | 当 Claude Code 从外部终端启动时自动连接到运行的 IDE。默认：`false`。在 VS Code 或 JetBrains 终端外运行时在 `/config` 中显示为**自动连接到 IDE（外部终端）**                                                                   | `true`     |
+| `autoInstallIdeExtension` | 从 VS Code 终端运行时自动安装 Claude Code IDE 扩展。默认：`true`。在 VS Code 或 JetBrains 终端内运行时在 `/config` 中显示为**自动安装 IDE 扩展**。您也可以设置 [`CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`](/zh-CN/env-vars) 环境变量 | `false`    |
+| `externalEditorContext`   | 当您使用 `Ctrl+G` 打开外部编辑器时，将 Claude 的上一个响应作为 `#` 注释上下文前置。默认：`false`。在 `/config` 中显示为**在外部编辑器中显示最后响应**                                                                               | `true`     |
+| `teammateDefaultModel`    | [agent team](/zh-CN/agent-teams) 队友的默认模型，当生成提示未指定时。设置为模型别名（如 `"sonnet"`），或 `null` 以继承主导的当前 `/model` 选择。在 `/config` 中显示为**默认队友模型**                                               | `"sonnet"` |
 
 ### Worktree 设置
 
@@ -670,6 +671,8 @@ Claude Code 支持一个插件系统，让您可以使用 skills、agents、hook
 * `directory`：本地文件系统路径（使用 `path`，仅用于开发）
 * `hostPattern`：正则表达式模式以匹配市场主机（使用 `hostPattern`）
 * `settings`：直接在 settings.json 中声明的内联市场，无需单独的托管存储库（使用 `name` 和 `plugins`）
+
+每个市场条目还接受可选的 `autoUpdate` 布尔值。在 `source` 旁边设置 `"autoUpdate": true` 以使 Claude Code 在启动时刷新该市场并更新其已安装的插件。省略时，官方 Anthropic 市场默认为 `true`，所有其他市场默认为 `false`。请参阅[配置自动更新](/zh-CN/discover-plugins#configure-auto-updates)。
 
 使用 `source: 'settings'` 声明一小组插件内联，无需设置托管市场存储库。此处列出的插件必须引用外部源，例如 GitHub 或 npm。您仍需要在 `enabledPlugins` 中单独启用每个插件。
 

@@ -253,11 +253,12 @@ Windows에서 `~/.claude`로 표시된 경로는 `%USERPROFILE%\.claude`로 확�
   v2.1.119 이전 버전은 `autoScrollEnabled`, `editorMode`, `showTurnDuration`, `teammateMode` 및 `terminalProgressBarEnabled`를 `settings.json` 대신 여기에 저장합니다.
 </Note>
 
-| 키                         | 설명                                                                                                                                                                                                                       | 예제      |
-| :------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------ |
-| `autoConnectIde`          | Claude Code가 외부 터미널에서 시작될 때 실행 중인 IDE에 자동으로 연결합니다. 기본값: `false`. VS Code 또는 JetBrains 터미널 외부에서 실행할 때 `/config`에 \*\*IDE에 자동 연결 (외부 터미널)\*\*로 표시됩니다. [`CLAUDE_CODE_AUTO_CONNECT_IDE`](/ko/env-vars) 환경 변수가 설정되면 이를 재정의합니다 | `true`  |
-| `autoInstallIdeExtension` | VS Code 터미널에서 실행할 때 Claude Code IDE 확장을 자동으로 설치합니다. 기본값: `true`. VS Code 또는 JetBrains 터미널 내에서 실행할 때 `/config`에 **IDE 확장 자동 설치**로 표시됩니다. [`CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`](/ko/env-vars) 환경 변수도 설정할 수 있습니다            | `false` |
-| `externalEditorContext`   | `Ctrl+G`로 외부 편집기를 열 때 Claude의 이전 응답을 `#` 주석 처리된 컨텍스트로 앞에 붙입니다. 기본값: `false`. `/config`에 **외부 편집기에 마지막 응답 표시**로 표시됩니다                                                                                                     | `true`  |
+| 키                         | 설명                                                                                                                                                                                                                       | 예제         |
+| :------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------- |
+| `autoConnectIde`          | Claude Code가 외부 터미널에서 시작될 때 실행 중인 IDE에 자동으로 연결합니다. 기본값: `false`. VS Code 또는 JetBrains 터미널 외부에서 실행할 때 `/config`에 \*\*IDE에 자동 연결 (외부 터미널)\*\*로 표시됩니다. [`CLAUDE_CODE_AUTO_CONNECT_IDE`](/ko/env-vars) 환경 변수가 설정되면 이를 재정의합니다 | `true`     |
+| `autoInstallIdeExtension` | VS Code 터미널에서 실행할 때 Claude Code IDE 확장을 자동으로 설치합니다. 기본값: `true`. VS Code 또는 JetBrains 터미널 내에서 실행할 때 `/config`에 **IDE 확장 자동 설치**로 표시됩니다. [`CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`](/ko/env-vars) 환경 변수도 설정할 수 있습니다            | `false`    |
+| `externalEditorContext`   | `Ctrl+G`로 외부 편집기를 열 때 Claude의 이전 응답을 `#` 주석 처리된 컨텍스트로 앞에 붙입니다. 기본값: `false`. `/config`에 **외부 편집기에 마지막 응답 표시**로 표시됩니다                                                                                                     | `true`     |
+| `teammateDefaultModel`    | [에이전트 팀](/ko/agent-teams) 팀원을 위한 기본 모델로 spawn 프롬프트가 하나를 지정하지 않을 때 사용됩니다. `"sonnet"`과 같은 모델 별칭으로 설정하거나 lead의 현재 `/model` 선택을 상속하려면 `null`로 설정합니다. `/config`에 **기본 팀원 모델**로 표시됩니다                                          | `"sonnet"` |
 
 ### Worktree 설정
 
@@ -267,7 +268,7 @@ Windows에서 `~/.claude`로 표시된 경로는 `%USERPROFILE%\.claude`로 확�
 | :---------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------ |
 | `worktree.baseRef`            | 새 worktrees가 분기하는 ref입니다. `"fresh"` (기본값)은 깨끗한 트리와 일치하는 원격에 대해 `origin/<default-branch>`에서 분기합니다. `"head"`는 현재 local `HEAD`에서 분기하므로 푸시되지 않은 커밋 및 feature-branch 상태가 worktree에 있습니다. `--worktree`, `EnterWorktree` 도구 및 subagent 격리에 적용됩니다 | `"head"`                              |
 | `worktree.symlinkDirectories` | 각 worktree에서 중복을 피하기 위해 메인 저장소에서 symlink할 디렉토리입니다. 기본적으로 디렉토리는 symlink되지 않습니다                                                                                                                                                             | `["node_modules", ".cache"]`          |
-| `worktree.sparsePaths`        | git sparse-checkout (cone mode)을 통해 각 worktree에서 체크아웃할 디렉토리입니다. 나열된 경로만 디스크에 작성되므로 대규모 monorepos에서 더 빠릅니다                                                                                                                                 | `["packages/my-app", "shared/utils"]` |
+| `worktree.sparsePaths`        | git sparse-checkout을 통해 각 worktree에서 체크아웃할 디렉토리입니다. 나열된 경로만 디스크에 작성되므로 대규모 monorepos에서 더 빠릅니다                                                                                                                                             | `["packages/my-app", "shared/utils"]` |
 
 worktrees에 `.env`와 같은 gitignored 파일을 복사하려면 설정 대신 프로젝트 루트의 [`.worktreeinclude` 파일](/ko/worktrees#copy-gitignored-files-into-worktrees)을 사용합니다.
 
@@ -670,6 +671,8 @@ Claude Code는 skills, agents, hooks 및 MCP servers로 기능을 확장할 수 
 * `directory`: 로컬 파일 시스템 경로 (`path` 사용, 개발 전용)
 * `hostPattern`: 마켓플레이스 호스트와 일치하는 정규식 패턴 (`hostPattern` 사용)
 * `settings`: 별도의 호스팅 저장소 없이 settings.json에 직접 선언된 인라인 마켓플레이스 (`name` 및 `plugins` 사용)
+
+각 마켓플레이스 항목은 선택적 `autoUpdate` Boolean도 허용합니다. `source`와 함께 `"autoUpdate": true`를 설정하여 Claude Code가 해당 마켓플레이스를 새로고침하고 시작 시 설치된 플러그인을 업데이트하도록 합니다. 생략하면 공식 Anthropic 마켓플레이스는 기본값이 `true`이고 다른 모든 마켓플레이스는 기본값이 `false`입니다. [자동 업데이트 구성](/ko/discover-plugins#configure-auto-updates)을 참조하세요.
 
 `source: 'settings'`를 사용하여 호스팅된 마켓플레이스 저장소를 설정하지 않고 작은 플러그인 세트를 인라인으로 선언합니다. 여기에 나열된 플러그인은 GitHub 또는 npm과 같은 외부 소스를 참조해야 합니다. 여전히 `enabledPlugins`에서 각 플러그인을 별도로 활성화해야 합니다.
 

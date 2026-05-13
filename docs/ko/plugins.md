@@ -299,6 +299,12 @@ LSP (Language Server Protocol) 플러그인은 Claude에 실시간 코드 인텔
 claude --plugin-dir ./my-plugin
 ```
 
+플래그는 플러그인 디렉토리의 `.zip` 아카이브도 허용하며, 이는 Claude Code v2.1.128 이상이 필요합니다.
+
+```bash theme={null}
+claude --plugin-dir ./my-plugin.zip
+```
+
 `--plugin-dir` 플러그인이 설치된 마켓플레이스 플러그인과 동일한 이름을 가진 경우 로컬 복사본이 해당 세션에 우선합니다. 이를 통해 먼저 제거하지 않고도 이미 설치한 플러그인의 변경 사항을 테스트할 수 있습니다. 관리 설정에 의해 강제로 활성화된 마켓플레이스 플러그인은 유일한 예외이며 재정의할 수 없습니다.
 
 플러그인을 변경할 때 `/reload-plugins`를 실행하여 다시 시작하지 않고 업데이트를 적용합니다. 이는 플러그인, skills, agents, hooks, 플러그인 MCP servers, 플러그인 LSP servers를 다시 로드합니다. 플러그인 구성 요소를 테스트합니다:

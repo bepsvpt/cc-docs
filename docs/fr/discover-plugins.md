@@ -364,6 +364,8 @@ Basculez la mise à jour automatique pour les marketplaces individuelles via l'i
 
 Les marketplaces officielles Anthropic ont la mise à jour automatique activée par défaut. Les marketplaces tierces et de développement local ont la mise à jour automatique désactivée par défaut.
 
+Les administrateurs peuvent également définir `"autoUpdate": true` sur chaque entrée [`extraKnownMarketplaces`](/fr/settings#extraknownmarketplaces) dans les paramètres gérés pour activer la mise à jour automatique pour une marketplace d'organisation sans exiger que chaque utilisateur la bascule.
+
 Pour désactiver complètement toutes les mises à jour automatiques pour Claude Code et tous les plugins, définissez la variable d'environnement `DISABLE_AUTOUPDATER`. Consultez [Auto updates](/fr/setup#auto-updates) pour plus de détails.
 
 Pour garder les mises à jour automatiques des plugins activées tout en désactivant les mises à jour automatiques de Claude Code, définissez `FORCE_AUTOUPDATE_PLUGINS=1` avec `DISABLE_AUTOUPDATER` :

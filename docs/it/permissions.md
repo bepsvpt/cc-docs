@@ -138,7 +138,7 @@ I wrapper exec come `watch`, `setsid`, `ionice` e `flock` richiedono sempre un p
 
 #### Comandi di sola lettura
 
-Claude Code riconosce un insieme integrato di comandi Bash come di sola lettura e li esegue senza un prompt di autorizzazione in ogni modalità. Questi includono `ls`, `cat`, `head`, `tail`, `grep`, `find`, `wc`, `diff`, `stat`, `du`, `cd` e forme di sola lettura di `git`. L'insieme non è configurabile; per richiedere un prompt per uno di questi comandi, aggiungete una regola `ask` o `deny` per esso.
+Claude Code riconosce un insieme integrato di comandi Bash come di sola lettura e li esegue senza un prompt di autorizzazione in ogni modalità. Questi includono `ls`, `cat`, `echo`, `pwd`, `head`, `tail`, `grep`, `find`, `wc`, `which`, `diff`, `stat`, `du`, `cd` e forme di sola lettura di `git`. L'insieme non è configurabile; per richiedere un prompt per uno di questi comandi, aggiungete una regola `ask` o `deny` per esso.
 
 I modelli glob non quotati sono consentiti per i comandi il cui ogni flag è di sola lettura, quindi `ls *.ts` e `wc -l src/*.py` vengono eseguiti senza un prompt. I comandi con flag in grado di scrivere o eseguire, come `find`, `sort`, `sed` e `git`, richiedono comunque un prompt quando è presente un glob non quotato perché il glob potrebbe espandersi a un flag come `-delete`.
 
@@ -290,7 +290,7 @@ I seguenti tipi di configurazione vengono caricati dalle directory `--add-dir`:
 | Impostazioni plugin in `.claude/settings.json`                     | Solo `enabledPlugins` e `extraKnownMarketplaces`                                                                                                                                         |
 | File [CLAUDE.md](/it/memory), `.claude/rules/` e `CLAUDE.local.md` | Solo quando `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` è impostato. `CLAUDE.local.md` richiede inoltre l'impostazione `local` source, che è abilitata per impostazione predefinita |
 
-Tutto il resto, inclusi subagents, commands, output styles, hooks e altre impostazioni, viene scoperto solo dalla directory di lavoro corrente e dai suoi genitori, dalla vostra directory utente in `~/.claude/` e dalle impostazioni gestite. Per condividere quella configurazione tra progetti, utilizzate uno di questi approcci:
+Subagents, commands e output styles vengono scoperti dalla directory di lavoro corrente e dai suoi genitori, dalla vostra directory utente in `~/.claude/` e dalle impostazioni gestite. Hooks e altre chiavi `settings.json` vengono caricati dalla cartella `.claude/` della directory di lavoro corrente senza fallback alla directory genitore, insieme al vostro `~/.claude/settings.json` utente e alle impostazioni gestite. Per condividere quella configurazione tra progetti, utilizzate uno di questi approcci:
 
 * **Configurazione a livello utente**: posizionate i file in `~/.claude/agents/`, `~/.claude/output-styles/` o `~/.claude/settings.json` per renderli disponibili in ogni progetto
 * **Plugin**: pacchetto e distribuite la configurazione come [plugin](/it/plugins) che i team possono installare
@@ -352,6 +352,8 @@ Le regole di autorizzazione seguono la stessa [precedenza delle impostazioni](/i
 5. **Impostazioni utente** (`~/.claude/settings.json`)
 
 Se uno strumento viene negato a qualsiasi livello, nessun altro livello può consentirlo. Ad esempio, un deny delle impostazioni gestite non può essere ignorato da `--allowedTools` e `--disallowedTools` può aggiungere restrizioni oltre a quelle definite dalle impostazioni gestite.
+
+Gli host di embedding possono fornire ulteriori criteri gestiti tramite l'opzione SDK `managedSettings` quando [`parentSettingsBehavior`](/it/settings#settings-precedence) è impostato su `"merge"`; i valori dell'embedder possono irrigidire la politica ma non allentarla.
 
 Se un'autorizzazione è consentita nelle impostazioni utente ma negata nelle impostazioni di progetto, l'impostazione di progetto ha la precedenza e l'autorizzazione viene bloccata.
 

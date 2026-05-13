@@ -129,6 +129,8 @@ Créez une équipe avec 4 coéquipiers pour refactoriser ces modules en parallè
 Utilisez Sonnet pour chaque coéquipier.
 ```
 
+Les coéquipiers n'héritent pas de la sélection `/model` du chef par défaut. Pour modifier le modèle utilisé lorsque l'invite ne spécifie pas un, définissez **Modèle de coéquipier par défaut** dans `/config`. Choisissez **Par défaut (modèle du chef)** pour que les coéquipiers suivent le modèle actuel du chef.
+
 ### Exiger l'approbation du plan pour les coéquipiers
 
 Pour les tâches complexes ou risquées, vous pouvez exiger que les coéquipiers planifient avant de mettre en œuvre. Le coéquipier travaille en mode plan en lecture seule jusqu'à ce que le chef approuve son approche :
@@ -140,7 +142,7 @@ Exigez l'approbation du plan avant qu'il ne fasse des modifications.
 
 Lorsqu'un coéquipier termine la planification, il envoie une demande d'approbation du plan au chef. Le chef examine le plan et l'approuve ou le rejette avec des commentaires. S'il est rejeté, le coéquipier reste en mode plan, révise en fonction des commentaires et resoumis. Une fois approuvé, le coéquipier quitte le mode plan et commence la mise en œuvre.
 
-Le chef prend les décisions d'approbation de manière autonome. Pour influencer le jugement du chef, donnez-lui des critères dans votre prompt, tels que « n'approuvez que les plans qui incluent la couverture de test » ou « rejetez les plans qui modifient le schéma de base de données ».
+Le chef prend les décisions d'approbation de manière autonome. Pour influencer le jugement du chef, donnez-lui des critères dans votre invite, tels que « n'approuvez que les plans qui incluent la couverture de test » ou « rejetez les plans qui modifient le schéma de base de données ».
 
 ### Parler directement aux coéquipiers
 

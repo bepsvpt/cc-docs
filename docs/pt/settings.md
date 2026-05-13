@@ -253,11 +253,12 @@ Estas configurações são armazenadas em `~/.claude.json` em vez de `settings.j
   Versões antes da v2.1.119 também armazenam `autoScrollEnabled`, `editorMode`, `showTurnDuration`, `teammateMode`, e `terminalProgressBarEnabled` aqui em vez de em `settings.json`.
 </Note>
 
-| Chave                     | Descrição                                                                                                                                                                                                                                                                                                                                         | Exemplo |
-| :------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------ |
-| `autoConnectIde`          | Conectar automaticamente a um IDE em execução quando Claude Code inicia de um terminal externo. Padrão: `false`. Aparece em `/config` como **Auto-connect to IDE (external terminal)** ao executar fora de um terminal VS Code ou JetBrains. A variável de ambiente [`CLAUDE_CODE_AUTO_CONNECT_IDE`](/pt/env-vars) substitui isto quando definida | `true`  |
-| `autoInstallIdeExtension` | Instalar automaticamente a extensão IDE do Claude Code ao executar de um terminal VS Code. Padrão: `true`. Aparece em `/config` como **Auto-install IDE extension** ao executar dentro de um terminal VS Code ou JetBrains. Você também pode definir a variável de ambiente [`CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`](/pt/env-vars)                   | `false` |
-| `externalEditorContext`   | Prepend a resposta anterior do Claude como contexto comentado com `#` quando você abre o editor externo com `Ctrl+G`. Padrão: `false`. Aparece em `/config` como **Show last response in external editor**                                                                                                                                        | `true`  |
+| Chave                     | Descrição                                                                                                                                                                                                                                                                                                                                         | Exemplo    |
+| :------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :--------- |
+| `autoConnectIde`          | Conectar automaticamente a um IDE em execução quando Claude Code inicia de um terminal externo. Padrão: `false`. Aparece em `/config` como **Auto-connect to IDE (external terminal)** ao executar fora de um terminal VS Code ou JetBrains. A variável de ambiente [`CLAUDE_CODE_AUTO_CONNECT_IDE`](/pt/env-vars) substitui isto quando definida | `true`     |
+| `autoInstallIdeExtension` | Instalar automaticamente a extensão IDE do Claude Code ao executar de um terminal VS Code. Padrão: `true`. Aparece em `/config` como **Auto-install IDE extension** ao executar dentro de um terminal VS Code ou JetBrains. Você também pode definir a variável de ambiente [`CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`](/pt/env-vars)                   | `false`    |
+| `externalEditorContext`   | Prepend a resposta anterior do Claude como contexto comentado com `#` quando você abre o editor externo com `Ctrl+G`. Padrão: `false`. Aparece em `/config` como **Show last response in external editor**                                                                                                                                        | `true`     |
+| `teammateDefaultModel`    | Modelo padrão para [colegas de equipe de agente](/pt/agent-teams) quando o prompt de spawn não especifica um. Defina como um alias de modelo como `"sonnet"`, ou `null` para herdar a seleção `/model` atual do líder. Aparece em `/config` como **Default teammate model**                                                                       | `"sonnet"` |
 
 ### Configurações de worktrees
 
@@ -267,7 +268,7 @@ Configure como `--worktree` cria e gerencia git worktrees.
 | :---------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------ |
 | `worktree.baseRef`            | Qual ref novos worktrees ramificam. `"fresh"` (padrão) ramifica de `origin/<default-branch>` para uma árvore limpa correspondendo ao remoto. `"head"` ramifica de seu `HEAD` local atual, então commits não enviados e estado de branch de feature estão presentes no worktree. Se aplica a `--worktree`, a ferramenta `EnterWorktree`, e isolamento de subagent | `"head"`                              |
 | `worktree.symlinkDirectories` | Diretórios para criar symlink do repositório principal em cada worktree para evitar duplicar grandes diretórios no disco. Nenhum diretório é criado symlink por padrão                                                                                                                                                                                           | `["node_modules", ".cache"]`          |
-| `worktree.sparsePaths`        | Diretórios para fazer checkout em cada worktree via git sparse-checkout (modo cone). Apenas os caminhos listados são escritos no disco, o que é mais rápido em grandes monorepos                                                                                                                                                                                 | `["packages/my-app", "shared/utils"]` |
+| `worktree.sparsePaths`        | Diretórios para fazer checkout em cada worktree via git sparse-checkout. Apenas os caminhos listados mais arquivos de nível raiz são escritos no disco, o que é mais rápido em grandes monorepos                                                                                                                                                                 | `["packages/my-app", "shared/utils"]` |
 
 Para copiar arquivos ignorados pelo git como `.env` em novos worktrees, use um arquivo [`.worktreeinclude`](/pt/worktrees#copy-gitignored-files-into-worktrees) na raiz do seu projeto em vez de uma configuração.
 
@@ -578,7 +579,7 @@ Arquivos de subagent definem assistentes de IA especializados com prompts person
 
 ## Configuração de plugin
 
-O Claude Code suporta um sistema de plugin que permite estender funcionalidade com skills, agents, hooks, e MCP servers. Plugins são distribuídos através de marketplaces e podem ser configurados em níveis de usuário e repositório.
+Claude Code suporta um sistema de plugin que permite estender funcionalidade com skills, agents, hooks, e MCP servers. Plugins são distribuídos através de marketplaces e podem ser configurados em níveis de usuário e repositório.
 
 ### Configurações de plugin
 
@@ -670,6 +671,8 @@ Define marketplaces adicionais que devem ser disponibilizados para o repositóri
 * `directory`: Caminho do sistema de arquivos local (usa `path`, apenas para desenvolvimento)
 * `hostPattern`: Padrão regex para corresponder hosts de marketplace (usa `hostPattern`)
 * `settings`: marketplace inline declarado diretamente em settings.json sem um repositório hospedado separado (usa `name` e `plugins`)
+
+Cada entrada de marketplace também aceita um Boolean `autoUpdate` opcional. Defina `"autoUpdate": true` junto com `source` para fazer Claude Code atualizar aquele marketplace e atualizar seus plugins instalados na inicialização. Quando omitido, marketplaces oficiais da Anthropic padrão para `true` e todos os outros marketplaces padrão para `false`. Veja [Configurar auto-atualizações](/pt/discover-plugins#configure-auto-updates).
 
 Use `source: 'settings'` para declarar um pequeno conjunto de plugins inline sem configurar um repositório de marketplace hospedado. Plugins listados aqui devem referenciar fontes externas como GitHub ou npm. Você ainda precisa habilitar cada plugin separadamente em `enabledPlugins`.
 

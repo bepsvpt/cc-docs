@@ -97,9 +97,9 @@ Skills가 여러 수준에서 같은 이름을 공유할 때, enterprise가 pers
 
 Claude Code는 skill 디렉토리의 파일 변경을 감시합니다. `~/.claude/skills/`, 프로젝트 `.claude/skills/`, 또는 `--add-dir` 디렉토리 내의 `.claude/skills/` 아래에서 skill을 추가, 편집 또는 제거하면 Claude Code를 다시 시작하지 않고도 현재 세션 내에서 적용됩니다. 세션이 시작되었을 때 존재하지 않았던 최상위 skills 디렉토리를 생성하려면 Claude Code를 다시 시작해야 새 디렉토리를 감시할 수 있습니다.
 
-#### 중첩된 디렉토리에서 자동 검색
+#### 상위 및 중첩된 디렉토리에서 자동 검색
 
-하위 디렉토리의 파일로 작업할 때, Claude Code는 중첩된 `.claude/skills/` 디렉토리에서 skills를 자동으로 검색합니다. 예를 들어, `packages/frontend/`의 파일을 편집하는 경우, Claude Code는 `packages/frontend/.claude/skills/`에서도 skills를 찾습니다. 이는 패키지가 자신의 skills를 가진 monorepo 설정을 지원합니다.
+프로젝트 skills는 시작 디렉토리의 `.claude/skills/`와 저장소 루트까지의 모든 상위 디렉토리에서 로드되므로, 하위 디렉토리에서 Claude를 시작해도 루트에서 정의된 skills를 선택합니다. 시작 디렉토리 아래의 하위 디렉토리에 있는 파일로 작업할 때, Claude Code는 필요에 따라 중첩된 `.claude/skills/` 디렉토리에서 skills를 검색합니다. 예를 들어, `packages/frontend/`의 파일을 편집하는 경우, Claude Code는 `packages/frontend/.claude/skills/`에서도 skills를 찾습니다. 이는 패키지가 자신의 skills를 가진 monorepo 설정을 지원합니다.
 
 각 skill은 `SKILL.md`를 진입점으로 하는 디렉토리입니다:
 

@@ -90,12 +90,14 @@ Les fichiers de style de sortie prennent en charge frontmatter pour spécifier l
 
 ### Styles de sortie vs. CLAUDE.md vs. --append-system-prompt
 
-Les styles de sortie « désactivent » complètement les parties de l'invite système par défaut de Claude Code spécifiques à l'ingénierie logicielle. Ni CLAUDE.md ni `--append-system-prompt` ne modifient l'invite système par défaut de Claude Code. CLAUDE.md ajoute le contenu en tant que message utilisateur *suivant* l'invite système par défaut de Claude Code. `--append-system-prompt` ajoute le contenu à l'invite système.
+Choisissez en fonction de si Claude doit cesser d'agir comme assistant de codage ou conserver son rôle par défaut et en apprendre davantage. Les styles de sortie remplacent les parties liées à l'ingénierie logicielle de l'invite système de Claude Code par votre propre rôle et voix, donc utilisez-en un quand Claude doit adopter une identité différente, comme un éditeur d'écriture ou un assistant d'analyse de données. CLAUDE.md et `--append-system-prompt` conservent tous deux l'identité par défaut de Claude Code et y ajoutent du contenu, donc utilisez-les quand Claude doit rester un assistant de codage qui suit également vos conventions de projet ou des instructions supplémentaires.
+
+Les mécanismes diffèrent également. Les styles de sortie modifient directement l'invite système. CLAUDE.md ajoute son contenu en tant que message utilisateur après l'invite système. `--append-system-prompt` ajoute du contenu à la fin de l'invite système sans rien supprimer.
 
 ### Styles de sortie vs. [Agents](/fr/sub-agents)
 
-Les styles de sortie affectent directement la boucle d'agent principal et n'affectent que l'invite système. Les agents sont invoqués pour gérer des tâches spécifiques et peuvent inclure des paramètres supplémentaires tels que le modèle à utiliser, les outils disponibles et un contexte sur le moment d'utiliser l'agent.
+Utilisez un style de sortie pour modifier la façon dont la conversation principale répond dans chaque session. Utilisez un [sous-agent](/fr/sub-agents) quand vous voulez un assistant à portée séparée auquel la conversation principale délègue. Les styles de sortie affectent uniquement l'invite système de la boucle d'agent principal. Les agents gèrent des tâches spécifiques et peuvent avoir leur propre modèle, outils et contexte sur le moment de les invoquer.
 
 ### Styles de sortie vs. [Skills](/fr/skills)
 
-Les styles de sortie modifient la façon dont Claude répond (formatage, ton, structure) et sont toujours actifs une fois sélectionnés. Les skills sont des invites spécifiques à une tâche que vous invoquez avec `/skill-name` ou que Claude charge automatiquement si pertinent. Utilisez les styles de sortie pour les préférences de formatage cohérentes ; utilisez les skills pour les flux de travail et les tâches réutilisables.
+Les styles de sortie modifient la façon dont Claude répond (formatage, ton, structure) et sont toujours actifs une fois sélectionnés. Les skills sont des invites spécifiques à une tâche que vous invoquez avec `/skill-name` ou que Claude charge automatiquement quand pertinent. Utilisez les styles de sortie pour les préférences de formatage cohérentes ; utilisez les skills pour les flux de travail et les tâches réutilisables.

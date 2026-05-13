@@ -148,8 +148,8 @@ Claude Code pode fazer fallback automaticamente para Sonnet se você atingir um 
 
 O alias de modelo `opusplan` fornece uma abordagem híbrida automatizada:
 
-* **No Plan Mode** - Usa `opus` para raciocínio complexo e decisões de arquitetura
-* **No modo de execução** - Muda automaticamente para `sonnet` para geração de código e implementação
+* **Em Plan Mode** - Usa `opus` para raciocínio complexo e decisões de arquitetura
+* **Em modo de execução** - Muda automaticamente para `sonnet` para geração de código e implementação
 
 Isso oferece o melhor dos dois mundos: o raciocínio superior do Opus para planejamento e a eficiência do Sonnet para execução.
 
@@ -231,7 +231,7 @@ A saída de pensamento é recolhida por padrão. Pressione `Ctrl+O` para alterna
 
 Opus 4.7, Opus 4.6 e Sonnet 4.6 suportam uma [janela de contexto de 1 milhão de tokens](https://platform.claude.com/docs/pt/build-with-claude/context-windows#1m-token-context-window) para sessões longas com grandes bases de código.
 
-A disponibilidade varia por modelo e plano. Nos planos Max, Team e Enterprise, Opus é automaticamente atualizado para contexto 1M sem configuração adicional. Isso se aplica aos assentos Team Standard e Team Premium.
+A disponibilidade varia por modelo e plano. Nos planos Max, Team e Enterprise, Opus é automaticamente atualizado para contexto 1M sem configuração adicional. Isso se aplica aos assentos Team Standard e Team Premium. Sonnet com contexto 1M não faz parte da atualização automática e requer [uso extra](https://support.claude.com/pt/articles/12429409-extra-usage-for-paid-claude-plans) em todos os planos de assinatura, incluindo Max.
 
 | Plano                          | Opus com contexto 1M                                                                                  | Sonnet com contexto 1M                                                                                |
 | ------------------------------ | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |

@@ -516,6 +516,8 @@ Se um caminho personalizado substitui ou estende o diretório padrão do plugin 
 * **Adiciona ao padrão**: `skills`. O diretório padrão `skills/` é sempre verificado, e diretórios listados em `skills` são carregados junto com ele
 * **Regras de mesclagem próprias**: [hooks](#hooks), [MCP servers](#mcp-servers) e [LSP servers](#lsp-servers). Veja cada seção para como múltiplas fontes se combinam
 
+Quando um plugin tem tanto uma pasta padrão quanto a chave de manifesto correspondente, Claude Code v2.1.140 e posterior sinaliza a pasta ignorada em `/doctor`, `claude plugin list` e a visualização de detalhes `/plugin`. O plugin ainda carrega usando os caminhos do manifesto. Nenhum aviso é mostrado quando a chave de manifesto aponta para a pasta padrão, por exemplo `"commands": ["./commands/deploy.md"]`, porque a pasta é abordada explicitamente nesse caso.
+
 Para todos os campos de caminho:
 
 * Todos os caminhos devem ser relativos à raiz do plugin e começar com `./`

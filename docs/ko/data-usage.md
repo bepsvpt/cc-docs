@@ -33,9 +33,9 @@ Claude Code에서 "Claude가 이 세션을 어떻게 수행하고 있나요?"라
 * **아니오**: 아무것도 보내지 않고 거절합니다.
 * **다시 묻지 않기**: 거절하고 향후 세션에서 이 후속 질문이 표시되지 않도록 합니다.
 
-**예**를 명시적으로 선택하지 않으면 아무것도 업로드되지 않습니다. [Zero data retention](/ko/zero-data-retention)이 있는 조직이거나 조직 정책에 의해 제품 피드백이 비활성화된 조직은 이 후속 질문을 볼 수 없습니다. 등급 메시지 이후 제출된 세션 기록을 포함한 이 설문조사에 대한 응답은 데이터 학습 선호도에 영향을 주지 않으며 AI 모델을 학습하는 데 사용될 수 없습니다.
+**예**를 명시적으로 선택하지 않으면 아무것도 업로드되지 않습니다. [Zero data retention](/ko/zero-data-retention)이 있는 조직이거나 조직 정책에 의해 제품 피드백이 비활성화된 조직이거나 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`이 설정된 조직은 이 후속 질문을 볼 수 없습니다. 등급 메시지 이후 제출된 세션 기록을 포함한 이 설문조사에 대한 응답은 데이터 학습 선호도에 영향을 주지 않으며 AI 모델을 학습하는 데 사용될 수 없습니다.
 
-이러한 설문조사를 비활성화하려면 `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`을 설정합니다. `DISABLE_TELEMETRY` 또는 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`이 설정되면 설문조사도 비활성화됩니다. 빈도를 제어하려면 설정 파일에서 [`feedbackSurveyRate`](/ko/settings#available-settings)를 `0`과 `1` 사이의 확률로 설정합니다.
+이러한 설문조사를 비활성화하려면 `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`을 설정합니다. `DISABLE_TELEMETRY`, `DO_NOT_TRACK` 또는 `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`이 설정되면 설문조사도 비활성화됩니다. 비필수 트래픽을 차단하지만 자신의 [OpenTelemetry collector](/ko/monitoring-usage)를 통해 설문조사 응답을 캡처하는 조직은 `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL=1`을 설정하여 설문조사를 다시 활성화할 수 있습니다. 그러면 설문조사는 구성된 수집기에만 등급을 기록합니다. 기록 공유 후속 및 기타 모든 Anthropic 바운드 피드백 트래픽은 비활성화된 상태로 유지됩니다. 빈도를 제어하려면 설정 파일에서 [`feedbackSurveyRate`](/ko/settings#available-settings)를 `0`과 `1` 사이의 확률로 설정합니다.
 
 ### 데이터 보관
 

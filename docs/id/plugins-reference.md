@@ -516,6 +516,8 @@ Apakah jalur khusus menggantikan atau memperluas direktori default plugin tergan
 * **Menambah default**: `skills`. Direktori default `skills/` selalu dipindai, dan direktori yang tercantum di `skills` dimuat bersama dengannya
 * **Aturan penggabungan sendiri**: [hooks](#hooks), [MCP servers](#mcp-servers), dan [LSP servers](#lsp-servers). Lihat setiap bagian untuk cara beberapa sumber digabungkan
 
+Saat plugin memiliki folder default dan kunci manifest yang cocok, Claude Code v2.1.140 dan yang lebih baru menandai folder yang diabaikan di `/doctor`, `claude plugin list`, dan tampilan detail `/plugin`. Plugin masih dimuat menggunakan jalur manifest. Tidak ada peringatan yang ditampilkan saat kunci manifest menunjuk ke folder default, misalnya `"commands": ["./commands/deploy.md"]`, karena folder ditangani secara eksplisit dalam hal itu.
+
 Untuk semua field jalur:
 
 * Semua jalur harus relatif terhadap root plugin dan dimulai dengan `./`

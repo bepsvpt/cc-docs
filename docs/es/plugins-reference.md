@@ -516,6 +516,8 @@ Si una ruta personalizada reemplaza o extiende el directorio predeterminado del 
 * **Se añade al predeterminado**: `skills`. El directorio predeterminado `skills/` siempre se escanea, y los directorios enumerados en `skills` se cargan junto a él
 * **Reglas de fusión propias**: [hooks](#hooks), [MCP servers](#mcp-servers) y [LSP servers](#lsp-servers). Consulta cada sección para ver cómo se combinan múltiples fuentes
 
+Cuando un plugin tiene tanto una carpeta predeterminada como la clave de manifiesto coincidente, Claude Code v2.1.140 y posterior marca la carpeta ignorada en `/doctor`, `claude plugin list` y la vista de detalles `/plugin`. El plugin aún se carga usando las rutas del manifiesto. No se muestra advertencia cuando la clave del manifiesto apunta a la carpeta predeterminada, por ejemplo `"commands": ["./commands/deploy.md"]`, porque la carpeta se aborda explícitamente en ese caso.
+
 Para todos los campos de ruta:
 
 * Todas las rutas deben ser relativas a la raíz del plugin y comenzar con `./`

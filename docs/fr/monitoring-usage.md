@@ -905,6 +905,24 @@ Enregistré lorsque la compaction de conversation se termine.
 * `post_tokens` : Nombre approximatif de jetons après la compaction
 * `error` : Message d'erreur lorsque la compaction a échoué
 
+#### Événement de sondage de rétroaction
+
+Enregistré lorsqu'un sondage de qualité de session est affiché ou auquel il est répondu. Voir [Sondages de qualité de session](/fr/data-usage#session-quality-surveys) pour savoir ce que les sondages collectent et comment les contrôler.
+
+**Nom de l'événement** : `claude_code.feedback_survey`
+
+**Attributs** :
+
+* Tous les [attributs standard](#standard-attributes)
+* `event.name` : `"feedback_survey"`
+* `event.timestamp` : Horodatage ISO 8601
+* `event.sequence` : Compteur monotone croissant pour ordonner les événements au sein d'une session
+* `event_type` : Événement du cycle de vie du sondage, par exemple `"appeared"`, `"responded"`, ou `"transcript_prompt_appeared"`
+* `appearance_id` : ID unique liant les événements émis pour une instance de sondage
+* `survey_type` : Quel sondage a produit l'événement. `"session"` est l'invite d'évaluation « Comment Claude se débrouille-t-il ? »
+* `response` : La sélection de l'utilisateur sur les événements `responded`
+* `enabled_via_override` : `true` lorsque [`CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL`](/fr/env-vars) est défini. Émis en tant que booléen, pas une chaîne. Présent sur les événements de sondage `session`. Filtrez sur cet attribut pour confirmer que le remplacement est appliqué dans votre flotte
+
 ## Interpréter les données de métriques et d'événements
 
 Les métriques et événements exportés prennent en charge une gamme d'analyses :

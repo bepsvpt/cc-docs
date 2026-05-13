@@ -129,6 +129,8 @@ Create a team with 4 teammates to refactor these modules in parallel.
 Use Sonnet for each teammate.
 ```
 
+队友默认不继承负责人的 `/model` 选择。要更改在提示未指定模型时使用的模型，在 `/config` 中设置**默认队友模型**。选择\*\*默认（负责人的模型）\*\*以让队友遵循负责人的当前模型。
+
 ### 要求队友的计划批准
 
 对于复杂或有风险的任务，你可以要求队友在实施前进行规划。队友在只读计划模式下工作，直到负责人批准他们的方法：

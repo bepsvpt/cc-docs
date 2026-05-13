@@ -4,15 +4,15 @@
 
 # Accélérez les réponses avec le mode rapide
 
-> Obtenez des réponses Opus 4.6 plus rapides dans Claude Code en activant le mode rapide.
+> Obtenez des réponses Opus plus rapides dans Claude Code en activant le mode rapide.
 
 <Note>
   Le mode rapide est en [aperçu de recherche](#research-preview). La fonctionnalité, la tarification et la disponibilité peuvent changer en fonction des commentaires.
 </Note>
 
-Le mode rapide est une configuration haute vitesse pour Claude Opus 4.6, rendant le modèle 2,5 fois plus rapide à un coût par jeton plus élevé. Activez-le avec `/fast` quand vous avez besoin de vitesse pour un travail interactif comme l'itération rapide ou le débogage en direct, et désactivez-le quand le coût importe plus que la latence.
+Le mode rapide est une configuration haute vitesse pour Claude Opus, rendant le modèle 2,5 fois plus rapide à un coût par jeton plus élevé. Activez-le avec `/fast` quand vous avez besoin de vitesse pour un travail interactif comme l'itération rapide ou le débogage en direct, et désactivez-le quand le coût importe plus que la latence.
 
-Le mode rapide n'est pas un modèle différent. Il utilise le même Opus 4.6 avec une configuration API différente qui priorise la vitesse plutôt que l'efficacité des coûts. Vous obtenez une qualité et des capacités identiques, juste des réponses plus rapides.
+Le mode rapide n'est pas un modèle différent. Il utilise Claude Opus avec une configuration API différente qui priorise la vitesse plutôt que l'efficacité des coûts. Vous obtenez une qualité et des capacités identiques, juste des réponses plus rapides. Le mode rapide est pris en charge sur Opus 4.6 et Opus 4.7. Il n'est pas disponible sur Sonnet, Haiku ou d'autres modèles.
 
 <Note>
   Le mode rapide nécessite Claude Code v2.1.36 ou ultérieur. Vérifiez votre version avec `claude --version`.
@@ -21,11 +21,12 @@ Le mode rapide n'est pas un modèle différent. Il utilise le même Opus 4.6 ave
 Ce qu'il faut savoir :
 
 * Utilisez `/fast` pour activer/désactiver le mode rapide dans Claude Code CLI. Également disponible via `/fast` dans l'extension Claude Code VS Code.
-* La tarification du mode rapide pour Opus 4.6 commence à 30 \$/150 MTok. Le mode rapide est disponible avec une réduction de 50 % pour tous les plans jusqu'à 23 h 59 PT le 16 février.
+* Par défaut, `/fast` s'exécute sur Opus 4.6. Pour exécuter le mode rapide sur Opus 4.7 à la place, définissez la variable d'environnement [`CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`](#use-fast-mode-on-opus-4-7).
+* La tarification du mode rapide est de 30 \$/150 MTok sur Opus 4.6 et Opus 4.7.
 * Disponible pour tous les utilisateurs de Claude Code sur les plans d'abonnement (Pro/Max/Team/Enterprise) et Claude Console.
 * Pour les utilisateurs de Claude Code sur les plans d'abonnement (Pro/Max/Team/Enterprise), le mode rapide est disponible via l'utilisation supplémentaire uniquement et n'est pas inclus dans les limites de taux d'utilisation de l'abonnement.
 
-Cette page couvre comment [activer le mode rapide](#toggle-fast-mode), son [compromis de coût](#understand-the-cost-tradeoff), [quand l'utiliser](#decide-when-to-use-fast-mode), les [exigences](#requirements), l'[opt-in par session](#require-per-session-opt-in), et le [comportement des limites de taux](#handle-rate-limits).
+Cette page couvre comment [activer le mode rapide](#toggle-fast-mode), [utiliser le mode rapide sur Opus 4.7](#use-fast-mode-on-opus-4-7), le [compromis de coût](#understand-the-cost-tradeoff), [quand l'utiliser](#decide-when-to-use-fast-mode), les [exigences](#requirements), l'[opt-in par session](#require-per-session-opt-in), et le [comportement des limites de taux](#handle-rate-limits).
 
 ## Activer le mode rapide
 
@@ -40,23 +41,57 @@ Pour la meilleure efficacité des coûts, activez le mode rapide au début d'une
 
 Quand vous activez le mode rapide :
 
-* Si vous êtes sur un modèle différent, Claude Code bascule automatiquement vers Opus 4.6
+* Si vous êtes sur un modèle différent, Claude Code bascule automatiquement vers le modèle du mode rapide : Opus 4.6 par défaut, ou Opus 4.7 quand [`CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`](#use-fast-mode-on-opus-4-7) est défini.
 * Vous verrez un message de confirmation : « Mode rapide ACTIVÉ »
 * Une petite icône `↯` apparaît à côté de l'invite pendant que le mode rapide est actif
 * Exécutez `/fast` à nouveau à tout moment pour vérifier si le mode rapide est activé ou désactivé
 
-Quand vous désactivez le mode rapide avec `/fast` à nouveau, vous restez sur Opus 4.6. Le modèle ne revient pas à votre modèle précédent. Pour basculer vers un modèle différent, utilisez `/model`.
+Quand vous désactivez le mode rapide avec `/fast` à nouveau, vous restez sur la même version d'Opus que celle sur laquelle le mode rapide s'exécutait. Le modèle ne revient pas à votre modèle précédent. Pour basculer vers un modèle différent, utilisez `/model`.
+
+## Utiliser le mode rapide sur Opus 4.7
+
+<Note>
+  Le mode rapide sur Opus 4.7 nécessite Claude Code v2.1.139 ou ultérieur.
+</Note>
+
+Le mode rapide pour Claude Opus 4.7 est en aperçu de recherche. Il s'exécute à la même vitesse 2,5x et au même prix que le mode rapide pour Opus 4.6, sans autres changements de comportement.
+
+<Note>
+  Le 14 mai 2026, Opus 4.7 devient le modèle du mode rapide par défaut. Jusqu'à présent, optez en définissant `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1`.
+</Note>
+
+Pour opter, définissez `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1` avant de lancer Claude Code. Avec la variable définie, `/fast` s'exécute sur Opus 4.7. Sans elle, `/fast` continue à s'exécuter sur Opus 4.6.
+
+Vous pouvez définir la variable comme une exportation shell :
+
+```bash theme={null}
+export CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1
+```
+
+Ou dans n'importe quel [fichier de paramètres](/fr/settings#settings-files) de Claude Code, y compris les paramètres utilisateur, projet et gérés, pour délimiter l'opt-in :
+
+```json theme={null}
+{
+  "env": {
+    "CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE": "1"
+  }
+}
+```
+
+Le mode rapide pour Opus 4.6 reste disponible aux côtés d'Opus 4.7. Les deux partagent le même pool de limites de taux du mode rapide : l'utilisation sur l'un ou l'autre modèle puise dans les mêmes limites.
+
+Pour épingler le mode rapide à Opus 4.6 explicitement, définissez `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE=1`. Cette variable a la priorité, donc le mode rapide s'exécute sur Opus 4.6 indépendamment du fait que `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE` soit défini.
 
 ## Comprendre le compromis de coût
 
-Le mode rapide a une tarification par jeton plus élevée que l'Opus 4.6 standard :
+Le mode rapide a une tarification par jeton plus élevée que l'Opus standard :
 
-| Mode                              | Entrée (MTok) | Sortie (MTok) |
-| --------------------------------- | ------------- | ------------- |
-| Mode rapide sur Opus 4.6 (\<200K) | 30 \$         | 150 \$        |
-| Mode rapide sur Opus 4.6 (>200K)  | 60 \$         | 225 \$        |
+| Mode                     | Entrée (MTok) | Sortie (MTok) |
+| ------------------------ | ------------- | ------------- |
+| Mode rapide sur Opus 4.6 | 30 \$         | 150 \$        |
+| Mode rapide sur Opus 4.7 | 30 \$         | 150 \$        |
 
-Le mode rapide est compatible avec la fenêtre de contexte étendue de 1 million de jetons.
+La tarification du mode rapide est plate sur toute la fenêtre de contexte de 1 million de jetons.
 
 Quand vous basculez en mode rapide en milieu de conversation, vous payez le prix complet du jeton d'entrée non mis en cache du mode rapide pour tout le contexte de la conversation. Cela coûte plus cher que si vous aviez activé le mode rapide dès le départ.
 
@@ -125,9 +160,9 @@ Ceci est utile pour contrôler les coûts dans les organisations où les utilisa
 
 ## Gérer les limites de taux
 
-Le mode rapide a des limites de taux séparées de l'Opus 4.6 standard. Quand vous atteignez la limite de taux du mode rapide ou que vous manquez de crédits d'utilisation supplémentaire :
+Le mode rapide a des limites de taux séparées de l'Opus standard. Le mode rapide pour Opus 4.6 et Opus 4.7 partagent le même pool de limites de taux : l'utilisation sur l'un ou l'autre modèle puise dans les mêmes limites. Quand vous atteignez la limite de taux du mode rapide ou que vous manquez d'utilisation supplémentaire :
 
-1. Le mode rapide bascule automatiquement vers l'Opus 4.6 standard
+1. Le mode rapide bascule automatiquement vers la vitesse standard sur la même version d'Opus
 2. L'icône `↯` devient grise pour indiquer le refroidissement
 3. Vous continuez à travailler à la vitesse et à la tarification standard
 4. Quand le refroidissement expire, le mode rapide se réactive automatiquement
