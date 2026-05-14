@@ -49,7 +49,7 @@ Der **lokale Bereich** ist am besten für:
 
 ### Wie Bereiche interagieren
 
-Wenn die gleiche Einstellung in mehreren Bereichen konfiguriert ist, haben spezifischere Bereiche Vorrang:
+Wenn die gleiche Einstellung in mehreren Bereichen konfiguriert ist, wendet Claude Code sie in Prioritätsreihenfolge an:
 
 1. **Verwaltet** (höchste) - kann von nichts überschrieben werden
 2. **Befehlszeilenargumente** - temporäre Sitzungsüberschreibungen
@@ -57,7 +57,7 @@ Wenn die gleiche Einstellung in mehreren Bereichen konfiguriert ist, haben spezi
 4. **Projekt** - überschreibt Benutzereinstellungen
 5. **Benutzer** (niedrigste) - gilt, wenn nichts anderes die Einstellung angibt
 
-Wenn beispielsweise eine Berechtigung in Benutzereinstellungen erlaubt, aber in Projekteinstellungen verweigert wird, hat die Projekteinstellung Vorrang und die Berechtigung wird blockiert.
+Wenn beispielsweise Ihre Benutzereinstellungen `spinnerTipsEnabled` auf `true` setzen und Projekteinstellungen es auf `false` setzen, gilt der Projektwert. Berechtigungsregeln verhalten sich anders, da sie über Bereiche hinweg zusammengeführt werden, anstatt sich zu überschreiben. Siehe [Einstellungspriorität](#settings-precedence).
 
 ### Was verwendet Bereiche
 

@@ -754,7 +754,7 @@ hook 进程仅在 Bash 命令的子命令与 `git *` 匹配时生成，或当命
 | [Plugin](/zh-CN/plugins) `hooks/hooks.json`                     | 启用插件时                   | 是，与插件捆绑      |
 | [Skill](/zh-CN/skills) 或 [agent](/zh-CN/sub-agents) frontmatter | 当 skill 或 agent 处于活动状态时 | 是，在组件文件中定义   |
 
-在 Claude Code 中运行 [`/hooks`](/zh-CN/hooks#the-hooks-menu) 以浏览所有按事件分组的配置 hooks。要一次禁用所有 hooks，在设置文件中设置 `"disableAllHooks": true`。
+在 Claude Code 中运行 [`/hooks`](/zh-CN/hooks#the-hooks-menu) 以浏览所有按事件分组的配置 hooks。要一次禁用所有 hooks，在设置文件中设置 `"disableAllHooks": true`。托管设置中配置的 Hooks 仍然运行，除非 `disableAllHooks` 也在那里设置。
 
 如果你在 Claude Code 运行时直接编辑设置文件，文件监视器通常会自动拾取 hook 更改。
 

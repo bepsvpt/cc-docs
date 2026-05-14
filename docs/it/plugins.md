@@ -305,7 +305,7 @@ Il flag accetta anche un archivio `.zip` della directory del plugin, che richied
 claude --plugin-dir ./my-plugin.zip
 ```
 
-Quando un plugin `--plugin-dir` ha lo stesso nome di un plugin marketplace installato, la copia locale ha la precedenza per quella sessione. Questo ti consente di testare le modifiche a un plugin che hai già installato senza disinstallarlo prima. I plugin marketplace forzatamente abilitati dalle impostazioni gestite sono l'unica eccezione e non possono essere sovrascritti.
+Quando un plugin `--plugin-dir` ha lo stesso nome di un plugin marketplace installato, la copia locale ha la precedenza per quella sessione. Questo ti consente di testare le modifiche a un plugin che hai già installato senza disinstallarlo prima. L'eccezione è rappresentata dai plugin le cui impostazioni gestite forzano l'abilitazione o la disabilitazione: `--plugin-dir` non può sovrascrivere quelli.
 
 Man mano che apporti modifiche al tuo plugin, esegui `/reload-plugins` per raccogliere gli aggiornamenti senza riavviare. Questo ricarica plugin, skills, agents, hooks, MCP servers del plugin e LSP servers del plugin. Testa i componenti del tuo plugin:
 

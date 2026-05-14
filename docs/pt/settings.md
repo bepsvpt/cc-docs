@@ -49,7 +49,7 @@ O escopo **Local** é melhor para:
 
 ### Como os escopos interagem
 
-Quando a mesma configuração é definida em vários escopos, escopos mais específicos têm precedência:
+Quando a mesma configuração aparece em vários escopos, o Claude Code as aplica em ordem de prioridade:
 
 1. **Managed** (mais alta) - não pode ser substituída por nada
 2. **Argumentos de linha de comando** - substituições de sessão temporárias
@@ -57,7 +57,7 @@ Quando a mesma configuração é definida em vários escopos, escopos mais espec
 4. **Project** - substitui configurações de usuário
 5. **User** (mais baixa) - se aplica quando nada mais especifica a configuração
 
-Por exemplo, se uma permissão é permitida nas configurações do usuário, mas negada nas configurações do projeto, a configuração do projeto tem precedência e a permissão é bloqueada.
+Por exemplo, se suas configurações de usuário definem `spinnerTipsEnabled` como `true` e as configurações de projeto a definem como `false`, o valor do projeto se aplica. As regras de permissão se comportam de forma diferente porque se mesclam entre escopos em vez de substituir. Veja [Precedência de configurações](#settings-precedence).
 
 ### O que usa escopos
 

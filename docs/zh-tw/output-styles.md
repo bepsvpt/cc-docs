@@ -6,7 +6,9 @@
 
 > 將 Claude Code 適配用於軟體工程以外的用途
 
-輸出樣式改變 Claude 的回應方式，而不是 Claude 知道什麼。它們修改系統提示以設定角色、語氣和輸出格式，同時保留核心功能，例如執行指令碼、讀取和寫入檔案，以及追蹤待辦事項。當您每次都重新提示相同的語音或格式，或者當您希望 Claude 充當軟體工程師以外的角色時，請使用一個。
+輸出樣式改變 Claude 的回應方式，而不是 Claude 知道什麼。它們修改系統提示以設定角色、語氣和輸出格式。當您每次都重新提示相同的語音或格式，或者當您希望 Claude 充當軟體工程師以外的角色時，請使用一個。
+
+自訂輸出樣式將您的指令添加到系統提示，並讓您選擇是否保留 Claude Code 的內建軟體工程指令。當您改變 Claude 的溝通方式但仍在編碼時（例如始終用圖表回答），請保留它們。當 Claude 根本不進行軟體工程時（例如寫作助手或數據分析師），請省略它們。
 
 有關您的專案、慣例或程式碼庫的說明，請改用 [CLAUDE.md](/zh-TW/memory)。
 
@@ -21,16 +23,6 @@ Claude Code 的**預設**輸出樣式是現有的系統提示，旨在幫助您�
 * **Explanatory**：在幫助您完成軟體工程任務的同時提供教育性的「Insights」。幫助您理解實現選擇和程式碼庫模式。
 
 * **Learning**：協作式的邊做邊學模式，Claude 不僅會在編碼時分享「Insights」，還會要求您自己貢獻小的、策略性的程式碼片段。Claude Code 將在您的程式碼中添加 `TODO(human)` 標記供您實現。
-
-## 輸出樣式的工作原理
-
-輸出樣式直接修改 Claude Code 的系統提示。
-
-* 自訂輸出樣式排除了編碼指令（例如使用測試驗證程式碼），除非 `keep-coding-instructions` 為真。
-* 所有輸出樣式都在系統提示的末尾添加了自己的自訂指令。
-* 所有輸出樣式都會在對話期間觸發提醒，讓 Claude 遵守輸出樣式指令。
-
-Token 使用量取決於樣式。將指令添加到系統提示會增加輸入 token，儘管 prompt caching 在工作階段中的第一個請求之後會降低此成本。內建的 Explanatory 和 Learning 樣式按設計會產生比預設更長的回應，這會增加輸出 token。對於自訂樣式，輸出 token 使用量取決於您的指令告訴 Claude 要產生什麼。
 
 ## 變更您的輸出樣式
 
@@ -48,56 +40,80 @@ Token 使用量取決於樣式。將指令添加到系統提示會增加輸入 t
 
 ## 建立自訂輸出樣式
 
-自訂輸出樣式是具有 frontmatter 和將添加到系統提示的文字的 Markdown 檔案：
+自訂輸出樣式是一個 Markdown 檔案：frontmatter 用於中繼資料，然後是要添加到系統提示的指令。
 
-```markdown theme={null}
----
-name: My Custom Style
-description:
-  A brief description of what this style does, to be displayed to the user
----
+<Steps>
+  <Step title="建立 Markdown 檔案">
+    將其儲存在三個層級之一。檔案名稱成為樣式名稱，除非您在 frontmatter 中設定 `name`。
 
-# Custom Style Instructions
+    * 使用者：`~/.claude/output-styles`
+    * 專案：`.claude/output-styles`
+    * 受管原則：[受管設定目錄](/zh-TW/settings#settings-files)內的 `.claude/output-styles`
+  </Step>
 
-You are an interactive CLI tool that helps users with software engineering
-tasks. [Your custom instructions here...]
+  <Step title="添加 frontmatter 和指令">
+    決定是否保留 Claude Code 的軟體工程指令。如果您改變 Claude 的溝通方式但仍希望它以相同方式編碼，請設定 `keep-coding-instructions: true`。如果 Claude 不會進行軟體工程，請省略它。
 
-## Specific Behaviors
+    此範例在保留 Claude 編碼行為的同時，在每個說明前面加上圖表：
 
-[Define how the assistant should behave in this style...]
-```
+    ```markdown theme={null}
+    ---
+    name: Diagrams first
+    description: Lead every explanation with a diagram
+    keep-coding-instructions: true
+    ---
 
-您可以在三個層級儲存這些檔案：
+    When explaining code, architecture, or data flow, start with a Mermaid diagram showing the structure, then explain in prose.
 
-* 使用者：`~/.claude/output-styles`
-* 專案：`.claude/output-styles`
-* 受管原則：[受管設定目錄](/zh-TW/settings#settings-files)內的 `.claude/output-styles`
+    ## Diagram conventions
+
+    Use `flowchart TD` for control flow and `sequenceDiagram` for request paths. Keep diagrams under 15 nodes.
+    ```
+  </Step>
+
+  <Step title="切換到您的樣式">
+    執行 `/config` 並在**輸出樣式**下選擇您的樣式。它將在您下次啟動工作階段時生效。
+  </Step>
+</Steps>
 
 [Plugins](/zh-TW/plugins-reference) 也可以在 `output-styles/` 目錄中提供輸出樣式。
 
 ### Frontmatter
 
-輸出樣式檔案支援 frontmatter 以指定中繼資料：
+輸出樣式檔案支援這些 frontmatter 欄位：
 
-| Frontmatter                | 用途                                                                                                   | 預設      |
-| :------------------------- | :--------------------------------------------------------------------------------------------------- | :------ |
-| `name`                     | 輸出樣式的名稱，如果不是檔案名稱                                                                                     | 繼承自檔案名稱 |
-| `description`              | 輸出樣式的描述，在 `/config` 選擇器中顯示                                                                           | 無       |
-| `keep-coding-instructions` | 是否保留 Claude Code 系統提示中與編碼相關的部分。                                                                      | false   |
-| `force-for-plugin`         | 僅限 Plugin 輸出樣式：在啟用 plugin 時自動應用此樣式，無需要求使用者選擇它。覆蓋使用者的 `outputStyle` 設定。如果多個啟用的 plugin 設定此項，則第一個載入的獲勝。 | false   |
+| Frontmatter                | 用途                                                                                                              | 預設      |
+| :------------------------- | :-------------------------------------------------------------------------------------------------------------- | :------ |
+| `name`                     | 輸出樣式的名稱，如果不是檔案名稱                                                                                                | 繼承自檔案名稱 |
+| `description`              | 輸出樣式的描述，在 `/config` 選擇器中顯示                                                                                      | 無       |
+| `keep-coding-instructions` | 保留 Claude Code 的內建軟體工程指令                                                                                        | `false` |
+| `force-for-plugin`         | 僅限 Plugin 輸出樣式：在啟用 plugin 時自動應用此樣式，無需要求使用者選擇它。覆蓋使用者的 `outputStyle` 設定。如果多個啟用的 plugin 設定此項，Claude Code 使用第一個載入的。 | `false` |
+
+## 輸出樣式的工作原理
+
+輸出樣式直接修改 Claude Code 的系統提示。
+
+* 所有輸出樣式都在系統提示的末尾添加了自己的自訂指令。
+* 所有輸出樣式都會在對話期間觸發提醒，讓 Claude 遵守輸出樣式指令。
+* 自訂輸出樣式排除了 Claude Code 的內建軟體工程指令，例如如何限定變更範圍、編寫註解和驗證工作，除非 `keep-coding-instructions` 設定為 `true`。
+
+Token 使用量取決於樣式。將指令添加到系統提示會增加輸入 token，儘管 prompt caching 在工作階段中的第一個請求之後會降低此成本。內建的 Explanatory 和 Learning 樣式按設計會產生比預設更長的回應，這會增加輸出 token。對於自訂樣式，輸出 token 使用量取決於您的指令告訴 Claude 要產生什麼。
 
 ## 與相關功能的比較
 
-### 輸出樣式 vs. CLAUDE.md vs. --append-system-prompt
+多個功能自訂 Claude Code 的行為方式。輸出樣式直接修改系統提示並應用於每個回應。其他功能添加指令而不改變預設系統提示，或將其限定於特定任務。
 
-根據 Claude 是否應該停止充當編碼助手或保持其預設角色並學習更多內容來選擇。輸出樣式用您自己的角色和聲音替換 Claude Code 系統提示中的軟體工程部分，因此當 Claude 應該採用不同的身份（例如寫作編輯或數據分析助手）時，請使用一個。CLAUDE.md 和 `--append-system-prompt` 都保持 Claude Code 的預設身份並添加到它，因此當 Claude 應該保持編碼助手身份同時遵循您的專案慣例或額外指示時，請使用它們。
+| 功能                          | 工作原理                 | 使用時機                        |
+| :-------------------------- | :------------------- | :-------------------------- |
+| 輸出樣式                        | 修改系統提示               | 您希望每次都有不同的角色、語氣或預設回應格式      |
+| [CLAUDE.md](/zh-TW/memory)  | 在系統提示之後添加使用者訊息       | Claude 應該始終知道您的專案慣例和程式碼庫上下文 |
+| `--append-system-prompt`    | 附加到系統提示而不移除任何內容      | 您希望為單個呼叫進行一次性添加             |
+| [Agents](/zh-TW/sub-agents) | 使用自己的系統提示、模型和工具運行子代理 | 您希望為專注任務提供單獨作用域的幫助程式        |
+| [Skills](/zh-TW/skills)     | 在呼叫或相關時載入特定於任務的指令    | 您有可重複使用的工作流程                |
 
-機制也不同。輸出樣式直接編輯系統提示。CLAUDE.md 在系統提示之後將其內容添加為使用者訊息。`--append-system-prompt` 將內容附加到系統提示的末尾，而不移除任何內容。
+## 相關資源
 
-### 輸出樣式 vs. [Agents](/zh-TW/sub-agents)
-
-使用輸出樣式在每個工作階段中改變主對話的回應方式。當您想要一個單獨作用域的幫助程式，由主對話委派給它時，請使用 [subagent](/zh-TW/sub-agents)。輸出樣式僅影響主代理迴圈的系統提示。Agents 處理特定任務，可以攜帶自己的模型、工具和有關何時呼叫它們的上下文。
-
-### 輸出樣式 vs. [Skills](/zh-TW/skills)
-
-輸出樣式修改 Claude 的回應方式（格式、語氣、結構），一旦選擇就始終處於活動狀態。Skills 是特定於任務的提示，您可以使用 `/skill-name` 呼叫或 Claude 在相關時自動載入。使用輸出樣式來實現一致的格式設定偏好；使用 skills 來實現可重複使用的工作流程和任務。
+* [Settings](/zh-TW/settings)：`outputStyle` 欄位所在位置以及設定優先順序的工作原理
+* [Permission modes](/zh-TW/permission-modes)：Proactive 樣式鏡像自動模式而不改變您的權限模式
+* [Plugins](/zh-TW/plugins)：與 skills、hooks 和 agents 一起打包和分發輸出樣式
+* [Debug your configuration](/zh-TW/debug-your-config)：診斷為什麼輸出樣式沒有生效

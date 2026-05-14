@@ -754,7 +754,7 @@ Di mana Anda menambahkan hook menentukan cakupannya:
 | [Plugin](/id/plugins) `hooks/hooks.json`                     | Ketika plugin diaktifkan    | Ya, dikemas dengan plugin             |
 | [Skill](/id/skills) atau [agent](/id/sub-agents) frontmatter | Saat skill atau agent aktif | Ya, didefinisikan dalam file komponen |
 
-Jalankan [`/hooks`](/id/hooks#the-hooks-menu) di Claude Code untuk menjelajahi semua hooks yang dikonfigurasi dikelompokkan berdasarkan acara. Untuk menonaktifkan semua hooks sekaligus, atur `"disableAllHooks": true` dalam file pengaturan Anda.
+Jalankan [`/hooks`](/id/hooks#the-hooks-menu) di Claude Code untuk menjelajahi semua hooks yang dikonfigurasi dikelompokkan berdasarkan acara. Untuk menonaktifkan hooks, atur `"disableAllHooks": true` dalam file pengaturan Anda. Hooks yang dikonfigurasi dalam pengaturan terkelola masih berjalan kecuali `disableAllHooks` juga diatur di sana.
 
 Jika Anda mengedit file pengaturan secara langsung saat Claude Code berjalan, file watcher biasanya mengambil perubahan hook secara otomatis.
 

@@ -305,7 +305,7 @@ claude --plugin-dir ./my-plugin
 claude --plugin-dir ./my-plugin.zip
 ```
 
-當 `--plugin-dir` plugin 與已安裝的市場 plugin 具有相同名稱時，本地副本在該工作階段中優先。這讓您可以測試已安裝的 plugin 的變更，而無需先卸載它。由受管設定強制啟用的市場 plugins 是唯一的例外，無法被覆蓋。
+當 `--plugin-dir` plugin 與已安裝的市場 plugin 具有相同名稱時，本地副本在該工作階段中優先。這讓您可以測試已安裝的 plugin 的變更，而無需先卸載它。由受管設定強制啟用或強制停用的 plugins 是唯一的例外：`--plugin-dir` 無法覆蓋這些。
 
 當您對 plugin 進行變更時，執行 `/reload-plugins` 以取得更新，無需重新啟動。這會重新載入 plugins、skills、agents、hooks、plugin MCP servers 和 plugin LSP servers。測試您的 plugin 元件：
 

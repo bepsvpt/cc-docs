@@ -49,7 +49,7 @@ Claude Code menggunakan **sistem cakupan** untuk menentukan di mana konfigurasi 
 
 ### Bagaimana cakupan berinteraksi
 
-Ketika pengaturan yang sama dikonfigurasi dalam beberapa cakupan, cakupan yang lebih spesifik memiliki prioritas:
+Ketika pengaturan yang sama muncul dalam beberapa cakupan, Claude Code menerapkannya dalam urutan prioritas:
 
 1. **Managed** (tertinggi) - tidak dapat ditimpa oleh apa pun
 2. **Argumen baris perintah** - penggantian sesi sementara
@@ -57,7 +57,7 @@ Ketika pengaturan yang sama dikonfigurasi dalam beberapa cakupan, cakupan yang l
 4. **Project** - menimpa pengaturan pengguna
 5. **User** (terendah) - berlaku ketika tidak ada yang menentukan pengaturan
 
-Misalnya, jika izin diizinkan dalam pengaturan pengguna tetapi ditolak dalam pengaturan proyek, pengaturan proyek memiliki prioritas dan izin diblokir.
+Misalnya, jika pengaturan pengguna Anda menetapkan `spinnerTipsEnabled` ke `true` dan pengaturan proyek menetapkannya ke `false`, nilai proyek berlaku. Aturan izin berperilaku berbeda karena mereka menggabungkan di seluruh cakupan daripada menimpa. Lihat [Preseden pengaturan](#settings-precedence).
 
 ### Apa yang menggunakan cakupan
 

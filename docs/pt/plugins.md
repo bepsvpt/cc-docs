@@ -305,9 +305,9 @@ A flag também aceita um arquivo `.zip` do diretório do plugin, que requer Clau
 claude --plugin-dir ./my-plugin.zip
 ```
 
-Quando um plugin `--plugin-dir` tem o mesmo nome que um plugin marketplace instalado, a cópia local tem precedência para essa sessão. Isso permite que você teste mudanças em um plugin que você já tem instalado sem desinstalá-lo primeiro. Plugins marketplace forçadamente habilitados por configurações gerenciadas são a única exceção e não podem ser substituídos.
+Quando um plugin `--plugin-dir` tem o mesmo nome que um plugin marketplace instalado, a cópia local tem precedência para essa sessão. Isso permite que você teste mudanças em um plugin que você já tem instalado sem desinstalá-lo primeiro. A exceção é plugins que configurações gerenciadas forçadamente habilitam ou desabilitam: `--plugin-dir` não pode substituir aqueles.
 
-Conforme você faz mudanças no seu plugin, execute `/reload-plugins` para pegar as atualizações sem reiniciar. Isso recarrega plugins, skills, agents, hooks, MCP servers do plugin e LSP servers do plugin. Teste seus componentes de plugin:
+Conforme você faz mudanças no seu plugin, execute `/reload-plugins` para pegar as atualizações sem reiniciar. Isso recarrega plugins, skills, agents, hooks, plugin MCP servers e plugin LSP servers. Teste seus componentes de plugin:
 
 * Tente seus skills com `/plugin-name:skill-name`
 * Verifique que agents aparecem em `/agents`

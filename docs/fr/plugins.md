@@ -305,7 +305,7 @@ Le drapeau accepte également une archive `.zip` du répertoire du plugin, qui n
 claude --plugin-dir ./my-plugin.zip
 ```
 
-Quand un plugin `--plugin-dir` a le même nom qu'un plugin marketplace installé, la copie locale prend la priorité pour cette session. Cela vous permet de tester les modifications d'un plugin que vous avez déjà installé sans le désinstaller d'abord. Les plugins marketplace forcément activés par les paramètres gérés sont la seule exception et ne peuvent pas être remplacés.
+Quand un plugin `--plugin-dir` a le même nom qu'un plugin marketplace installé, la copie locale prend la priorité pour cette session. Cela vous permet de tester les modifications d'un plugin que vous avez déjà installé sans le désinstaller d'abord. L'exception concerne les plugins dont les paramètres gérés forcent l'activation ou la désactivation : `--plugin-dir` ne peut pas les remplacer.
 
 À mesure que vous apportez des modifications à votre plugin, exécutez `/reload-plugins` pour récupérer les mises à jour sans redémarrer. Cela recharge les plugins, les skills, les agents, les hooks, les serveurs MCP du plugin et les serveurs LSP du plugin. Testez vos composants de plugin :
 

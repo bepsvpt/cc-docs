@@ -355,7 +355,7 @@ Wenn ein Werkzeug auf einer beliebigen Ebene verweigert wird, kann keine andere 
 
 Embedding-Hosts können zusätzliche verwaltete Richtlinien über die SDK-Option `managedSettings` bereitstellen, wenn [`parentSettingsBehavior`](/de/settings#settings-precedence) auf `"merge"` gesetzt ist; Embedder-Werte können die Richtlinie verschärfen, aber nicht lockern.
 
-Wenn eine Berechtigung in Benutzereinstellungen zulässig ist, aber in Projekteinstellungen verweigert wird, hat die Projekteinstellung Vorrang und die Berechtigung wird blockiert.
+Wenn beispielsweise Benutzereinstellungen eine Berechtigung zulassen und Projekteinstellungen sie verweigern, blockiert die Deny-Regel sie. Das Gegenteil ist auch wahr: eine Deny-Regel auf Benutzerebene blockiert eine Allow-Regel auf Projektebene, da Deny-Regeln aus jedem Bereich vor Allow-Regeln ausgewertet werden.
 
 ## Beispielkonfigurationen
 

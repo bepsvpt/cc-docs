@@ -754,7 +754,7 @@ Wo Sie einen Hook hinzufügen, bestimmt seinen Bereich:
 | [Plugin](/de/plugins) `hooks/hooks.json`                     | Wenn Plugin aktiviert ist              | Ja, mit dem Plugin gebündelt          |
 | [Skill](/de/skills) oder [Agent](/de/sub-agents) Frontmatter | Während der Skill oder Agent aktiv ist | Ja, in der Komponentendatei definiert |
 
-Führen Sie [`/hooks`](/de/hooks#the-hooks-menu) in Claude Code aus, um alle konfigurierten Hooks nach Event gruppiert zu durchsuchen. Um alle Hooks auf einmal zu deaktivieren, setzen Sie `"disableAllHooks": true` in Ihrer Einstellungsdatei.
+Führen Sie [`/hooks`](/de/hooks#the-hooks-menu) in Claude Code aus, um alle konfigurierten Hooks nach Event gruppiert zu durchsuchen. Um Hooks zu deaktivieren, setzen Sie `"disableAllHooks": true` in Ihrer Einstellungsdatei. Hooks, die in verwalteten Einstellungen konfiguriert sind, werden weiterhin ausgeführt, es sei denn, `disableAllHooks` ist auch dort gesetzt.
 
 Wenn Sie Einstellungsdateien direkt bearbeiten, während Claude Code läuft, werden Hook-Änderungen normalerweise automatisch vom Datei-Watcher aufgegriffen.
 

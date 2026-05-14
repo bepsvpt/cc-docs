@@ -355,7 +355,7 @@ Se uma ferramenta for negada em qualquer nível, nenhum outro nível pode permit
 
 Os hosts de incorporação podem fornecer política gerenciada adicional por meio da opção `managedSettings` do SDK quando [`parentSettingsBehavior`](/pt/settings#settings-precedence) está definido como `"merge"`; os valores do incorporador podem apertar a política, mas não afrouxá-la.
 
-Se uma permissão for permitida em configurações de usuário mas negada em configurações de projeto, a configuração de projeto tem precedência e a permissão é bloqueada.
+Por exemplo, se as configurações de usuário permitirem uma permissão e as configurações de projeto a negarem, a regra de negação a bloqueia. O inverso também é verdadeiro: uma negação no nível de usuário bloqueia uma permissão no nível de projeto, porque as regras de negação de qualquer escopo são avaliadas antes das regras de permissão.
 
 ## Configurações de exemplo
 

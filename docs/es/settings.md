@@ -49,7 +49,7 @@ El **ámbito Local** es mejor para:
 
 ### Cómo interactúan los ámbitos
 
-Cuando la misma configuración se configura en múltiples ámbitos, los ámbitos más específicos tienen precedencia:
+Cuando la misma configuración aparece en múltiples ámbitos, Claude Code las aplica en orden de prioridad:
 
 1. **Managed** (más alto) - no puede ser anulado por nada
 2. **Argumentos de línea de comandos** - anulaciones de sesión temporal
@@ -57,7 +57,7 @@ Cuando la misma configuración se configura en múltiples ámbitos, los ámbitos
 4. **Project** - anula configuraciones de usuario
 5. **User** (más bajo) - se aplica cuando nada más especifica la configuración
 
-Por ejemplo, si un permiso se permite en la configuración de usuario pero se deniega en la configuración de proyecto, la configuración de proyecto tiene precedencia y el permiso se bloquea.
+Por ejemplo, si la configuración de usuario establece `spinnerTipsEnabled` en `true` y la configuración de proyecto lo establece en `false`, se aplica el valor del proyecto. Las reglas de permisos se comportan de manera diferente porque se fusionan en todos los ámbitos en lugar de anular. Consulte [Precedencia de configuración](#settings-precedence).
 
 ### Qué usa ámbitos
 

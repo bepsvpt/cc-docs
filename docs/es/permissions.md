@@ -355,7 +355,7 @@ Si una herramienta se deniega en cualquier nivel, ningún otro nivel puede permi
 
 Los hosts de inserción pueden proporcionar política administrada adicional a través de la opción `managedSettings` del SDK cuando [`parentSettingsBehavior`](/es/settings#settings-precedence) se establece en `"merge"`; los valores del integrador pueden restringir la política pero no flexibilizarla.
 
-Si un permiso se permite en configuración de usuario pero se deniega en configuración de proyecto, la configuración de proyecto tiene prioridad y el permiso se bloquea.
+Por ejemplo, si la configuración de usuario permite un permiso y la configuración de proyecto lo deniega, la regla de negación lo bloquea. Lo contrario también es cierto: una negación a nivel de usuario bloquea un permiso a nivel de proyecto, porque las reglas de negación de cualquier ámbito se evalúan antes que las reglas de permiso.
 
 ## Configuraciones de ejemplo
 

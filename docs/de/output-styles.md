@@ -6,7 +6,9 @@
 
 > Passen Sie Claude Code für Anwendungsfälle über Softwareentwicklung hinaus an
 
-Ausgabestile ändern, wie Claude antwortet, nicht was Claude weiß. Sie ändern die Systemaufforderung, um Rolle, Ton und Ausgabeformat festzulegen, während die Kernfunktionen wie das Ausführen von Skripten, das Lesen und Schreiben von Dateien sowie das Nachverfolgen von TODOs erhalten bleiben. Verwenden Sie einen, wenn Sie sich in jedem Durchgang immer wieder nach derselben Stimme oder demselben Format erkundigen, oder wenn Sie möchten, dass Claude als etwas anderes als ein Softwareentwickler fungiert.
+Ausgabestile ändern, wie Claude antwortet, nicht was Claude weiß. Sie ändern die Systemaufforderung, um Rolle, Ton und Ausgabeformat festzulegen. Verwenden Sie einen, wenn Sie sich in jedem Durchgang immer wieder nach derselben Stimme oder demselben Format erkundigen, oder wenn Sie möchten, dass Claude als etwas anderes als ein Softwareentwickler fungiert.
+
+Ein benutzerdefinierter Ausgabestil fügt Ihre Anweisungen zur Systemaufforderung hinzu und lässt Sie wählen, ob Sie die integrierten Softwareentwicklungsanweisungen von Claude Code beibehalten möchten. Behalten Sie sie, wenn Sie ändern, wie Claude kommuniziert, aber immer noch codiert, z. B. immer mit einem Diagramm antwortet. Lassen Sie sie weg, wenn Claude überhaupt keine Softwareentwicklung durchführt, z. B. als Schreib-Assistent oder Datenanalyst.
 
 Für Anweisungen zu Ihrem Projekt, Konventionen oder Ihrer Codebasis verwenden Sie stattdessen [CLAUDE.md](/de/memory).
 
@@ -21,16 +23,6 @@ Es gibt drei zusätzliche integrierte Ausgabestile:
 * **Explanatory**: Bietet pädagogische „Insights" zwischen der Unterstützung bei Softwareentwicklungsaufgaben. Hilft Ihnen, Implementierungsentscheidungen und Codebase-Muster zu verstehen.
 
 * **Learning**: Kollaborativer, Lern-durch-Tun-Modus, in dem Claude nicht nur „Insights" beim Codieren teilt, sondern Sie auch auffordert, kleine, strategische Codestücke selbst beizutragen. Claude Code fügt `TODO(human)`-Marker in Ihren Code ein, damit Sie diese implementieren können.
-
-## Wie Ausgabestile funktionieren
-
-Ausgabestile ändern direkt die Systemaufforderung von Claude Code.
-
-* Benutzerdefinierte Ausgabestile schließen Anweisungen zum Codieren aus (z. B. Überprüfung von Code mit Tests), es sei denn, `keep-coding-instructions` ist true.
-* Alle Ausgabestile haben ihre eigenen benutzerdefinierten Anweisungen am Ende der Systemaufforderung hinzugefügt.
-* Alle Ausgabestile lösen Erinnerungen für Claude aus, um die Ausgabestil-Anweisungen während des Gesprächs einzuhalten.
-
-Die Tokennutzung hängt vom Stil ab. Das Hinzufügen von Anweisungen zur Systemaufforderung erhöht die Eingabe-Token, obwohl Prompt Caching diese Kosten nach der ersten Anfrage in einer Sitzung reduziert. Die integrierten Explanatory- und Learning-Stile erzeugen absichtlich längere Antworten als Standard, was die Ausgabe-Token erhöht. Bei benutzerdefinierten Stilen hängt die Tokennutzung für die Ausgabe davon ab, was Ihre Anweisungen Claude zu produzieren sagen.
 
 ## Ändern Sie Ihren Ausgabestil
 
@@ -48,56 +40,80 @@ Da der Ausgabestil in der Systemaufforderung beim Sitzungsstart festgelegt wird,
 
 ## Erstellen Sie einen benutzerdefinierten Ausgabestil
 
-Benutzerdefinierte Ausgabestile sind Markdown-Dateien mit Frontmatter und dem Text, der zur Systemaufforderung hinzugefügt wird:
+Ein benutzerdefinierter Ausgabestil ist eine Markdown-Datei: Frontmatter für Metadaten, dann die Anweisungen, die zur Systemaufforderung hinzugefügt werden.
 
-```markdown theme={null}
----
-name: My Custom Style
-description:
-  A brief description of what this style does, to be displayed to the user
----
+<Steps>
+  <Step title="Erstellen Sie eine Markdown-Datei">
+    Speichern Sie sie auf einer von drei Ebenen. Der Dateiname wird zum Stilnamen, es sei denn, Sie legen `name` im Frontmatter fest.
 
-# Custom Style Instructions
+    * Benutzer: `~/.claude/output-styles`
+    * Projekt: `.claude/output-styles`
+    * Verwaltete Richtlinie: `.claude/output-styles` im [Verzeichnis für verwaltete Einstellungen](/de/settings#settings-files)
+  </Step>
 
-You are an interactive CLI tool that helps users with software engineering
-tasks. [Your custom instructions here...]
+  <Step title="Fügen Sie Frontmatter und Anweisungen hinzu">
+    Entscheiden Sie, ob Sie die Softwareentwicklungsanweisungen von Claude Code beibehalten möchten. Setzen Sie `keep-coding-instructions: true`, wenn Sie ändern, wie Claude kommuniziert, aber möchten, dass es auf die gleiche Weise codiert. Lassen Sie es weg, wenn Claude keine Softwareentwicklung durchführt.
 
-## Specific Behaviors
+    Dieses Beispiel leitet jede Erklärung mit einem Diagramm ein und behält Claudes Codierungsverhalten bei:
 
-[Define how the assistant should behave in this style...]
-```
+    ```markdown theme={null}
+    ---
+    name: Diagrams first
+    description: Lead every explanation with a diagram
+    keep-coding-instructions: true
+    ---
 
-Sie können diese Dateien auf drei Ebenen speichern:
+    When explaining code, architecture, or data flow, start with a Mermaid diagram showing the structure, then explain in prose.
 
-* Benutzer: `~/.claude/output-styles`
-* Projekt: `.claude/output-styles`
-* Verwaltete Richtlinie: `.claude/output-styles` im [Verzeichnis für verwaltete Einstellungen](/de/settings#settings-files)
+    ## Diagram conventions
+
+    Use `flowchart TD` for control flow and `sequenceDiagram` for request paths. Keep diagrams under 15 nodes.
+    ```
+  </Step>
+
+  <Step title="Wechseln Sie zu Ihrem Stil">
+    Führen Sie `/config` aus und wählen Sie Ihren Stil unter **Output style**. Es wird beim nächsten Start einer Sitzung wirksam.
+  </Step>
+</Steps>
 
 [Plugins](/de/plugins-reference) können auch Ausgabestile in einem `output-styles/`-Verzeichnis bereitstellen.
 
 ### Frontmatter
 
-Ausgabestil-Dateien unterstützen Frontmatter zum Angeben von Metadaten:
+Ausgabestil-Dateien unterstützen diese Frontmatter-Felder:
 
-| Frontmatter                | Zweck                                                                                                                                                                                                                                                                          | Standard                   |
-| :------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------- |
-| `name`                     | Name des Ausgabestils, falls nicht der Dateiname                                                                                                                                                                                                                               | Wird vom Dateinamen geerbt |
-| `description`              | Beschreibung des Ausgabestils, angezeigt in der `/config`-Auswahl                                                                                                                                                                                                              | Keine                      |
-| `keep-coding-instructions` | Ob die Teile der Systemaufforderung von Claude Code bezüglich Codierung beibehalten werden sollen.                                                                                                                                                                             | false                      |
-| `force-for-plugin`         | Nur Plugin-Ausgabestile: Wenden Sie diesen Stil automatisch an, wenn das Plugin aktiviert ist, ohne dass Benutzer ihn auswählen müssen. Überschreibt die `outputStyle`-Einstellung des Benutzers. Wenn mehrere aktivierte Plugins dies festlegen, gewinnt das zuerst geladene. | false                      |
+| Frontmatter                | Zweck                                                                                                                                                                                                                                                                                        | Standard                   |
+| :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------- |
+| `name`                     | Name des Ausgabestils, falls nicht der Dateiname                                                                                                                                                                                                                                             | Wird vom Dateinamen geerbt |
+| `description`              | Beschreibung des Ausgabestils, angezeigt in der `/config`-Auswahl                                                                                                                                                                                                                            | Keine                      |
+| `keep-coding-instructions` | Behalten Sie die integrierten Softwareentwicklungsanweisungen von Claude Code                                                                                                                                                                                                                | `false`                    |
+| `force-for-plugin`         | Nur Plugin-Ausgabestile: Wenden Sie diesen Stil automatisch an, wenn das Plugin aktiviert ist, ohne dass Benutzer ihn auswählen müssen. Überschreibt die `outputStyle`-Einstellung des Benutzers. Wenn mehrere aktivierte Plugins dies festlegen, verwendet Claude Code das zuerst geladene. | `false`                    |
+
+## Wie Ausgabestile funktionieren
+
+Ausgabestile ändern direkt die Systemaufforderung von Claude Code.
+
+* Alle Ausgabestile haben ihre eigenen benutzerdefinierten Anweisungen am Ende der Systemaufforderung hinzugefügt.
+* Alle Ausgabestile lösen Erinnerungen für Claude aus, um die Ausgabestil-Anweisungen während des Gesprächs einzuhalten.
+* Benutzerdefinierte Ausgabestile lassen die integrierten Softwareentwicklungsanweisungen von Claude Code weg, z. B. wie man Änderungen begrenzt, Kommentare schreibt und Arbeiten überprüft, es sei denn, `keep-coding-instructions` ist auf `true` gesetzt.
+
+Die Tokennutzung hängt vom Stil ab. Das Hinzufügen von Anweisungen zur Systemaufforderung erhöht die Eingabe-Token, obwohl Prompt Caching diese Kosten nach der ersten Anfrage in einer Sitzung reduziert. Die integrierten Explanatory- und Learning-Stile erzeugen absichtlich längere Antworten als Standard, was die Ausgabe-Token erhöht. Bei benutzerdefinierten Stilen hängt die Tokennutzung für die Ausgabe davon ab, was Ihre Anweisungen Claude zu produzieren sagen.
 
 ## Vergleiche mit verwandten Funktionen
 
-### Ausgabestile vs. CLAUDE.md vs. --append-system-prompt
+Mehrere Funktionen passen an, wie sich Claude Code verhält. Ausgabestile ändern die Systemaufforderung direkt und gelten für jede Antwort. Die anderen fügen Anweisungen hinzu, ohne die Standard-Systemaufforderung zu ändern, oder begrenzen sie auf eine bestimmte Aufgabe.
 
-Wählen Sie basierend darauf, ob Claude seine Rolle als Coding-Assistent aufgeben oder seine Standardrolle behalten und mehr lernen soll. Ausgabestile ersetzen die Softwareentwicklungsteile von Claude Codes Systemaufforderung durch Ihre eigene Rolle und Stimme, verwenden Sie also einen, wenn Claude eine andere Identität annehmen soll, wie ein Schreib-Editor oder ein Datenanalyse-Assistent. CLAUDE.md und `--append-system-prompt` behalten beide Claude Codes Standardidentität bei und ergänzen sie, verwenden Sie sie also, wenn Claude ein Coding-Assistent bleiben soll, der auch Ihre Projektkonventionen oder zusätzliche Anweisungen befolgt.
+| Funktion                 | Wie es funktioniert                                                                            | Verwenden Sie es, wenn                                                                                      |
+| :----------------------- | :--------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------- |
+| Ausgabestile             | Ändert die Systemaufforderung                                                                  | Sie möchten in jedem Durchgang eine andere Rolle, einen anderen Ton oder ein anderes Standard-Antwortformat |
+| [CLAUDE.md](/de/memory)  | Fügt eine Benutzernachricht nach der Systemaufforderung hinzu                                  | Claude sollte immer Ihre Projektkonventionen und Codebase-Kontext kennen                                    |
+| `--append-system-prompt` | Hängt an die Systemaufforderung an, ohne etwas zu entfernen                                    | Sie möchten eine einmalige Ergänzung für einen einzelnen Aufruf                                             |
+| [Agents](/de/sub-agents) | Führt einen Subagent mit seiner eigenen Systemaufforderung, seinem Modell und seinen Tools aus | Sie möchten einen separat definierten Helper für eine fokussierte Aufgabe                                   |
+| [Skills](/de/skills)     | Lädt aufgabenspezifische Anweisungen, wenn aufgerufen oder relevant                            | Sie haben einen wiederverwendbaren Workflow                                                                 |
 
-Die Mechanismen unterscheiden sich ebenfalls. Ausgabestile bearbeiten die Systemaufforderung direkt. CLAUDE.md fügt seinen Inhalt als Benutzernachricht nach der Systemaufforderung hinzu. `--append-system-prompt` hängt Inhalte an das Ende der Systemaufforderung an, ohne etwas zu entfernen.
+## Verwandte Ressourcen
 
-### Ausgabestile vs. [Agents](/de/sub-agents)
-
-Verwenden Sie einen Ausgabestil, um zu ändern, wie die Hauptkonversation in jeder Sitzung antwortet. Verwenden Sie einen [Subagent](/de/sub-agents), wenn Sie einen separat definierten Helper möchten, an den die Hauptkonversation delegiert. Ausgabestile beeinflussen nur die Systemaufforderung der Hauptagentenschleife. Agents bewältigen spezifische Aufgaben und können ihr eigenes Modell, Tools und einen Kontext darüber haben, wann sie aufgerufen werden sollen.
-
-### Ausgabestile vs. [Skills](/de/skills)
-
-Ausgabestile ändern, wie Claude antwortet (Formatierung, Ton, Struktur), und sind immer aktiv, sobald sie ausgewählt sind. Skills sind aufgabenspezifische Aufforderungen, die Sie mit `/skill-name` aufrufen oder die Claude automatisch lädt, wenn relevant. Verwenden Sie Ausgabestile für konsistente Formatierungspräferenzen; verwenden Sie Skills für wiederverwendbare Workflows und Aufgaben.
+* [Settings](/de/settings): wo das Feld `outputStyle` lebt und wie die Einstellungspriorität funktioniert
+* [Permission modes](/de/permission-modes): der Proactive-Stil spiegelt den Auto-Modus wider, ohne Ihren Berechtigungsmodus zu ändern
+* [Plugins](/de/plugins): Verpacken und verteilen Sie Ausgabestile zusammen mit Skills, Hooks und Agents
+* [Debug your configuration](/de/debug-your-config): Diagnostizieren Sie, warum ein Ausgabestil nicht wirksam wird

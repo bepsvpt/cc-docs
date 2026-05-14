@@ -6,7 +6,9 @@
 
 > Adapte Claude Code para usos más allá de la ingeniería de software
 
-Los estilos de salida cambian cómo responde Claude, no lo que Claude sabe. Modifican el mensaje del sistema para establecer el rol, el tono y el formato de salida mientras se mantienen las capacidades principales como ejecutar scripts, leer y escribir archivos y realizar un seguimiento de TODOs. Use uno cuando siga re-solicitando la misma voz o formato en cada turno, o cuando desee que Claude actúe como algo diferente a un ingeniero de software.
+Los estilos de salida cambian cómo responde Claude, no lo que Claude sabe. Modifican el mensaje del sistema para establecer el rol, el tono y el formato de salida. Use uno cuando siga re-solicitando la misma voz o formato en cada turno, o cuando desee que Claude actúe como algo diferente a un ingeniero de software.
+
+Un estilo de salida personalizado agrega sus instrucciones al mensaje del sistema y le permite elegir si desea mantener las instrucciones integradas de ingeniería de software de Claude Code. Manténgalas cuando esté cambiando cómo Claude se comunica pero sigue codificando, como siempre respondiendo con un diagrama. Déjelas fuera cuando Claude no esté haciendo ingeniería de software en absoluto, como un asistente de escritura o analista de datos.
 
 Para instrucciones sobre su proyecto, convenciones o base de código, use [CLAUDE.md](/es/memory) en su lugar.
 
@@ -21,16 +23,6 @@ Hay tres estilos de salida integrados adicionales:
 * **Explanatory**: Proporciona "Insights" educativos entre ayudarle a completar tareas de ingeniería de software. Le ayuda a entender las opciones de implementación y los patrones de la base de código.
 
 * **Learning**: Modo colaborativo de aprendizaje práctico donde Claude no solo compartirá "Insights" mientras codifica, sino que también le pedirá que contribuya con pequeñas piezas de código estratégicas. Claude Code agregará marcadores `TODO(human)` en su código para que usted implemente.
-
-## Cómo funcionan los estilos de salida
-
-Los estilos de salida modifican directamente el mensaje del sistema de Claude Code.
-
-* Los estilos de salida personalizados excluyen instrucciones para codificación (como verificar código con pruebas), a menos que `keep-coding-instructions` sea verdadero.
-* Todos los estilos de salida tienen sus propias instrucciones personalizadas agregadas al final del mensaje del sistema.
-* Todos los estilos de salida activan recordatorios para que Claude se adhiera a las instrucciones del estilo de salida durante la conversación.
-
-El uso de tokens depende del estilo. Agregar instrucciones al mensaje del sistema aumenta los tokens de entrada, aunque el almacenamiento en caché de prompts reduce este costo después de la primera solicitud en una sesión. Los estilos integrados Explanatory y Learning producen respuestas más largas que Default por diseño, lo que aumenta los tokens de salida. Para estilos personalizados, el uso de tokens de salida depende de lo que sus instrucciones le digan a Claude que produzca.
 
 ## Cambiar su estilo de salida
 
@@ -48,56 +40,80 @@ Debido a que el estilo de salida se establece en el mensaje del sistema al inici
 
 ## Crear un estilo de salida personalizado
 
-Los estilos de salida personalizados son archivos Markdown con frontmatter y el texto que se agregará al mensaje del sistema:
+Un estilo de salida personalizado es un archivo Markdown: frontmatter para metadatos, luego las instrucciones a agregar al mensaje del sistema.
 
-```markdown theme={null}
----
-name: My Custom Style
-description:
-  A brief description of what this style does, to be displayed to the user
----
+<Steps>
+  <Step title="Crear un archivo Markdown">
+    Guárdelo en uno de tres niveles. El nombre del archivo se convierte en el nombre del estilo a menos que establezca `name` en el frontmatter.
 
-# Custom Style Instructions
+    * Usuario: `~/.claude/output-styles`
+    * Proyecto: `.claude/output-styles`
+    * Política administrada: `.claude/output-styles` dentro del [directorio de configuración administrada](/es/settings#settings-files)
+  </Step>
 
-You are an interactive CLI tool that helps users with software engineering
-tasks. [Your custom instructions here...]
+  <Step title="Agregar frontmatter e instrucciones">
+    Decida si desea mantener las instrucciones de ingeniería de software de Claude Code. Establezca `keep-coding-instructions: true` si está cambiando cómo Claude se comunica pero aún desea que codifique de la misma manera. Déjelo fuera si Claude no estará haciendo ingeniería de software.
 
-## Specific Behaviors
+    Este ejemplo encabeza cada explicación con un diagrama mientras mantiene el comportamiento de codificación de Claude:
 
-[Define how the assistant should behave in this style...]
-```
+    ```markdown theme={null}
+    ---
+    name: Diagrams first
+    description: Lead every explanation with a diagram
+    keep-coding-instructions: true
+    ---
 
-Puede guardar estos archivos en tres niveles:
+    When explaining code, architecture, or data flow, start with a Mermaid diagram showing the structure, then explain in prose.
 
-* Usuario: `~/.claude/output-styles`
-* Proyecto: `.claude/output-styles`
-* Política administrada: `.claude/output-styles` dentro del [directorio de configuración administrada](/es/settings#settings-files)
+    ## Diagram conventions
 
-Los [Plugins](/es/plugins-reference) también pueden enviar estilos de salida en un directorio `output-styles/`.
+    Use `flowchart TD` for control flow and `sequenceDiagram` for request paths. Keep diagrams under 15 nodes.
+    ```
+  </Step>
+
+  <Step title="Cambiar a su estilo">
+    Ejecute `/config` y seleccione su estilo bajo **Output style**. Surte efecto la próxima vez que inicie una sesión.
+  </Step>
+</Steps>
+
+[Plugins](/es/plugins-reference) también pueden enviar estilos de salida en un directorio `output-styles/`.
 
 ### Frontmatter
 
-Los archivos de estilo de salida admiten frontmatter para especificar metadatos:
+Los archivos de estilo de salida admiten estos campos de frontmatter:
 
-| Frontmatter                | Propósito                                                                                                                                                                                                                                                                             | Predeterminado                   |
-| :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------- |
-| `name`                     | Nombre del estilo de salida, si no es el nombre del archivo                                                                                                                                                                                                                           | Se hereda del nombre del archivo |
-| `description`              | Descripción del estilo de salida, mostrada en el selector `/config`                                                                                                                                                                                                                   | Ninguno                          |
-| `keep-coding-instructions` | Si se deben mantener las partes del mensaje del sistema de Claude Code relacionadas con la codificación.                                                                                                                                                                              | false                            |
-| `force-for-plugin`         | Solo estilos de salida de plugins: aplique este estilo automáticamente siempre que el plugin esté habilitado, sin requerir que los usuarios lo seleccionen. Anula la configuración `outputStyle` del usuario. Si varios plugins habilitados establecen esto, el primero cargado gana. | false                            |
+| Frontmatter                | Propósito                                                                                                                                                                                                                                                                                        | Predeterminado                   |
+| :------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------- |
+| `name`                     | Nombre del estilo de salida, si no es el nombre del archivo                                                                                                                                                                                                                                      | Se hereda del nombre del archivo |
+| `description`              | Descripción del estilo de salida, mostrada en el selector `/config`                                                                                                                                                                                                                              | Ninguno                          |
+| `keep-coding-instructions` | Mantener las instrucciones integradas de ingeniería de software de Claude Code                                                                                                                                                                                                                   | `false`                          |
+| `force-for-plugin`         | Solo estilos de salida de plugins: aplique este estilo automáticamente siempre que el plugin esté habilitado, sin requerir que los usuarios lo seleccionen. Anula la configuración `outputStyle` del usuario. Si varios plugins habilitados establecen esto, Claude Code usa el primero cargado. | `false`                          |
+
+## Cómo funcionan los estilos de salida
+
+Los estilos de salida modifican directamente el mensaje del sistema de Claude Code.
+
+* Todos los estilos de salida tienen sus propias instrucciones personalizadas agregadas al final del mensaje del sistema.
+* Todos los estilos de salida activan recordatorios para que Claude se adhiera a las instrucciones del estilo de salida durante la conversación.
+* Los estilos de salida personalizados dejan fuera las instrucciones integradas de ingeniería de software de Claude Code, como cómo delimitar cambios, escribir comentarios y verificar el trabajo, a menos que `keep-coding-instructions` esté establecido en `true`.
+
+El uso de tokens depende del estilo. Agregar instrucciones al mensaje del sistema aumenta los tokens de entrada, aunque el almacenamiento en caché de prompts reduce este costo después de la primera solicitud en una sesión. Los estilos integrados Explanatory y Learning producen respuestas más largas que Default por diseño, lo que aumenta los tokens de salida. Para estilos personalizados, el uso de tokens de salida depende de lo que sus instrucciones le digan a Claude que produzca.
 
 ## Comparaciones con características relacionadas
 
-### Estilos de salida vs. CLAUDE.md vs. --append-system-prompt
+Varias características personalizan cómo se comporta Claude Code. Los estilos de salida modifican el mensaje del sistema directamente y se aplican a cada respuesta. Los otros agregan instrucciones sin cambiar el mensaje del sistema predeterminado, o los limitan a una tarea específica.
 
-Elija según si Claude debe dejar de actuar como asistente de codificación o mantener su rol predeterminado y aprender más. Los estilos de salida reemplazan las partes de ingeniería de software del mensaje del sistema de Claude Code con su propio rol y voz, así que use uno cuando Claude deba adoptar una identidad diferente, como un editor de escritura o un asistente de análisis de datos. CLAUDE.md y `--append-system-prompt` mantienen la identidad predeterminada de Claude Code y se agregan a ella, así que úselos cuando Claude deba seguir siendo un asistente de codificación que también sigue sus convenciones de proyecto o instrucciones adicionales.
+| Característica           | Cómo funciona                                                                 | Úselo cuando                                                                          |
+| :----------------------- | :---------------------------------------------------------------------------- | :------------------------------------------------------------------------------------ |
+| Estilos de salida        | Modifica el mensaje del sistema                                               | Desea un rol, tono o formato de respuesta predeterminado diferente en cada turno      |
+| [CLAUDE.md](/es/memory)  | Agrega un mensaje de usuario después del mensaje del sistema                  | Claude siempre debe conocer sus convenciones de proyecto y contexto de base de código |
+| `--append-system-prompt` | Se agrega al mensaje del sistema sin eliminar nada                            | Desea una adición única para una única invocación                                     |
+| [Agents](/es/sub-agents) | Ejecuta un subagente con su propio mensaje del sistema, modelo y herramientas | Desea un ayudante con alcance separado para una tarea enfocada                        |
+| [Skills](/es/skills)     | Carga instrucciones específicas de tareas cuando se invoca o es relevante     | Tiene un flujo de trabajo reutilizable                                                |
 
-Los mecanismos también difieren. Los estilos de salida editan el mensaje del sistema directamente. CLAUDE.md agrega su contenido como un mensaje de usuario después del mensaje del sistema. `--append-system-prompt` agrega contenido al final del mensaje del sistema sin eliminar nada.
+## Recursos relacionados
 
-### Estilos de salida vs. [Agents](/es/sub-agents)
-
-Use un estilo de salida para cambiar cómo responde la conversación principal en cada sesión. Use un [subagent](/es/sub-agents) cuando desee un ayudante con alcance separado al que la conversación principal delegue. Los estilos de salida afectan solo el mensaje del sistema del bucle del agente principal. Los agentes manejan tareas específicas y pueden llevar su propio modelo, herramientas y contexto sobre cuándo invocarlos.
-
-### Estilos de salida vs. [Skills](/es/skills)
-
-Los estilos de salida modifican cómo responde Claude (formato, tono, estructura) y siempre están activos una vez seleccionados. Skills son prompts específicos de tareas que invoca con `/skill-name` o que Claude carga automáticamente cuando es relevante. Use estilos de salida para preferencias de formato consistentes; use skills para flujos de trabajo y tareas reutilizables.
+* [Settings](/es/settings): donde vive el campo `outputStyle` y cómo funciona la precedencia de configuración
+* [Permission modes](/es/permission-modes): el estilo Proactive refleja el modo automático sin cambiar su modo de permisos
+* [Plugins](/es/plugins): empaquete y distribuya estilos de salida junto con skills, hooks y agents
+* [Debug your configuration](/es/debug-your-config): diagnostique por qué un estilo de salida no está surtiendo efecto

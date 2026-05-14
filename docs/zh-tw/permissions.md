@@ -355,7 +355,7 @@ Subagents、命令和輸出樣式是從目前工作目錄及其父目錄、您�
 
 嵌入主機可以在 [`parentSettingsBehavior`](/zh-TW/settings#settings-precedence) 設定為 `"merge"` 時，透過 SDK `managedSettings` 選項提供額外的受管理原則；嵌入器值可以收緊原則但不能放寬它。
 
-如果權限在使用者設定中被允許但在專案設定中被拒絕，專案設定優先，權限被阻止。
+例如，如果使用者設定允許某項權限而專案設定拒絕它，deny 規則會阻止它。反之亦然：使用者級別的 deny 會阻止專案級別的 allow，因為來自任何範圍的 deny 規則會在 allow 規則之前進行評估。
 
 ## 範例設定
 

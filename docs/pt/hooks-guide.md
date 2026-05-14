@@ -541,11 +541,11 @@ INPUT=$(cat)
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
 
 if echo "$COMMAND" | grep -q "drop table"; then
-  echo "Blocked: dropping tables is not allowed" >&2  # stderr se torna feedback do Claude
-  exit 2 # exit 2 = bloquear a ação
+  echo "Blocked: dropping tables is not allowed" >&2  // stderr se torna feedback do Claude
+  exit 2 // exit 2 = bloquear a ação
 fi
 
-exit 0  # exit 0 = deixar prosseguir
+exit 0  // exit 0 = deixar prosseguir
 ```
 
 O código de saída determina o que acontece a seguir:
@@ -754,7 +754,7 @@ Onde você adiciona um hook determina seu escopo:
 | [Plugin](/pt/plugins) `hooks/hooks.json`                    | Quando o plugin está habilitado       | Sim, empacotado com o plugin           |
 | [Skill](/pt/skills) ou [agente](/pt/sub-agents) frontmatter | Enquanto a skill ou agente está ativo | Sim, definido no arquivo do componente |
 
-Execute [`/hooks`](/pt/hooks#the-hooks-menu) no Claude Code para navegar por todos os hooks configurados agrupados por evento. Para desabilitar todos os hooks de uma vez, defina `"disableAllHooks": true` no seu arquivo de configuração.
+Execute [`/hooks`](/pt/hooks#the-hooks-menu) no Claude Code para navegar por todos os hooks configurados agrupados por evento. Para desabilitar hooks, defina `"disableAllHooks": true` no seu arquivo de configuração. Hooks configurados em configurações gerenciadas ainda executam a menos que `disableAllHooks` também esteja definido lá.
 
 Se você editar arquivos de configuração diretamente enquanto Claude Code está em execução, o observador de arquivo normalmente pega mudanças de hook automaticamente.
 

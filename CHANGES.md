@@ -1,5 +1,219 @@
 # Documentation Changes
 
+## 2026-05-14
+
+99 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Beschleunigen Sie Antworten mit dem Schnellmodus** (`fast-mode.md`): 1 lines added, 1 removed
+- **Claude Code programmgesteuert ausführen** (`headless.md`): 4 lines added, 4 removed
+- **Automatisieren Sie Workflows mit Hooks** (`hooks-guide.md`): 1 lines added, 1 removed
+- **Rechtliche Bestimmungen und Compliance** (`legal-and-compliance.md`): 4 lines added, 0 removed
+- **Wie Claude sich Ihr Projekt merkt** (`memory.md`): 3 lines added, 3 removed
+- **Ausgabestile** (`output-styles.md`): 59 lines added, 41 removed
+  - New section: "## Wie Ausgabestile funktionieren"
+  - New section: "## Vergleiche mit verwandten Funktionen"
+  - New section: "## Verwandte Ressourcen"
+- **Berechtigungen konfigurieren** (`permissions.md`): 1 lines added, 1 removed
+- **Plugins erstellen** (`plugins.md`): 1 lines added, 1 removed
+- **Claude Code-Einstellungen** (`settings.md`): 2 lines added, 2 removed
+
+### English
+
+
+**Modified**
+
+- **Authentication** (`authentication.md`): 4 lines added, 0 removed
+- **Changelog** (`changelog.md`): 64 lines added, 0 removed
+- **Commands** (`commands.md`): 1 lines added, 1 removed
+- **Speed up responses with fast mode** (`fast-mode.md`): 1 lines added, 1 removed
+- **Run Claude Code programmatically** (`headless.md`): 4 lines added, 4 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 1 lines added, 1 removed
+- **Legal and compliance** (`legal-and-compliance.md`): 4 lines added, 0 removed
+- **How Claude remembers your project** (`memory.md`): 2 lines added, 2 removed
+- **Output styles** (`output-styles.md`): 66 lines added, 88 removed
+  - New section: "## How output styles work"
+  - New section: "## Comparisons to related features"
+  - New section: "## Related resources"
+- **Configure permissions** (`permissions.md`): 1 lines added, 1 removed
+- **Create plugins** (`plugins.md`): 1 lines added, 1 removed
+- **Claude Code settings** (`settings.md`): 4 lines added, 4 removed
+
+### Español
+
+
+**Modified**
+
+- **Ejecutar Claude Code mediante programación** (`headless.md`): 4 lines added, 4 removed
+- **Automatizar flujos de trabajo con hooks** (`hooks-guide.md`): 1 lines added, 1 removed
+- **Legal y cumplimiento** (`legal-and-compliance.md`): 4 lines added, 0 removed
+- **Cómo Claude recuerda su proyecto** (`memory.md`): 2 lines added, 2 removed
+- **Estilos de salida** (`output-styles.md`): 60 lines added, 42 removed
+  - New section: "## Cómo funcionan los estilos de salida"
+  - New section: "## Comparaciones con características relacionadas"
+  - New section: "## Recursos relacionados"
+- **Configurar permisos** (`permissions.md`): 1 lines added, 1 removed
+- **Crear plugins** (`plugins.md`): 1 lines added, 1 removed
+- **Configuración de Claude Code** (`settings.md`): 2 lines added, 2 removed
+
+### Français
+
+
+**Modified**
+
+- **Exécuter Claude Code par programmation** (`headless.md`): 4 lines added, 4 removed
+- **Automatiser les workflows avec les hooks** (`hooks-guide.md`): 1 lines added, 1 removed
+- **Aspects juridiques et conformité** (`legal-and-compliance.md`): 4 lines added, 0 removed
+- **Comment Claude se souvient de votre projet** (`memory.md`): 2 lines added, 2 removed
+- **Styles de sortie** (`output-styles.md`): 59 lines added, 41 removed
+  - New section: "## Fonctionnement des styles de sortie"
+  - New section: "## Comparaisons avec les fonctionnalités connexes"
+  - New section: "## Ressources connexes"
+- **Configurer les autorisations** (`permissions.md`): 1 lines added, 1 removed
+- **Créer des plugins** (`plugins.md`): 1 lines added, 1 removed
+- **Paramètres Claude Code** (`settings.md`): 2 lines added, 2 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Jalankan Claude Code secara programatis** (`headless.md`): 4 lines added, 4 removed
+- **Otomatisasi alur kerja dengan hooks** (`hooks-guide.md`): 1 lines added, 1 removed
+- **Hukum dan kepatuhan** (`legal-and-compliance.md`): 4 lines added, 0 removed
+- **Bagaimana Claude mengingat proyek Anda** (`memory.md`): 3 lines added, 3 removed
+- **Output styles** (`output-styles.md`): 66 lines added, 73 removed
+  - New section: "## Cara kerja output styles"
+  - New section: "## Perbandingan dengan fitur terkait"
+  - New section: "## Sumber daya terkait"
+- **Konfigurasi izin** (`permissions.md`): 1 lines added, 1 removed
+- **Buat plugins** (`plugins.md`): 1 lines added, 1 removed
+- **Pengaturan Claude Code** (`settings.md`): 2 lines added, 2 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Eseguire Claude Code a livello programmatico** (`headless.md`): 4 lines added, 4 removed
+- **Automatizzare i flussi di lavoro con hooks** (`hooks-guide.md`): 1 lines added, 1 removed
+- **Aspetti legali e conformità** (`legal-and-compliance.md`): 4 lines added, 0 removed
+- **Come Claude ricorda il tuo progetto** (`memory.md`): 2 lines added, 2 removed
+- **Output styles** (`output-styles.md`): 59 lines added, 41 removed
+  - New section: "## Come funzionano gli output styles"
+  - New section: "## Confronti con funzionalità correlate"
+  - New section: "## Risorse correlate"
+- **Configurare le autorizzazioni** (`permissions.md`): 1 lines added, 1 removed
+- **Creare plugin** (`plugins.md`): 1 lines added, 1 removed
+- **Impostazioni di Claude Code** (`settings.md`): 2 lines added, 2 removed
+
+### 日本語
+
+
+**Modified**
+
+- **Claude Code をプログラムで実行する** (`headless.md`): 4 lines added, 4 removed
+- **hooks でワークフローを自動化する** (`hooks-guide.md`): 1 lines added, 1 removed
+- **法的および規制対応** (`legal-and-compliance.md`): 4 lines added, 0 removed
+- **Claude があなたのプロジェクトを記憶する方法** (`memory.md`): 4 lines added, 4 removed
+- **出力スタイル** (`output-styles.md`): 59 lines added, 41 removed
+  - New section: "## 出力スタイルの仕組み"
+  - New section: "## 関連機能との比較"
+  - New section: "## 関連リソース"
+- **権限を設定する** (`permissions.md`): 1 lines added, 1 removed
+- **Claude Code の設定** (`settings.md`): 3 lines added, 3 removed
+
+### 한국어
+
+
+**Modified**
+
+- **Claude Code를 프로그래밍 방식으로 실행하기** (`headless.md`): 4 lines added, 4 removed
+- **hooks를 사용하여 워크플로우 자동화** (`hooks-guide.md`): 1 lines added, 1 removed
+- **법률 및 규정 준수** (`legal-and-compliance.md`): 4 lines added, 0 removed
+- **Claude가 프로젝트를 기억하는 방법** (`memory.md`): 2 lines added, 2 removed
+- **출력 스타일** (`output-styles.md`): 57 lines added, 40 removed
+  - New section: "## 출력 스타일의 작동 방식"
+  - New section: "## 관련 기능과의 비교"
+  - New section: "## 관련 리소스"
+- **권한 구성** (`permissions.md`): 1 lines added, 1 removed
+- **Claude Code 설정** (`settings.md`): 3 lines added, 3 removed
+
+### Português
+
+
+**Modified**
+
+- **Executar Claude Code programaticamente** (`headless.md`): 4 lines added, 4 removed
+- **Automatizar fluxos de trabalho com hooks** (`hooks-guide.md`): 4 lines added, 4 removed
+- **Legal e conformidade** (`legal-and-compliance.md`): 4 lines added, 0 removed
+- **Como Claude se lembra do seu projeto** (`memory.md`): 2 lines added, 2 removed
+- **Estilos de saída** (`output-styles.md`): 59 lines added, 41 removed
+  - New section: "## Como os estilos de saída funcionam"
+  - New section: "## Comparações com recursos relacionados"
+  - New section: "## Recursos relacionados"
+- **Configurar permissões** (`permissions.md`): 1 lines added, 1 removed
+- **Criar plugins** (`plugins.md`): 2 lines added, 2 removed
+- **Configurações do Claude Code** (`settings.md`): 2 lines added, 2 removed
+
+### Русский
+
+
+**Modified**
+
+- **Запуск Claude Code программно** (`headless.md`): 4 lines added, 4 removed
+- **Автоматизация рабочих процессов с помощью hooks** (`hooks-guide.md`): 1 lines added, 1 removed
+- **Правовые и нормативные требования** (`legal-and-compliance.md`): 4 lines added, 0 removed
+- **Как Claude запоминает ваш проект** (`memory.md`): 2 lines added, 2 removed
+- **Output styles** (`output-styles.md`): 59 lines added, 41 removed
+  - New section: "## Как работают output styles"
+  - New section: "## Сравнения со связанными функциями"
+  - New section: "## Связанные ресурсы"
+- **Настройка разрешений** (`permissions.md`): 1 lines added, 1 removed
+- **Создание plugins** (`plugins.md`): 1 lines added, 1 removed
+- **Параметры Claude Code** (`settings.md`): 3 lines added, 3 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **以编程方式运行 Claude Code** (`headless.md`): 4 lines added, 4 removed
+- **使用 hooks 自动化工作流** (`hooks-guide.md`): 1 lines added, 1 removed
+- **法律和合规** (`legal-and-compliance.md`): 4 lines added, 0 removed
+- **Claude 如何记住你的项目** (`memory.md`): 2 lines added, 2 removed
+- **输出样式** (`output-styles.md`): 59 lines added, 41 removed
+  - New section: "## 输出样式如何工作"
+  - New section: "## 与相关功能的比较"
+  - New section: "## 相关资源"
+- **配置权限** (`permissions.md`): 1 lines added, 1 removed
+- **创建插件** (`plugins.md`): 1 lines added, 1 removed
+- **Claude Code 设置** (`settings.md`): 2 lines added, 2 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **以程式方式執行 Claude Code** (`headless.md`): 4 lines added, 4 removed
+- **使用 hooks 自動化工作流程** (`hooks-guide.md`): 1 lines added, 1 removed
+- **法律和合規** (`legal-and-compliance.md`): 4 lines added, 0 removed
+- **Claude 如何記住您的專案** (`memory.md`): 2 lines added, 2 removed
+- **輸出樣式** (`output-styles.md`): 59 lines added, 41 removed
+  - New section: "## 輸出樣式的工作原理"
+  - New section: "## 與相關功能的比較"
+  - New section: "## 相關資源"
+- **設定權限** (`permissions.md`): 1 lines added, 1 removed
+- **建立 plugins** (`plugins.md`): 1 lines added, 1 removed
+- **Claude Code 設定** (`settings.md`): 2 lines added, 2 removed
+
+---
+
 ## 2026-05-13
 
 209 pages modified

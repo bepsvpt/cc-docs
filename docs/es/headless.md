@@ -6,13 +6,13 @@
 
 > Utilice el Agent SDK para ejecutar Claude Code mediante programación desde la CLI, Python o TypeScript.
 
-El [Agent SDK](/es/agent-sdk/overview) le proporciona las mismas herramientas, bucle de agente y gestión de contexto que potencian Claude Code. Está disponible como CLI para scripts e CI/CD, o como paquetes de [Python](/es/agent-sdk/python) y [TypeScript](/es/agent-sdk/typescript) para control programático completo.
-
 <Note>
-  La CLI se llamaba anteriormente "modo sin interfaz". La bandera `-p` y todas las opciones de CLI funcionan de la misma manera.
+  Starting June 15, 2026, Agent SDK and `claude -p` usage on subscription plans will draw from a new monthly Agent SDK credit, separate from your interactive usage limits. See [Use the Claude Agent SDK with your Claude plan](https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan) for details.
 </Note>
 
-Para ejecutar Claude Code mediante programación desde la CLI, pase `-p` con su indicación y cualquier [opción de CLI](/es/cli-reference):
+El [Agent SDK](/es/agent-sdk/overview) le proporciona las mismas herramientas, bucle de agente y gestión de contexto que potencian Claude Code. Está disponible como CLI para scripts e CI/CD, o como paquetes de [Python](/es/agent-sdk/python) y [TypeScript](/es/agent-sdk/typescript) para control programático completo.
+
+Para ejecutar Claude Code en modo no interactivo, pase `-p` con su indicación y cualquier [opción de CLI](/es/cli-reference):
 
 ```bash theme={null}
 claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"

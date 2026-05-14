@@ -355,7 +355,7 @@ Jika alat ditolak di tingkat mana pun, tidak ada tingkat lain yang dapat mengizi
 
 Host penyematan dapat menyediakan kebijakan terkelola tambahan melalui opsi SDK `managedSettings` ketika [`parentSettingsBehavior`](/id/settings#settings-precedence) diatur ke `"merge"`; nilai penyemat dapat memperketat kebijakan tetapi tidak dapat melonggarkannya.
 
-Jika izin diizinkan dalam pengaturan pengguna tetapi ditolak dalam pengaturan proyek, pengaturan proyek memiliki prioritas dan izin diblokir.
+Sebagai contoh, jika pengaturan pengguna mengizinkan izin dan pengaturan proyek menolaknya, aturan penolakan memblokir izin tersebut. Kebalikannya juga benar: penolakan tingkat pengguna memblokir izin tingkat proyek, karena aturan penolakan dari cakupan apa pun dievaluasi sebelum aturan izin.
 
 ## Contoh konfigurasi
 

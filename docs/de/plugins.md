@@ -305,7 +305,7 @@ Das Flag akzeptiert auch ein `.zip`-Archiv des Plugin-Verzeichnisses, das Claude
 claude --plugin-dir ./my-plugin.zip
 ```
 
-Wenn ein `--plugin-dir`-Plugin denselben Namen wie ein installiertes Marketplace-Plugin hat, hat die lokale Kopie in dieser Sitzung Vorrang. Dies ermöglicht es Ihnen, Änderungen an einem Plugin zu testen, das Sie bereits installiert haben, ohne es zuerst zu deinstallieren. Marketplace-Plugins, die durch verwaltete Einstellungen erzwungen aktiviert sind, sind die einzige Ausnahme und können nicht überschrieben werden.
+Wenn ein `--plugin-dir`-Plugin denselben Namen wie ein installiertes Marketplace-Plugin hat, hat die lokale Kopie in dieser Sitzung Vorrang. Dies ermöglicht es Ihnen, Änderungen an einem Plugin zu testen, das Sie bereits installiert haben, ohne es zuerst zu deinstallieren. Die Ausnahme sind Plugins, die durch verwaltete Einstellungen erzwungen aktiviert oder deaktiviert werden: `--plugin-dir` kann diese nicht überschreiben.
 
 Wenn Sie Änderungen an Ihrem Plugin vornehmen, führen Sie `/reload-plugins` aus, um die Updates zu übernehmen, ohne neu zu starten. Dies lädt Plugins, Skills, Agents, Hooks, Plugin-MCP-Server und Plugin-LSP-Server neu. Testen Sie Ihre Plugin-Komponenten:
 

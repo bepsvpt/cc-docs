@@ -754,7 +754,7 @@ hook 程序只在 Bash 命令的子命令與 `git *` 相符時生成，或當命
 | [Plugin](/zh-TW/plugins) `hooks/hooks.json`                    | 啟用外掛時                   | 是，與外掛捆綁      |
 | [Skill](/zh-TW/skills) 或[agent](/zh-TW/sub-agents) frontmatter | 當 skill 或 agent 處於活動狀態時 | 是，在元件檔案中定義   |
 
-在 Claude Code 中執行 [`/hooks`](/zh-TW/hooks#the-hooks-menu) 以瀏覽按事件分組的所有配置的 hooks。若要一次禁用所有 hooks，請在設定檔中設定 `"disableAllHooks": true`。
+在 Claude Code 中執行 [`/hooks`](/zh-TW/hooks#the-hooks-menu) 以瀏覽按事件分組的所有配置的 hooks。若要一次禁用所有 hooks，請在設定檔中設定 `"disableAllHooks": true`。受管理的原則設定中配置的 Hooks 仍會執行，除非 `disableAllHooks` 也在那裡設定。
 
 如果您在 Claude Code 執行時直接編輯設定檔，檔案監視程式通常會自動選取 hook 變更。
 

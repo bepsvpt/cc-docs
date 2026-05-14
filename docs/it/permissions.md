@@ -355,7 +355,7 @@ Se uno strumento viene negato a qualsiasi livello, nessun altro livello può con
 
 Gli host di embedding possono fornire ulteriori criteri gestiti tramite l'opzione SDK `managedSettings` quando [`parentSettingsBehavior`](/it/settings#settings-precedence) è impostato su `"merge"`; i valori dell'embedder possono irrigidire la politica ma non allentarla.
 
-Se un'autorizzazione è consentita nelle impostazioni utente ma negata nelle impostazioni di progetto, l'impostazione di progetto ha la precedenza e l'autorizzazione viene bloccata.
+Ad esempio, se le impostazioni utente consentono un'autorizzazione e le impostazioni di progetto la negano, la regola di negazione la blocca. Il contrario è vero anche: un deny a livello utente blocca un allow a livello di progetto, perché le regole di negazione da qualsiasi ambito vengono valutate prima delle regole di consentimento.
 
 ## Configurazioni di esempio
 

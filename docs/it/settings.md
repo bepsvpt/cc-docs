@@ -49,7 +49,7 @@ L'ambito **Local** è migliore per:
 
 ### Come interagiscono gli ambiti
 
-Quando la stessa impostazione è configurata in più ambiti, gli ambiti più specifici hanno la precedenza:
+Quando la stessa impostazione è configurata in più ambiti, Claude Code le applica in ordine di priorità:
 
 1. **Managed** (più alta) - non può essere ignorata da nulla
 2. **Argomenti della riga di comando** - override temporanei della sessione
@@ -57,7 +57,7 @@ Quando la stessa impostazione è configurata in più ambiti, gli ambiti più spe
 4. **Project** - ignora le impostazioni utente
 5. **User** (più bassa) - si applica quando nient'altro specifica l'impostazione
 
-Ad esempio, se un permesso è consentito nelle impostazioni utente ma negato nelle impostazioni di progetto, l'impostazione di progetto ha la precedenza e il permesso è bloccato.
+Ad esempio, se le impostazioni utente impostano `spinnerTipsEnabled` su `true` e le impostazioni di progetto lo impostano su `false`, si applica il valore del progetto. Le regole di permesso si comportano diversamente perché si uniscono tra gli ambiti piuttosto che ignorarsi. Vedi [Precedenza delle impostazioni](#settings-precedence).
 
 ### Cosa utilizza gli ambiti
 

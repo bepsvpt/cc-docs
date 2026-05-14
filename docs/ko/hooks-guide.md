@@ -754,7 +754,7 @@ Hook을 추가하는 위치는 범위를 결정합니다:
 | [Plugin](/ko/plugins) `hooks/hooks.json`                   | 플러그인이 활성화되었을 때             | 예, 플러그인과 함께 번들됨 |
 | [Skill](/ko/skills) 또는 [agent](/ko/sub-agents) frontmatter | Skill 또는 에이전트가 활성화되어 있는 동안 | 예, 컴포넌트 파일에 정의됨 |
 
-Claude Code에서 [`/hooks`](/ko/hooks#the-hooks-menu)를 실행하여 이벤트별로 그룹화된 모든 구성된 hooks를 찾아봅니다. 모든 hooks를 한 번에 비활성화하려면 설정 파일에서 `"disableAllHooks": true`를 설정합니다.
+Claude Code에서 [`/hooks`](/ko/hooks#the-hooks-menu)를 실행하여 이벤트별로 그룹화된 모든 구성된 hooks를 찾아봅니다. 모든 hooks를 한 번에 비활성화하려면 설정 파일에서 `"disableAllHooks": true`를 설정합니다. 관리형 설정에서 구성된 Hooks는 `disableAllHooks`도 설정되지 않는 한 실행됩니다.
 
 Claude Code가 실행 중인 동안 설정 파일을 직접 편집하면 파일 감시자가 일반적으로 hook 변경을 자동으로 선택합니다.
 

@@ -6,13 +6,13 @@
 
 > Agent SDK를 사용하여 CLI, Python 또는 TypeScript에서 Claude Code를 프로그래밍 방식으로 실행합니다.
 
-[Agent SDK](/ko/agent-sdk/overview)는 Claude Code를 구동하는 동일한 도구, 에이전트 루프 및 컨텍스트 관리를 제공합니다. 스크립트 및 CI/CD용 CLI로 사용하거나 완전한 프로그래밍 방식 제어를 위한 [Python](/ko/agent-sdk/python) 및 [TypeScript](/ko/agent-sdk/typescript) 패키지로 사용할 수 있습니다.
-
 <Note>
-  CLI는 이전에 "헤드리스 모드"라고 불렸습니다. `-p` 플래그 및 모든 CLI 옵션은 동일한 방식으로 작동합니다.
+  Starting June 15, 2026, Agent SDK and `claude -p` usage on subscription plans will draw from a new monthly Agent SDK credit, separate from your interactive usage limits. See [Use the Claude Agent SDK with your Claude plan](https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan) for details.
 </Note>
 
-CLI에서 Claude Code를 프로그래밍 방식으로 실행하려면 프롬프트와 함께 `-p`를 전달하고 [CLI 옵션](/ko/cli-reference)을 사용합니다:
+[Agent SDK](/ko/agent-sdk/overview)는 Claude Code를 구동하는 동일한 도구, 에이전트 루프 및 컨텍스트 관리를 제공합니다. 스크립트 및 CI/CD용 CLI로 사용하거나 완전한 프로그래밍 방식 제어를 위한 [Python](/ko/agent-sdk/python) 및 [TypeScript](/ko/agent-sdk/typescript) 패키지로 사용할 수 있습니다.
+
+Claude Code를 비대화형 모드에서 실행하려면 프롬프트와 함께 `-p`를 전달하고 [CLI 옵션](/ko/cli-reference)을 사용합니다:
 
 ```bash theme={null}
 claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"

@@ -6,13 +6,13 @@
 
 > Используйте Agent SDK для программного запуска Claude Code из CLI, Python или TypeScript.
 
-[Agent SDK](/ru/agent-sdk/overview) предоставляет вам те же инструменты, цикл агента и управление контекстом, которые питают Claude Code. Он доступен как CLI для скриптов и CI/CD, или как пакеты [Python](/ru/agent-sdk/python) и [TypeScript](/ru/agent-sdk/typescript) для полного программного управления.
-
 <Note>
-  CLI ранее назывался "headless mode". Флаг `-p` и все параметры CLI работают так же.
+  Starting June 15, 2026, Agent SDK and `claude -p` usage on subscription plans will draw from a new monthly Agent SDK credit, separate from your interactive usage limits. See [Use the Claude Agent SDK with your Claude plan](https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan) for details.
 </Note>
 
-Чтобы запустить Claude Code программно из CLI, передайте `-p` с вашим запросом и любыми [параметрами CLI](/ru/cli-reference):
+[Agent SDK](/ru/agent-sdk/overview) предоставляет вам те же инструменты, цикл агента и управление контекстом, которые питают Claude Code. Он доступен как CLI для скриптов и CI/CD, или как пакеты [Python](/ru/agent-sdk/python) и [TypeScript](/ru/agent-sdk/typescript) для полного программного управления.
+
+Чтобы запустить Claude Code в неинтерактивном режиме, передайте `-p` с вашим запросом и любыми [параметрами CLI](/ru/cli-reference):
 
 ```bash theme={null}
 claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"

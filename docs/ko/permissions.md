@@ -355,7 +355,7 @@ Claude Code 구성에 대한 중앙 집중식 제어가 필요한 조직의 경�
 
 Embedding hosts는 [`parentSettingsBehavior`](/ko/settings#settings-precedence)가 `"merge"`로 설정되어 있을 때 SDK `managedSettings` 옵션을 통해 추가 관리형 정책을 제공할 수 있습니다. Embedder 값은 정책을 강화할 수 있지만 완화할 수는 없습니다.
 
-권한이 사용자 설정에서 허용되지만 프로젝트 설정에서 거부되면, 프로젝트 설정이 우선이며 권한이 차단됩니다.
+예를 들어, 사용자 설정에서 도구가 허용되고 프로젝트 설정에서 거부되면, deny 규칙이 이를 차단합니다. 그 반대도 마찬가지입니다: 사용자 수준의 deny는 프로젝트 수준의 allow를 차단합니다. 왜냐하면 모든 범위의 deny 규칙이 allow 규칙보다 먼저 평가되기 때문입니다.
 
 ## 예시 구성
 

@@ -6,13 +6,13 @@
 
 > 使用 Agent SDK 从 CLI、Python 或 TypeScript 以编程方式运行 Claude Code。
 
-[Agent SDK](/zh-CN/agent-sdk/overview) 为您提供了与 Claude Code 相同的工具、agent 循环和上下文管理。它可作为 CLI 用于脚本和 CI/CD，或作为 [Python](/zh-CN/agent-sdk/python) 和 [TypeScript](/zh-CN/agent-sdk/typescript) 包供完整的编程控制。
-
 <Note>
-  CLI 之前被称为"headless mode"。`-p` 标志和所有 CLI 选项的工作方式相同。
+  Starting June 15, 2026, Agent SDK and `claude -p` usage on subscription plans will draw from a new monthly Agent SDK credit, separate from your interactive usage limits. See [Use the Claude Agent SDK with your Claude plan](https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan) for details.
 </Note>
 
-要从 CLI 以编程方式运行 Claude Code，请使用 `-p` 传递您的提示和任何 [CLI 选项](/zh-CN/cli-reference)：
+[Agent SDK](/zh-CN/agent-sdk/overview) 为您提供了与 Claude Code 相同的工具、agent 循环和上下文管理。它可作为 CLI 用于脚本和 CI/CD，或作为 [Python](/zh-CN/agent-sdk/python) 和 [TypeScript](/zh-CN/agent-sdk/typescript) 包供完整的编程控制。
+
+要以非交互模式运行 Claude Code，请使用 `-p` 传递您的提示和任何 [CLI 选项](/zh-CN/cli-reference)：
 
 ```bash theme={null}
 claude -p "Find and fix the bug in auth.py" --allowedTools "Read,Edit,Bash"

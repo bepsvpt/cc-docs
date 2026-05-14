@@ -49,7 +49,7 @@ La portée **Local** est idéale pour :
 
 ### Comment les portées interagissent
 
-Quand le même paramètre est configuré dans plusieurs portées, les portées plus spécifiques ont la priorité :
+Quand le même paramètre est configuré dans plusieurs portées, Claude Code les applique dans l'ordre de priorité :
 
 1. **Managed** (la plus élevée) - ne peut pas être contournée par quoi que ce soit
 2. **Arguments de ligne de commande** - remplacements de session temporaires
@@ -57,7 +57,7 @@ Quand le même paramètre est configuré dans plusieurs portées, les portées p
 4. **Project** - remplace les paramètres d'utilisateur
 5. **User** (la plus basse) - s'applique quand rien d'autre ne spécifie le paramètre
 
-Par exemple, si une permission est autorisée dans les paramètres utilisateur mais refusée dans les paramètres de projet, le paramètre de projet a la priorité et la permission est bloquée.
+Par exemple, si vos paramètres utilisateur définissent `spinnerTipsEnabled` à `true` et les paramètres de projet le définissent à `false`, la valeur du projet s'applique. Les règles de permission se comportent différemment car elles fusionnent entre les portées plutôt que de se remplacer. Voir [Précédence des paramètres](#settings-precedence).
 
 ### Ce qui utilise les portées
 

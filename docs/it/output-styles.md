@@ -6,7 +6,9 @@
 
 > Adattare Claude Code per usi oltre l'ingegneria del software
 
-Output styles cambiano il modo in cui Claude risponde, non quello che Claude sa. Modificano il prompt di sistema per impostare il ruolo, il tono e il formato di output mantenendo le capacità principali come l'esecuzione di script, la lettura e la scrittura di file e il tracciamento dei TODO. Utilizzatene uno quando continuate a ripetere la stessa voce o formato ad ogni turno, oppure quando desiderate che Claude agisca come qualcosa di diverso da un ingegnere del software.
+Output styles cambiano il modo in cui Claude risponde, non quello che Claude sa. Modificano il prompt di sistema per impostare il ruolo, il tono e il formato di output. Utilizzatene uno quando continuate a ripetere la stessa voce o formato ad ogni turno, oppure quando desiderate che Claude agisca come qualcosa di diverso da un ingegnere del software.
+
+Uno stile di output personalizzato aggiunge le vostre istruzioni al prompt di sistema e vi permette di scegliere se mantenere le istruzioni integrate di ingegneria del software di Claude Code. Mantenetele quando state cambiando il modo in cui Claude comunica ma state ancora codificando, come rispondere sempre con un diagramma. Omettele quando Claude non sta facendo ingegneria del software affatto, come un assistente di scrittura o un analista di dati.
 
 Per le istruzioni relative al vostro progetto, alle convenzioni o al codebase, utilizzate [CLAUDE.md](/it/memory) invece.
 
@@ -21,16 +23,6 @@ Ci sono tre output styles integrati aggiuntivi:
 * **Explanatory**: Fornisce "Insights" educativi tra l'aiuto nel completamento dei compiti di ingegneria del software. Aiuta a comprendere le scelte di implementazione e i pattern del codebase.
 
 * **Learning**: Modalità collaborativa di apprendimento pratico in cui Claude non solo condividerà "Insights" durante la codifica, ma vi chiederà anche di contribuire con piccoli, strategici pezzi di codice voi stessi. Claude Code aggiungerà marcatori `TODO(human)` nel vostro codice per voi da implementare.
-
-## Come funzionano gli output styles
-
-Gli output styles modificano direttamente il prompt di sistema di Claude Code.
-
-* Gli output styles personalizzati escludono istruzioni per la codifica (come la verifica del codice con i test), a meno che `keep-coding-instructions` non sia true.
-* Tutti gli output styles hanno le loro istruzioni personalizzate aggiunte alla fine del prompt di sistema.
-* Tutti gli output styles attivano promemoria affinché Claude aderisca alle istruzioni dell'output style durante la conversazione.
-
-L'utilizzo dei token dipende dallo stile. L'aggiunta di istruzioni al prompt di sistema aumenta i token di input, anche se il prompt caching riduce questo costo dopo la prima richiesta in una sessione. Gli output styles integrati Explanatory e Learning producono risposte più lunghe rispetto a Default per progettazione, il che aumenta i token di output. Per gli stili personalizzati, l'utilizzo dei token di output dipende da ciò che le vostre istruzioni dicono a Claude di produrre.
 
 ## Cambiare il vostro output style
 
@@ -48,56 +40,80 @@ Poiché l'output style è impostato nel prompt di sistema all'avvio della sessio
 
 ## Creare un output style personalizzato
 
-Gli output styles personalizzati sono file Markdown con frontmatter e il testo che verrà aggiunto al prompt di sistema:
+Uno stile di output personalizzato è un file Markdown: frontmatter per i metadati, quindi le istruzioni da aggiungere al prompt di sistema.
 
-```markdown theme={null}
----
-name: My Custom Style
-description:
-  A brief description of what this style does, to be displayed to the user
----
+<Steps>
+  <Step title="Creare un file Markdown">
+    Salvarlo a uno di tre livelli. Il nome del file diventa il nome dello stile a meno che non impostiate `name` nel frontmatter.
 
-# Custom Style Instructions
+    * Utente: `~/.claude/output-styles`
+    * Progetto: `.claude/output-styles`
+    * Politica gestita: `.claude/output-styles` all'interno della [directory delle impostazioni gestite](/it/settings#settings-files)
+  </Step>
 
-You are an interactive CLI tool that helps users with software engineering
-tasks. [Your custom instructions here...]
+  <Step title="Aggiungere frontmatter e istruzioni">
+    Decidete se mantenere le istruzioni di ingegneria del software di Claude Code. Impostate `keep-coding-instructions: true` se state cambiando il modo in cui Claude comunica ma volete comunque che codifichi allo stesso modo. Omettete se Claude non farà ingegneria del software.
 
-## Specific Behaviors
+    Questo esempio introduce ogni spiegazione con un diagramma mantenendo il comportamento di codifica di Claude:
 
-[Define how the assistant should behave in this style...]
-```
+    ```markdown theme={null}
+    ---
+    name: Diagrams first
+    description: Lead every explanation with a diagram
+    keep-coding-instructions: true
+    ---
 
-Potete salvare questi file a tre livelli:
+    When explaining code, architecture, or data flow, start with a Mermaid diagram showing the structure, then explain in prose.
 
-* Utente: `~/.claude/output-styles`
-* Progetto: `.claude/output-styles`
-* Politica gestita: `.claude/output-styles` all'interno della [directory delle impostazioni gestite](/it/settings#settings-files)
+    ## Diagram conventions
+
+    Use `flowchart TD` for control flow and `sequenceDiagram` for request paths. Keep diagrams under 15 nodes.
+    ```
+  </Step>
+
+  <Step title="Passare al vostro stile">
+    Eseguite `/config` e selezionate il vostro stile sotto **Output style**. Ha effetto la prossima volta che avviate una sessione.
+  </Step>
+</Steps>
 
 I [Plugins](/it/plugins-reference) possono anche fornire output styles in una directory `output-styles/`.
 
 ### Frontmatter
 
-I file di output style supportano frontmatter per specificare i metadati:
+I file di output style supportano questi campi frontmatter:
 
-| Frontmatter                | Scopo                                                                                                                                                                                                                                                                            | Predefinito               |
-| :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------ |
-| `name`                     | Nome dell'output style, se non il nome del file                                                                                                                                                                                                                                  | Eredita dal nome del file |
-| `description`              | Descrizione dell'output style, mostrata nel picker `/config`                                                                                                                                                                                                                     | Nessuno                   |
-| `keep-coding-instructions` | Se mantenere le parti del prompt di sistema di Claude Code relative alla codifica.                                                                                                                                                                                               | false                     |
-| `force-for-plugin`         | Solo output styles dei plugin: applica questo stile automaticamente ogni volta che il plugin è abilitato, senza richiedere agli utenti di selezionarlo. Sostituisce l'impostazione `outputStyle` dell'utente. Se più plugin abilitati impostano questo, il primo caricato vince. | false                     |
+| Frontmatter                | Scopo                                                                                                                                                                                                                                                                                           | Predefinito               |
+| :------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------ |
+| `name`                     | Nome dell'output style, se non il nome del file                                                                                                                                                                                                                                                 | Eredita dal nome del file |
+| `description`              | Descrizione dell'output style, mostrata nel picker `/config`                                                                                                                                                                                                                                    | Nessuno                   |
+| `keep-coding-instructions` | Mantenere le istruzioni integrate di ingegneria del software di Claude Code                                                                                                                                                                                                                     | `false`                   |
+| `force-for-plugin`         | Solo output styles dei plugin: applica questo stile automaticamente ogni volta che il plugin è abilitato, senza richiedere agli utenti di selezionarlo. Sostituisce l'impostazione `outputStyle` dell'utente. Se più plugin abilitati impostano questo, Claude Code utilizza il primo caricato. | `false`                   |
+
+## Come funzionano gli output styles
+
+Gli output styles modificano direttamente il prompt di sistema di Claude Code.
+
+* Tutti gli output styles hanno le loro istruzioni personalizzate aggiunte alla fine del prompt di sistema.
+* Tutti gli output styles attivano promemoria affinché Claude aderisca alle istruzioni dell'output style durante la conversazione.
+* Gli output styles personalizzati omettono le istruzioni integrate di ingegneria del software di Claude Code, come come definire l'ambito dei cambiamenti, scrivere commenti e verificare il lavoro, a meno che `keep-coding-instructions` non sia impostato a `true`.
+
+L'utilizzo dei token dipende dallo stile. L'aggiunta di istruzioni al prompt di sistema aumenta i token di input, anche se il prompt caching riduce questo costo dopo la prima richiesta in una sessione. Gli output styles integrati Explanatory e Learning producono risposte più lunghe rispetto a Default per progettazione, il che aumenta i token di output. Per gli stili personalizzati, l'utilizzo dei token di output dipende da ciò che le vostre istruzioni dicono a Claude di produrre.
 
 ## Confronti con funzionalità correlate
 
-### Output Styles vs. CLAUDE.md vs. --append-system-prompt
+Diverse funzionalità personalizzano il comportamento di Claude Code. Gli output styles modificano il prompt di sistema direttamente e si applicano a ogni risposta. Gli altri aggiungono istruzioni senza cambiare il prompt di sistema predefinito, o le limitano a un compito specifico.
 
-Scegliete in base al fatto che Claude debba smettere di agire come assistente di codifica o mantenere il suo ruolo predefinito e imparare di più. Gli output styles sostituiscono le parti di ingegneria del software del prompt di sistema di Claude Code con il vostro ruolo e voce personali, quindi utilizzateli quando Claude dovrebbe adottare un'identità diversa, come un editor di testi o un assistente di analisi dei dati. CLAUDE.md e `--append-system-prompt` mantengono entrambi l'identità predefinita di Claude Code e vi aggiungono contenuti, quindi utilizzateli quando Claude dovrebbe rimanere un assistente di codifica che segue anche le convenzioni del vostro progetto o istruzioni aggiuntive.
+| Funzionalità             | Come funziona                                                        | Utilizzatela quando                                                                            |
+| :----------------------- | :------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
+| Output styles            | Modifica il prompt di sistema                                        | Desiderate un ruolo, tono o formato di risposta predefinito diverso ad ogni turno              |
+| [CLAUDE.md](/it/memory)  | Aggiunge un messaggio utente dopo il prompt di sistema               | Claude dovrebbe sempre conoscere le convenzioni del vostro progetto e il contesto del codebase |
+| `--append-system-prompt` | Aggiunge al prompt di sistema senza rimuovere nulla                  | Desiderate un'aggiunta una tantum per una singola invocazione                                  |
+| [Agents](/it/sub-agents) | Esegue un subagent con il suo prompt di sistema, modello e strumenti | Desiderate un helper con ambito separato per un compito focalizzato                            |
+| [Skills](/it/skills)     | Carica istruzioni specifiche per compiti quando invocate o rilevanti | Avete un flusso di lavoro riutilizzabile                                                       |
 
-I meccanismi differiscono inoltre. Gli output styles modificano il prompt di sistema direttamente. CLAUDE.md aggiunge i suoi contenuti come messaggio utente dopo il prompt di sistema. `--append-system-prompt` aggiunge contenuti alla fine del prompt di sistema senza rimuovere nulla.
+## Risorse correlate
 
-### Output Styles vs. [Agents](/it/sub-agents)
-
-Utilizzate uno output style per cambiare il modo in cui la conversazione principale risponde in ogni sessione. Utilizzate un [subagent](/it/sub-agents) quando desiderate un helper con ambito separato a cui la conversazione principale delega. Gli output styles influenzano solo il prompt di sistema del loop dell'agente principale. Gli agenti gestiscono compiti specifici e possono avere il loro modello, strumenti e contesto su quando invocarli.
-
-### Output Styles vs. [Skills](/it/skills)
-
-Gli output styles modificano il modo in cui Claude risponde (formattazione, tono, struttura) e sono sempre attivi una volta selezionati. Skills sono prompt specifici per compiti che invocate con `/skill-name` o che Claude carica automaticamente quando rilevante. Utilizzate gli output styles per preferenze di formattazione coerenti; utilizzate skills per flussi di lavoro e compiti riutilizzabili.
+* [Settings](/it/settings): dove risiede il campo `outputStyle` e come funziona la precedenza delle impostazioni
+* [Permission modes](/it/permission-modes): lo stile Proactive rispecchia la modalità auto senza cambiare la vostra modalità di permesso
+* [Plugins](/it/plugins): pacchetto e distribuzione degli output styles insieme a skills, hooks e agents
+* [Debug your configuration](/it/debug-your-config): diagnosticare perché uno output style non ha effetto

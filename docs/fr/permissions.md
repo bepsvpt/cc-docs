@@ -355,7 +355,7 @@ Si un outil est refusé à n'importe quel niveau, aucun autre niveau ne peut l'a
 
 Les hôtes d'intégration peuvent fournir une politique gérée supplémentaire via l'option SDK `managedSettings` lorsque [`parentSettingsBehavior`](/fr/settings#settings-precedence) est défini sur `"merge"` ; les valeurs de l'intégrateur peuvent renforcer la politique mais pas l'assouplir.
 
-Si une autorisation est autorisée dans les paramètres utilisateur mais refusée dans les paramètres de projet, le paramètre de projet prend la priorité et l'autorisation est bloquée.
+Par exemple, si les paramètres utilisateur autorisent une autorisation et que les paramètres de projet la refusent, la règle de refus la bloque. L'inverse est également vrai : un refus au niveau utilisateur bloque une autorisation au niveau du projet, car les règles de refus de n'importe quelle portée sont évaluées avant les règles d'autorisation.
 
 ## Exemples de configurations
 

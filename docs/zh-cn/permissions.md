@@ -355,7 +355,7 @@ Hook 决定不会绕过权限规则。Deny 和 ask 规则在 hook 返回 `"allow
 
 嵌入主机可以在 [`parentSettingsBehavior`](/zh-CN/settings#settings-precedence) 设置为 `"merge"` 时，通过 SDK `managedSettings` 选项提供额外的托管策略；嵌入器值可以收紧策略但不能放松它。
 
-如果权限在用户设置中被允许但在项目设置中被拒绝，项目设置优先，权限被阻止。
+例如，如果用户设置允许某个权限而项目设置拒绝它，deny 规则会阻止它。反之亦然：用户级别的 deny 会阻止项目级别的 allow，因为来自任何范围的 deny 规则在 allow 规则之前被评估。
 
 ## 示例配置
 

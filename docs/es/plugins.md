@@ -305,7 +305,7 @@ La bandera también acepta un archivo `.zip` del directorio del plugin, que requ
 claude --plugin-dir ./my-plugin.zip
 ```
 
-Cuando un plugin `--plugin-dir` tiene el mismo nombre que un plugin de marketplace instalado, la copia local tiene prioridad para esa sesión. Esto le permite probar cambios en un plugin que ya tiene instalado sin desinstalarlo primero. Los plugins de marketplace forzados a estar habilitados por configuraciones administradas son la única excepción y no pueden ser anulados.
+Cuando un plugin `--plugin-dir` tiene el mismo nombre que un plugin de marketplace instalado, la copia local tiene prioridad para esa sesión. Esto le permite probar cambios en un plugin que ya tiene instalado sin desinstalarlo primero. La excepción son los plugins cuyas configuraciones administradas fuerzan la habilitación o deshabilitación: `--plugin-dir` no puede anular esos.
 
 A medida que haga cambios en su plugin, ejecute `/reload-plugins` para recoger las actualizaciones sin reiniciar. Esto recarga plugins, skills, agentes, hooks, servidores MCP de plugin y servidores LSP de plugin. Pruebe los componentes de su plugin:
 

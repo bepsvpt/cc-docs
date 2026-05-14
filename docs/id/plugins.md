@@ -305,7 +305,7 @@ Flag juga menerima arsip `.zip` dari direktori plugin, yang memerlukan Claude Co
 claude --plugin-dir ./my-plugin.zip
 ```
 
-Ketika plugin `--plugin-dir` memiliki nama yang sama dengan plugin marketplace yang diinstal, salinan lokal mengambil prioritas untuk sesi itu. Ini memungkinkan Anda menguji perubahan pada plugin yang sudah Anda instal tanpa mencopot pemasangannya terlebih dahulu. Plugin marketplace yang dipaksa diaktifkan oleh managed settings adalah satu-satunya pengecualian dan tidak dapat ditimpa.
+Ketika plugin `--plugin-dir` memiliki nama yang sama dengan plugin marketplace yang diinstal, salinan lokal mengambil prioritas untuk sesi itu. Ini memungkinkan Anda menguji perubahan pada plugin yang sudah Anda instal tanpa mencopot pemasangannya terlebih dahulu. Pengecualian adalah plugins yang managed settings force-enable atau force-disable: `--plugin-dir` tidak dapat menimpa pengaturan tersebut.
 
 Saat Anda membuat perubahan pada plugin Anda, jalankan `/reload-plugins` untuk mengambil pembaruan tanpa memulai ulang. Ini memuat ulang plugins, skills, agents, hooks, plugin MCP servers, dan plugin LSP servers. Uji komponen plugin Anda:
 

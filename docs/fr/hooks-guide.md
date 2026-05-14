@@ -754,7 +754,7 @@ L'endroit où vous ajoutez un hook détermine son périmètre :
 | [Plugin](/fr/plugins) `hooks/hooks.json`                   | Lorsque le plugin est activé              | Oui, fourni avec le plugin               |
 | [Skill](/fr/skills) ou [agent](/fr/sub-agents) frontmatter | Pendant que le skill ou l'agent est actif | Oui, défini dans le fichier du composant |
 
-Exécutez [`/hooks`](/fr/hooks#the-hooks-menu) dans Claude Code pour parcourir tous les hooks configurés regroupés par événement. Pour désactiver tous les hooks à la fois, définissez `"disableAllHooks": true` dans votre fichier de paramètres.
+Exécutez [`/hooks`](/fr/hooks#the-hooks-menu) dans Claude Code pour parcourir tous les hooks configurés regroupés par événement. Pour désactiver tous les hooks à la fois, définissez `"disableAllHooks": true` dans votre fichier de paramètres. Les hooks configurés dans les paramètres gérés s'exécutent toujours sauf si `disableAllHooks` est également défini là.
 
 Si vous modifiez les fichiers de paramètres directement pendant que Claude Code s'exécute, l'observateur de fichiers récupère normalement les modifications de hook automatiquement.
 

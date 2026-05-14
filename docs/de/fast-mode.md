@@ -22,7 +22,7 @@ Was Sie wissen sollten:
 
 * Verwenden Sie `/fast`, um den Schnellmodus in Claude Code CLI ein- oder auszuschalten. Auch über `/fast` in der Claude Code VS Code Extension verfügbar.
 * Standardmäßig wird `/fast` auf Opus 4.6 ausgeführt. Um den Schnellmodus stattdessen auf Opus 4.7 auszuführen, setzen Sie die Umgebungsvariable [`CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`](#use-fast-mode-on-opus-4-7).
-* Die Preisgestaltung für den Schnellmodus beträgt \$30/150 MTok auf Opus 4.6 und Opus 4.7.
+* Die Preisgestaltung für den Schnellmodus beträgt $30/$150 MTok auf Opus 4.6 und Opus 4.7.
 * Verfügbar für alle Claude Code-Benutzer mit Abonnementplänen (Pro/Max/Team/Enterprise) und Claude Console.
 * Für Claude Code-Benutzer mit Abonnementplänen (Pro/Max/Team/Enterprise) ist der Schnellmodus nur über zusätzliche Nutzung verfügbar und nicht in den Abonnement-Ratenlimits enthalten.
 
