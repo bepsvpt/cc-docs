@@ -158,8 +158,6 @@ Subagents 在 Markdown 檔案中定義，具有 YAML frontmatter。您可以 [�
 
 這是建立和管理 subagents 的建議方式。對於手動建立或自動化，您也可以直接新增 subagent 檔案。
 
-若要從命令行列出所有配置的 subagents 而不開啟 [agent view](/zh-TW/agent-view)，請使用管道輸出 `claude agents`。例如，`claude agents | cat` 會按來源分組列印代理，並指示哪些被更高優先級的定義覆蓋。
-
 ### 選擇 subagent 範圍
 
 Subagents 是具有 YAML frontmatter 的 Markdown 檔案。根據範圍將它們儲存在不同位置。當多個 subagents 共享相同名稱時，更高優先級的位置獲勝。
@@ -177,6 +175,10 @@ Subagents 是具有 YAML frontmatter 的 Markdown 檔案。根據範圍將它們
 專案 subagents 是透過從目前工作目錄向上走來發現的。使用 `--add-dir` 新增的目錄 [僅授予檔案存取權限](/zh-TW/permissions#additional-directories-grant-file-access-not-configuration)，不會掃描 subagents。若要跨專案共享 subagents，請使用 `~/.claude/agents/` 或 [plugin](/zh-TW/plugins)。
 
 **使用者 subagents**（`~/.claude/agents/`）是在所有專案中可用的個人 subagents。
+
+Claude Code 會遞迴掃描 `.claude/agents/` 和 `~/.claude/agents/`，因此您可以將定義組織到子資料夾中，例如 `agents/review/` 或 `agents/research/`。子目錄路徑不會影響 subagent 的識別或呼叫方式，因為身份僅來自 `name` frontmatter 欄位。在整個樹中保持 `name` 值唯一：如果一個範圍內的兩個檔案宣告相同的名稱，Claude Code 會保留一個並丟棄另一個，不會發出警告。
+
+外掛程式 `agents/` 目錄也會遞迴掃描。與專案和使用者範圍不同，外掛程式 `agents/` 目錄內的子資料夾成為 [scoped identifier](#invoke-subagents-explicitly) 的一部分：外掛程式 `my-plugin` 中位於 `agents/review/security.md` 的檔案註冊為 `my-plugin:review:security`。
 
 **CLI 定義的 subagents** 在啟動 Claude Code 時作為 JSON 傳遞。它們僅存在於該工作階段，不會儲存到磁碟，使其適用於快速測試或自動化指令碼。您可以在單一 `--agents` 呼叫中定義多個 subagents：
 
@@ -638,7 +640,7 @@ Have the code-reviewer subagent look at my recent changes
 
 您的完整訊息仍然會傳送給 Claude，它根據您要求的內容為 subagent 編寫任務提示。@-mention 控制 Claude 呼叫哪個 subagent，而不是它接收什麼提示。
 
-由啟用的 [plugin](/zh-TW/plugins) 提供的 Subagents 在預輸入中顯示為 `<plugin-name>:<agent-name>`。名為背景 subagents 目前在工作階段中執行也出現在預輸入中，在名稱旁邊顯示其狀態。您也可以手動輸入提及而不使用選擇器：`@agent-<name>` 用於本地 subagents，或 `@agent-<plugin-name>:<agent-name>` 用於外掛程式 subagents。
+由啟用的 [plugin](/zh-TW/plugins) 提供的 Subagents 在預輸入中顯示為其限定名稱，例如 `my-plugin:code-reviewer` 或 `my-plugin:review:security`（當 plugin [將 agents 組織到子資料夾](#choose-the-subagent-scope) 時）。名為背景 subagents 目前在工作階段中執行也出現在預輸入中，在名稱旁邊顯示其狀態。您也可以手動輸入提及而不使用選擇器：`@agent-<name>` 用於本地 subagents，或 `@agent-` 後跟外掛程式 subagents 的限定名稱，例如 `@agent-my-plugin:code-reviewer`。
 
 **將整個工作階段作為 subagent 執行。** 傳遞 [`--agent <name>`](/zh-TW/cli-reference) 以啟動一個工作階段，其中主執行緒本身採用該 subagent 的系統提示、工具限制和模型：
 
@@ -650,7 +652,7 @@ Subagent 的系統提示完全替換預設 Claude Code 系統提示，就像 [`-
 
 這適用於內建和自訂 subagents，選擇在您恢復工作階段時持續。
 
-對於外掛程式提供的 subagent，傳遞限定名稱：`claude --agent <plugin-name>:<agent-name>`。
+對於外掛程式提供的 subagent，傳遞限定名稱：`claude --agent <plugin-name>:<agent-name>`。如果 plugin 將 agent 放在其 `agents/` 目錄的子資料夾中，請在限定名稱中包括子資料夾，例如 `claude --agent my-plugin:review:security`。
 
 若要使其成為專案中每個工作階段的預設值，請在 `.claude/settings.json` 中設定 `agent`：
 

@@ -156,6 +156,13 @@ jobs:
 
 ### Usar skills
 
+La entrada `prompt` acepta una [invocación de skill](/es/skills) así como texto sin formato:
+
+* Para un skill en el directorio `.claude/skills/` de su repositorio, ejecute `actions/checkout` antes del paso de acción y pase `/skill-name`.
+* Para un skill empaquetado en un plugin, instale el plugin con las entradas `plugin_marketplaces` y `plugins` y pase el `/plugin-name:skill-name` con espacio de nombres.
+
+El siguiente flujo de trabajo instala el plugin `code-review` y ejecuta su skill en cada solicitud de extracción nueva o actualizada:
+
 ```yaml theme={null}
 name: Code Review
 on:
@@ -168,8 +175,9 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: "Review this pull request for code quality, correctness, and security. Analyze the diff, then post your findings as review comments."
-          claude_args: "--max-turns 5"
+          plugin_marketplaces: "https://github.com/anthropics/claude-code.git"
+          plugins: "code-review@claude-code-plugins"
+          prompt: "/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
 ```
 
 ### Automatización personalizada con solicitudes
@@ -621,15 +629,17 @@ Confirme que la clave API sea válida y tenga permisos suficientes. Para Bedrock
 
 Claude Code Action v1 utiliza una configuración simplificada:
 
-| Parámetro           | Descripción                                                                      | Requerido |
-| ------------------- | -------------------------------------------------------------------------------- | --------- |
-| `prompt`            | Instrucciones para Claude (texto sin formato o un nombre de [skill](/es/skills)) | No\*      |
-| `claude_args`       | Argumentos de CLI pasados a Claude Code                                          | No        |
-| `anthropic_api_key` | Clave API de Claude                                                              | Sí\*\*    |
-| `github_token`      | Token de GitHub para acceso a API                                                | No        |
-| `trigger_phrase`    | Frase de disparo personalizada (predeterminado: "@claude")                       | No        |
-| `use_bedrock`       | Usar Amazon Bedrock en lugar de Claude API                                       | No        |
-| `use_vertex`        | Usar Google Vertex AI en lugar de Claude API                                     | No        |
+| Parámetro             | Descripción                                                                               | Requerido |
+| --------------------- | ----------------------------------------------------------------------------------------- | --------- |
+| `prompt`              | Instrucciones para Claude (texto sin formato o un nombre de [skill](/es/skills))          | No\*      |
+| `claude_args`         | Argumentos de CLI pasados a Claude Code                                                   | No        |
+| `plugin_marketplaces` | Lista separada por saltos de línea de URLs de Git de marketplace de plugins               | No        |
+| `plugins`             | Lista separada por saltos de línea de nombres de plugins a instalar antes de la ejecución | No        |
+| `anthropic_api_key`   | Clave API de Claude                                                                       | Sí\*\*    |
+| `github_token`        | Token de GitHub para acceso a API                                                         | No        |
+| `trigger_phrase`      | Frase de disparo personalizada (predeterminado: "@claude")                                | No        |
+| `use_bedrock`         | Usar Amazon Bedrock en lugar de Claude API                                                | No        |
+| `use_vertex`          | Usar Google Vertex AI en lugar de Claude API                                              | No        |
 
 \*Prompt es opcional - cuando se omite para comentarios de problema/PR, Claude responde a la frase de disparo\
 \*\*Requerido para Claude API directo, no para Bedrock/Vertex

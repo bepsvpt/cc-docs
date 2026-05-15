@@ -148,7 +148,7 @@ Tab Code dibangun di sekitar pane yang dapat Anda atur dalam tata letak apa pun:
 
 ### Jalankan perintah di terminal
 
-Terminal terintegrasi memungkinkan Anda menjalankan perintah bersama sesi Anda tanpa beralih ke aplikasi lain. Buka dari menu **Views** atau tekan **Ctrl+\`** di macOS atau Windows. Terminal terbuka di direktori kerja sesi Anda dan berbagi lingkungan yang sama dengan Claude, jadi perintah seperti `npm test` atau `git status` melihat file yang sama yang sedang diedit Claude. Terminal hanya tersedia di sesi lokal.
+Terminal terintegrasi memungkinkan Anda menjalankan perintah bersama sesi Anda tanpa beralih ke aplikasi lain. Buka dari menu **Views** atau tekan **Ctrl+\`** di macOS atau Windows. Terminal terbuka di direktori kerja sesi Anda dan berbagi lingkungan yang sama dengan Claude, jadi perintah seperti `npm test` atau `git status` melihat file yang sama yang sedang diedit Claude. Untuk membuka tab terminal kedua, klik **+** di header pane terminal atau klik kanan folder di chat untuk memilih **Open in terminal**. Terminal hanya tersedia di sesi lokal.
 
 ### Buka dan edit file
 
@@ -295,6 +295,8 @@ Untuk menyertakan file yang diabaikan git seperti `.env` di worktree baru, buat 
 </Note>
 
 Gunakan kontrol di bagian atas sidebar untuk memfilter sesi berdasarkan status, proyek, atau lingkungan, dan untuk mengelompokkan sesi berdasarkan proyek. Untuk mengganti nama sesi, klik judul sesi di toolbar di bagian atas sesi aktif. Untuk memeriksa penggunaan konteks, lihat [Check usage](#check-usage). Ketika konteks penuh, Claude secara otomatis merangkum percakapan dan terus bekerja. Anda juga dapat mengetik `/compact` untuk memicu perangkuman lebih awal dan membebaskan ruang konteks. Lihat [jendela konteks](/id/how-claude-code-works#the-context-window) untuk detail tentang cara pemadatan bekerja.
+
+Aplikasi desktop mengirimkan notifikasi OS ketika sesi Code menyelesaikan tugas dan Anda tidak sedang melihat sesi tersebut.
 
 ### Tanyakan pertanyaan sampingan tanpa menggoyahkan sesi
 
@@ -597,13 +599,14 @@ Pengaturan ini dikonfigurasi melalui [konsol pengaturan admin](https://claude.ai
 
 Pengaturan yang dikelola menimpa pengaturan proyek dan pengguna dan berlaku ketika Desktop menjalankan sesi CLI. Anda dapat mengatur kunci ini di file [managed settings](/id/settings#settings-precedence) organisasi Anda atau mendorongnya dari jarak jauh melalui konsol admin.
 
-| Key                                        | Description                                                                                                                                                                                                                             |
-| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `permissions.disableBypassPermissionsMode` | atur ke `"disable"` untuk mencegah pengguna dari mengaktifkan Bypass permissions mode.                                                                                                                                                  |
-| `disableAutoMode`                          | atur ke `"disable"` untuk mencegah pengguna dari mengaktifkan [Auto](/id/permission-modes#eliminate-prompts-with-auto-mode) mode. Menghapus Auto dari pemilih mode. Juga diterima di bawah `permissions`.                               |
-| `autoMode`                                 | sesuaikan apa yang dipercaya dan diblokir oleh pengklasifikasi auto mode di seluruh organisasi Anda. Lihat [Configure auto mode](/id/auto-mode-config).                                                                                 |
-| `sshConfigs`                               | pre-configure [SSH connections](#pre-configure-ssh-connections-for-your-team) yang muncul di dropdown lingkungan. Pengguna tidak dapat mengedit atau menghapus koneksi yang dikelola.                                                   |
-| `sshHostAllowlist`                         | batasi [SSH sessions](#restrict-which-ssh-hosts-users-can-connect-to) ke host yang nama hostname yang diselesaikannya cocok dengan salah satu pola ini. Array kosong menonaktifkan sesi SSH. Dibaca dari pengaturan yang dikelola saja. |
+| Key                                        | Description                                                                                                                                                                                                                                                                                                                                       |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `permissions.disableBypassPermissionsMode` | atur ke `"disable"` untuk mencegah pengguna dari mengaktifkan Bypass permissions mode.                                                                                                                                                                                                                                                            |
+| `disableAutoMode`                          | atur ke `"disable"` untuk mencegah pengguna dari mengaktifkan [Auto](/id/permission-modes#eliminate-prompts-with-auto-mode) mode. Menghapus Auto dari pemilih mode. Juga diterima di bawah `permissions`.                                                                                                                                         |
+| `autoMode`                                 | sesuaikan apa yang dipercaya dan diblokir oleh pengklasifikasi auto mode di seluruh organisasi Anda. Lihat [Configure auto mode](/id/auto-mode-config).                                                                                                                                                                                           |
+| `sshConfigs`                               | pre-configure [SSH connections](#pre-configure-ssh-connections-for-your-team) yang muncul di dropdown lingkungan. Pengguna tidak dapat mengedit atau menghapus koneksi yang dikelola.                                                                                                                                                             |
+| `sshHostAllowlist`                         | batasi [SSH sessions](#restrict-which-ssh-hosts-users-can-connect-to) ke host yang nama hostname yang diselesaikannya cocok dengan salah satu pola ini. Array kosong menonaktifkan sesi SSH. Dibaca dari pengaturan yang dikelola saja.                                                                                                           |
+| `managedMcpServers`                        | dorong konfigurasi server MCP ke semua pengguna dalam penyebaran pihak ketiga. Setiap entri menentukan transport `"http"`, `"sse"`, atau `"stdio"`, detail koneksi, dan secara opsional peta `toolPolicy` yang membatasi alat mana dalam server tersebut yang dapat dipanggil pengguna. Tersedia dalam penyebaran Desktop pihak ketiga (3P) saja. |
 
 File pengaturan yang dikelola yang disebarkan ke disk pada setiap mesin berlaku untuk sesi Desktop. Pengaturan yang dikelola yang didorong dari jarak jauh melalui konsol admin saat ini hanya mencapai sesi CLI dan IDE, jadi untuk penyebaran Desktop baik distribusikan file melalui MDM atau gunakan [kontrol konsol admin](#admin-console-controls) di atas.
 

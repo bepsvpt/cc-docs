@@ -297,7 +297,7 @@ MCP 工具遵循命名模式 `mcp__<server>__<tool>`，例如：
 | :-------------- | :- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `type`          | 是  | `"command"`、`"http"`、`"mcp_tool"`、`"prompt"` 或 `"agent"`                                                                                                                                                                                                             |
 | `if`            | 否  | 權限規則語法以篩選此 hook 何時執行，例如 `"Bash(git *)"` 或 `"Edit(*.ts)"`。Hook 僅在工具呼叫匹配模式時生成，或當 Bash 命令太複雜而無法解析時。僅在工具事件上評估：`PreToolUse`、`PostToolUse`、`PostToolUseFailure`、`PermissionRequest` 和 `PermissionDenied`。在其他事件上，設定 `if` 的 hook 永遠不會執行。使用與 [權限規則](/zh-TW/permissions) 相同的語法 |
-| `timeout`       | 否  | 取消前的秒數。預設值：命令 600、提示 30、代理 60                                                                                                                                                                                                                                        |
+| `timeout`       | 否  | 取消前的秒數。預設值：`command`、`http` 和 `mcp_tool` 為 600；`prompt` 為 30；`agent` 為 60。[`UserPromptSubmit`](#userpromptsubmit) 將 `command`、`http` 和 `mcp_tool` 的預設值降低到 30                                                                                                         |
 | `statusMessage` | 否  | hook 執行時顯示的自訂微調訊息                                                                                                                                                                                                                                                    |
 | `once`          | 否  | 如果為 `true`，每個工作階段只執行一次，然後被移除。僅在 [skill frontmatter](#hooks-in-skills-and-agents) 中受尊重；在設定檔和代理 frontmatter 中被忽略                                                                                                                                                       |
 
@@ -558,9 +558,11 @@ hooks:
 
 命令 hooks 通過 stdin 接收 JSON 資料，並通過退出代碼、stdout 和 stderr 傳回結果。HTTP hooks 接收相同的 JSON 作為 POST 請求正文，並通過 HTTP 回應正文傳回結果。本部分涵蓋所有事件通用的欄位和行為。每個事件在 [Hook 事件](#hook-events) 下的部分包括其特定的輸入架構和決定控制選項。
 
+在 macOS 和 Linux 上，自 v2.1.139 起，命令 hooks 在沒有控制終端的自己的工作階段中執行。Hook 程序和任何子程序無法開啟 `/dev/tty` 或直接向 Claude Code 介面發送逃逸序列。Windows 沒有 `/dev/tty`。要在任何平台上向使用者顯示訊息，請在 JSON 輸出中返回 [`systemMessage`](#json-output)。要觸發桌面通知、設定視窗標題或響鈴，請改為返回 [`terminalSequence`](#emit-terminal-notifications)。
+
 ### 通用輸入欄位
 
-除了每個 [hook 事件](#hook-events) 部分中記錄的事件特定欄位外，所有 hook 事件都接收這些欄位作為 JSON。對於命令 hooks，此 JSON 通過 stdin 到達。對於 HTTP hooks，它作為 POST 請求正文到達。
+Hook 事件接收這些欄位作為 JSON，除了每個 [hook 事件](#hook-events) 部分中記錄的事件特定欄位。對於命令 hooks，此 JSON 通過 stdin 到達。對於 HTTP hooks，它作為 POST 請求正文到達。
 
 | 欄位                | 描述                                                                                                                                                                                                                                                                                                                                                                      |
 | :---------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -685,7 +687,7 @@ HTTP hooks 使用 HTTP 狀態代碼和回應正文，而不是退出代碼和 st
 
 您的 hook 的 stdout 必須僅包含 JSON 物件。如果您的 shell 設定檔在啟動時列印文字，它可能會干擾 JSON 解析。請參閱故障排除指南中的 [JSON 驗證失敗](/zh-TW/hooks-guide#json-validation-failed)。
 
-注入到上下文中的 hook 輸出（`additionalContext`、`systemMessage` 或純 stdout）的上限為 10,000 個字元。超過此限制的輸出會儲存到檔案並替換為預覽和檔案路徑，與大型工具結果的處理方式相同。
+Hook 輸出字串，包括 `additionalContext`、`systemMessage` 和純 stdout，上限為 10,000 個字元。超過此限制的輸出會儲存到檔案並替換為預覽和檔案路徑，與大型工具結果的處理方式相同。
 
 JSON 物件支援三種欄位：
 
@@ -693,12 +695,13 @@ JSON 物件支援三種欄位：
 * **頂層 `decision` 和 `reason`** 由某些事件用來阻止或提供反饋。
 * **`hookSpecificOutput`** 是一個嵌套物件，用於需要更豐富控制的事件。它需要一個設定為事件名稱的 `hookEventName` 欄位。
 
-| 欄位               | 預設      | 描述                                                 |
-| :--------------- | :------ | :------------------------------------------------- |
-| `continue`       | `true`  | 如果為 `false`，Claude 在 hook 執行後完全停止處理。優先於任何事件特定的決定欄位 |
-| `stopReason`     | 無       | 當 `continue` 為 `false` 時向使用者顯示的訊息。不向 Claude 顯示     |
-| `suppressOutput` | `false` | 如果為 `true`，隱藏詳細日誌中的 stdout                         |
-| `systemMessage`  | 無       | 向使用者顯示的警告訊息                                        |
+| 欄位                 | 預設      | 描述                                                                                                                                          |
+| :----------------- | :------ | :------------------------------------------------------------------------------------------------------------------------------------------ |
+| `continue`         | `true`  | 如果為 `false`，Claude 在 hook 執行後完全停止處理。優先於任何事件特定的決定欄位                                                                                          |
+| `stopReason`       | 無       | 當 `continue` 為 `false` 時向使用者顯示的訊息。不向 Claude 顯示                                                                                              |
+| `suppressOutput`   | `false` | 如果為 `true`，隱藏詳細日誌中的 stdout                                                                                                                  |
+| `systemMessage`    | 無       | 向使用者顯示的警告訊息                                                                                                                                 |
+| `terminalSequence` | 無       | Claude Code 代表您發出的終端逃逸序列，例如桌面通知、視窗標題或響鈴。限制為 OSC `0`/`1`/`2`/`9`/`99`/`777` 和 BEL。如果值包含允許清單外的任何內容，該欄位將被忽略。使用此項而不是寫入 `/dev/tty`，後者對 hooks 不可用 |
 
 要無論事件類型如何都完全停止 Claude：
 
@@ -706,7 +709,41 @@ JSON 物件支援三種欄位：
 { "continue": false, "stopReason": "Build failed, fix errors before continuing" }
 ```
 
-#### 新增 Claude 的上下文
+#### 發出終端通知
+
+`terminalSequence` 欄位需要 Claude Code v2.1.141 或更新版本。
+
+Hooks 在沒有控制終端的情況下執行，因此直接寫入逃逸序列到 `/dev/tty` 會失敗。相反，在 `terminalSequence` 欄位中返回逃逸序列，Claude Code 通過其自己的終端寫入路徑為您發出它。這是無競爭的，在 tmux 和 GNU screen 內工作，並在沒有 `/dev/tty` 的 Windows 上工作。
+
+該欄位接受一個或多個允許清單逃逸序列的字串：
+
+* OSC `0`、`1`、`2`：視窗和圖示標題
+* OSC `9`：iTerm2、ConEmu、Windows Terminal 和 WezTerm 通知，包括 `9;4` 工作列進度
+* OSC `99`：Kitty 通知
+* OSC `777`：urxvt、Ghostty 和 Warp 通知
+* 裸 BEL
+
+序列可以用 BEL 或 ST 終止。允許清單外的任何內容，包括 CSI 游標和顏色序列、OSC 調色板序列、OSC 8 超連結、OSC 52 剪貼簿寫入和 OSC 1337，都會被拒絕，該欄位將被忽略。
+
+下面的範例從 `Notification` hook 觸發桌面通知。逃逸序列使用 `printf` 八進位逃逸構建，因此控制位元組永遠不會出現在 shell 命令行上，`jq -n --arg` 構建 JSON 輸出，因此通知訊息中的引號、反斜線和換行符被正確逃逸：
+
+```bash theme={null}
+#!/bin/bash
+# Notification hook：當 Claude Code 需要注意時 ping 桌面。
+input=$(cat)
+title="Claude Code'
+body=$(jq -r '.message // 'Needs your attention"' <<<"$input")
+seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
+jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
+```
+
+`{ "terminalSequence": "..." }` 形狀在任何 shell 或語言中都相同。在 Windows 上，在 PowerShell 或指令碼中構建逃逸字串並發出相同的 JSON 物件。
+
+<Note>
+  `terminalSequence` 是之前直接寫入逃逸序列到 `/dev/tty` 的 hooks 的支援替代品。允許清單限制為無法移動游標或改變顏色的序列，因此 hook 永遠無法損壞螢幕上的提示。
+</Note>
+
+#### 為 Claude 新增上下文
 
 `additionalContext` 欄位將字串從您的 hook 傳遞到 Claude 的上下文視窗。Claude Code 將字串包裝在系統提醒中，並將其插入到 hook 觸發的對話點。Claude 在下一個模型請求時讀取提醒，但它不會在介面中顯示為聊天訊息。
 
@@ -989,6 +1026,8 @@ InstructionsLoaded hooks 沒有決定控制。它們無法阻止或修改指令�
 
 在使用者提交提示時執行，在 Claude 處理之前。這允許您根據提示/對話新增額外上下文、驗證提示或阻止某些類型的提示。
 
+`UserPromptSubmit` hooks 對於 `command`、`http` 和 `mcp_tool` 類型的預設逾時為 30 秒，比其他事件上這些類型的 600 秒預設值更短。因為此 hook 在每個提示之前執行並阻止模型處理直到完成，卡住的 hook 會停滯工作階段。如果您的 hook 需要更多時間，請在 hook 項目中設定 `timeout` 欄位。
+
 #### UserPromptSubmit 輸入
 
 除了 [通用輸入欄位](#common-input-fields) 外，UserPromptSubmit hooks 還接收包含使用者提交的文字的 `prompt` 欄位。
@@ -1190,6 +1229,20 @@ InstructionsLoaded hooks 沒有決定控制。它們無法阻止或修改指令�
 | `description`   | 字串 | `"Find API endpoints"`     | 任務的簡短描述       |
 | `subagent_type` | 字串 | `"Explore"`                | 要使用的專門代理類型    |
 | `model`         | 字串 | `"sonnet"`                 | 可選的模型別名以覆蓋預設值 |
+
+在 `PostToolUse` 中，已完成的 Agent 呼叫的 `tool_response` 攜帶 subagent 的最終文字以及使用量遙測。讀取這些欄位以從 hook 記錄每個 subagent 的成本：
+
+| 欄位                  | 類型 | 範例                                                    | 描述                                                                                              |
+| :------------------ | :- | :---------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
+| `status`            | 字串 | `"completed"`                                         | 同步呼叫為 `"completed"`，`run_in_background: true` 為 `"async_launched"`                              |
+| `agentId`           | 字串 | `"a4d2c8f1e0b3a297"`                                  | subagent 執行的識別碼                                                                                 |
+| `content`           | 陣列 | `[{"type": "text", "text": "Found 12 endpoints..."}]` | subagent 的最終文字塊                                                                                 |
+| `totalTokens`       | 數字 | `12450`                                               | 在 subagent 轉向中計費的總令牌數                                                                           |
+| `totalDurationMs`   | 數字 | `48211`                                               | subagent 執行的掛鐘時間                                                                                |
+| `totalToolUseCount` | 數字 | `7`                                                   | subagent 進行的工具呼叫計數                                                                              |
+| `usage`             | 物件 | `{"input_tokens": 8320, ...}`                         | 按類型的令牌細分：`input_tokens`、`output_tokens`、`cache_creation_input_tokens`、`cache_read_input_tokens` |
+
+對於 `run_in_background: true` 呼叫，工具在啟動 subagent 後立即返回，因此 `tool_response` 不攜帶使用量欄位。它具有 `status: "async_launched"`、`agentId`、`description`、`prompt` 和 `outputFile`。
 
 ##### AskUserQuestion
 
@@ -2601,7 +2654,7 @@ LLM 必須以包含以下內容的 JSON 回應：
 
 當非同步 hook 觸發時，Claude Code 啟動 hook 程序並立即繼續，而不等待它完成。Hook 在 stdin 上接收與同步 hook 相同的 JSON 輸入。
 
-背景程序退出後，如果 hook 產生了帶有 `systemMessage` 或 `additionalContext` 欄位的 JSON 回應，該內容會在下一個對話輪次上作為上下文傳遞給 Claude。
+背景程序退出後，如果 hook 產生了帶有 `additionalContext` 欄位的 JSON 回應，該內容會在下一個對話輪次上作為上下文傳遞給 Claude。`systemMessage` 欄位會顯示給你，而不是 Claude。
 
 非同步 hook 完成通知預設被抑制。要查看它們，請使用 `Ctrl+O` 啟用詳細模式或使用 `--verbose` 啟動 Claude Code。
 
@@ -2622,15 +2675,16 @@ if [[ "$FILE_PATH" != *.ts && "$FILE_PATH" != *.js ]]; then
   exit 0
 fi
 
-# 執行測試並通過 systemMessage 報告結果
+# 執行測試並通過 additionalContext 報告結果給 Claude
 RESULT=$(npm test 2>&1)
 EXIT_CODE=$?
 
 if [ $EXIT_CODE -eq 0 ]; then
-  echo "{\"systemMessage\": \"Tests passed after editing $FILE_PATH\"}"
+  MSG="Tests passed after editing $FILE_PATH"
 else
-  echo "{\"systemMessage\": \"Tests failed after editing $FILE_PATH: $RESULT\"}"
+  MSG="Tests failed after editing $FILE_PATH: $RESULT"
 fi
+jq -nc --arg msg "$MSG" '{hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: $msg}}'
 ```
 
 然後將此配置新增到專案根目錄中的 `.claude/settings.json`。`async: true` 標誌讓 Claude 在測試執行時繼續工作：

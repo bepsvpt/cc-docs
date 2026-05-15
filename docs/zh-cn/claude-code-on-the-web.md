@@ -782,7 +782,7 @@ Claude 可能会作为解决审查评论线程的一部分在 GitHub 上回复�
 
 ### 远程控制会话已过期或访问被拒绝
 
-`--teleport` 通过与云会话使用的相同远程控制会话基础设施连接，所以身份验证和会话过期错误会显示远程控制措辞。你可能会看到 `Remote Control session has expired` 或 `Access denied`。连接令牌是短期的，并限定于你的账户。
+`--teleport` 通过与云会话使用的相同远程控制会话基础设施连接，所以身份验证和会话过期错误会显示远程控制措辞。你可能会看到 `Remote Control session expired` 或 `Access denied`。连接令牌是短期的，并限定于你的账户。
 
 * 在本地运行 `/login` 以刷新你的凭证，然后重新连接
 * 确认你已登录到拥有会话的相同账户

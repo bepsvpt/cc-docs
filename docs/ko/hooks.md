@@ -297,7 +297,7 @@ MCP 도구는 `mcp__<server>__<tool>` 명명 패턴을 따릅니다. 예를 들�
 | :-------------- | :-- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `type`          | 예   | `"command"`, `"http"`, `"mcp_tool"`, `"prompt"` 또는 `"agent"`                                                                                                                                                                                                                                                                                 |
 | `if`            | 아니오 | `"Bash(git *)"` 또는 `"Edit(*.ts)"`와 같은 권한 규칙 구문을 사용하여 이 hook이 실행될 때를 필터링합니다. hook은 도구 호출이 패턴과 일치할 때만 생성되거나 Bash 명령이 너무 복잡하여 구문 분석할 수 없을 때 생성됩니다. 도구 이벤트에서만 평가됩니다: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`. 다른 이벤트에서는 `if`가 설정된 hook이 절대 실행되지 않습니다. [권한 규칙](/ko/permissions)과 동일한 구문을 사용합니다 |
-| `timeout`       | 아니오 | 취소하기 전 초 단위. 기본값: 명령의 경우 600, 프롬프트의 경우 30, 에이전트의 경우 60                                                                                                                                                                                                                                                                                       |
+| `timeout`       | 아니오 | 취소하기 전 초 단위. 기본값: `command`, `http`, `mcp_tool`의 경우 600; `prompt`의 경우 30; `agent`의 경우 60. [`UserPromptSubmit`](#userpromptsubmit)은 `command`, `http`, `mcp_tool`의 기본값을 30으로 낮춥니다                                                                                                                                                             |
 | `statusMessage` | 아니오 | hook이 실행되는 동안 표시되는 사용자 정의 스피너 메시지                                                                                                                                                                                                                                                                                                            |
 | `once`          | 아니오 | `true`인 경우 세션당 한 번만 실행된 후 제거됩니다. [Skill 및 에이전트의 Hook](#hooks-in-skills-and-agents)에서 선언된 hook에만 적용됨; 설정 파일 및 에이전트 frontmatter에서는 무시됨                                                                                                                                                                                                         |
 
@@ -558,6 +558,8 @@ hook을 제거하려면 설정 JSON 파일에서 해당 항목을 삭제합니�
 
 명령 hook은 stdin을 통해 JSON 데이터를 받고 종료 코드, stdout, stderr를 통해 결과를 전달합니다. HTTP hook은 POST 요청 본문으로 동일한 JSON을 받고 HTTP 응답 본문을 통해 결과를 전달합니다. 이 섹션에서는 모든 이벤트에 공통적인 필드와 동작을 다룹니다. [Hook 이벤트](#hook-events) 아래의 각 이벤트 섹션에는 특정 입력 스키마와 결정 제어 옵션이 포함됩니다.
 
+macOS 및 Linux에서 명령 hook은 v2.1.139부터 제어 터미널 없이 자신의 세션에서 실행됩니다. hook 프로세스 및 모든 자식 프로세스는 `/dev/tty`를 열거나 Claude Code 인터페이스에 직접 이스케이프 시퀀스를 보낼 수 없습니다. Windows에는 `/dev/tty`가 없습니다. 모든 플랫폼에서 사용자에게 메시지를 표시하려면 JSON 출력에서 [`systemMessage`](#json-output)를 반환합니다. 데스크톱 알림을 트리거하거나 창 제목을 설정하거나 벨을 울리려면 대신 [`terminalSequence`](#emit-terminal-notifications)를 반환합니다.
+
 ### 공통 입력 필드
 
 Hook 이벤트는 각 [hook 이벤트](#hook-events) 섹션에서 문서화된 이벤트 특정 필드 외에 이러한 필드를 JSON으로 받습니다. 명령 hook의 경우 이 JSON은 stdin을 통해 도착합니다. HTTP hook의 경우 POST 요청 본문으로 도착합니다.
@@ -685,7 +687,7 @@ HTTP hook은 종료 코드와 stdout 대신 HTTP 상태 코드와 응답 본문�
 
 hook의 stdout은 JSON 객체만 포함해야 합니다. 셸 프로필이 시작 시 텍스트를 인쇄하면 JSON 구문 분석을 방해할 수 있습니다. 문제 해결 가이드의 [JSON 검증 실패](/ko/hooks-guide#json-validation-failed)를 참조하세요.
 
-컨텍스트에 주입된 hook 출력 (`additionalContext`, `systemMessage` 또는 일반 stdout)은 10,000자로 제한됩니다. 이 제한을 초과하는 출력은 파일에 저장되고 미리보기 및 파일 경로로 바뀌며, 큰 도구 결과가 처리되는 방식과 동일합니다.
+hook 출력 문자열 (`additionalContext`, `systemMessage`, 및 일반 stdout)은 10,000자로 제한됩니다. 이 제한을 초과하는 출력은 파일에 저장되고 미리보기 및 파일 경로로 바뀌며, 큰 도구 결과가 처리되는 방식과 동일합니다.
 
 JSON 객체는 세 가지 종류의 필드를 지원합니다:
 
@@ -693,18 +695,53 @@ JSON 객체는 세 가지 종류의 필드를 지원합니다:
 * \*\*최상위 `decision` 및 `reason`\*\*은 일부 이벤트에서 차단하거나 피드백을 제공하는 데 사용됩니다.
 * \*\*`hookSpecificOutput`\*\*은 더 풍부한 제어가 필요한 이벤트를 위한 중첩 객체입니다. 이벤트 이름으로 설정된 `hookEventName` 필드가 필요합니다.
 
-| 필드               | 기본값     | 설명                                                                 |
-| :--------------- | :------ | :----------------------------------------------------------------- |
-| `continue`       | `true`  | `false`인 경우 hook이 실행된 후 Claude가 완전히 중지됩니다. 모든 이벤트 특정 결정 필드보다 우선합니다 |
-| `stopReason`     | 없음      | `continue`가 `false`일 때 사용자에게 표시되는 메시지. Claude에는 표시되지 않음            |
-| `suppressOutput` | `false` | `true`인 경우 디버그 로그에서 stdout을 숨깁니다                                   |
-| `systemMessage`  | 없음      | 사용자에게 표시되는 경고 메시지                                                  |
+| 필드                 | 기본값     | 설명                                                                                                                                                                                   |
+| :----------------- | :------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `continue`         | `true`  | `false`인 경우 hook이 실행된 후 Claude가 완전히 중지됩니다. 모든 이벤트 특정 결정 필드보다 우선합니다                                                                                                                   |
+| `stopReason`       | 없음      | `continue`가 `false`일 때 사용자에게 표시되는 메시지. Claude에는 표시되지 않음                                                                                                                              |
+| `suppressOutput`   | `false` | `true`인 경우 디버그 로그에서 stdout을 숨깁니다                                                                                                                                                     |
+| `systemMessage`    | 없음      | 사용자에게 표시되는 경고 메시지                                                                                                                                                                    |
+| `terminalSequence` | 없음      | Claude Code가 사용자를 대신하여 내보낼 터미널 이스케이프 시퀀스 (예: 데스크톱 알림, 창 제목 또는 벨). OSC `0`/`1`/`2`/`9`/`99`/`777` 및 BEL로 제한됩니다. 값에 허용 목록 외의 항목이 포함되면 필드는 무시됩니다. `/dev/tty`를 사용할 수 없는 hook 대신 이를 사용합니다 |
 
 Claude를 이벤트 유형과 관계없이 완전히 중지하려면:
 
 ```json theme={null}
 { "continue": false, "stopReason": "Build failed, fix errors before continuing" }
 ```
+
+#### 터미널 알림 내보내기
+
+`terminalSequence` 필드는 Claude Code v2.1.141 이상이 필요합니다.
+
+Hook은 제어 터미널 없이 실행되므로 이스케이프 시퀀스를 `/dev/tty`에 직접 쓰는 것이 실패합니다. 대신 `terminalSequence` 필드에 이스케이프 시퀀스를 반환하면 Claude Code가 자신의 터미널 쓰기 경로를 통해 이를 내보냅니다. 이는 race-free이고 tmux 및 GNU screen 내에서 작동하며 `/dev/tty`가 없는 Windows에서도 작동합니다.
+
+필드는 하나 이상의 허용 목록에 있는 이스케이프 시퀀스 문자열을 허용합니다:
+
+* OSC `0`, `1`, `2`: 창 및 아이콘 제목
+* OSC `9`: iTerm2, ConEmu, Windows Terminal, 및 WezTerm 알림 (`9;4` 작업 표시줄 진행률 포함)
+* OSC `99`: Kitty 알림
+* OSC `777`: urxvt, Ghostty, 및 Warp 알림
+* 맨 BEL
+
+시퀀스는 BEL 또는 ST로 종료될 수 있습니다. 허용 목록 외의 항목 (CSI 커서 및 색상 시퀀스, OSC 팔레트 시퀀스, OSC 8 하이퍼링크, OSC 52 클립보드 쓰기, 및 OSC 1337 포함)은 거부되고 필드는 무시됩니다.
+
+아래 예제는 `Notification` hook에서 데스크톱 알림을 발생시킵니다. 이스케이프 시퀀스는 `printf` 8진수 이스케이프로 빌드되므로 제어 바이트가 셸 명령줄에 나타나지 않으며, `jq -n --arg`는 JSON 출력을 빌드하므로 알림 메시지의 따옴표, 백슬래시, 및 줄바꿈이 올바르게 이스케이프됩니다:
+
+```bash theme={null}
+#!/bin/bash
+# Notification hook: Claude Code가 주의가 필요할 때 데스크톱을 ping합니다.
+input=$(cat)
+title="Claude Code'
+body=$(jq -r '.message // 'Needs your attention"' <<<"$input")
+seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
+jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
+```
+
+`{ "terminalSequence": "..." }` 형태는 모든 셸 또는 언어에서 동일합니다. Windows에서는 PowerShell 또는 스크립트에서 이스케이프 문자열을 빌드하고 동일한 JSON 객체를 내보냅니다.
+
+<Note>
+  `terminalSequence`는 이전에 `/dev/tty`에 직접 이스케이프 시퀀스를 작성한 hook의 지원되는 대체입니다. 허용 목록은 커서를 이동하거나 색상을 변경할 수 없는 시퀀스로 제한되므로 hook은 화면상의 프롬프트를 손상시킬 수 없습니다.
+</Note>
 
 #### Claude를 위한 컨텍스트 추가
 
@@ -989,6 +1026,8 @@ InstructionsLoaded hook은 결정 제어가 없습니다. 명령 로드를 차�
 
 사용자가 프롬프트를 제출할 때, Claude가 처리하기 전에 실행됩니다. 이를 통해 프롬프트/대화를 기반으로 추가 컨텍스트를 추가하거나, 프롬프트를 검증하거나, 특정 유형의 프롬프트를 차단할 수 있습니다.
 
+`UserPromptSubmit` hook은 `command`, `http`, `mcp_tool` 유형에 대해 기본 30초 시간 초과를 가지며, 이는 다른 이벤트에서 이러한 유형의 기본 600초보다 짧습니다. 이 hook은 모든 프롬프트 전에 실행되고 모델 처리가 완료될 때까지 차단하므로 stuck hook은 세션을 정지시킵니다. hook에 더 많은 시간이 필요하면 hook 항목에서 `timeout` 필드를 설정합니다.
+
 #### UserPromptSubmit 입력
 
 [공통 입력 필드](#common-input-fields) 외에도 UserPromptSubmit hook은 사용자가 제출한 텍스트를 포함하는 `prompt` 필드를 받습니다.
@@ -1190,6 +1229,20 @@ glob 패턴과 일치하는 파일을 찾습니다.
 | `description`   | 문자열 | `"Find API endpoints"`     | 작업의 짧은 설명           |
 | `subagent_type` | 문자열 | `"Explore"`                | 사용할 특화된 에이전트의 유형    |
 | `model`         | 문자열 | `"sonnet"`                 | 기본값을 재정의할 선택적 모델 별칭 |
+
+`PostToolUse`에서 완료된 Agent 호출의 `tool_response`는 subagent의 최종 텍스트와 사용 원격 측정을 전달합니다. hook에서 subagent별 비용을 기록하려면 이러한 필드를 읽으세요:
+
+| 필드                  | 유형  | 예제                                                    | 설명                                                                                                   |
+| :------------------ | :-- | :---------------------------------------------------- | :--------------------------------------------------------------------------------------------------- |
+| `status`            | 문자열 | `"completed"`                                         | 동기 호출의 경우 `"completed"`, `run_in_background: true`의 경우 `"async_launched"`                            |
+| `agentId`           | 문자열 | `"a4d2c8f1e0b3a297"`                                  | subagent 실행의 식별자                                                                                     |
+| `content`           | 배열  | `[{"type": "text", "text": "Found 12 endpoints..."}]` | subagent의 최종 텍스트 블록                                                                                  |
+| `totalTokens`       | 숫자  | `12450`                                               | subagent의 턴 전체에서 청구된 총 토큰                                                                            |
+| `totalDurationMs`   | 숫자  | `48211`                                               | subagent 실행의 벽시계 기간                                                                                  |
+| `totalToolUseCount` | 숫자  | `7`                                                   | subagent가 수행한 도구 호출 수                                                                                |
+| `usage`             | 객체  | `{"input_tokens": 8320, ...}`                         | 유형별 토큰 분석: `input_tokens`, `output_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens` |
+
+`run_in_background: true` 호출의 경우 도구는 subagent를 시작한 후 즉시 반환되므로 `tool_response`는 사용 필드를 전달하지 않습니다. `status: "async_launched"`, `agentId`, `description`, `prompt`, `outputFile`이 있습니다.
 
 ##### AskUserQuestion
 
@@ -2267,7 +2320,7 @@ CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
 
 ### Elicitation
 
-MCP 서버가 작업 중 사용자 입력을 요청할 때 실행됩니다. 기본적으로 Claude Code는 사용자가 응답할 수 있는 대화형 대화 상자를 표시합니다. Hook은 이 요청을 가로채고 프로그래밍 방식으로 응답하여 대화 상자를 완전히 건너뛸 수 있습니다.
+MCP 서버가 작업 중 사용자 입력을 요청할 때 실행됩니다. 기본적으로 Claude Code는 사용자가 응답할 수 있는 대화형 대화 상자를 표시합니다. Hook은 이 요청을 가로채고 프로그래밍 방식으로 응답하여 대화 상자를 완전히 건너뛸 수  있습니다.
 
 matcher 필드는 MCP 서버 이름과 일치합니다.
 
@@ -2596,7 +2649,7 @@ hook 구성에 `"async": true`를 추가하여 Claude를 차단하지 않고 백
 
 비동기 hook이 발생하면 Claude Code는 hook 프로세스를 시작하고 완료를 기다리지 않고 즉시 계속합니다. hook은 동기 hook과 동일한 JSON 입력을 stdin을 통해 받습니다.
 
-백그라운드 프로세스가 종료된 후 hook이 `systemMessage` 또는 `additionalContext` 필드가 있는 JSON 응답을 생성한 경우 해당 콘텐츠는 다음 대화 턴에서 Claude에 컨텍스트로 전달됩니다.
+백그라운드 프로세스가 종료된 후 hook이 `additionalContext` 필드가 있는 JSON 응답을 생성한 경우 해당 콘텐츠는 다음 대화 턴에서 Claude에 컨텍스트로 전달됩니다. `systemMessage` 필드는 Claude가 아닌 사용자에게 표시됩니다.
 
 비동기 hook 완료 알림은 기본적으로 억제됩니다. 보려면 `Ctrl+O`로 자세한 모드를 활성화하거나 `--verbose`로 Claude Code를 시작합니다.
 
@@ -2617,15 +2670,16 @@ if [[ "$FILE_PATH" != *.ts && "$FILE_PATH" != *.js ]]; then
   exit 0
 fi
 
-# 테스트를 실행하고 systemMessage를 통해 결과를 보고합니다
+# 테스트를 실행하고 additionalContext를 통해 결과를 Claude에 보고합니다
 RESULT=$(npm test 2>&1)
 EXIT_CODE=$?
 
 if [ $EXIT_CODE -eq 0 ]; then
-  echo "{\"systemMessage\": \"Tests passed after editing $FILE_PATH\"}"
+  MSG="Tests passed after editing $FILE_PATH"
 else
-  echo "{\"systemMessage\": \"Tests failed after editing $FILE_PATH: $RESULT\"}"
+  MSG="Tests failed after editing $FILE_PATH: $RESULT"
 fi
+jq -nc --arg msg "$MSG" '{hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: $msg}}'
 ```
 
 그런 다음 프로젝트 루트의 `.claude/settings.json`에 이 구성을 추가합니다. `async: true` 플래그를 사용하면 Claude가 테스트 실행 중에 계속 작업할 수 있습니다:

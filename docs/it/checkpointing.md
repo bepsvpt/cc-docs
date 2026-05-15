@@ -28,23 +28,24 @@ Premi `Esc` due volte (`Esc` + `Esc`) o usa il comando `/rewind` per aprire il m
 * **Ripristina conversazione**: riavvolgi al messaggio mantenendo il codice attuale
 * **Ripristina codice**: ripristina le modifiche ai file mantenendo la conversazione
 * **Riassumi da qui**: comprimi la conversazione da questo punto in avanti in un riassunto, liberando spazio nella context window
+* **Riassumi fino a qui**: comprimi la conversazione prima di questo punto in un riassunto, mantenendo i messaggi successivi intatti
 * **Annulla**: torna all'elenco dei messaggi senza apportare modifiche
 
-Dopo aver ripristinato la conversazione o aver riassunto, il prompt originale dal messaggio selezionato viene ripristinato nel campo di input in modo che tu possa reinviarlo o modificarlo.
+Dopo aver ripristinato la conversazione o aver scelto Riassumi da qui, il prompt originale dal messaggio selezionato viene ripristinato nel campo di input in modo che tu possa reinviarlo o modificarlo.
+
+Scegliendo Riassumi fino a qui ti lascia alla fine della conversazione con l'input vuoto.
 
 #### Ripristina vs. riassumi
 
-Le tre opzioni di ripristino ripristinano lo stato: annullano le modifiche al codice, la cronologia della conversazione o entrambi. "Riassumi da qui" funziona diversamente:
+Le opzioni di ripristino ripristinano lo stato: annullano le modifiche al codice, la cronologia della conversazione o entrambi. Le opzioni di riassunto comprimono parte della conversazione in un riassunto generato dall'IA senza modificare i file su disco:
 
-* I messaggi prima del messaggio selezionato rimangono intatti
-* Il messaggio selezionato e tutti i messaggi successivi vengono sostituiti con un riassunto compatto generato dall'IA
-* Nessun file su disco viene modificato
-* I messaggi originali vengono conservati nella trascrizione della sessione, quindi Claude può fare riferimento ai dettagli se necessario
+* **Riassumi da qui**: i messaggi prima del messaggio selezionato rimangono intatti. Il messaggio selezionato e tutto ciò che segue vengono sostituiti con un riassunto. Usa questo per scartare una discussione laterale mantenendo il contesto iniziale in dettaglio completo.
+* **Riassumi fino a qui**: i messaggi prima del messaggio selezionato vengono sostituiti con un riassunto. Il messaggio selezionato e tutto ciò che segue rimangono intatti, e rimani alla fine della conversazione. Usa questo per comprimere la discussione di configurazione iniziale mantenendo il lavoro recente in dettaglio completo.
 
-Questo è simile a `/compact`, ma mirato: invece di riassumere l'intera conversazione, mantieni il contesto iniziale in dettaglio completo e comprimi solo le parti che stanno usando spazio. Puoi digitare istruzioni facoltative per guidare su cosa si concentra il riassunto.
+In entrambi i casi i messaggi originali vengono conservati nella trascrizione della sessione, quindi Claude può fare riferimento ai dettagli se necessario. Puoi digitare istruzioni facoltative per guidare su cosa si concentra il riassunto. Questo è simile a `/compact`, ma mirato: invece di riassumere l'intera conversazione, scegli quale lato del messaggio selezionato comprimere.
 
 <Note>
-  Riassumi ti mantiene nella stessa sessione e comprime il contesto. Se desideri creare un ramo e provare un approccio diverso preservando la sessione originale intatta, usa [fork](/it/how-claude-code-works#resume-or-fork-sessions) invece (`claude --continue --fork-session`).
+  Riassumi ti mantiene nella stessa sessione e comprime il contesto. Se desideri creare un ramo e provare un approccio diverso preservando la sessione originale intatta, usa [fork](/it/sessions#branch-a-session) invece (`claude --continue --fork-session`).
 </Note>
 
 ## Casi d'uso comuni
@@ -85,5 +86,5 @@ I checkpoint sono progettati per il recupero rapido a livello di sessione. Per l
 ## Vedi anche
 
 * [Modalità interattiva](/it/interactive-mode) - Scorciatoie da tastiera e controlli della sessione
-* [Comandi integrati](/it/commands) - Accesso ai checkpoint usando `/rewind`
+* [Comandi](/it/commands) - Accesso ai checkpoint usando `/rewind`
 * [Riferimento CLI](/it/cli-reference) - Opzioni della riga di comando

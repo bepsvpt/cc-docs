@@ -533,7 +533,9 @@ Por exemplo, se suas configurações de usuário permitem `Bash(npm run *)` mas 
 
 ### Verificar configurações ativas
 
-Execute `/status` dentro do Claude Code para ver quais fontes de configuração estão ativas e de onde vêm. A saída mostra cada camada de configuração (gerenciada, usuário, projeto) junto com sua origem, como `Enterprise managed settings (remote)`, `Enterprise managed settings (plist)`, `Enterprise managed settings (HKLM)`, `Enterprise managed settings (HKCU)`, ou `Enterprise managed settings (file)`. Se um arquivo de configuração contém erros, `/status` relata o problema para que você possa corrigi-lo.
+Execute `/status` dentro do Claude Code para ver quais fontes de configuração estão ativas. A aba Status inclui uma linha `Setting sources` que lista cada camada que Claude Code carregou para a sessão atual, como `User settings` ou `Project local settings`. Quando [configurações gerenciadas](/pt/managed-settings) estão em efeito, a entrada mostra o canal de entrega entre parênteses, por exemplo `Enterprise managed settings (remote)`, `(plist)`, `(HKLM)`, `(HKCU)`, ou `(file)`. Uma camada aparece na lista apenas quando essa fonte é carregada com pelo menos uma chave, então uma lista vazia significa que nenhuma fonte de configuração foi encontrada.
+
+A linha `Setting sources` confirma quais fontes estão sendo lidas. Ela não mostra qual camada forneceu cada chave individual. A aba Config no mesmo diálogo é um editor para um conjunto fixo de toggles como tema e saída verbose, não uma visualização do conteúdo do seu `settings.json`. Se um arquivo de configuração contém erros, como JSON inválido ou um valor que falha na validação, `/status` relata o problema para que você possa corrigi-lo.
 
 ### Pontos-chave sobre o sistema de configuração
 
@@ -542,7 +544,7 @@ Execute `/status` dentro do Claude Code para ver quais fontes de configuração 
 * **Skills**: Prompts personalizados que podem ser invocados com `/skill-name` ou carregados pelo Claude automaticamente
 * **MCP servers**: Estender Claude Code com ferramentas e integrações adicionais
 * **Precedência**: Configurações de nível mais alto (Managed) substituem as de nível mais baixo (User/Project)
-* **Herança**: Configurações são mescladas, com configurações mais específicas adicionando ou substituindo as mais amplas
+* **Herança**: Configurações são mescladas entre escopos; valores escalares de escopos de prioridade mais alta substituem, e arrays se concatenam
 
 ### Prompt do sistema
 

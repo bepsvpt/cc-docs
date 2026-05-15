@@ -782,7 +782,7 @@ Wenn eine neue Sitzung mit `Session creation failed` fehlschlägt oder bei der B
 
 ### Remote Control-Sitzung abgelaufen oder Zugriff verweigert
 
-`--teleport` verbindet sich über die gleiche Remote Control-Sitzungsinfrastruktur, die Cloud-Sitzungen verwenden, daher werden Authentifizierungs- und Sitzungs-Ablauf-Fehler mit Remote Control-Wording angezeigt. Sie können `Remote Control session has expired` oder `Access denied` sehen. Das Verbindungs-Token ist kurzlebig und auf Ihr Konto begrenzt.
+`--teleport` verbindet sich über die gleiche Remote Control-Sitzungsinfrastruktur, die Cloud-Sitzungen verwenden, daher werden Authentifizierungs- und Sitzungs-Ablauf-Fehler mit Remote Control-Wording angezeigt. Sie können `Remote Control session expired` oder `Access denied` sehen. Das Verbindungs-Token ist kurzlebig und auf Ihr Konto begrenzt.
 
 * Führen Sie `/login` lokal aus, um Ihre Anmeldedaten zu aktualisieren, und verbinden Sie sich dann erneut
 * Bestätigen Sie, dass Sie sich bei demselben Konto angemeldet haben, das die Sitzung besitzt

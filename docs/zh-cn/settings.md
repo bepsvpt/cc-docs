@@ -533,7 +533,9 @@ your-repo-file-index --query "$query" | head -20
 
 ### 验证活跃设置
 
-在 Claude Code 中运行 `/status` 以查看哪些设置源处于活跃状态以及它们来自何处。输出显示每个配置层（managed、user、project）及其来源，例如 `Enterprise managed settings (remote)`、`Enterprise managed settings (plist)`、`Enterprise managed settings (HKLM)`、`Enterprise managed settings (HKCU)` 或 `Enterprise managed settings (file)`。如果设置文件包含错误，`/status` 会报告问题，以便您可以修复它。
+在 Claude Code 中运行 `/status` 以查看哪些设置源处于活跃状态。状态选项卡包含一条 `Setting sources` 行，列出 Claude Code 为当前会话加载的每一层，例如 `User settings` 或 `Project local settings`。当[managed 设置](/zh-CN/managed-settings)生效时，该条目在括号中显示交付渠道，例如 `Enterprise managed settings (remote)`、`(plist)`、`(HKLM)`、`(HKCU)` 或 `(file)`。仅当该源至少加载一个键时，该层才出现在列表中，因此空列表意味着未找到任何设置源。
+
+`Setting sources` 行确认正在读取哪些源。它不显示哪一层提供了每个单独的键。同一对话框中的 Config 选项卡是一个固定的切换集合（如主题和详细输出）的编辑器，而不是您的 `settings.json` 内容的视图。如果设置文件包含错误，例如无效的 JSON 或验证失败的值，`/status` 会报告问题，以便您可以修复它。
 
 ### 配置系统的关键点
 

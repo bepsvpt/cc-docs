@@ -782,7 +782,7 @@ Se uma nova sessão falha ao iniciar com `Session creation failed` ou fica presa
 
 ### Remote Control session expired or access denied
 
-`--teleport` se conecta através da mesma infraestrutura de sessão Remote Control que as sessões em nuvem usam, então erros de autenticação e expiração de sessão aparecem com wording de Remote Control. Você pode ver `Remote Control session has expired` ou `Access denied`. O token de conexão é de curta duração e limitado à sua conta.
+`--teleport` se conecta através da mesma infraestrutura de sessão Remote Control que as sessões em nuvem usam, então erros de autenticação e expiração de sessão aparecem com wording de Remote Control. Você pode ver `Remote Control session expired` ou `Access denied`. O token de conexão é de curta duração e limitado à sua conta.
 
 * Execute `/login` localmente para atualizar suas credenciais, depois reconecte
 * Confirme que você está conectado à mesma conta que possui a sessão

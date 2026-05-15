@@ -156,6 +156,13 @@ jobs:
 
 ### 使用 skills
 
+`prompt` 输入接受 [skill](/zh-CN/skills) 调用以及纯文本：
+
+* 对于存储库的 `.claude/skills/` 目录中的 skill，在操作步骤之前运行 `actions/checkout`，然后传递 `/skill-name`。
+* 对于打包在插件中的 skill，使用 `plugin_marketplaces` 和 `plugins` 输入安装插件，然后传递命名空间的 `/plugin-name:skill-name`。
+
+以下工作流安装 `code-review` 插件并在每个新的或更新的拉取请求上运行其 skill：
+
 ```yaml theme={null}
 name: Code Review
 on:
@@ -168,8 +175,9 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: "Review this pull request for code quality, correctness, and security. Analyze the diff, then post your findings as review comments."
-          claude_args: "--max-turns 5"
+          plugin_marketplaces: "https://github.com/anthropics/claude-code.git"
+          plugins: "code-review@claude-code-plugins"
+          prompt: "/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
 ```
 
 ### 使用提示的自定义自动化
@@ -621,15 +629,17 @@ Claude Code Action v1 使用统一参数简化了配置：
 
 Claude Code Action v1 使用简化的配置：
 
-| 参数                  | 描述                                         | 必需    |
-| ------------------- | ------------------------------------------ | ----- |
-| `prompt`            | Claude 的说明（纯文本或 [skill](/zh-CN/skills) 名称） | 否\*   |
-| `claude_args`       | 传递给 Claude Code 的 CLI 参数                   | 否     |
-| `anthropic_api_key` | Claude API 密钥                              | 是\*\* |
-| `github_token`      | 用于 API 访问的 GitHub 令牌                       | 否     |
-| `trigger_phrase`    | 自定义触发短语（默认："@claude"）                      | 否     |
-| `use_bedrock`       | 使用 Amazon Bedrock 而不是 Claude API           | 否     |
-| `use_vertex`        | 使用 Google Vertex AI 而不是 Claude API         | 否     |
+| 参数                    | 描述                                         | 必需    |
+| --------------------- | ------------------------------------------ | ----- |
+| `prompt`              | Claude 的说明（纯文本或 [skill](/zh-CN/skills) 名称） | 否\*   |
+| `claude_args`         | 传递给 Claude Code 的 CLI 参数                   | 否     |
+| `plugin_marketplaces` | 插件市场 Git URL 的换行符分隔列表                      | 否     |
+| `plugins`             | 执行前要安装的插件名称的换行符分隔列表                        | 否     |
+| `anthropic_api_key`   | Claude API 密钥                              | 是\*\* |
+| `github_token`        | 用于 API 访问的 GitHub 令牌                       | 否     |
+| `trigger_phrase`      | 自定义触发短语（默认："@claude"）                      | 否     |
+| `use_bedrock`         | 使用 Amazon Bedrock 而不是 Claude API           | 否     |
+| `use_vertex`          | 使用 Google Vertex AI 而不是 Claude API         | 否     |
 
 \*提示是可选的 - 当对 issue/PR 评论省略时，Claude 响应触发短语\
 \*\*对于直接 Claude API 是必需的，对于 Bedrock/Vertex 不是必需的

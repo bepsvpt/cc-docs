@@ -170,7 +170,10 @@ Bedrock API 金鑰提供了一種更簡單的驗證方法，無需完整的 AWS 
 
 Claude Code 支援 AWS SSO 和公司身分提供者的自動認證重新整理。將這些設定新增至您的 Claude Code 設定檔（請參閱[設定](/zh-TW/settings)以了解檔案位置）。
 
-當 Claude Code 偵測到您的 AWS 認證已過期（基於本機時間戳記或當 Bedrock 傳回認證錯誤時），它將自動執行您設定的 `awsAuthRefresh` 和/或 `awsCredentialExport` 命令以取得新認證，然後重試請求。
+這兩個設定有不同的觸發條件：
+
+* **`awsAuthRefresh`**：僅在 Claude Code 偵測到您的 AWS 認證已過期時執行，基於本機時間戳記或當 Bedrock 傳回認證錯誤時，然後使用重新整理的認證重試請求。
+* **`awsCredentialExport`**：在工作階段開始時和每次認證重新載入時執行，即使您的 AWS 預設認證提供者鏈中的認證仍然有效。當您的 Bedrock 帳戶需要與預設提供者鏈會解析的認證不同的跨帳戶認證時，請使用此選項。
 
 ##### 範例設定
 
@@ -187,7 +190,7 @@ Claude Code 支援 AWS SSO 和公司身分提供者的自動認證重新整理�
 
 **`awsAuthRefresh`**：用於修改 `.aws` 目錄的命令，例如更新認證、SSO 快取或設定檔。命令的輸出會顯示給使用者，但不支援互動式輸入。這適用於瀏覽器型 SSO 流程，其中 CLI 顯示 URL 或代碼，您在瀏覽器中完成驗證。
 
-**`awsCredentialExport`**：僅在您無法修改 `.aws` 且必須直接傳回認證時使用。輸出會被無聲地擷取，不會顯示給使用者。命令必須以此格式輸出 JSON：
+**`awsCredentialExport`**：僅在您無法修改 `.aws` 且必須直接傳回認證時使用。此命令在每次需要重新整理認證時執行，而不僅在認證過期時執行。輸出會被無聲地擷取，不會顯示給使用者。命令必須以此格式輸出 JSON：
 
 ```json theme={null}
 {

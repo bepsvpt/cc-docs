@@ -170,7 +170,10 @@ Bedrock API-Schlüssel bieten eine einfachere Authentifizierungsmethode ohne vol
 
 Claude Code unterstützt die automatische Aktualisierung von Anmeldedaten für AWS SSO und Unternehmensidentitätsanbieter. Fügen Sie diese Einstellungen zu Ihrer Claude Code-Einstellungsdatei hinzu (siehe [Einstellungen](/de/settings) für Dateispeicherorte).
 
-Wenn Claude Code erkennt, dass Ihre AWS-Anmeldedaten abgelaufen sind (entweder lokal basierend auf ihrem Zeitstempel oder wenn Bedrock einen Anmeldedatenfehler zurückgibt), führt es automatisch Ihre konfigurierten `awsAuthRefresh`- und/oder `awsCredentialExport`-Befehle aus, um neue Anmeldedaten zu erhalten, bevor die Anfrage erneut versucht wird.
+Diese zwei Einstellungen haben unterschiedliche Auslösebedingungen:
+
+* **`awsAuthRefresh`**: wird nur ausgeführt, wenn Claude Code erkennt, dass Ihre AWS-Anmeldedaten abgelaufen sind, entweder lokal basierend auf ihrem Zeitstempel oder wenn Bedrock einen Anmeldedatenfehler zurückgibt, und versucht dann die Anfrage mit aktualisierten Anmeldedaten erneut.
+* **`awsCredentialExport`**: wird beim Sitzungsstart und bei jeder Anmeldedatenaktualisierung ausgeführt, auch wenn die Anmeldedaten in Ihrer AWS-Standard-Anmeldedatenkette noch gültig sind. Verwenden Sie dies, wenn Ihr Bedrock-Konto Cross-Account-Anmeldedaten erfordert, die sich von denen unterscheiden, die die Standard-Anmeldedatenkette auflösen würde.
 
 ##### Beispielkonfiguration
 
@@ -187,7 +190,7 @@ Wenn Claude Code erkennt, dass Ihre AWS-Anmeldedaten abgelaufen sind (entweder l
 
 **`awsAuthRefresh`**: Verwenden Sie dies für Befehle, die das `.aws`-Verzeichnis ändern, z. B. zum Aktualisieren von Anmeldedaten, SSO-Cache oder Konfigurationsdateien. Die Ausgabe des Befehls wird dem Benutzer angezeigt, aber interaktive Eingaben werden nicht unterstützt. Dies funktioniert gut für browserbasierte SSO-Flows, bei denen die CLI eine URL oder einen Code anzeigt und Sie die Authentifizierung im Browser abschließen.
 
-**`awsCredentialExport`**: Verwenden Sie dies nur, wenn Sie das `.aws`-Verzeichnis nicht ändern können und Anmeldedaten direkt zurückgeben müssen. Die Ausgabe wird stillschweigend erfasst und nicht dem Benutzer angezeigt. Der Befehl muss JSON in diesem Format ausgeben:
+**`awsCredentialExport`**: Verwenden Sie dies nur, wenn Sie das `.aws`-Verzeichnis nicht ändern können und Anmeldedaten direkt zurückgeben müssen. Dieser Befehl wird ausgeführt, wenn Anmeldedaten aktualisiert werden müssen, nicht nur wenn Anmeldedaten abgelaufen sind. Die Ausgabe wird stillschweigend erfasst und nicht dem Benutzer angezeigt. Der Befehl muss JSON in diesem Format ausgeben:
 
 ```json theme={null}
 {

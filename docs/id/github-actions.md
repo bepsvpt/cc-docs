@@ -156,6 +156,13 @@ jobs:
 
 ### Menggunakan skills
 
+Input `prompt` menerima [skill](/id/skills) invocation serta teks biasa:
+
+* Untuk skill di direktori `.claude/skills/` repositori Anda, jalankan `actions/checkout` sebelum langkah action dan berikan `/skill-name`.
+* Untuk skill yang dikemas dalam plugin, instal plugin dengan input `plugin_marketplaces` dan `plugins` serta berikan `/plugin-name:skill-name` dengan namespace.
+
+Workflow berikut menginstal plugin `code-review` dan menjalankan skillnya pada setiap pull request baru atau yang diperbarui:
+
 ```yaml theme={null}
 name: Code Review
 on:
@@ -168,8 +175,9 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: "Review this pull request for code quality, correctness, and security. Analyze the diff, then post your findings as review comments."
-          claude_args: "--max-turns 5"
+          plugin_marketplaces: "https://github.com/anthropics/claude-code.git"
+          plugins: "code-review@claude-code-plugins"
+          prompt: "/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
 ```
 
 ### Otomasi kustom dengan prompt
@@ -621,15 +629,17 @@ Konfirmkan kunci API valid dan memiliki izin yang cukup. Untuk Bedrock/Vertex, p
 
 Claude Code Action v1 menggunakan konfigurasi yang disederhanakan:
 
-| Parameter           | Description                                                       | Required |
-| ------------------- | ----------------------------------------------------------------- | -------- |
-| `prompt`            | Instruksi untuk Claude (teks biasa atau nama [skill](/id/skills)) | No\*     |
-| `claude_args`       | Argumen CLI yang diteruskan ke Claude Code                        | No       |
-| `anthropic_api_key` | Kunci Claude API                                                  | Yes\*\*  |
-| `github_token`      | Token GitHub untuk akses API                                      | No       |
-| `trigger_phrase`    | Frasa pemicu kustom (default: "@claude")                          | No       |
-| `use_bedrock`       | Gunakan Amazon Bedrock alih-alih Claude API                       | No       |
-| `use_vertex`        | Gunakan Google Vertex AI alih-alih Claude API                     | No       |
+| Parameter             | Description                                                                   | Required |
+| --------------------- | ----------------------------------------------------------------------------- | -------- |
+| `prompt`              | Instruksi untuk Claude (teks biasa atau nama [skill](/id/skills))             | No\*     |
+| `claude_args`         | Argumen CLI yang diteruskan ke Claude Code                                    | No       |
+| `plugin_marketplaces` | Daftar URL Git marketplace plugin yang dipisahkan baris baru                  | No       |
+| `plugins`             | Daftar nama plugin yang dipisahkan baris baru untuk diinstal sebelum eksekusi | No       |
+| `anthropic_api_key`   | Kunci Claude API                                                              | Yes\*\*  |
+| `github_token`        | Token GitHub untuk akses API                                                  | No       |
+| `trigger_phrase`      | Frasa pemicu kustom (default: "@claude")                                      | No       |
+| `use_bedrock`         | Gunakan Amazon Bedrock alih-alih Claude API                                   | No       |
+| `use_vertex`          | Gunakan Google Vertex AI alih-alih Claude API                                 | No       |
 
 \*Prompt opsional - saat dihilangkan untuk komentar issue/PR, Claude merespons frasa pemicu\
 \*\*Diperlukan untuk Claude API langsung, bukan untuk Bedrock/Vertex

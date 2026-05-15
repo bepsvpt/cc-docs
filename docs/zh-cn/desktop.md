@@ -148,7 +148,7 @@ Code 选项卡围绕你可以以任何布局排列的窗格构建：聊天、dif
 
 ### 在终端中运行命令
 
-集成终端让你在不切换到另一个应用的情况下运行命令。从 **Views** 菜单打开它，或在 macOS 或 Windows 上按 **Ctrl+\`**。终端在你的会话工作目录中打开，并与 Claude 共享相同的环境，因此 `npm test` 或 `git status` 等命令看到 Claude 正在编辑的相同文件。终端仅在本地会话中可用。
+集成终端让你在不切换到另一个应用的情况下运行命令。从 **Views** 菜单打开它，或在 macOS 或 Windows 上按 **Ctrl+\`**。终端在你的会话工作目录中打开，并与 Claude 共享相同的环境，因此 `npm test` 或 `git status` 等命令看到 Claude 正在编辑的相同文件。要打开第二个终端选项卡，点击终端窗格标题中的 **+** 或右键点击聊天中的文件夹来选择 **Open in terminal**。终端仅在本地会话中可用。
 
 ### 打开和编辑文件
 
@@ -295,6 +295,8 @@ Worktrees 默认存储在 `<project-root>/.claude/worktrees/` 中。你可以在
 </Note>
 
 使用侧边栏顶部的控制来按状态、项目或环境过滤会话，并按项目分组会话。要重命名会话，点击活跃会话顶部工具栏中的会话标题。要检查上下文使用情况，请参阅[检查使用情况](#check-usage)。当上下文填满时，Claude 自动总结对话并继续工作。你也可以输入 `/compact` 来更早触发总结并释放上下文空间。有关压缩工作原理的详细信息，请参阅[上下文窗口](/zh-CN/how-claude-code-works#the-context-window)。
+
+桌面应用在 Code 会话完成任务且你当前未查看该会话时发送操作系统通知。
 
 ### 在不偏离会话的情况下提出侧边问题
 
@@ -597,13 +599,14 @@ Teams 或 Enterprise 计划上的组织可以通过管理员控制台控制、�
 
 托管设置覆盖项目和用户设置，并在 Desktop 生成 CLI 会话时应用。你可以在你的组织的[托管设置](/zh-CN/settings#settings-precedence)文件中设置这些键，或通过管理员控制台远程推送它们。
 
-| 键                                          | 描述                                                                                                                               |
-| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
-| `permissions.disableBypassPermissionsMode` | 设置为 `"disable"` 以防止用户启用绕过权限模式。                                                                                                   |
-| `disableAutoMode`                          | 设置为 `"disable"` 以防止用户启用 [Auto](/zh-CN/permission-modes#eliminate-prompts-with-auto-mode) 模式。从模式选择器中删除 Auto。也在 `permissions` 下接受。 |
-| `autoMode`                                 | 自定义 auto 模式分类器在你的组织中信任和阻止的内容。请参阅[配置 auto 模式](/zh-CN/auto-mode-config)。                                                           |
-| `sshConfigs`                               | 预配置[SSH 连接](#pre-configure-ssh-connections-for-your-team)，在环境下拉菜单中显示。用户无法编辑或删除托管连接。                                              |
-| `sshHostAllowlist`                         | 限制 [SSH 会话](#restrict-which-ssh-hosts-users-can-connect-to)连接到已解析主机名与这些模式之一匹配的主机。空数组禁用 SSH 会话。仅从托管设置中读取。                         |
+| 键                                          | 描述                                                                                                                                           |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `permissions.disableBypassPermissionsMode` | 设置为 `"disable"` 以防止用户启用绕过权限模式。                                                                                                               |
+| `disableAutoMode`                          | 设置为 `"disable"` 以防止用户启用 [Auto](/zh-CN/permission-modes#eliminate-prompts-with-auto-mode) 模式。从模式选择器中删除 Auto。也在 `permissions` 下接受。             |
+| `autoMode`                                 | 自定义 auto 模式分类器在你的组织中信任和阻止的内容。请参阅[配置 auto 模式](/zh-CN/auto-mode-config)。                                                                       |
+| `sshConfigs`                               | 预配置[SSH 连接](#pre-configure-ssh-connections-for-your-team)，在环境下拉菜单中显示。用户无法编辑或删除托管连接。                                                          |
+| `sshHostAllowlist`                         | 限制 [SSH 会话](#restrict-which-ssh-hosts-users-can-connect-to)连接到已解析主机名与这些模式之一匹配的主机。空数组禁用 SSH 会话。仅从托管设置中读取。                                     |
+| `managedMcpServers`                        | 将 MCP 服务器配置推送到第三方部署中的所有用户。每个条目指定 `"http"`、`"sse"` 或 `"stdio"` 的传输、连接详细信息，以及可选的 `toolPolicy` 映射，该映射限制该服务器中用户可以调用的工具。仅在第三方 (3P) Desktop 部署中可用。 |
 
 部署到每台机器上磁盘的托管设置文件适用于 Desktop 会话。通过管理员控制台远程推送的托管设置目前仅适用于 CLI 和 IDE 会话，因此对于 Desktop 部署，要么通过 MDM 分发文件，要么使用上面的[管理员控制台控制](#admin-console-controls)。
 

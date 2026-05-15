@@ -52,7 +52,7 @@ Verifikasi Anda juga dapat berupa rangkaian tes, linter, atau perintah Bash yang
   Pisahkan penelitian dan perencanaan dari implementasi untuk menghindari menyelesaikan masalah yang salah.
 </Tip>
 
-Membiarkan Claude langsung melompat ke pengkodean dapat menghasilkan kode yang menyelesaikan masalah yang salah. Gunakan [Plan Mode](/id/common-workflows#use-plan-mode-for-safe-code-analysis) untuk memisahkan eksplorasi dari eksekusi.
+Membiarkan Claude langsung melompat ke pengkodean dapat menghasilkan kode yang menyelesaikan masalah yang salah. Gunakan [Plan Mode](/id/permission-modes#analyze-before-you-edit-with-plan-mode) untuk memisahkan eksplorasi dari eksekusi.
 
 Alur kerja yang direkomendasikan memiliki empat fase:
 
@@ -60,7 +60,7 @@ Alur kerja yang direkomendasikan memiliki empat fase:
   <Step title="Jelajahi">
     Masukkan Plan Mode. Claude membaca file dan menjawab pertanyaan tanpa membuat perubahan.
 
-    ```txt claude (Plan Mode) theme={null}
+    ```txt claude (plan mode) theme={null}
     read /src/auth and understand how we handle sessions and login.
     also look at how we manage environment variables for secrets.
     ```
@@ -69,7 +69,7 @@ Alur kerja yang direkomendasikan memiliki empat fase:
   <Step title="Rencanakan">
     Minta Claude untuk membuat rencana implementasi terperinci.
 
-    ```txt claude (Plan Mode) theme={null}
+    ```txt claude (plan mode) theme={null}
     I want to add Google OAuth. What files need to change?
     What's the session flow? Create a plan.
     ```
@@ -78,9 +78,9 @@ Alur kerja yang direkomendasikan memiliki empat fase:
   </Step>
 
   <Step title="Implementasikan">
-    Beralih kembali ke Normal Mode dan biarkan Claude kode, memverifikasi terhadap rencananya.
+    Beralih keluar dari Plan Mode dan biarkan Claude kode, memverifikasi terhadap rencananya.
 
-    ```txt claude (Normal Mode) theme={null}
+    ```txt claude (default mode) theme={null}
     implement the OAuth flow from your plan. write tests for the
     callback handler, run the test suite and fix any failures.
     ```
@@ -89,7 +89,7 @@ Alur kerja yang direkomendasikan memiliki empat fase:
   <Step title="Komit">
     Minta Claude untuk melakukan komit dengan pesan deskriptif dan membuat PR.
 
-    ```txt claude (Normal Mode) theme={null}
+    ```txt claude (default mode) theme={null}
     commit with a descriptive message and open a PR
     ```
   </Step>
@@ -396,7 +396,7 @@ Selama sesi panjang, jendela konteks Claude dapat terisi dengan percakapan yang 
 * Gunakan `/clear` sering antara tugas untuk mengatur ulang jendela konteks sepenuhnya
 * Ketika auto compaction dipicu, Claude meringkas apa yang paling penting, termasuk pola kode, status file, dan keputusan kunci
 * Untuk kontrol lebih, jalankan `/compact <instructions>`, seperti `/compact Focus on the API changes`
-* Untuk mengompaksi hanya bagian dari percakapan, gunakan `Esc + Esc` atau `/rewind`, pilih checkpoint pesan, dan pilih **Summarize from here**. Ini mengondensasi pesan dari titik itu maju sambil menjaga konteks awal tetap utuh.
+* Untuk mengompaksi hanya bagian dari percakapan, gunakan `Esc + Esc` atau `/rewind`, pilih checkpoint pesan, dan pilih **Summarize from here** atau **Summarize up to here**. Yang pertama mengondensasi pesan dari titik itu maju sambil menjaga konteks awal tetap utuh; yang kedua mengondensasi pesan awal sambil menjaga pesan terbaru tetap lengkap. Lihat [Restore vs. summarize](/id/checkpointing#restore-vs-summarize).
 * Sesuaikan perilaku compaction di CLAUDE.md dengan instruksi seperti `"When compacting, always preserve the full list of modified files and any test commands"` untuk memastikan konteks kritis bertahan dari ringkasan
 * Untuk pertanyaan cepat yang tidak perlu tetap dalam konteks, gunakan [`/btw`](/id/interactive-mode#side-questions-with-%2Fbtw). Jawabannya muncul dalam overlay yang dapat ditutup dan tidak pernah memasuki riwayat percakapan, jadi Anda dapat memeriksa detail tanpa menumbuhkan konteks.
 
@@ -424,10 +424,10 @@ use a subagent to review this code for edge cases
 ### Rewind dengan checkpoints
 
 <Tip>
-  Setiap tindakan yang dilakukan Claude membuat checkpoint. Anda dapat mengembalikan percakapan, kode, atau keduanya ke checkpoint sebelumnya.
+  Setiap prompt yang Anda kirim membuat checkpoint. Anda dapat mengembalikan percakapan, kode, atau keduanya ke checkpoint sebelumnya.
 </Tip>
 
-Claude secara otomatis membuat checkpoint sebelum perubahan. Tekan Escape dua kali atau jalankan `/rewind` untuk membuka menu rewind. Anda dapat mengembalikan percakapan saja, mengembalikan kode saja, mengembalikan keduanya, atau meringkas dari pesan yang dipilih. Lihat [Checkpointing](/id/checkpointing) untuk detail.
+Claude secara otomatis membuat snapshot file sebelum setiap perubahan sehingga checkpoint dapat mengembalikannya. Tekan Escape dua kali atau jalankan `/rewind` untuk membuka menu rewind. Anda dapat mengembalikan percakapan saja, mengembalikan kode saja, mengembalikan keduanya, atau meringkas dari pesan yang dipilih. Lihat [Checkpointing](/id/checkpointing) untuk detail.
 
 Alih-alih merencanakan setiap langkah dengan hati-hati, Anda dapat memberi tahu Claude untuk mencoba sesuatu yang berisiko. Jika tidak berhasil, rewind dan coba pendekatan berbeda. Checkpoints bertahan di seluruh sesi, jadi Anda dapat menutup terminal dan masih rewind nanti.
 
@@ -438,17 +438,10 @@ Alih-alih merencanakan setiap langkah dengan hati-hati, Anda dapat memberi tahu 
 ### Lanjutkan percakapan
 
 <Tip>
-  Jalankan `claude --continue` untuk melanjutkan dari mana Anda tinggalkan, atau `--resume` untuk memilih dari sesi terbaru.
+  Beri nama sesi dengan `/rename` dan perlakukan mereka seperti cabang: setiap alur kerja mendapatkan konteks persisten sendiri.
 </Tip>
 
-Claude Code menyimpan percakapan secara lokal. Ketika tugas mencakup beberapa sesi, Anda tidak harus menjelaskan ulang konteksnya:
-
-```bash theme={null}
-claude --continue    # Resume the most recent conversation
-claude --resume      # Select from recent conversations
-```
-
-Gunakan `/rename` untuk memberikan sesi nama deskriptif seperti `"oauth-migration"` atau `"debugging-memory-leak"` sehingga Anda dapat menemukannya nanti. Perlakukan sesi seperti cabang: alur kerja yang berbeda dapat memiliki konteks terpisah dan persisten.
+Claude Code menyimpan percakapan secara lokal, jadi ketika tugas mencakup beberapa sesi Anda tidak harus menjelaskan ulang konteksnya. Jalankan `claude --continue` untuk melanjutkan dari sesi terbaru, atau `claude --resume` untuk memilih dari daftar. Berikan sesi nama deskriptif seperti `oauth-migration` sehingga Anda dapat menemukannya nanti. Lihat [Manage sessions](/id/sessions) untuk set lengkap kontrol resume, branch, dan naming.
 
 ***
 
@@ -464,7 +457,7 @@ Semuanya sejauh ini mengasumsikan satu manusia, satu Claude, dan satu percakapan
   Gunakan `claude -p "prompt"` di CI, pre-commit hooks, atau skrip. Tambahkan `--output-format stream-json` untuk output JSON streaming.
 </Tip>
 
-Dengan `claude -p "your prompt"`, Anda dapat menjalankan Claude secara non-interaktif, tanpa sesi. Mode non-interaktif adalah cara Anda mengintegrasikan Claude ke dalam pipeline CI, pre-commit hooks, atau alur kerja otomatis apa pun. Format output memungkinkan Anda mengurai hasil secara terprogram: teks biasa, JSON, atau JSON streaming.
+Dengan `claude -p "your prompt"`, Anda dapat menjalankan Claude secara non-interaktif, tanpa sesi. [Mode non-interaktif](/id/headless) adalah cara Anda mengintegrasikan Claude ke dalam pipeline CI, pre-commit hooks, atau alur kerja otomatis apa pun. Format output memungkinkan Anda mengurai hasil secara terprogram: teks biasa, JSON, atau JSON streaming.
 
 ```bash theme={null}
 # One-off queries
@@ -483,11 +476,12 @@ claude -p "Analyze this log file" --output-format stream-json
   Jalankan beberapa sesi Claude secara paralel untuk mempercepat pengembangan, menjalankan eksperimen terisolasi, atau memulai alur kerja kompleks.
 </Tip>
 
-Ada tiga cara utama untuk menjalankan sesi paralel:
+Pilih pendekatan paralel yang sesuai dengan seberapa banyak koordinasi yang ingin Anda lakukan sendiri:
 
-* [Aplikasi desktop Claude Code](/id/desktop#work-in-parallel-with-sessions): Kelola beberapa sesi lokal secara visual. Setiap sesi mendapat worktree terisolasi sendiri.
-* [Claude Code di web](/id/claude-code-on-the-web): Jalankan di infrastruktur cloud aman Anthropic dalam VM terisolasi.
-* [Tim agen](/id/agent-teams): Koordinasi otomatis dari beberapa sesi dengan tugas bersama, pesan, dan pemimpin tim.
+* [Worktrees](/id/worktrees): jalankan sesi CLI terpisah dalam checkout git terisolasi sehingga edit tidak bertabrakan
+* [Aplikasi desktop](/id/desktop#work-in-parallel-with-sessions): kelola beberapa sesi lokal secara visual, masing-masing dalam worktree-nya sendiri
+* [Claude Code di web](/id/claude-code-on-the-web): jalankan sesi pada infrastruktur cloud yang dikelola Anthropic dalam VM terisolasi
+* [Tim agen](/id/agent-teams): koordinasi otomatis dari beberapa sesi dengan tugas bersama, pesan, dan pemimpin tim
 
 Selain paralelisasi pekerjaan, beberapa sesi memungkinkan alur kerja yang berfokus pada kualitas. Konteks segar meningkatkan tinjauan kode karena Claude tidak akan bias terhadap kode yang baru saja ditulisnya.
 

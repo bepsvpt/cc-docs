@@ -156,6 +156,13 @@ jobs:
 
 ### 使用 skills
 
+`prompt` 輸入接受 [skill](/zh-TW/skills) 調用以及純文本：
+
+* 對於存放在您的儲存庫 `.claude/skills/` 目錄中的 skill，請在操作步驟之前執行 `actions/checkout`，並傳遞 `/skill-name`。
+* 對於打包在外掛程式中的 skill，請使用 `plugin_marketplaces` 和 `plugins` 輸入安裝外掛程式，並傳遞命名空間 `/plugin-name:skill-name`。
+
+以下工作流程安裝 `code-review` 外掛程式，並在每個新的或更新的提取請求上執行其 skill：
+
 ```yaml theme={null}
 name: Code Review
 on:
@@ -168,8 +175,9 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: "Review this pull request for code quality, correctness, and security. Analyze the diff, then post your findings as review comments."
-          claude_args: "--max-turns 5"
+          plugin_marketplaces: "https://github.com/anthropics/claude-code.git"
+          plugins: "code-review@claude-code-plugins"
+          prompt: "/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
 ```
 
 ### 使用提示的自訂自動化
@@ -621,15 +629,17 @@ Claude Code Action v1 使用統一參數簡化了設定：
 
 Claude Code Action v1 使用簡化的設定：
 
-| 參數                  | 描述                                         | 必需    |
-| ------------------- | ------------------------------------------ | ----- |
-| `prompt`            | Claude 的指令（純文字或 [skill](/zh-TW/skills) 名稱） | 否\*   |
-| `claude_args`       | 傳遞給 Claude Code 的 CLI 引數                   | 否     |
-| `anthropic_api_key` | Claude API 金鑰                              | 是\*\* |
-| `github_token`      | 用於 API 存取的 GitHub 令牌                       | 否     |
-| `trigger_phrase`    | 自訂觸發短語（預設：「@claude」）                       | 否     |
-| `use_bedrock`       | 使用 Amazon Bedrock 而不是 Claude API           | 否     |
-| `use_vertex`        | 使用 Google Vertex AI 而不是 Claude API         | 否     |
+| 參數                    | 描述                                         | 必需    |
+| --------------------- | ------------------------------------------ | ----- |
+| `prompt`              | Claude 的指令（純文字或 [skill](/zh-TW/skills) 名稱） | 否\*   |
+| `claude_args`         | 傳遞給 Claude Code 的 CLI 引數                   | 否     |
+| `plugin_marketplaces` | 以換行符分隔的 plugin marketplace Git URL 清單      | 否     |
+| `plugins`             | 以換行符分隔的 plugin 名稱清單，在執行前安裝                 | 否     |
+| `anthropic_api_key`   | Claude API 金鑰                              | 是\*\* |
+| `github_token`        | 用於 API 存取的 GitHub 令牌                       | 否     |
+| `trigger_phrase`      | 自訂觸發短語（預設：「@claude」）                       | 否     |
+| `use_bedrock`         | 使用 Amazon Bedrock 而不是 Claude API           | 否     |
+| `use_vertex`          | 使用 Google Vertex AI 而不是 Claude API         | 否     |
 
 \*提示是可選的 - 當在議題/PR 評論中省略時，Claude 回應觸發短語\
 \*\*對於直接 Claude API 是必需的，對於 Bedrock/Vertex 不是必需的

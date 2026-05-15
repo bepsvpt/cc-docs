@@ -533,7 +533,7 @@ HTTP hooks가 헤더 값에 보간할 수 있는 환경 변수 이름을 제한�
 
 ### 활성 설정 확인
 
-Claude Code 내에서 `/status`를 실행하여 어떤 설정 소스가 활성화되어 있고 어디에서 오는지 확인합니다. 출력은 각 구성 계층 (managed, user, project)을 `Enterprise managed settings (remote)`, `Enterprise managed settings (plist)`, `Enterprise managed settings (HKLM)`, `Enterprise managed settings (HKCU)` 또는 `Enterprise managed settings (file)`과 같은 출처와 함께 표시합니다. 설정 파일에 오류가 포함되어 있으면 `/status`는 문제를 보고하여 수정할 수 있습니다.
+Claude Code 내에서 `/status`를 실행하여 어떤 설정 소스가 활성화되어 있고 어디에서 오는지 확인합니다. Status 탭에는 각 구성 계층 (managed, user, project)을 `Enterprise managed settings (remote)`, `Enterprise managed settings (plist)`, `Enterprise managed settings (HKLM)`, `Enterprise managed settings (HKCU)` 또는 `Enterprise managed settings (file)`과 같은 출처와 함께 표시하는 `Setting sources` 줄이 포함됩니다. 설정 파일에 오류가 포함되어 있으면 `/status`는 문제를 보고하여 수정할 수 있습니다.
 
 ### 구성 시스템의 핵심 포인트
 

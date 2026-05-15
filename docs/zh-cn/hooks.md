@@ -297,7 +297,7 @@ MCP 工具遵循命名模式 `mcp__<server>__<tool>`，例如：
 | :-------------- | :- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `type`          | 是  | `"command"`、`"http"`、`"mcp_tool"`、`"prompt"` 或 `"agent"`                                                                                                                                                                                                                |
 | `if`            | 否  | 权限规则语法以过滤此 hook 何时运行，例如 `"Bash(git *)"` 或 `"Edit(*.ts)"`。仅当工具调用与模式匹配时，hook 才会生成，或当 Bash 命令太复杂而无法解析时。仅在工具事件上评估：`PreToolUse`、`PostToolUse`、`PostToolUseFailure`、`PermissionRequest` 和 `PermissionDenied`。在其他事件上，设置了 `if` 的 hook 永远不会运行。使用与[权限规则](/zh-CN/permissions)相同的语法 |
-| `timeout`       | 否  | 取消前的秒数。默认值：命令 600、提示 30、代理 60                                                                                                                                                                                                                                           |
+| `timeout`       | 否  | 取消前的秒数。默认值：`command`、`http` 和 `mcp_tool` 为 600；`prompt` 为 30；`agent` 为 60。[`UserPromptSubmit`](#userpromptsubmit) 将 `command`、`http` 和 `mcp_tool` 的默认值降低到 30                                                                                                            |
 | `statusMessage` | 否  | hook 运行时显示的自定义加载程序消息                                                                                                                                                                                                                                                    |
 | `once`          | 否  | 如果为 `true`，每个会话仅运行一次，然后被移除。仅在[skill frontmatter](#hooks-in-skills-and-agents)中声明的 hooks 中受尊重；在设置文件和代理 frontmatter 中被忽略                                                                                                                                                  |
 
@@ -558,9 +558,11 @@ hooks:
 
 命令 hooks 通过 stdin 接收 JSON 数据，并通过退出代码、stdout 和 stderr 传回结果。HTTP hooks 接收相同的 JSON 作为 POST 请求体，并通过 HTTP 响应体传回结果。本部分涵盖所有事件通用的字段和行为。每个事件在[Hook 事件](#hook-events)下的部分包括其特定的输入架构和决定控制选项。
 
+从 v2.1.139 开始，在 macOS 和 Linux 上，命令 hooks 在没有控制终端的自己的会话中运行。hook 进程和任何子进程无法打开 `/dev/tty` 或直接向 Claude Code 界面发送转义序列。Windows 没有 `/dev/tty`。要在任何平台上向用户显示消息，请在 JSON 输出中返回[`systemMessage`](#json-output)。要触发桌面通知、设置窗口标题或响铃，请改为返回[`terminalSequence`](#emit-terminal-notifications)。
+
 ### 通用输入字段
 
-所有 hook 事件都接收这些字段作为 JSON，除了每个[hook 事件](#hook-events)部分中记录的事件特定字段。对于命令 hooks，此 JSON 通过 stdin 到达。对于 HTTP hooks，它作为 POST 请求体到达。
+Hook 事件接收这些字段作为 JSON，除了每个[hook 事件](#hook-events)部分中记录的事件特定字段。对于命令 hooks，此 JSON 通过 stdin 到达。对于 HTTP hooks，它作为 POST 请求体到达。
 
 | 字段                | 描述                                                                                                                                                                                                                                                                                                                                                                      |
 | :---------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -685,7 +687,7 @@ HTTP hooks 使用 HTTP 状态代码和响应体而不是退出代码和 stdout�
 
 您的 hook 的 stdout 必须仅包含 JSON 对象。如果您的 shell 配置文件在启动时打印文本，它可能会干扰 JSON 解析。请参阅故障排除指南中的[JSON 验证失败](/zh-CN/hooks-guide#json-validation-failed)。
 
-Hook 输出注入到上下文中（`additionalContext`、`systemMessage` 或纯 stdout）的上限为 10,000 个字符。超过此限制的输出被保存到文件并替换为预览和文件路径，与大型工具结果的处理方式相同。
+Hook 输出字符串，包括 `additionalContext`、`systemMessage` 和纯 stdout，上限为 10,000 个字符。超过此限制的输出被保存到文件并替换为预览和文件路径，与大型工具结果的处理方式相同。
 
 JSON 对象支持三种字段：
 
@@ -693,18 +695,53 @@ JSON 对象支持三种字段：
 * **顶级 `decision` 和 `reason`** 由某些事件用于阻止或提供反馈。
 * **`hookSpecificOutput`** 是一个嵌套对象，用于需要更丰富控制的事件。它需要一个设置为事件名称的 `hookEventName` 字段。
 
-| 字段               | 默认      | 描述                                                   |
-| :--------------- | :------ | :--------------------------------------------------- |
-| `continue`       | `true`  | 如果为 `false`，Claude 在 hook 运行后完全停止处理。优先于任何事件特定的决定字段   |
-| `stopReason`     | 无       | hook 运行后 `continue` 为 `false` 时向用户显示的消息。不向 Claude 显示 |
-| `suppressOutput` | `false` | 如果为 `true`，从调试日志中隐藏 stdout                           |
-| `systemMessage`  | 无       | 向用户显示的警告消息                                           |
+| 字段                 | 默认      | 描述                                                                                                                                         |
+| :----------------- | :------ | :----------------------------------------------------------------------------------------------------------------------------------------- |
+| `continue`         | `true`  | 如果为 `false`，Claude 在 hook 运行后完全停止处理。优先于任何事件特定的决定字段                                                                                         |
+| `stopReason`       | 无       | 当 `continue` 为 `false` 时向用户显示的消息。不向 Claude 显示                                                                                              |
+| `suppressOutput`   | `false` | 如果为 `true`，从调试日志中隐藏 stdout                                                                                                                 |
+| `systemMessage`    | 无       | 向用户显示的警告消息                                                                                                                                 |
+| `terminalSequence` | 无       | Claude Code 代表您发出的终端转义序列，例如桌面通知、窗口标题或响铃。限制为 OSC `0`/`1`/`2`/`9`/`99`/`777` 和 BEL。如果值包含允许列表之外的任何内容，该字段将被忽略。使用此而不是写入 `/dev/tty`，这对 hooks 不可用 |
 
 要无论事件类型如何都完全停止 Claude：
 
 ```json theme={null}
 { "continue": false, "stopReason": "Build failed, fix errors before continuing" }
 ```
+
+#### 发出终端通知
+
+`terminalSequence` 字段需要 Claude Code v2.1.141 或更高版本。
+
+Hooks 运行时没有控制终端，因此直接向 `/dev/tty` 写入转义序列会失败。相反，在 `terminalSequence` 字段中返回转义序列，Claude Code 通过其自己的终端写入路径为您发出它。这是无竞争的，在 tmux 和 GNU screen 内工作，并在 Windows 上工作，其中没有 `/dev/tty`。
+
+该字段接受一个或多个允许列表转义序列的字符串：
+
+* OSC `0`、`1`、`2`：窗口和图标标题
+* OSC `9`：iTerm2、ConEmu、Windows Terminal 和 WezTerm 通知，包括 `9;4` 任务栏进度
+* OSC `99`：Kitty 通知
+* OSC `777`：urxvt、Ghostty 和 Warp 通知
+* 裸 BEL
+
+序列可以用 BEL 或 ST 终止。允许列表之外的任何内容，包括 CSI 光标和颜色序列、OSC 调色板序列、OSC 8 超链接、OSC 52 剪贴板写入和 OSC 1337，都会被拒绝，该字段将被忽略。
+
+下面的示例从 `Notification` hook 触发桌面通知。转义序列使用 `printf` 八进制转义构建，因此控制字节永远不会出现在 shell 命令行上，`jq -n --arg` 构建 JSON 输出，因此通知消息中的引号、反斜杠和换行符被正确转义：
+
+```bash theme={null}
+#!/bin/bash
+# Notification hook：当 Claude Code 需要注意时 ping 桌面。
+input=$(cat)
+title="Claude Code'
+body=$(jq -r '.message // 'Needs your attention"' <<<"$input")
+seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
+jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
+```
+
+`{ "terminalSequence": "..." }` 形状从任何 shell 或语言都相同。在 Windows 上，在 PowerShell 或脚本中构建转义字符串并发出相同的 JSON 对象。
+
+<Note>
+  `terminalSequence` 是之前直接向 `/dev/tty` 写入转义序列的 hooks 的受支持替代品。允许列表限制为无法移动光标或改变颜色的序列，因此 hook 永远无法破坏屏幕上的提示。
+</Note>
 
 #### 为 Claude 添加上下文
 
@@ -989,6 +1026,8 @@ InstructionsLoaded hooks 没有决定控制。它们无法阻止或修改指令�
 
 在用户提交提示时运行，在 Claude 处理之前。这允许您根据提示/对话添加额外上下文、验证提示或阻止某些类型的提示。
 
+`UserPromptSubmit` hooks 对 `command`、`http` 和 `mcp_tool` 类型的默认超时为 30 秒，比这些类型在其他事件上的 600 秒默认值更短。因为此 hook 在每个提示之前运行并阻止模型处理直到完成，卡住的 hook 会停滞会话。如果您的 hook 需要更多时间，在 hook 条目中设置 `timeout` 字段。
+
 #### UserPromptSubmit 输入
 
 除了[通用输入字段](#common-input-fields)外，UserPromptSubmit hooks 还接收包含用户提交的文本的 `prompt` 字段。
@@ -1190,6 +1229,20 @@ InstructionsLoaded hooks 没有决定控制。它们无法阻止或修改指令�
 | `description`   | string | `"Find API endpoints"`     | 任务的简短描述       |
 | `subagent_type` | string | `"Explore"`                | 要使用的专门代理的类型   |
 | `model`         | string | `"sonnet"`                 | 可选的模型别名以覆盖默认值 |
+
+在 `PostToolUse` 中，已完成的 Agent 调用的 `tool_response` 携带 subagent 的最终文本以及使用遥测。读取这些字段以从 hook 记录每个 subagent 的成本：
+
+| 字段                  | 类型     | 示例                                                    | 描述                                                                                              |
+| :------------------ | :----- | :---------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
+| `status`            | string | `"completed"`                                         | 同步调用为 `"completed"`，`run_in_background: true` 为 `"async_launched"`                              |
+| `agentId`           | string | `"a4d2c8f1e0b3a297"`                                  | subagent 运行的标识符                                                                                 |
+| `content`           | array  | `[{"type": "text", "text": "Found 12 endpoints..."}]` | subagent 的最终文本块                                                                                 |
+| `totalTokens`       | number | `12450`                                               | 在 subagent 轮次中计费的总令牌数                                                                           |
+| `totalDurationMs`   | number | `48211`                                               | subagent 运行的挂钟时间                                                                                |
+| `totalToolUseCount` | number | `7`                                                   | subagent 进行的工具调用计数                                                                              |
+| `usage`             | object | `{"input_tokens": 8320, ...}`                         | 按类型的令牌分解：`input_tokens`、`output_tokens`、`cache_creation_input_tokens`、`cache_read_input_tokens` |
+
+对于 `run_in_background: true` 调用，工具在启动 subagent 后立即返回，因此 `tool_response` 不携带使用字段。它具有 `status: "async_launched"`、`agentId`、`description`、`prompt` 和 `outputFile`。
 
 ##### AskUserQuestion
 
@@ -2596,7 +2649,7 @@ LLM 必须使用包含以下内容的 JSON 响应：
 
 当异步 hook 触发时，Claude Code 启动 hook 进程并立即继续，不等待其完成。Hook 通过 stdin 接收与同步 hook 相同的 JSON 输入。
 
-后台进程退出后，如果 hook 产生了带有 `systemMessage` 或 `additionalContext` 字段的 JSON 响应，该内容在下一个对话轮次作为上下文传递给 Claude。
+后台进程退出后，如果 hook 产生了带有 `additionalContext` 字段的 JSON 响应，该内容在下一个对话轮次作为上下文传递给 Claude。`systemMessage` 字段显示给你，而不是 Claude。
 
 异步 hook 完成通知默认被抑制。要查看它们，请使用 `Ctrl+O` 启用详细模式或使用 `--verbose` 启动 Claude Code。
 
@@ -2617,15 +2670,16 @@ if [[ "$FILE_PATH" != *.ts && "$FILE_PATH" != *.js ]]; then
   exit 0
 fi
 
-# 运行测试并通过 systemMessage 报告结果
+# 运行测试并通过 additionalContext 向 Claude 报告结果
 RESULT=$(npm test 2>&1)
 EXIT_CODE=$?
 
 if [ $EXIT_CODE -eq 0 ]; then
-  echo "{\"systemMessage\": \"Tests passed after editing $FILE_PATH\"}"
+  MSG="Tests passed after editing $FILE_PATH"
 else
-  echo "{\"systemMessage\": \"Tests failed after editing $FILE_PATH: $RESULT\"}"
+  MSG="Tests failed after editing $FILE_PATH: $RESULT"
 fi
+jq -nc --arg msg "$MSG" '{hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: $msg}}'
 ```
 
 然后将此配置添加到项目根目录中的 `.claude/settings.json`。`async: true` 标志让 Claude 在测试运行时继续工作：

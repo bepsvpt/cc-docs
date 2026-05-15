@@ -156,6 +156,13 @@ jobs:
 
 ### Usando skills
 
+A entrada `prompt` aceita uma invocação de [skill](/pt/skills) bem como texto simples:
+
+* Para uma skill no diretório `.claude/skills/` do seu repositório, execute `actions/checkout` antes da etapa de ação e passe `/skill-name`.
+* Para uma skill empacotada em um plugin, instale o plugin com as entradas `plugin_marketplaces` e `plugins` e passe a `/plugin-name:skill-name` com namespace.
+
+O fluxo de trabalho a seguir instala o plugin `code-review` e executa sua skill em cada pull request novo ou atualizado:
+
 ```yaml theme={null}
 name: Code Review
 on:
@@ -168,8 +175,9 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: "Review this pull request for code quality, correctness, and security. Analyze the diff, then post your findings as review comments."
-          claude_args: "--max-turns 5"
+          plugin_marketplaces: "https://github.com/anthropics/claude-code.git"
+          plugins: "code-review@claude-code-plugins"
+          prompt: "/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
 ```
 
 ### Automação personalizada com prompts
@@ -621,15 +629,17 @@ Confirme que a chave de API é válida e tem permissões suficientes. Para Bedro
 
 A Claude Code Action v1 usa uma configuração simplificada:
 
-| Parâmetro           | Descrição                                                                | Necessário |
-| ------------------- | ------------------------------------------------------------------------ | ---------- |
-| `prompt`            | Instruções para Claude (texto simples ou um nome de [skill](/pt/skills)) | Não\*      |
-| `claude_args`       | Argumentos de CLI passados para Claude Code                              | Não        |
-| `anthropic_api_key` | Chave de API Claude                                                      | Sim\*\*    |
-| `github_token`      | Token do GitHub para acesso à API                                        | Não        |
-| `trigger_phrase`    | Frase de gatilho personalizada (padrão: "@claude")                       | Não        |
-| `use_bedrock`       | Use Amazon Bedrock em vez da Claude API                                  | Não        |
-| `use_vertex`        | Use Google Vertex AI em vez da Claude API                                | Não        |
+| Parâmetro             | Descrição                                                                              | Necessário |
+| --------------------- | -------------------------------------------------------------------------------------- | ---------- |
+| `prompt`              | Instruções para Claude (texto simples ou um nome de [skill](/pt/skills))               | Não\*      |
+| `claude_args`         | Argumentos de CLI passados para Claude Code                                            | Não        |
+| `plugin_marketplaces` | Lista separada por quebra de linha de URLs Git do marketplace de plugins               | Não        |
+| `plugins`             | Lista separada por quebra de linha de nomes de plugins para instalar antes da execução | Não        |
+| `anthropic_api_key`   | Chave de API Claude                                                                    | Sim\*\*    |
+| `github_token`        | Token do GitHub para acesso à API                                                      | Não        |
+| `trigger_phrase`      | Frase de gatilho personalizada (padrão: "@claude")                                     | Não        |
+| `use_bedrock`         | Use Amazon Bedrock em vez da Claude API                                                | Não        |
+| `use_vertex`          | Use Google Vertex AI em vez da Claude API                                              | Não        |
 
 \*Prompt é opcional - quando omitido para comentários de issue/PR, Claude responde à frase de gatilho\
 \*\*Necessário para Claude API direto, não para Bedrock/Vertex

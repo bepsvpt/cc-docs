@@ -533,7 +533,9 @@ Por ejemplo, si su configuración de usuario permite `Bash(npm run *)` pero la c
 
 ### Verificar configuraciones activas
 
-Ejecute `/status` dentro de Claude Code para ver qué fuentes de configuración están activas y de dónde provienen. La salida muestra cada capa de configuración (administrada, usuario, proyecto) junto con su origen, como `Enterprise managed settings (remote)`, `Enterprise managed settings (plist)`, `Enterprise managed settings (HKLM)`, `Enterprise managed settings (HKCU)`, o `Enterprise managed settings (file)`. Si un archivo de configuración contiene errores, `/status` reporta el problema para que pueda corregirlo.
+Ejecute `/status` dentro de Claude Code para ver qué fuentes de configuración están activas. La pestaña Status incluye una línea `Setting sources` que enumera cada capa que Claude Code cargó para la sesión actual, como `User settings` o `Project local settings`. Cuando [configuraciones administradas](/es/managed-settings) están en efecto, la entrada muestra el canal de entrega entre paréntesis, por ejemplo `Enterprise managed settings (remote)`, `(plist)`, `(HKLM)`, `(HKCU)`, o `(file)`. Una capa aparece en la lista solo cuando esa fuente se carga con al menos una clave, por lo que una lista vacía significa que no se encontraron fuentes de configuración.
+
+La línea `Setting sources` confirma qué fuentes se están leyendo. No muestra qué capa suministró cada clave individual. La pestaña Config en el mismo diálogo es un editor para un conjunto fijo de toggles como tema y salida detallada, no una vista de los contenidos de su `settings.json`. Si un archivo de configuración contiene errores, como JSON inválido o un valor que falla la validación, `/status` reporta el problema para que pueda corregirlo.
 
 ### Puntos clave sobre el sistema de configuración
 
@@ -542,7 +544,7 @@ Ejecute `/status` dentro de Claude Code para ver qué fuentes de configuración 
 * **Skills**: Indicaciones personalizadas que se pueden invocar con `/skill-name` o cargar automáticamente por Claude
 * **MCP servers**: Extender Claude Code con herramientas e integraciones adicionales
 * **Precedencia**: Las configuraciones de nivel superior (Managed) anulan las de nivel inferior (User/Project)
-* **Herencia**: Las configuraciones se fusionan, con configuraciones más específicas agregando o anulando las más amplias
+* **Herencia**: Las configuraciones se fusionan entre ámbitos; los valores escalares de ámbitos de mayor prioridad anulan, y las matrices se concatenan
 
 ### Indicador del sistema
 

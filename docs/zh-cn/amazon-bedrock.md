@@ -170,7 +170,10 @@ Bedrock API 密钥提供了一种更简单的身份验证方法，无需完整�
 
 Claude Code 支持 AWS SSO 和企业身份提供商的自动凭证刷新。将这些设置添加到您的 Claude Code 设置文件（请参阅[设置](/zh-CN/settings)了解文件位置）。
 
-当 Claude Code 检测到您的 AWS 凭证已过期（基于本地时间戳或当 Bedrock 返回凭证错误时），它将自动运行您配置的 `awsAuthRefresh` 和/或 `awsCredentialExport` 命令来获取新凭证，然后重试请求。
+这两个设置有不同的触发条件：
+
+* **`awsAuthRefresh`**：仅当 Claude Code 检测到您的 AWS 凭证已过期时运行，基于本地时间戳或当 Bedrock 返回凭证错误时，然后使用刷新的凭证重试请求。
+* **`awsCredentialExport`**：在会话启动和每次凭证重新加载时运行，即使您的 AWS 默认凭证提供商链中的凭证仍然有效。当您的 Bedrock 账户需要与默认提供商链会解析的凭证不同的跨账户凭证时，请使用此选项。
 
 ##### 示例配置
 
@@ -187,7 +190,7 @@ Claude Code 支持 AWS SSO 和企业身份提供商的自动凭证刷新。将�
 
 **`awsAuthRefresh`**：用于修改 `.aws` 目录的命令，例如更新凭证、SSO 缓存或配置文件。命令的输出显示给用户，但不支持交互式输入。这适用于基于浏览器的 SSO 流，其中 CLI 显示 URL 或代码，您在浏览器中完成身份验证。
 
-**`awsCredentialExport`**：仅在您无法修改 `.aws` 且必须直接返回凭证时使用。输出被静默捕获，不显示给用户。命令必须以此格式输出 JSON：
+**`awsCredentialExport`**：仅在您无法修改 `.aws` 且必须直接返回凭证时使用。此命令在需要刷新凭证时运行，而不仅仅是在凭证过期时。输出被静默捕获，不显示给用户。命令必须以此格式输出 JSON：
 
 ```json theme={null}
 {

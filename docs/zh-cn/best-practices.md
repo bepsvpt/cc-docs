@@ -52,7 +52,7 @@ UI 更改可以使用 [Chrome 中的 Claude 扩展](/zh-CN/chrome) 进行验证�
   将研究和规划与实现分开，以避免解决错误的问题。
 </Tip>
 
-让 Claude 直接跳到编码可能会产生解决错误问题的代码。使用 [Plan Mode](/zh-CN/common-workflows#use-plan-mode-for-safe-code-analysis) 将探索与执行分开。
+让 Claude 直接跳到编码可能会产生解决错误问题的代码。使用 [Plan Mode](/zh-CN/permission-modes#analyze-before-you-edit-with-plan-mode) 将探索与执行分开。
 
 推荐的工作流有四个阶段：
 
@@ -60,7 +60,7 @@ UI 更改可以使用 [Chrome 中的 Claude 扩展](/zh-CN/chrome) 进行验证�
   <Step title="探索">
     进入 Plan Mode。Claude 读取文件并回答问题，不进行任何更改。
 
-    ```txt claude (Plan Mode) theme={null}
+    ```txt claude (plan mode) theme={null}
     read /src/auth and understand how we handle sessions and login.
     also look at how we manage environment variables for secrets.
     ```
@@ -69,7 +69,7 @@ UI 更改可以使用 [Chrome 中的 Claude 扩展](/zh-CN/chrome) 进行验证�
   <Step title="规划">
     要求 Claude 创建详细的实现计划。
 
-    ```txt claude (Plan Mode) theme={null}
+    ```txt claude (plan mode) theme={null}
     I want to add Google OAuth. What files need to change?
     What's the session flow? Create a plan.
     ```
@@ -78,9 +78,9 @@ UI 更改可以使用 [Chrome 中的 Claude 扩展](/zh-CN/chrome) 进行验证�
   </Step>
 
   <Step title="实现">
-    切换回 Normal Mode 并让 Claude 编码，根据其计划进行验证。
+    切换出 Plan Mode 并让 Claude 编码，根据其计划进行验证。
 
-    ```txt claude (Normal Mode) theme={null}
+    ```txt claude (default mode) theme={null}
     implement the OAuth flow from your plan. write tests for the
     callback handler, run the test suite and fix any failures.
     ```
@@ -89,7 +89,7 @@ UI 更改可以使用 [Chrome 中的 Claude 扩展](/zh-CN/chrome) 进行验证�
   <Step title="提交">
     要求 Claude 使用描述性消息进行提交并创建 PR。
 
-    ```txt claude (Normal Mode) theme={null}
+    ```txt claude (default mode) theme={null}
     commit with a descriptive message and open a PR
     ```
   </Step>
@@ -396,7 +396,7 @@ Claude Code 在你接近 context 限制时自动压缩对话历史，这保留�
 * 在任务之间频繁使用 `/clear` 来完全重置 context window
 * 当自动压缩触发时，Claude 总结最重要的东西，包括代码模式、文件状态和关键决策
 * 为了更多控制，运行 `/compact <instructions>`，如 `/compact Focus on the API changes`
-* 要仅压缩对话的一部分，使用 `Esc + Esc` 或 `/rewind`，选择消息检查点，并选择 **从这里总结**。这会压缩从该点开始的消息，同时保持早期 context 完整。
+* 要仅压缩对话的一部分，使用 `Esc + Esc` 或 `/rewind`，选择消息检查点，并选择 **从这里总结** 或 **总结到这里**。第一个会压缩从该点开始的消息，同时保持早期 context 完整；第二个会压缩早期消息，同时保持最近的消息完整。请参阅 [恢复与总结](/zh-CN/checkpointing#restore-vs-summarize)。
 * 在 CLAUDE.md 中使用像 `"When compacting, always preserve the full list of modified files and any test commands"` 这样的指令来自定义压缩行为，以确保关键 context 在总结中存活
 * 对于不需要留在 context 中的快速问题，使用 [`/btw`](/zh-CN/interactive-mode#side-questions-with-%2Fbtw)。答案出现在可关闭的覆盖层中，永远不会进入对话历史，所以你可以检查细节而不增加 context。
 
@@ -424,10 +424,10 @@ use a subagent to review this code for edge cases
 ### 使用检查点进行 Rewind
 
 <Tip>
-  Claude 进行的每个操作都会创建一个检查点。你可以将对话、代码或两者恢复到任何之前的检查点。
+  Claude 进行的每个提示都会创建一个检查点。你可以将对话、代码或两者恢复到任何之前的检查点。
 </Tip>
 
-Claude 在更改前自动检查点。双击 `Escape` 或运行 `/rewind` 来打开 rewind 菜单。你可以仅恢复对话、仅恢复代码、恢复两者或从选定的消息进行总结。有关详细信息，请参阅 [Checkpointing](/zh-CN/checkpointing)。
+Claude 在每次更改前自动对文件进行快照，以便检查点可以恢复它们。双击 `Escape` 或运行 `/rewind` 来打开 rewind 菜单。你可以仅恢复对话、仅恢复代码、恢复两者或从选定的消息进行总结。有关详细信息，请参阅 [Checkpointing](/zh-CN/checkpointing)。
 
 与其仔细规划每一步，你可以告诉 Claude 尝试一些冒险的事情。如果不起作用，rewind 并尝试不同的方法。检查点在会话中持续，所以你可以关闭你的终端并稍后仍然 rewind。
 
@@ -438,17 +438,10 @@ Claude 在更改前自动检查点。双击 `Escape` 或运行 `/rewind` 来打�
 ### 恢复对话
 
 <Tip>
-  运行 `claude --continue` 来继续你离开的地方，或 `--resume` 来从最近的会话中选择。
+  使用 `/rename` 给会话命名，并像对待分支一样对待它们：每个工作流都有自己的持久 context。
 </Tip>
 
-Claude Code 在本地保存对话。当任务跨越多个会话时，你不必重新解释 context：
-
-```bash theme={null}
-claude --continue    # Resume the most recent conversation
-claude --resume      # Select from recent conversations
-```
-
-使用 `/rename` 给会话起描述性名称，如 `"oauth-migration"` 或 `"debugging-memory-leak"`，以便你稍后可以找到它们。像对待分支一样对待会话：不同的工作流可以有单独的、持久的 context。
+Claude Code 在本地保存对话，所以当任务跨越多个会话时，你不必重新解释 context。运行 `claude --continue` 来继续最近的会话，或 `claude --resume` 来从列表中选择。给会话起描述性名称，如 `oauth-migration`，以便你稍后可以找到它们。有关完整的恢复、分支和命名控制集，请参阅 [管理会话](/zh-CN/sessions)。
 
 ***
 
@@ -464,7 +457,7 @@ claude --resume      # Select from recent conversations
   在 CI、pre-commit hooks 或脚本中使用 `claude -p "prompt"`。添加 `--output-format stream-json` 用于流式 JSON 输出。
 </Tip>
 
-使用 `claude -p "your prompt"`，你可以非交互地运行 Claude，不需要会话。非交互模式是你将 Claude 集成到 CI 管道、pre-commit hooks 或任何自动化工作流中的方式。输出格式让你以编程方式解析结果：纯文本、JSON 或流式 JSON。
+使用 `claude -p "your prompt"`，你可以非交互地运行 Claude，不需要会话。[非交互模式](/zh-CN/headless)是你将 Claude 集成到 CI 管道、pre-commit hooks 或任何自动化工作流中的方式。输出格式让你以编程方式解析结果：纯文本、JSON 或流式 JSON。
 
 ```bash theme={null}
 # One-off queries
@@ -483,11 +476,12 @@ claude -p "Analyze this log file" --output-format stream-json
   并行运行多个 Claude 会话以加快开发、运行隔离的实验或启动复杂的工作流。
 </Tip>
 
-有三种主要方式来运行并行会话：
+选择适合你想要自己进行多少协调的并行方法：
 
-* [Claude Code 桌面应用](/zh-CN/desktop#work-in-parallel-with-sessions)：以视觉方式管理多个本地会话。每个会话获得自己的隔离 worktree。
-* [Claude Code 在网络上](/zh-CN/claude-code-on-the-web)：在 Anthropic 的安全云基础设施中的隔离 VM 上运行。
-* [Agent teams](/zh-CN/agent-teams)：具有共享任务、消息和团队主管的多个会话的自动协调。
+* [Worktrees](/zh-CN/worktrees)：在隔离的 git 检出中运行单独的 CLI 会话，以便编辑不会冲突
+* [桌面应用](/zh-CN/desktop#work-in-parallel-with-sessions)：以视觉方式管理多个本地会话，每个会话都在自己的 worktree 中
+* [Claude Code 在网络上](/zh-CN/claude-code-on-the-web)：在 Anthropic 管理的云基础设施中的隔离虚拟机上运行会话
+* [Agent teams](/zh-CN/agent-teams)：具有共享任务、消息和团队主管的多个会话的自动协调
 
 除了并行化工作，多个会话启用了质量关注的工作流。新鲜的 context 改进了代码审查，因为 Claude 不会偏向于它刚刚编写的代码。
 

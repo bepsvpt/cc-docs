@@ -865,7 +865,10 @@ HTTP hooks 在您希望 Web 伺服器、雲端函數或外部服務處理 hook �
 ### 限制
 
 * 命令 hooks 只透過 stdout、stderr 和退出代碼通訊。它們無法觸發 `/` 命令或工具呼叫。透過 `additionalContext` 傳回的文字會作為系統提醒注入，Claude 將其讀取為純文字。HTTP hooks 改為透過回應主體通訊。
-* Hook 超時預設為 10 分鐘，可透過 `timeout` 欄位（以秒為單位）按 hook 配置。
+* Hook 超時因類型而異。透過 `timeout` 欄位（以秒為單位）按 hook 覆寫。
+  * `command`、`http`、`mcp_tool`：10 分鐘。`UserPromptSubmit` 將這些降低至 30 秒。
+  * `prompt`：30 秒。
+  * `agent`：60 秒。
 * `PostToolUse` hooks 無法撤銷操作，因為工具已經執行。
 * `PermissionRequest` hooks 在[非互動模式](/zh-TW/headless)（`-p`）中不觸發。對於自動化權限決策，使用 `PreToolUse` hooks。
 * `Stop` hooks 在 Claude 完成回應時觸發，而不僅在任務完成時。它們在使用者中斷時不觸發。API 錯誤觸發 [StopFailure](/zh-TW/hooks#stopfailure) 代替。

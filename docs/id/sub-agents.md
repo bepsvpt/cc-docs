@@ -158,8 +158,6 @@ Perintah `/agents` membuka antarmuka bertab untuk mengelola subagent. Tab **Runn
 
 Ini adalah cara yang direkomendasikan untuk membuat dan mengelola subagent. Untuk pembuatan manual atau otomasi, Anda juga dapat menambahkan file subagent secara langsung.
 
-Untuk membuat daftar semua subagent yang dikonfigurasi dari baris perintah tanpa membuka [tampilan agen](/id/agent-view), alirkan output dari `claude agents`. Misalnya, `claude agents | cat` mencetak agen yang dikelompokkan berdasarkan sumber dan menunjukkan mana yang ditimpa oleh definisi prioritas lebih tinggi.
-
 ### Pilih cakupan subagent
 
 Subagent adalah file Markdown dengan frontmatter YAML. Simpan mereka di lokasi berbeda tergantung cakupan. Ketika beberapa subagent berbagi nama yang sama, lokasi prioritas lebih tinggi menang.
@@ -177,6 +175,10 @@ Subagent adalah file Markdown dengan frontmatter YAML. Simpan mereka di lokasi b
 Subagent proyek ditemukan dengan berjalan naik dari direktori kerja saat ini. Direktori yang ditambahkan dengan `--add-dir` [memberikan akses file saja](/id/permissions#additional-directories-grant-file-access-not-configuration) dan tidak dipindai untuk subagent. Untuk berbagi subagent di seluruh proyek, gunakan `~/.claude/agents/` atau [plugin](/id/plugins).
 
 **Subagent pengguna** (`~/.claude/agents/`) adalah subagent pribadi yang tersedia di semua proyek Anda.
+
+Claude Code memindai `.claude/agents/` dan `~/.claude/agents/` secara rekursif, sehingga Anda dapat mengorganisir definisi ke dalam subfolder seperti `agents/review/` atau `agents/research/`. Jalur subdirektori tidak mempengaruhi cara subagent diidentifikasi atau dipanggil, karena identitas hanya berasal dari bidang frontmatter `name`. Jaga nilai `name` tetap unik di seluruh pohon: jika dua file dalam satu cakupan mendeklarasikan nama yang sama, Claude Code menyimpan satu dan membuang yang lain tanpa peringatan.
+
+Direktori `agents/` plugin juga dipindai secara rekursif. Tidak seperti cakupan proyek dan pengguna, subfolder di dalam direktori `agents/` plugin menjadi bagian dari [pengenal yang dibatasi cakupan](#invoke-subagents-explicitly): file di `agents/review/security.md` dalam plugin `my-plugin` terdaftar sebagai `my-plugin:review:security`.
 
 **Subagent yang ditentukan CLI** dilewatkan sebagai JSON saat meluncurkan Claude Code. Mereka hanya ada untuk sesi itu dan tidak disimpan ke disk, menjadikannya berguna untuk pengujian cepat atau skrip otomasi. Anda dapat mendefinisikan beberapa subagent dalam satu panggilan `--agents`:
 
@@ -638,7 +640,7 @@ Have the code-reviewer subagent look at my recent changes
 
 Pesan lengkap Anda masih pergi ke Claude, yang menulis prompt tugas subagent berdasarkan apa yang Anda minta. @-mention mengontrol subagent mana yang Claude panggil, bukan prompt apa yang diterima.
 
-Subagent yang disediakan oleh [plugin](/id/plugins) yang diaktifkan muncul di typeahead sebagai `<plugin-name>:<agent-name>`. Subagent background bernama yang saat ini berjalan dalam sesi juga muncul di typeahead, menunjukkan status mereka di samping nama. Anda juga dapat mengetik mention secara manual tanpa menggunakan picker: `@agent-<name>` untuk subagent lokal, atau `@agent-<plugin-name>:<agent-name>` untuk subagent plugin.
+Subagent yang disediakan oleh [plugin](/id/plugins) yang diaktifkan muncul di typeahead dengan nama yang dibatasi, seperti `my-plugin:code-reviewer` atau `my-plugin:review:security` ketika plugin [mengorganisir agen ke dalam subfolder](#choose-the-subagent-scope). Subagent background bernama yang saat ini berjalan dalam sesi juga muncul di typeahead, menunjukkan status mereka di samping nama. Anda juga dapat mengetik mention secara manual tanpa menggunakan picker: `@agent-<name>` untuk subagent lokal, atau `@agent-` diikuti dengan nama yang dibatasi untuk subagent plugin, misalnya `@agent-my-plugin:code-reviewer`.
 
 **Jalankan seluruh sesi sebagai subagent.** Lewatkan [`--agent <name>`](/id/cli-reference) untuk memulai sesi di mana thread utama itu sendiri mengambil prompt sistem subagent, pembatasan alat, dan model:
 
@@ -650,7 +652,7 @@ Prompt sistem subagent menggantikan prompt sistem Claude Code default sepenuhnya
 
 Ini berfungsi dengan subagent bawaan dan khusus, dan pilihan bertahan ketika Anda melanjutkan sesi.
 
-Untuk subagent yang disediakan plugin, lewatkan nama yang dibatasi: `claude --agent <plugin-name>:<agent-name>`.
+Untuk subagent yang disediakan plugin, lewatkan nama yang dibatasi: `claude --agent <plugin-name>:<agent-name>`. Jika plugin menempatkan agen dalam subfolder dari direktori `agents/` nya, sertakan subfolder dalam nama yang dibatasi, misalnya `claude --agent my-plugin:review:security`.
 
 Untuk menjadikannya default untuk setiap sesi dalam proyek, atur `agent` dalam `.claude/settings.json`:
 

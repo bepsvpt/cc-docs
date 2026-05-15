@@ -50,14 +50,14 @@ CLI 또는 VS Code 확장에서 Remote Control 세션을 시작할 수 있습니
 
     사용 가능한 플래그:
 
-    | 플래그                                             | 설명                                                                                                                                                                                                                                                                                                                                                                                 |
-    | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | `--name "My Project"`                           | claude.ai/code의 세션 목록에 표시되는 사용자 정의 세션 제목을 설정합니다.                                                                                                                                                                                                                                                                                                                                   |
-    | `--remote-control-session-name-prefix <prefix>` | 명시적 이름이 설정되지 않았을 때 자동 생성된 세션 이름의 접두사입니다. 기본값은 컴퓨터의 호스트 이름이며, `myhost-graceful-unicorn`과 같은 이름을 생성합니다. 동일한 효과를 위해 `CLAUDE_REMOTE_CONTROL_SESSION_NAME_PREFIX`를 설정하세요.                                                                                                                                                                                                               |
-    | `--spawn <mode>`                                | 서버가 세션을 생성하는 방식입니다.<br />• `same-dir` (기본값): 모든 세션이 현재 작업 디렉토리를 공유하므로 동일한 파일을 편집할 때 충돌할 수 있습니다.<br />• `worktree`: 각 온디맨드 세션은 자체 [git worktree](/ko/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees)를 가져옵니다. git 저장소가 필요합니다.<br />• `session`: 단일 세션 모드입니다. 정확히 하나의 세션을 제공하고 추가 연결을 거부합니다. 시작 시에만 설정합니다.<br />런타임에 `w`를 눌러 `same-dir`과 `worktree` 사이를 전환하세요. |
-    | `--capacity <N>`                                | 최대 동시 세션 수입니다. 기본값은 32입니다. `--spawn=session`과 함께 사용할 수 없습니다.                                                                                                                                                                                                                                                                                                                       |
-    | `--verbose`                                     | 자세한 연결 및 세션 로그를 표시합니다.                                                                                                                                                                                                                                                                                                                                                             |
-    | `--sandbox` / `--no-sandbox`                    | 파일 시스템 및 네트워크 격리를 위해 [샌드박싱](/ko/sandboxing)을 활성화하거나 비활성화합니다. 기본적으로 꺼져 있습니다.                                                                                                                                                                                                                                                                                                        |
+    | 플래그                                             | 설명                                                                                                                                                                                                                                                                                                                     |
+    | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | `--name "My Project"`                           | claude.ai/code의 세션 목록에 표시되는 사용자 정의 세션 제목을 설정합니다.                                                                                                                                                                                                                                                                       |
+    | `--remote-control-session-name-prefix <prefix>` | 명시적 이름이 설정되지 않았을 때 자동 생성된 세션 이름의 접두사입니다. 기본값은 컴퓨터의 호스트 이름이며, `myhost-graceful-unicorn`과 같은 이름을 생성합니다. 동일한 효과를 위해 `CLAUDE_REMOTE_CONTROL_SESSION_NAME_PREFIX`를 설정하세요.                                                                                                                                                   |
+    | `--spawn <mode>`                                | 서버가 세션을 생성하는 방식입니다.<br />• `same-dir` (기본값): 모든 세션이 현재 작업 디렉토리를 공유하므로 동일한 파일을 편집할 때 충돌할 수 있습니다.<br />• `worktree`: 각 온디맨드 세션은 자체 [git worktree](/ko/worktrees)를 가져옵니다. git 저장소가 필요합니다.<br />• `session`: 단일 세션 모드입니다. 정확히 하나의 세션을 제공하고 추가 연결을 거부합니다. 시작 시에만 설정합니다.<br />런타임에 `w`를 눌러 `same-dir`과 `worktree` 사이를 전환하세요. |
+    | `--capacity <N>`                                | 최대 동시 세션 수입니다. 기본값은 32입니다. `--spawn=session`과 함께 사용할 수 없습니다.                                                                                                                                                                                                                                                           |
+    | `--verbose`                                     | 자세한 연결 및 세션 로그를 표시합니다.                                                                                                                                                                                                                                                                                                 |
+    | `--sandbox` / `--no-sandbox`                    | 파일 시스템 및 네트워크 격리를 위해 [샌드박싱](/ko/sandboxing)을 활성화하거나 비활성화합니다. 기본적으로 꺼져 있습니다.                                                                                                                                                                                                                                            |
   </Tab>
 
   <Tab title="대화형 세션">
@@ -113,7 +113,7 @@ Remote Control 세션이 활성화되면 다른 기기에서 연결하는 몇 �
 
 * **세션 URL 열기**: 모든 브라우저에서 URL을 열어 [claude.ai/code](https://claude.ai/code)의 세션으로 직접 이동합니다.
 * **QR 코드 스캔**: 세션 URL 옆에 표시된 QR 코드를 스캔하여 Claude 앱에서 직접 열 수 있습니다. `claude remote-control`을 사용하면 스페이스바를 눌러 QR 코드 표시를 전환할 수 있습니다.
-* **[claude.ai/code](https://claude.ai/code) 또는 Claude 앱 열기**: 세션 목록에서 이름으로 세션을 찾습니다. Remote Control 세션은 온라인 상태일 때 녹색 상태 점이 있는 컴퓨터 아이콘을 표시합니다.
+* **[claude.ai/code](https://claude.ai/code) 또는 Claude 앱 열기**: 세션 목록에서 이름으로 세션을 찾습니다. Claude 모바일 앱에서 네비게이션의 **코드**를 탭하여 세션 목록에 도달하세요. Remote Control 세션은 온라인 상태일 때 녹색 상태 점이 있는 컴퓨터 아이콘을 표시합니다.
 
 원격 세션 제목은 다음 순서로 선택됩니다:
 
@@ -130,7 +130,7 @@ Claude 앱이 아직 없으면 Claude Code 내에서 `/mobile` 명령을 사용�
 
 ### 모든 세션에 대해 Remote Control 활성화
 
-기본적으로 Remote Control은 `claude remote-control`, `claude --remote-control` 또는 `/remote-control`을 명시적으로 실행할 때만 활성화됩니다. 모든 대화형 세션에 대해 자동으로 활성화하려면 Claude Code 내에서 `/config`를 실행하고 **모든 세션에 대해 Remote Control 활성화**를 `true`로 설정하세요. 비활성화하려면 `false`로 다시 설정하세요.
+기본적으로 Remote Control은 `claude remote-control`, `claude --remote-control` 또는 `/remote-control`을 명시적으로 실행할 때만 활성화됩니다. 모든 대화형 세션에 대해 자동으로 활성화하려면 Claude Code 내에서 `/config`를 실행하고 **모든 세션에 대해 Remote Control 활성화**를 `true`로 설정하세요. 비활성화하려면 `false`로 다시 설정하세요. Desktop 앱에서는 **설정 → Claude Code → 기본적으로 원격 제어 활성화**에서도 전환할 수 있습니다.
 
 이 설정이 켜져 있으면 각 대화형 Claude Code 프로세스는 하나의 원격 세션을 등록합니다. 여러 인스턴스를 실행하면 각각 자체 환경 및 세션을 가져옵니다. 단일 프로세스에서 여러 동시 세션을 실행하려면 [서버 모드](#remote-control-세션-시작)를 대신 사용하세요.
 
@@ -215,11 +215,12 @@ claude.ai 계정으로 인증되지 않았습니다. `claude auth login`을 실�
 
 ### "Remote Control이 조직의 정책에 의해 비활성화되었습니다"
 
-이 오류에는 세 가지 서로 다른 원인이 있습니다. 먼저 `/status`를 실행하여 사용 중인 로그인 방법과 구독을 확인하세요.
+이 오류에는 네 가지 서로 다른 원인이 있습니다. 먼저 `/status`를 실행하여 사용 중인 로그인 방법과 구독을 확인하세요.
 
 * **API 키 또는 Console 계정으로 인증됨**: Remote Control은 claude.ai OAuth가 필요합니다. `/login`을 실행하고 claude.ai 옵션을 선택하세요. `ANTHROPIC_API_KEY`가 환경에 설정되어 있으면 설정을 해제하세요.
-* **Team 또는 Enterprise 관리자가 활성화하지 않음**: Remote Control은 이러한 요금제에서 기본적으로 꺼져 있습니다. 관리자는 [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code)에서 **Remote Control** 토글을 켜서 활성화할 수 있습니다. 이는 서버 측 조직 설정이며 [관리 전용 설정](/ko/permissions#managed-only-settings) 키가 아닙니다.
+* **Team 또는 Enterprise 관리자가 활성화하지 않음**: Remote Control은 이러한 요금제에서 기본적으로 꺼져 있습니다. 관리자는 [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code)에서 **Remote Control** 토글을 켜서 활성화할 수 있습니다. 이 토글은 서버 측 조직 설정입니다.
 * **관리자 토글이 회색으로 표시됨**: 조직에 Remote Control과 호환되지 않는 데이터 보존 또는 규정 준수 구성이 있습니다. 이는 관리자 패널에서 변경할 수 없습니다. Anthropic 지원팀에 문의하여 옵션을 논의하세요.
+* **오류에 `disableRemoteControl`이 언급됨**: IT 관리자가 조직 전체 토글과 무관하게 [관리 설정](/ko/settings#settings-files)을 통해 이 장치에서 Remote Control을 비활성화했습니다.
 
 ### "원격 자격 증명 가져오기 실패"
 

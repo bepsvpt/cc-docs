@@ -158,8 +158,6 @@ Il comando `/agents` apre un'interfaccia a schede per gestire i subagent. La sch
 
 Questo è il modo consigliato per creare e gestire i subagent. Per la creazione manuale o l'automazione, può anche aggiungere file subagent direttamente.
 
-Per elencare tutti i subagent configurati dalla riga di comando senza aprire la [visualizzazione agente](/it/agent-view), esegua il piping dell'output di `claude agents`. Ad esempio, `claude agents | cat` stampa gli agenti raggruppati per fonte e indica quali sono sovrascritti da definizioni di priorità più alta.
-
 ### Scelga l'ambito del subagent
 
 I subagent sono file Markdown con frontmatter YAML. Li archivi in posizioni diverse a seconda dell'ambito. Quando più subagent condividono lo stesso nome, la posizione con priorità più alta vince.
@@ -177,6 +175,10 @@ I **subagent di progetto** (`.claude/agents/`) sono ideali per subagent specific
 I subagent di progetto vengono scoperti camminando verso l'alto dalla directory di lavoro corrente. Le directory aggiunte con `--add-dir` [concedono solo l'accesso ai file](/it/permissions#additional-directories-grant-file-access-not-configuration) e non vengono scansionate per i subagent. Per condividere i subagent tra progetti, usi `~/.claude/agents/` o un [plugin](/it/plugins).
 
 I **subagent utente** (`~/.claude/agents/`) sono subagent personali disponibili in tutti i suoi progetti.
+
+Claude Code scansiona `.claude/agents/` e `~/.claude/agents/` ricorsivamente, quindi può organizzare le definizioni in sottocartelle come `agents/review/` o `agents/research/`. Il percorso della sottodirectory non influisce su come un subagent viene identificato o invocato, perché l'identità proviene solo dal campo frontmatter `name`. Mantenga i valori `name` univoci in tutto l'albero: se due file all'interno di un ambito dichiarano lo stesso nome, Claude Code ne mantiene uno e scarta l'altro senza avviso.
+
+Le directory `agents/` del plugin vengono scansionate anche ricorsivamente. A differenza degli ambiti di progetto e utente, una sottocartella all'interno della directory `agents/` di un plugin diventa parte dell'[identificatore con ambito](#invoke-subagents-explicitly): un file in `agents/review/security.md` nel plugin `my-plugin` si registra come `my-plugin:review:security`.
 
 I **subagent definiti da CLI** vengono passati come JSON quando avvia Claude Code. Esistono solo per quella sessione e non vengono salvati su disco, rendendoli utili per test rapidi o script di automazione. Può definire più subagent in una singola chiamata `--agents`:
 
@@ -638,7 +640,7 @@ Have the code-reviewer subagent look at my recent changes
 
 Il suo messaggio completo va ancora a Claude, che scrive il prompt dell'attività del subagent in base a quello che ha chiesto. L'@-mention controlla quale subagent Claude invoca, non quale prompt riceve.
 
-I subagent forniti da un [plugin](/it/plugins) abilitato appaiono nel typeahead come `<plugin-name>:<agent-name>`. I subagent in background denominati attualmente in esecuzione nella sessione appaiono anche nel typeahead, mostrando il loro stato accanto al nome. Può anche digitare la mention manualmente senza usare il picker: `@agent-<name>` per i subagent locali, o `@agent-<plugin-name>:<agent-name>` per i subagent plugin.
+I subagent forniti da un [plugin](/it/plugins) abilitato appaiono nel typeahead con il loro nome con ambito, come `my-plugin:code-reviewer` o `my-plugin:review:security` quando il plugin [organizza gli agenti in sottocartelle](#choose-the-subagent-scope). I subagent in background denominati attualmente in esecuzione nella sessione appaiono anche nel typeahead, mostrando il loro stato accanto al nome. Può anche digitare la mention manualmente senza usare il picker: `@agent-<name>` per i subagent locali, o `@agent-` seguito dal nome con ambito per i subagent plugin, ad esempio `@agent-my-plugin:code-reviewer`.
 
 **Esegua l'intera sessione come un subagent.** Passi [`--agent <name>`](/it/cli-reference) per avviare una sessione in cui il thread principale stesso assume il prompt di sistema, le restrizioni di strumenti e il modello di quel subagent:
 
@@ -650,7 +652,7 @@ Il prompt di sistema del subagent sostituisce completamente il prompt di sistema
 
 Questo funziona con i subagent integrati e personalizzati, e la scelta persiste quando riprende la sessione.
 
-Per un subagent fornito da un plugin, passi il nome con ambito: `claude --agent <plugin-name>:<agent-name>`.
+Per un subagent fornito da un plugin, passi il nome con ambito: `claude --agent <plugin-name>:<agent-name>`. Se il plugin posiziona l'agente in una sottocartella della sua directory `agents/`, includa la sottocartella nel nome con ambito, ad esempio `claude --agent my-plugin:review:security`.
 
 Per renderlo il predefinito per ogni sessione in un progetto, imposti `agent` in `.claude/settings.json`:
 

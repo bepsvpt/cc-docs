@@ -865,9 +865,12 @@ Untuk opsi konfigurasi lengkap dan penanganan respons, lihat [HTTP hooks](/id/ho
 ### Keterbatasan
 
 * Hook perintah berkomunikasi melalui stdout, stderr, dan kode keluar saja. Mereka tidak dapat memicu perintah `/` atau panggilan alat. Teks yang dikembalikan melalui `additionalContext` disuntikkan sebagai pengingat sistem yang Claude baca sebagai teks biasa. HTTP hooks berkomunikasi melalui badan respons sebagai gantinya.
-* Timeout hook adalah 10 menit secara default, dapat dikonfigurasi per hook dengan bidang `timeout` (dalam detik).
+* Timeout hook bervariasi menurut jenis. Timpa per hook dengan bidang `timeout` dalam detik.
+  * `command`, `http`, `mcp_tool`: 10 menit. `UserPromptSubmit` menurunkan ini menjadi 30 detik.
+  * `prompt`: 30 detik.
+  * `agent`: 60 detik.
 * Hook `PostToolUse` tidak dapat membatalkan tindakan karena alat sudah dieksekusi.
-* Hook `PermissionRequest` tidak aktif dalam [non-interactive mode](/id/headless) (`-p`). Gunakan hook `PreToolUse` untuk keputusan izin otomatis.
+* Hook `PermissionRequest` tidak aktif dalam [mode non-interaktif](/id/headless) (`-p`). Gunakan hook `PreToolUse` untuk keputusan izin otomatis.
 * Hook `Stop` aktif kapan pun Claude selesai merespons, bukan hanya pada penyelesaian tugas. Mereka tidak aktif pada interupsi pengguna. Kesalahan API menjalankan [StopFailure](/id/hooks#stopfailure) sebagai gantinya.
 * Ketika beberapa hook PreToolUse mengembalikan [`updatedInput`](/id/hooks#pretooluse) untuk menulis ulang argumen alat, yang terakhir selesai menang. Karena hooks berjalan secara paralel, urutannya tidak deterministik. Hindari memiliki lebih dari satu hook memodifikasi input alat yang sama.
 

@@ -28,23 +28,24 @@ Pressione `Esc` duas vezes (`Esc` + `Esc`) ou use o comando `/rewind` para abrir
 * **Restaurar conversa**: reverte para essa mensagem mantendo o código atual
 * **Restaurar código**: reverte as alterações de arquivo mantendo a conversa
 * **Resumir a partir daqui**: compacta a conversa a partir deste ponto em diante em um resumo, liberando espaço da context window
-* **Cancelar**: retorna à lista de mensagens sem fazer alterações
+* **Resumir até aqui**: compacta a conversa antes deste ponto em um resumo, mantendo as mensagens posteriores intactas
+* **Nunca importa**: retorna à lista de mensagens sem fazer alterações
 
-Após restaurar a conversa ou resumir, o prompt original da mensagem selecionada é restaurado no campo de entrada para que você possa reenviá-lo ou editá-lo.
+Após restaurar a conversa ou escolher Resumir a partir daqui, o prompt original da mensagem selecionada é restaurado no campo de entrada para que você possa reenviá-lo ou editá-lo.
+
+Escolher Resumir até aqui o deixa no final da conversa com a entrada vazia.
 
 #### Restaurar vs. resumir
 
-As três opções de restauração revertam o estado: elas desfazem alterações de código, histórico de conversa ou ambos. "Resumir a partir daqui" funciona de forma diferente:
+As opções de restauração revertam o estado: elas desfazem alterações de código, histórico de conversa ou ambos. As opções de resumo compactam parte da conversa em um resumo gerado por IA sem alterar arquivos no disco:
 
-* As mensagens antes da mensagem selecionada permanecem intactas
-* A mensagem selecionada e todas as mensagens subsequentes são substituídas por um resumo compacto gerado por IA
-* Nenhum arquivo no disco é alterado
-* As mensagens originais são preservadas na transcrição da sessão, para que Claude possa fazer referência aos detalhes se necessário
+* **Resumir a partir daqui**: as mensagens antes da mensagem selecionada permanecem intactas. A mensagem selecionada e tudo depois dela são substituídos por um resumo. Use isso para descartar uma discussão lateral mantendo o contexto inicial em detalhes completos.
+* **Resumir até aqui**: as mensagens antes da mensagem selecionada são substituídas por um resumo. A mensagem selecionada e tudo depois dela permanecem intactas, e você permanece no final da conversa. Use isso para compactar a discussão de configuração inicial mantendo o trabalho recente em detalhes completos.
 
-Isso é semelhante ao `/compact`, mas direcionado: em vez de resumir toda a conversa, você mantém o contexto inicial em detalhes completos e apenas compacta as partes que estão usando espaço. Você pode digitar instruções opcionais para orientar o que o resumo se concentra.
+Em ambos os casos, as mensagens originais são preservadas na transcrição da sessão, para que Claude possa fazer referência aos detalhes se necessário. Você pode digitar instruções opcionais para orientar o que o resumo se concentra. Isso é semelhante ao `/compact`, mas direcionado: em vez de resumir toda a conversa, você escolhe qual lado da mensagem selecionada compactar.
 
 <Note>
-  Resumir mantém você na mesma sessão e compacta o contexto. Se você quiser ramificar e tentar uma abordagem diferente enquanto preserva a sessão original intacta, use [fork](/pt/how-claude-code-works#resume-or-fork-sessions) em vez disso (`claude --continue --fork-session`).
+  Resumir mantém você na mesma sessão e compacta o contexto. Se você quiser ramificar e tentar uma abordagem diferente enquanto preserva a sessão original intacta, use [fork](/pt/sessions#branch-a-session) em vez disso (`claude --continue --fork-session`).
 </Note>
 
 ## Casos de uso comuns
@@ -85,5 +86,5 @@ Os checkpoints são projetados para recuperação rápida no nível da sessão. 
 ## Veja também
 
 * [Modo interativo](/pt/interactive-mode) - Atalhos de teclado e controles de sessão
-* [Comandos integrados](/pt/commands) - Acessando checkpoints usando `/rewind`
+* [Comandos](/pt/commands) - Acessando checkpoints usando `/rewind`
 * [Referência CLI](/pt/cli-reference) - Opções de linha de comando

@@ -458,7 +458,7 @@ claude mcp add --transport stdio db -- npx -y @bytebase/dbhub \
 
 許多雲端 MCP servers 需要驗證。Claude Code 支援 OAuth 2.0 以進行安全連接。
 
-Claude Code 會在 server 以 `401 Unauthorized` 和指向其授權 server 的 `WWW-Authenticate` 標頭回應時，將遠端 server 標記為需要驗證。任何傳回該回應的自訂 server 都會獲得與任何其他遠端 server 相同的 `/mcp` 驗證流程。
+Claude Code 會在 server 以 `401 Unauthorized` 或 `403 Forbidden` 回應時，將遠端 server 標記為需要驗證。任一狀態碼都會在 `/mcp` 中標記 server，以便您可以完成 OAuth 流程。傳回指向其授權 server 的 `WWW-Authenticate` 標頭的自訂 server 會獲得與任何其他遠端 server 相同的自動探索。
 
 <Steps>
   <Step title="新增需要驗證的 server">

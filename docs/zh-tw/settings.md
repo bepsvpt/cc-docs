@@ -533,7 +533,9 @@ your-repo-file-index --query "$query" | head -20
 
 ### 驗證使用中的設定
 
-在 Claude Code 內執行 `/status` 以查看哪些設定來源處於使用中以及它們來自何處。輸出顯示每個設定層（managed、使用者、專案）及其來源，例如 `Enterprise managed settings (remote)`、`Enterprise managed settings (plist)`、`Enterprise managed settings (HKLM)`、`Enterprise managed settings (HKCU)` 或 `Enterprise managed settings (file)`。如果設定檔案包含錯誤，`/status` 會報告問題，以便您可以修復它。
+在 Claude Code 內執行 `/status` 以查看哪些設定來源處於使用中。狀態標籤包含 `Setting sources` 行，列出 Claude Code 為目前工作階段載入的每一層，例如 `User settings` 或 `Project local settings`。當[managed 設定](/zh-TW/managed-settings)生效時，項目會在括號中顯示傳遞頻道，例如 `Enterprise managed settings (remote)`、`(plist)`、`(HKLM)`、`(HKCU)` 或 `(file)`。只有當該來源至少載入一個金鑰時，層級才會出現在清單中，因此空清單表示未找到任何設定來源。
+
+`Setting sources` 行確認正在讀取哪些來源。它不顯示哪一層提供了每個個別金鑰。同一對話框中的 Config 標籤是固定切換集（例如主題和詳細輸出）的編輯器，而不是您 `settings.json` 內容的檢視。如果設定檔案包含錯誤（例如無效的 JSON 或驗證失敗的值），`/status` 會報告問題，以便您可以修復它。
 
 ### 設定系統的關鍵要點
 

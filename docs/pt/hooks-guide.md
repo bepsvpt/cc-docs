@@ -865,7 +865,10 @@ Para opções de configuração completas e manipulação de resposta, consulte 
 ### Limitações
 
 * Hooks de comando se comunicam apenas através de stdout, stderr e códigos de saída. Eles não podem disparar comandos `/` ou chamadas de ferramenta. Texto retornado via `additionalContext` é injetado como um lembrete do sistema que Claude lê como texto simples. HTTP hooks se comunicam através do corpo da resposta em vez disso.
-* O timeout do hook é 10 minutos por padrão, configurável por hook com o campo `timeout` (em segundos).
+* Os timeouts do hook variam por tipo. Substitua por hook com o campo `timeout` em segundos.
+  * `command`, `http`, `mcp_tool`: 10 minutos. `UserPromptSubmit` reduz estes para 30 segundos.
+  * `prompt`: 30 segundos.
+  * `agent`: 60 segundos.
 * Hooks `PostToolUse` não podem desfazer ações já que a ferramenta já foi executada.
 * Hooks `PermissionRequest` não disparam em [modo não-interativo](/pt/headless) (`-p`). Use hooks `PreToolUse` para decisões de permissão automatizadas.
 * Hooks `Stop` disparam sempre que Claude termina de responder, não apenas na conclusão de tarefas. Eles não disparam em interrupções do usuário. Erros de API disparam [StopFailure](/pt/hooks#stopfailure) em vez disso.

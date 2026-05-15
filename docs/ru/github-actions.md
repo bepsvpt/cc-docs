@@ -156,6 +156,13 @@ jobs:
 
 ### Использование skills
 
+Входной параметр `prompt` принимает как [вызов skill](/ru/skills), так и простой текст:
+
+* Для skill в каталоге `.claude/skills/` вашего репозитория запустите `actions/checkout` перед шагом action и передайте `/skill-name`.
+* Для skill, упакованного в plugin, установите plugin с помощью входных параметров `plugin_marketplaces` и `plugins` и передайте `/plugin-name:skill-name` с пространством имён.
+
+Следующий рабочий процесс устанавливает plugin `code-review` и запускает его skill для каждого нового или обновлённого pull request:
+
 ```yaml theme={null}
 name: Code Review
 on:
@@ -168,8 +175,9 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: "Review this pull request for code quality, correctness, and security. Analyze the diff, then post your findings as review comments."
-          claude_args: "--max-turns 5"
+          plugin_marketplaces: "https://github.com/anthropics/claude-code.git"
+          plugins: "code-review@claude-code-plugins"
+          prompt: "/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
 ```
 
 ### Пользовательская автоматизация с prompts
@@ -621,15 +629,17 @@ Claude Code Action v1 упрощает конфигурацию с унифиц�
 
 Claude Code Action v1 использует упрощённую конфигурацию:
 
-| Параметр            | Описание                                                          | Требуется |
-| ------------------- | ----------------------------------------------------------------- | --------- |
-| `prompt`            | Инструкции для Claude (простой текст или имя [skill](/ru/skills)) | Нет\*     |
-| `claude_args`       | Аргументы CLI, передаваемые в Claude Code                         | Нет       |
-| `anthropic_api_key` | Claude API ключ                                                   | Да\*\*    |
-| `github_token`      | GitHub токен для доступа к API                                    | Нет       |
-| `trigger_phrase`    | Пользовательская фраза триггера (по умолчанию: "@claude")         | Нет       |
-| `use_bedrock`       | Использовать AWS Bedrock вместо Claude API                        | Нет       |
-| `use_vertex`        | Использовать Google Vertex AI вместо Claude API                   | Нет       |
+| Параметр              | Описание                                                                           | Требуется |
+| --------------------- | ---------------------------------------------------------------------------------- | --------- |
+| `prompt`              | Инструкции для Claude (простой текст или имя [skill](/ru/skills))                  | Нет\*     |
+| `claude_args`         | Аргументы CLI, передаваемые в Claude Code                                          | Нет       |
+| `plugin_marketplaces` | Список URL-адресов Git маркетплейсов плагинов, разделённый переносами строк        | Нет       |
+| `plugins`             | Список имён плагинов для установки перед выполнением, разделённый переносами строк | Нет       |
+| `anthropic_api_key`   | Claude API ключ                                                                    | Да\*\*    |
+| `github_token`        | GitHub токен для доступа к API                                                     | Нет       |
+| `trigger_phrase`      | Пользовательская фраза триггера (по умолчанию: "@claude")                          | Нет       |
+| `use_bedrock`         | Использовать Amazon Bedrock вместо Claude API                                      | Нет       |
+| `use_vertex`          | Использовать Google Vertex AI вместо Claude API                                    | Нет       |
 
 \*Prompt опционален — при пропуске для комментариев issue/PR, Claude отвечает на фразу триггера\
 \*\*Требуется для прямого Claude API, не требуется для Bedrock/Vertex

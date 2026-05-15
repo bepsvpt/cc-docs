@@ -861,8 +861,11 @@ HTTP hooks는 웹 서버, 클라우드 함수 또는 외부 서비스가 hook �
 
 ### 제한 사항
 
-* 명령 hooks는 stdout, stderr 및 종료 코드를 통해서만 통신합니다. 직접 `/` 명령이나 도구 호출을 트리거할 수 없습니다. `additionalContext`를 통해 반환된 텍스트는 Claude가 일반 텍스트로 읽는 시스템 알림으로 주입됩니다. HTTP hooks는 응답 본문을 통해 통신합니다.
-* Hook 타임아웃은 기본적으로 10분이며 `timeout` 필드(초 단위)로 hook당 구성 가능합니다.
+* 명령 hooks는 stdout, stderr 및 종료 코드를 통해서만 통신합니다. `/` 명령이나 도구 호출을 직접 트리거할 수 없습니다. `additionalContext`를 통해 반환된 텍스트는 Claude가 일반 텍스트로 읽는 시스템 알림으로 주입됩니다. HTTP hooks는 응답 본문을 통해 통신합니다.
+* Hook 타임아웃은 유형에 따라 다릅니다. `timeout` 필드(초 단위)로 hook당 재정의할 수 있습니다.
+  * `command`, `http`, `mcp_tool`: 10분. `UserPromptSubmit`은 이를 30초로 낮춥니다.
+  * `prompt`: 30초.
+  * `agent`: 60초.
 * `PostToolUse` hooks는 도구가 이미 실행되었으므로 작업을 취소할 수 없습니다.
 * `PermissionRequest` hooks는 [비대화형 모드](/ko/headless)(`-p`)에서 발생하지 않습니다. 자동화된 권한 결정을 위해 `PreToolUse` hooks를 사용합니다.
 * `Stop` hooks는 작업 완료 시에만이 아니라 Claude가 응답을 완료할 때마다 발생합니다. 사용자 중단 시에는 발생하지 않습니다. API 오류는 대신 [StopFailure](/ko/hooks#stopfailure)를 발생시킵니다.

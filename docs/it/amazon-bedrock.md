@@ -170,7 +170,10 @@ Le chiavi API Bedrock forniscono un metodo di autenticazione più semplice senza
 
 Claude Code supporta l'aggiornamento automatico delle credenziali per AWS SSO e provider di identità aziendali. Aggiungi queste impostazioni al file di impostazioni di Claude Code (vedi [Impostazioni](/it/settings) per i percorsi dei file).
 
-Quando Claude Code rileva che le tue credenziali AWS sono scadute (sia localmente in base al loro timestamp che quando Bedrock restituisce un errore di credenziale), eseguirà automaticamente i tuoi comandi `awsAuthRefresh` e/o `awsCredentialExport` configurati per ottenere nuove credenziali prima di riprovare la richiesta.
+Queste due impostazioni hanno diverse condizioni di attivazione:
+
+* **`awsAuthRefresh`**: viene eseguito solo quando Claude Code rileva che le tue credenziali AWS sono scadute, sia localmente in base al loro timestamp che quando Bedrock restituisce un errore di credenziale, quindi ritenta la richiesta con credenziali aggiornate.
+* **`awsCredentialExport`**: viene eseguito all'avvio della sessione e ad ogni ricaricamento delle credenziali, anche quando le credenziali nel tuo provider di credenziali predefinito di AWS sono ancora valide. Usa questo quando il tuo account Bedrock richiede credenziali tra account che differiscono da quelle che il provider predefinito risolverebbe.
 
 ##### Configurazione di esempio
 
@@ -187,7 +190,7 @@ Quando Claude Code rileva che le tue credenziali AWS sono scadute (sia localment
 
 **`awsAuthRefresh`**: Usa questo per i comandi che modificano la directory `.aws`, come l'aggiornamento delle credenziali, della cache SSO o dei file di configurazione. L'output del comando viene visualizzato all'utente, ma l'input interattivo non è supportato. Funziona bene per i flussi SSO basati su browser in cui la CLI visualizza un URL o un codice e completi l'autenticazione nel browser.
 
-**`awsCredentialExport`**: Usa questo solo se non puoi modificare `.aws` e devi restituire direttamente le credenziali. L'output viene acquisito silenziosamente e non mostrato all'utente. Il comando deve restituire JSON in questo formato:
+**`awsCredentialExport`**: Usa questo solo se non puoi modificare `.aws` e devi restituire direttamente le credenziali. Questo comando viene eseguito ogni volta che le credenziali devono essere aggiornate, non solo quando le credenziali sono scadute. L'output viene acquisito silenziosamente e non mostrato all'utente. Il comando deve restituire JSON in questo formato:
 
 ```json theme={null}
 {

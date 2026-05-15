@@ -2,7 +2,7 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# checkpointing
+# Checkpointing
 
 > 跟踪、回溯和总结 Claude 的编辑和对话以管理会话状态。
 
@@ -30,21 +30,21 @@ Claude Code 跟踪其文件编辑工具所做的所有更改：
 * **从此处总结**：将此点之后的对话压缩为摘要，释放 context window 空间
 * **算了**：返回消息列表而不做任何更改
 
-恢复对话或总结后，所选消息的原始提示会恢复到输入字段中，以便您可以重新发送或编辑它。
+恢复对话或选择"从此处总结"后，所选消息的原始提示会恢复到输入字段中，以便您可以重新发送或编辑它。
+
+选择"算了"会让您留在消息列表，输入字段为空。
 
 #### 恢复与总结
 
-三个恢复选项恢复状态：它们撤销代码更改、对话历史或两者。"从此处总结"的工作方式不同：
+恢复选项恢复状态：它们撤销代码更改、对话历史或两者。总结选项将对话的一部分压缩为 AI 生成的摘要，而不改变磁盘上的文件：
 
-* 所选消息之前的消息保持不变
-* 所选消息及其后的所有消息被替换为紧凑的 AI 生成的摘要
-* 磁盘上的文件不会改变
-* 原始消息保存在会话记录中，因此 Claude 可以在需要时参考详细信息
+* **从此处总结**：所选消息之前的消息保持不变。所选消息及其后的所有消息被替换为摘要。使用此选项可以放弃旁支讨论，同时保持早期上下文的完整细节。
+* **算了总结**：所选消息之前的消息被替换为摘要。所选消息及其后的所有消息保持不变，您留在对话的末尾。使用此选项可以压缩早期设置讨论，同时保持最近工作的完整细节。
 
-这类似于 `/compact`，但更有针对性：您不是总结整个对话，而是保持早期上下文的完整细节，只压缩占用空间的部分。您可以输入可选说明来指导摘要的重点。
+在这两种情况下，原始消息都保存在会话记录中，因此 Claude 可以在需要时参考详细信息。您可以输入可选说明来指导摘要的重点。这类似于 `/compact`，但更有针对性：您不是总结整个对话，而是选择所选消息的哪一侧进行压缩。
 
 <Note>
-  总结将您保持在同一会话中并压缩上下文。如果您想尝试不同的方法，同时保持原始会话完整，请改用 [fork](/zh-CN/how-claude-code-works#resume-or-fork-sessions)（`claude --continue --fork-session`）。
+  总结将您保持在同一会话中并压缩上下文。如果您想尝试不同的方法，同时保持原始会话完整，请改用 [fork](/zh-CN/sessions#branch-a-session)（`claude --continue --fork-session`）。
 </Note>
 
 ## 常见用例
@@ -85,5 +85,5 @@ Checkpoints 设计用于快速的会话级恢复。对于永久版本历史和�
 ## 另请参阅
 
 * [Interactive mode](/zh-CN/interactive-mode) - 快捷键和会话控制
-* [Built-in commands](/zh-CN/commands) - 使用 `/rewind` 访问 checkpoints
+* [Commands](/zh-CN/commands) - 使用 `/rewind` 访问 checkpoints
 * [CLI reference](/zh-CN/cli-reference) - 命令行选项

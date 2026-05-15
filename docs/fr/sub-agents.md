@@ -158,8 +158,6 @@ La commande `/agents` ouvre une interface à onglets pour gérer les sous-agents
 
 C'est la méthode recommandée pour créer et gérer les sous-agents. Pour la création manuelle ou l'automatisation, vous pouvez également ajouter des fichiers de sous-agent directement.
 
-Pour lister tous les sous-agents configurés à partir de la ligne de commande sans ouvrir la [vue agent](/fr/agent-view), redirigez la sortie de `claude agents`. Par exemple, `claude agents | cat` affiche les agents groupés par source et indique lesquels sont remplacés par des définitions de priorité plus élevée.
-
 ### Choisir la portée du sous-agent
 
 Les sous-agents sont des fichiers Markdown avec du frontmatter YAML. Stockez-les dans différents emplacements selon la portée. Lorsque plusieurs sous-agents partagent le même nom, l'emplacement de priorité plus élevée gagne.
@@ -177,6 +175,10 @@ Les sous-agents sont des fichiers Markdown avec du frontmatter YAML. Stockez-les
 Les sous-agents de projet sont découverts en remontant à partir du répertoire de travail actuel. Les répertoires ajoutés avec `--add-dir` [accordent uniquement l'accès aux fichiers](/fr/permissions#additional-directories-grant-file-access-not-configuration) et ne sont pas analysés pour les sous-agents. Pour partager les sous-agents entre les projets, utilisez `~/.claude/agents/` ou un [plugin](/fr/plugins).
 
 **Les sous-agents utilisateur** (`~/.claude/agents/`) sont des sous-agents personnels disponibles dans tous vos projets.
+
+Claude Code analyse `.claude/agents/` et `~/.claude/agents/` de manière récursive, vous pouvez donc organiser les définitions dans des sous-dossiers tels que `agents/review/` ou `agents/research/`. Le chemin du sous-répertoire n'affecte pas la façon dont un sous-agent est identifié ou invoqué, car l'identité provient uniquement du champ frontmatter `name`. Gardez les valeurs `name` uniques dans tout l'arborescence : si deux fichiers dans une même portée déclarent le même nom, Claude Code en conserve un et rejette l'autre sans avertissement.
+
+Les répertoires `agents/` des plugins sont également analysés de manière récursive. Contrairement aux portées de projet et utilisateur, un sous-dossier à l'intérieur du répertoire `agents/` d'un plugin devient partie de l'[identifiant limité](#invoke-subagents-explicitly) : un fichier à `agents/review/security.md` dans le plugin `my-plugin` s'enregistre comme `my-plugin:review:security`.
 
 **Les sous-agents définis par CLI** sont passés en JSON lors du lancement de Claude Code. Ils n'existent que pour cette session et ne sont pas enregistrés sur le disque, ce qui les rend utiles pour les tests rapides ou les scripts d'automatisation. Vous pouvez définir plusieurs sous-agents dans un seul appel `--agents` :
 
@@ -638,7 +640,7 @@ Have the code-reviewer subagent look at my recent changes
 
 Votre message complet va toujours à Claude, qui écrit l'invite de tâche du sous-agent en fonction de ce que vous avez demandé. La @-mention contrôle quel sous-agent Claude invoque, pas quelle invite il reçoit.
 
-Les sous-agents fournis par un [plugin](/fr/plugins) activé apparaissent dans la saisie semi-automatique comme `<plugin-name>:<agent-name>`. Les sous-agents d'arrière-plan nommés actuellement en cours d'exécution dans la session apparaissent également dans la saisie semi-automatique, affichant leur statut à côté du nom. Vous pouvez également taper la mention manuellement sans utiliser le sélecteur : `@agent-<name>` pour les sous-agents locaux, ou `@agent-<plugin-name>:<agent-name>` pour les sous-agents de plugin.
+Les sous-agents fournis par un [plugin](/fr/plugins) activé apparaissent dans la saisie semi-automatique sous leur nom délimité, comme `my-plugin:code-reviewer` ou `my-plugin:review:security` lorsque le plugin [organise les agents dans des sous-dossiers](#choose-the-subagent-scope). Les sous-agents d'arrière-plan nommés actuellement en cours d'exécution dans la session apparaissent également dans la saisie semi-automatique, affichant leur statut à côté du nom. Vous pouvez également taper la mention manuellement sans utiliser le sélecteur : `@agent-<name>` pour les sous-agents locaux, ou `@agent-` suivi du nom délimité pour les sous-agents de plugin, par exemple `@agent-my-plugin:code-reviewer`.
 
 **Exécutez la session entière en tant que sous-agent.** Passez [`--agent <name>`](/fr/cli-reference) pour démarrer une session où le thread principal lui-même prend l'invite système, les restrictions d'outils et le modèle de ce sous-agent :
 
@@ -650,7 +652,7 @@ L'invite système du sous-agent remplace complètement l'invite système par dé
 
 Cela fonctionne avec les sous-agents intégrés et personnalisés, et le choix persiste lorsque vous reprenez la session.
 
-Pour un sous-agent fourni par un plugin, passez le nom délimité : `claude --agent <plugin-name>:<agent-name>`.
+Pour un sous-agent fourni par un plugin, passez le nom délimité : `claude --agent <plugin-name>:<agent-name>`. Si le plugin place l'agent dans un sous-dossier de son répertoire `agents/`, incluez le sous-dossier dans le nom délimité, par exemple `claude --agent my-plugin:review:security`.
 
 Pour en faire la valeur par défaut pour chaque session dans un projet, définissez `agent` dans `.claude/settings.json` :
 

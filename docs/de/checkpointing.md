@@ -28,23 +28,23 @@ Drücken Sie `Esc` zweimal (`Esc` + `Esc`) oder verwenden Sie den `/rewind` Befe
 * **Konversation wiederherstellen**: Zurückspulen zu dieser Nachricht, während der aktuelle Code beibehalten wird
 * **Code wiederherstellen**: Dateiänderungen rückgängig machen, während die Konversation beibehalten wird
 * **Von hier aus zusammenfassen**: Komprimieren Sie die Konversation von diesem Punkt an in eine Zusammenfassung und geben Sie Kontextfensterplatz frei
-* **Abbrechen**: Kehren Sie zur Nachrichtenliste zurück, ohne Änderungen vorzunehmen
+* **Nie Sinn**: Kehren Sie zur Nachrichtenliste zurück, ohne Änderungen vorzunehmen
 
-Nach dem Wiederherstellen der Konversation oder dem Zusammenfassen wird die ursprüngliche Eingabe aus der ausgewählten Nachricht in das Eingabefeld wiederhergestellt, sodass Sie sie erneut senden oder bearbeiten können.
+Nach dem Wiederherstellen der Konversation oder dem Auswählen von „Von hier aus zusammenfassen" wird die ursprüngliche Eingabe aus der ausgewählten Nachricht in das Eingabefeld wiederhergestellt, sodass Sie sie erneut senden oder bearbeiten können.
+
+Das Auswählen von „Bis hier zusammenfassen" hinterlässt Sie am Ende der Konversation mit leerem Eingabefeld.
 
 #### Wiederherstellen vs. zusammenfassen
 
-Die drei Wiederherstellungsoptionen setzen den Zustand zurück: Sie machen Code-Änderungen, Konversationsverlauf oder beides rückgängig. „Von hier aus zusammenfassen" funktioniert anders:
+Die Wiederherstellungsoptionen setzen den Zustand zurück: Sie machen Code-Änderungen, Konversationsverlauf oder beides rückgängig. Die Zusammenfassungsoptionen komprimieren einen Teil der Konversation in eine KI-generierte Zusammenfassung, ohne Dateien auf der Festplatte zu ändern:
 
-* Nachrichten vor der ausgewählten Nachricht bleiben intakt
-* Die ausgewählte Nachricht und alle nachfolgenden Nachrichten werden durch eine kompakte KI-generierte Zusammenfassung ersetzt
-* Keine Dateien auf der Festplatte werden geändert
-* Die ursprünglichen Nachrichten bleiben im Sitzungstranskript erhalten, sodass Claude die Details bei Bedarf referenzieren kann
+* **Von hier aus zusammenfassen**: Nachrichten vor der ausgewählten Nachricht bleiben intakt. Die ausgewählte Nachricht und alles danach werden durch eine Zusammenfassung ersetzt. Verwenden Sie dies, um eine Nebendiskussion zu verwerfen, während Sie frühen Kontext in vollem Detail behalten.
+* **Bis hier zusammenfassen**: Nachrichten vor der ausgewählten Nachricht werden durch eine Zusammenfassung ersetzt. Die ausgewählte Nachricht und alles danach bleiben intakt, und Sie bleiben am Ende der Konversation. Verwenden Sie dies, um frühe Setup-Diskussionen zu komprimieren, während Sie aktuelle Arbeit in vollem Detail behalten.
 
-Dies ähnelt `/compact`, ist aber gezielt: Anstatt die gesamte Konversation zusammenzufassen, behalten Sie frühen Kontext in vollem Detail und komprimieren nur die Teile, die Platz verbrauchen. Sie können optionale Anweisungen eingeben, um zu lenken, worauf sich die Zusammenfassung konzentriert.
+In beiden Fällen werden die ursprünglichen Nachrichten im Sitzungstranskript beibehalten, sodass Claude die Details bei Bedarf referenzieren kann. Sie können optionale Anweisungen eingeben, um zu lenken, worauf sich die Zusammenfassung konzentriert. Dies ähnelt `/compact`, ist aber gezielt: Anstatt die gesamte Konversation zusammenzufassen, wählen Sie, welche Seite der ausgewählten Nachricht komprimiert werden soll.
 
 <Note>
-  Zusammenfassen hält Sie in derselben Sitzung und komprimiert Kontext. Wenn Sie abzweigen und einen anderen Ansatz versuchen möchten, während Sie die ursprüngliche Sitzung intakt bewahren, verwenden Sie stattdessen [fork](/de/how-claude-code-works#resume-or-fork-sessions) (`claude --continue --fork-session`).
+  Zusammenfassen hält Sie in derselben Sitzung und komprimiert Kontext. Wenn Sie abzweigen und einen anderen Ansatz versuchen möchten, während Sie die ursprüngliche Sitzung intakt bewahren, verwenden Sie stattdessen [fork](/de/sessions#branch-a-session) (`claude --continue --fork-session`).
 </Note>
 
 ## Häufige Anwendungsfälle
@@ -85,5 +85,5 @@ Checkpoints sind für schnelle, sitzungsebene Wiederherstellung konzipiert. Für
 ## Siehe auch
 
 * [Interaktiver Modus](/de/interactive-mode) - Tastaturkürzel und Sitzungssteuerungen
-* [Integrierte Befehle](/de/commands) - Zugriff auf Checkpoints mit `/rewind`
+* [Befehle](/de/commands) - Zugriff auf Checkpoints mit `/rewind`
 * [CLI-Referenz](/de/cli-reference) - Befehlszeilenoptionen

@@ -158,8 +158,6 @@ El comando `/agents` abre una interfaz con pestañas para administrar subagentes
 
 Esta es la forma recomendada de crear y administrar subagentes. Para creación manual o automatización, también puede agregar archivos de subagentes directamente.
 
-Para enumerar todos los subagentes configurados desde la línea de comandos sin abrir [agent view](/es/agent-view), canalice la salida de `claude agents`. Por ejemplo, `claude agents | cat` imprime agentes agrupados por fuente e indica cuáles se anulan por definiciones de mayor prioridad.
-
 ### Elegir el alcance del subagente
 
 Los subagentes son archivos Markdown con frontmatter YAML. Guárdelos en diferentes ubicaciones según el alcance. Cuando múltiples subagentes comparten el mismo nombre, la ubicación de mayor prioridad gana.
@@ -174,9 +172,13 @@ Los subagentes son archivos Markdown con frontmatter YAML. Guárdelos en diferen
 
 **Los subagentes de proyecto** (`.claude/agents/`) son ideales para subagentes específicos de una base de código. Verifíquelos en control de versiones para que su equipo pueda usarlos y mejorarlos colaborativamente.
 
-Los subagentes se descubren caminando hacia arriba desde el directorio de trabajo actual. Los directorios agregados con `--add-dir` [otorgan acceso a archivos solamente](/es/permissions#additional-directories-grant-file-access-not-configuration) y no se escanean para subagentes. Para compartir subagentes entre proyectos, use `~/.claude/agents/` o un [plugin](/es/plugins).
+Los subagentes de proyecto se descubren caminando hacia arriba desde el directorio de trabajo actual. Los directorios agregados con `--add-dir` [otorgan acceso a archivos solamente](/es/permissions#additional-directories-grant-file-access-not-configuration) y no se escanean para subagentes. Para compartir subagentes entre proyectos, use `~/.claude/agents/` o un [plugin](/es/plugins).
 
 **Los subagentes de usuario** (`~/.claude/agents/`) son subagentes personales disponibles en todos sus proyectos.
+
+Claude Code escanea `.claude/agents/` y `~/.claude/agents/` recursivamente, por lo que puede organizar definiciones en subcarpetas como `agents/review/` o `agents/research/`. La ruta del subdirectorio no afecta cómo se identifica o invoca un subagente, porque la identidad proviene solo del campo `name` del frontmatter. Mantenga los valores de `name` únicos en todo el árbol: si dos archivos dentro de un alcance declaran el mismo nombre, Claude Code mantiene uno y descarta el otro sin advertencia.
+
+Los directorios `agents/` de plugins también se escanean recursivamente. A diferencia de los alcances de proyecto y usuario, una subcarpeta dentro del directorio `agents/` de un plugin se convierte en parte del [identificador con alcance](#invoke-subagents-explicitly): un archivo en `agents/review/security.md` en el plugin `my-plugin` se registra como `my-plugin:review:security`.
 
 **Los subagentes definidos por CLI** se pasan como JSON al lanzar Claude Code. Existen solo para esa sesión y no se guardan en disco, lo que los hace útiles para pruebas rápidas o scripts de automatización. Puede definir múltiples subagentes en una única llamada `--agents`:
 
@@ -638,7 +640,7 @@ Have the code-reviewer subagent look at my recent changes
 
 Su mensaje completo aún va a Claude, que escribe el mensaje de tarea del subagente basado en lo que pidió. El @-mention controla qué subagente Claude invoca, no qué mensaje recibe.
 
-Los subagentes proporcionados por un [plugin](/es/plugins) habilitado aparecen en el typeahead como `<plugin-name>:<agent-name>`. Los subagentes de fondo nombrados actualmente en ejecución en la sesión también aparecen en el typeahead, mostrando su estado junto al nombre. También puede escribir la mención manualmente sin usar el selector: `@agent-<name>` para subagentes locales, o `@agent-<plugin-name>:<agent-name>` para subagentes de plugin.
+Los subagentes proporcionados por un [plugin](/es/plugins) habilitado aparecen en el typeahead bajo su nombre con alcance, como `my-plugin:code-reviewer` o `my-plugin:review:security` cuando el plugin [organiza agentes en subcarpetas](#choose-the-subagent-scope). Los subagentes de fondo nombrados actualmente en ejecución en la sesión también aparecen en el typeahead, mostrando su estado junto al nombre. También puede escribir la mención manualmente sin usar el selector: `@agent-<name>` para subagentes locales, o `@agent-` seguido del nombre con alcance para subagentes de plugin, por ejemplo `@agent-my-plugin:code-reviewer`.
 
 **Ejecute toda la sesión como un subagente.** Pase [`--agent <name>`](/es/cli-reference) para iniciar una sesión donde el hilo principal en sí toma el mensaje del sistema del subagente, restricciones de herramientas y modelo:
 
@@ -650,7 +652,7 @@ El mensaje del sistema del subagente reemplaza completamente el mensaje del sist
 
 Esto funciona con subagentes integrados y personalizados, y la opción persiste cuando reanuda la sesión.
 
-Para un subagente proporcionado por plugin, pase el nombre con alcance: `claude --agent <plugin-name>:<agent-name>`.
+Para un subagente proporcionado por plugin, pase el nombre con alcance: `claude --agent <plugin-name>:<agent-name>`. Si el plugin coloca el agente en una subcarpeta de su directorio `agents/`, incluya la subcarpeta en el nombre con alcance, por ejemplo `claude --agent my-plugin:review:security`.
 
 Para hacerlo el predeterminado para cada sesión en un proyecto, establezca `agent` en `.claude/settings.json`:
 

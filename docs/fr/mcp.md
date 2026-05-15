@@ -458,7 +458,7 @@ Trouver les clients qui n'ont pas effectué d'achat depuis 90 jours
 
 De nombreux serveurs MCP basés sur le cloud nécessitent une authentification. Claude Code supporte OAuth 2.0 pour les connexions sécurisées.
 
-Claude Code marque un serveur distant comme nécessitant une authentification lorsque le serveur répond avec `401 Unauthorized` et un en-tête `WWW-Authenticate` pointant vers son serveur d'autorisation. Tout serveur personnalisé qui retourne cette réponse obtient le même flux d'authentification `/mcp` que tout autre serveur distant.
+Claude Code marque un serveur distant comme nécessitant une authentification lorsque le serveur répond avec `401 Unauthorized` ou `403 Forbidden`. L'un ou l'autre code de statut signale le serveur dans `/mcp` afin que vous puissiez compléter le flux OAuth. Un serveur personnalisé qui retourne un en-tête `WWW-Authenticate` pointant vers son serveur d'autorisation obtient la même découverte automatique que tout autre serveur distant.
 
 <Steps>
   <Step title="Ajouter le serveur qui nécessite une authentification">

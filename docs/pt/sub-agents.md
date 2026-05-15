@@ -158,8 +158,6 @@ O comando `/agents` abre uma interface com abas para gerenciar subagentes. A aba
 
 Esta é a forma recomendada de criar e gerenciar subagentes. Para criação manual ou automação, você também pode adicionar arquivos de subagente diretamente.
 
-Para listar todos os subagentes configurados da linha de comando sem abrir a [visualização de agente](/pt/agent-view), redirecione a saída de `claude agents`. Por exemplo, `claude agents | cat` imprime agentes agrupados por fonte e indica quais são substituídos por definições de prioridade mais alta.
-
 ### Escolher o escopo do subagente
 
 Subagentes são arquivos Markdown com frontmatter YAML. Armazene-os em locais diferentes dependendo do escopo. Quando múltiplos subagentes compartilham o mesmo nome, o local de prioridade mais alta vence.
@@ -177,6 +175,10 @@ Subagentes são arquivos Markdown com frontmatter YAML. Armazene-os em locais di
 Subagentes de projeto são descobertos caminhando para cima a partir do diretório de trabalho atual. Diretórios adicionados com `--add-dir` [concedem apenas acesso a arquivos](/pt/permissions#additional-directories-grant-file-access-not-configuration) e não são verificados para subagentes. Para compartilhar subagentes entre projetos, use `~/.claude/agents/` ou um [plugin](/pt/plugins).
 
 **Subagentes de usuário** (`~/.claude/agents/`) são subagentes pessoais disponíveis em todos os seus projetos.
+
+Claude Code verifica `.claude/agents/` e `~/.claude/agents/` recursivamente, para que você possa organizar definições em subpastas como `agents/review/` ou `agents/research/`. O caminho do subdiretório não afeta como um subagente é identificado ou invocado, porque a identidade vem apenas do campo `name` do frontmatter. Mantenha valores de `name` únicos em toda a árvore: se dois arquivos dentro de um escopo declaram o mesmo nome, Claude Code mantém um e descarta o outro sem aviso.
+
+Diretórios `agents/` de plugin também são verificados recursivamente. Diferentemente dos escopos de projeto e usuário, uma subpasta dentro do diretório `agents/` de um plugin se torna parte do [identificador com escopo](#invoke-subagents-explicitly): um arquivo em `agents/review/security.md` no plugin `my-plugin` se registra como `my-plugin:review:security`.
 
 **Subagentes definidos por CLI** são passados como JSON ao iniciar Claude Code. Eles existem apenas para essa sessão e não são salvos em disco, tornando-os úteis para testes rápidos ou scripts de automação. Você pode definir múltiplos subagentes em uma única chamada `--agents`:
 
@@ -638,7 +640,7 @@ Have the code-reviewer subagent look at my recent changes
 
 Sua mensagem completa ainda vai para Claude, que escreve o prompt de tarefa do subagente baseado no que você pediu. O @-mention controla qual subagente Claude invoca, não qual prompt ele recebe.
 
-Subagentes fornecidos por um [plugin](/pt/plugins) habilitado aparecem no typeahead como `<plugin-name>:<agent-name>`. Subagentes em background nomeados atualmente em execução na sessão também aparecem no typeahead, mostrando seu status ao lado do nome. Você também pode digitar a menção manualmente sem usar o picker: `@agent-<name>` para subagentes locais, ou `@agent-<plugin-name>:<agent-name>` para subagentes de plugin.
+Subagentes fornecidos por um [plugin](/pt/plugins) habilitado aparecem no typeahead sob seu nome com escopo, como `my-plugin:code-reviewer` ou `my-plugin:review:security` quando o plugin [organiza agentes em subpastas](#choose-the-subagent-scope). Subagentes em background nomeados atualmente em execução na sessão também aparecem no typeahead, mostrando seu status ao lado do nome. Você também pode digitar a menção manualmente sem usar o picker: `@agent-<name>` para subagentes locais, ou `@agent-` seguido pelo nome com escopo para subagentes de plugin, por exemplo `@agent-my-plugin:code-reviewer`.
 
 **Execute toda a sessão como um subagente.** Passe [`--agent <name>`](/pt/cli-reference) para iniciar uma sessão onde a thread principal em si assume o prompt de sistema, restrições de ferramentas e modelo do subagente:
 
@@ -650,7 +652,7 @@ O prompt de sistema do subagente substitui completamente o prompt de sistema pad
 
 Isso funciona com subagentes integrados e personalizados, e a escolha persiste quando você retoma a sessão.
 
-Para um subagente fornecido por plugin, passe o nome com escopo: `claude --agent <plugin-name>:<agent-name>`.
+Para um subagente fornecido por plugin, passe o nome com escopo: `claude --agent <plugin-name>:<agent-name>`. Se o plugin coloca o agente em uma subpasta de seu diretório `agents/`, inclua a subpasta no nome com escopo, por exemplo `claude --agent my-plugin:review:security`.
 
 Para torná-lo o padrão para cada sessão em um projeto, defina `agent` em `.claude/settings.json`:
 

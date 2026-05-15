@@ -50,14 +50,14 @@ Remote Control 将 [claude.ai/code](https://claude.ai/code) 或 Claude 应用（
 
     可用标志：
 
-    | 标志                                              | 描述                                                                                                                                                                                                                                                                                                     |
-    | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-    | `--name "My Project"`                           | 设置自定义会话标题，在 claude.ai/code 的会话列表中可见。                                                                                                                                                                                                                                                                   |
-    | `--remote-control-session-name-prefix <prefix>` | 未设置显式名称时自动生成的会话名称的前缀。默认为您的机器的主机名，生成类似 `myhost-graceful-unicorn` 的名称。设置 `CLAUDE_REMOTE_CONTROL_SESSION_NAME_PREFIX` 以获得相同效果。                                                                                                                                                                            |
-    | `--spawn <mode>`                                | 服务器如何创建会话。<br />• `same-dir`（默认）：所有会话共享当前工作目录，因此如果编辑相同的文件可能会冲突。<br />• `worktree`：每个按需会话都获得自己的 [git worktree](/zh-CN/common-workflows#run-parallel-claude-code-sessions-with-git-worktrees)。需要 git 存储库。<br />• `session`：单会话模式。恰好提供一个会话并拒绝其他连接。仅在启动时设置。<br />在运行时按 `w` 在 `same-dir` 和 `worktree` 之间切换。 |
-    | `--capacity <N>`                                | 最大并发会话数。默认为 32。不能与 `--spawn=session` 一起使用。                                                                                                                                                                                                                                                             |
-    | `--verbose`                                     | 显示详细的连接和会话日志。                                                                                                                                                                                                                                                                                          |
-    | `--sandbox` / `--no-sandbox`                    | 启用或禁用[沙箱](/zh-CN/sandboxing)以进行文件系统和网络隔离。默认关闭。                                                                                                                                                                                                                                                         |
+    | 标志                                              | 描述                                                                                                                                                                                                                                         |
+    | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+    | `--name "My Project"`                           | 设置自定义会话标题，在 claude.ai/code 的会话列表中可见。                                                                                                                                                                                                       |
+    | `--remote-control-session-name-prefix <prefix>` | 未设置显式名称时自动生成的会话名称的前缀。默认为您的机器的主机名，生成类似 `myhost-graceful-unicorn` 的名称。设置 `CLAUDE_REMOTE_CONTROL_SESSION_NAME_PREFIX` 以获得相同效果。                                                                                                                |
+    | `--spawn <mode>`                                | 服务器如何创建会话。<br />• `same-dir`（默认）：所有会话共享当前工作目录，因此如果编辑相同的文件可能会冲突。<br />• `worktree`：每个按需会话都获得自己的 [git worktree](/zh-CN/worktrees)。需要 git 存储库。<br />• `session`：单会话模式。恰好提供一个会话并拒绝其他连接。仅在启动时设置。<br />在运行时按 `w` 在 `same-dir` 和 `worktree` 之间切换。 |
+    | `--capacity <N>`                                | 最大并发会话数。默认为 32。不能与 `--spawn=session` 一起使用。                                                                                                                                                                                                 |
+    | `--verbose`                                     | 显示详细的连接和会话日志。                                                                                                                                                                                                                              |
+    | `--sandbox` / `--no-sandbox`                    | 启用或禁用[沙箱](/zh-CN/sandboxing)以进行文件系统和网络隔离。默认关闭。                                                                                                                                                                                             |
   </Tab>
 
   <Tab title="交互式会话">
@@ -113,7 +113,7 @@ Remote Control 将 [claude.ai/code](https://claude.ai/code) 或 Claude 应用（
 
 * **打开会话 URL** 在任何浏览器中直接转到 [claude.ai/code](https://claude.ai/code) 上的会话。
 * **扫描 QR 码** 显示在会话 URL 旁边，直接在 Claude 应用中打开它。使用 `claude remote-control` 时，按空格键切换 QR 码显示。
-* **打开 [claude.ai/code](https://claude.ai/code) 或 Claude 应用** 并在会话列表中按名称查找会话。Remote Control 会话在在线时显示带有绿色状态点的计算机图标。
+* **打开 [claude.ai/code](https://claude.ai/code) 或 Claude 应用** 并在会话列表中按名称查找会话。在 Claude 移动应用中，点击导航中的**代码**以访问会话列表。Remote Control 会话在在线时显示带有绿色状态点的计算机图标。
 
 远程会话标题按以下顺序选择：
 
@@ -130,7 +130,7 @@ Remote Control 将 [claude.ai/code](https://claude.ai/code) 或 Claude 应用（
 
 ### 为所有会话启用 Remote Control
 
-默认情况下，Remote Control 仅在您显式运行 `claude remote-control`、`claude --remote-control` 或 `/remote-control` 时激活。要为每个交互式会话自动启用它，请在 Claude Code 中运行 `/config` 并将**为所有会话启用 Remote Control** 设置为 `true`。将其设置回 `false` 以禁用。
+默认情况下，Remote Control 仅在您显式运行 `claude remote-control`、`claude --remote-control` 或 `/remote-control` 时激活。要为每个交互式会话自动启用它，请在 Claude Code 中运行 `/config` 并将**为所有会话启用 Remote Control** 设置为 `true`。将其设置回 `false` 以禁用。在桌面应用中，您也可以从**设置 → Claude Code → 默认启用远程控制**切换此选项。
 
 启用此设置后，每个交互式 Claude Code 进程注册一个远程会话。如果您运行多个实例，每个实例都获得自己的环境和会话。要从单个进程运行多个并发会话，请改用[服务器模式](#start-a-remote-control-session)。
 
@@ -215,11 +215,12 @@ Claude 决定何时推送。它通常在长时间运行的任务完成或需要�
 
 ### "Remote Control 被您的组织的策略禁用"
 
-此错误有三个不同的原因。首先运行 `/status` 以查看您使用的登录方法和订阅。
+此错误有四个不同的原因。首先运行 `/status` 以查看您使用的登录方法和订阅。
 
 * **您使用 API 密钥或 Console 账户进行身份验证**：Remote Control 需要 claude.ai OAuth。运行 `/login` 并选择 claude.ai 选项。如果在您的环境中设置了 `ANTHROPIC_API_KEY`，请取消设置它。
-* **您的 Team 或 Enterprise 管理员尚未启用它**：Remote Control 在这些计划上默认处于关闭状态。管理员可以在 [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code) 通过打开 **Remote Control** 切换来启用它。这是一个服务器端组织设置，不是[仅管理设置](/zh-CN/permissions#managed-only-settings)密钥。
+* **您的 Team 或 Enterprise 管理员尚未启用它**：Remote Control 在这些计划上默认处于关闭状态。管理员可以在 [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code) 通过打开 **Remote Control** 切换来启用它。此切换是服务器端组织设置。
 * **管理员切换呈灰色**：您的组织有数据保留或合规配置与 Remote Control 不兼容。这无法从管理面板更改。请联系 Anthropic 支持以讨论选项。
+* **错误提及 `disableRemoteControl`**：您的 IT 管理员已通过[托管设置](/zh-CN/settings#settings-files)在此设备上禁用了 Remote Control，独立于组织范围的切换。
 
 ### "Remote credentials fetch failed"
 

@@ -780,7 +780,7 @@ Jika sesi baru gagal dimulai dengan `Session creation failed` atau macet di prov
 
 ### Sesi Remote Control kedaluwarsa atau akses ditolak
 
-`--teleport` terhubung melalui infrastruktur sesi Remote Control yang sama yang digunakan sesi cloud, jadi kesalahan autentikasi dan kedaluwarsa sesi muncul dengan wording Remote Control. Anda mungkin melihat `Remote Control session has expired` atau `Access denied`. Token koneksi berumur pendek dan dibatasi pada akun Anda.
+`--teleport` terhubung melalui infrastruktur sesi Remote Control yang sama yang digunakan sesi cloud, jadi kesalahan autentikasi dan kedaluwarsa sesi muncul dengan wording Remote Control. Anda mungkin melihat `Remote Control session expired` atau `Access denied`. Token koneksi berumur pendek dan dibatasi pada akun Anda.
 
 * Jalankan `/login` secara lokal untuk menyegarkan kredensial Anda, kemudian sambungkan kembali
 * Konfirmasi Anda masuk ke akun yang sama yang memiliki sesi

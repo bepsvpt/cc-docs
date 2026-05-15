@@ -156,6 +156,13 @@ jobs:
 
 ### skills 사용
 
+`prompt` 입력은 [skill](/ko/skills) 호출뿐만 아니라 일반 텍스트도 허용합니다:
+
+* 저장소의 `.claude/skills/` 디렉토리에 있는 skill의 경우, 작업 단계 전에 `actions/checkout`을 실행하고 `/skill-name`을 전달합니다.
+* 플러그인에 패키징된 skill의 경우, `plugin_marketplaces` 및 `plugins` 입력으로 플러그인을 설치하고 네임스페이스가 지정된 `/plugin-name:skill-name`을 전달합니다.
+
+다음 워크플로우는 `code-review` 플러그인을 설치하고 각 새로운 또는 업데이트된 pull request에서 해당 skill을 실행합니다:
+
 ```yaml theme={null}
 name: Code Review
 on:
@@ -168,8 +175,9 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: "Review this pull request for code quality, correctness, and security. Analyze the diff, then post your findings as review comments."
-          claude_args: "--max-turns 5"
+          plugin_marketplaces: "https://github.com/anthropics/claude-code.git"
+          plugins: "code-review@claude-code-plugins"
+          prompt: "/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
 ```
 
 ### 프롬프트를 사용한 사용자 정의 자동화
@@ -621,15 +629,17 @@ API 키가 유효하고 충분한 권한이 있는지 확인합니다. Bedrock/V
 
 Claude Code Action v1은 단순화된 구성을 사용합니다:
 
-| 파라미터                | 설명                                               | 필수    |
-| ------------------- | ------------------------------------------------ | ----- |
-| `prompt`            | Claude에 대한 지침 (일반 텍스트 또는 [skill](/ko/skills) 이름) | 아니오\* |
-| `claude_args`       | Claude Code에 전달된 CLI 인수                          | 아니오   |
-| `anthropic_api_key` | Claude API 키                                     | 예\*\* |
-| `github_token`      | API 액세스용 GitHub 토큰                               | 아니오   |
-| `trigger_phrase`    | 사용자 정의 트리거 구문 (기본값: "@claude")                   | 아니오   |
-| `use_bedrock`       | Claude API 대신 Amazon Bedrock 사용                  | 아니오   |
-| `use_vertex`        | Claude API 대신 Google Vertex AI 사용                | 아니오   |
+| 파라미터                  | 설명                                               | 필수    |
+| --------------------- | ------------------------------------------------ | ----- |
+| `prompt`              | Claude에 대한 지침 (일반 텍스트 또는 [skill](/ko/skills) 이름) | 아니오\* |
+| `claude_args`         | Claude Code에 전달된 CLI 인수                          | 아니오   |
+| `plugin_marketplaces` | 플러그인 마켓플레이스 Git URL의 줄 바꿈으로 구분된 목록               | 아니오   |
+| `plugins`             | 실행 전에 설치할 플러그인 이름의 줄 바꿈으로 구분된 목록                 | 아니오   |
+| `anthropic_api_key`   | Claude API 키                                     | 예\*\* |
+| `github_token`        | API 액세스용 GitHub 토큰                               | 아니오   |
+| `trigger_phrase`      | 사용자 정의 트리거 구문 (기본값: "@claude")                   | 아니오   |
+| `use_bedrock`         | Claude API 대신 Amazon Bedrock 사용                  | 아니오   |
+| `use_vertex`          | Claude API 대신 Google Vertex AI 사용                | 아니오   |
 
 \*프롬프트는 선택 사항입니다. 이슈/PR 댓글에서 생략하면 Claude는 트리거 구문에 응답합니다\
 \*\*직접 Claude API에 필수이며, Bedrock/Vertex에는 필수가 아닙니다

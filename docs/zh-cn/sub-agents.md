@@ -158,8 +158,6 @@ Subagents 在带有 YAML frontmatter 的 Markdown 文件中定义。您可以 [�
 
 这是创建和管理 subagents 的推荐方式。对于手动创建或自动化，您也可以直接添加 subagent 文件。
 
-要从命令行列出所有配置的 subagents 而不打开 [agent view](/zh-CN/agent-view)，请使用管道输出 `claude agents`。例如，`claude agents | cat` 打印按来源分组的代理，并指示哪些被更高优先级的定义覆盖。
-
 ### 选择 subagent 范围
 
 Subagents 是带有 YAML frontmatter 的 Markdown 文件。根据范围将它们存储在不同的位置。当多个 subagents 共享相同的名称时，更高优先级的位置获胜。
@@ -177,6 +175,10 @@ Subagents 是带有 YAML frontmatter 的 Markdown 文件。根据范围将它们
 项目 subagents 通过从当前工作目录向上遍历来发现。使用 `--add-dir` 添加的目录 [仅授予文件访问权限](/zh-CN/permissions#additional-directories-grant-file-access-not-configuration)，不会扫描 subagents。要在项目间共享 subagents，请使用 `~/.claude/agents/` 或 [plugin](/zh-CN/plugins)。
 
 **用户 subagents**（`~/.claude/agents/`）是在所有项目中可用的个人 subagents。
+
+Claude Code 递归扫描 `.claude/agents/` 和 `~/.claude/agents/`，因此您可以将定义组织到子文件夹中，例如 `agents/review/` 或 `agents/research/`。子目录路径不会影响 subagent 的识别或调用方式，因为身份仅来自 `name` frontmatter 字段。在整个树中保持 `name` 值唯一：如果一个范围内的两个文件声明相同的名称，Claude Code 会保留一个并丢弃另一个而不发出警告。
+
+Plugin `agents/` 目录也会被递归扫描。与项目和用户范围不同，plugin 的 `agents/` 目录内的子文件夹成为 [scoped identifier](#invoke-subagents-explicitly) 的一部分：plugin `my-plugin` 中位于 `agents/review/security.md` 的文件注册为 `my-plugin:review:security`。
 
 **CLI 定义的 subagents** 在启动 Claude Code 时作为 JSON 传递。它们仅存在于该会话中，不会保存到磁盘，使其对快速测试或自动化脚本很有用。您可以在单个 `--agents` 调用中定义多个 subagents：
 
@@ -638,7 +640,7 @@ Have the code-reviewer subagent look at my recent changes
 
 您的完整消息仍然发送给 Claude，它根据您的要求为 subagent 编写任务提示。@-mention 控制调用哪个 subagent，而不是它接收什么提示。
 
-由启用的 [plugin](/zh-CN/plugins) 提供的 Subagents 在类型提前中显示为 `<plugin-name>:<agent-name>`。命名背景 subagents 当前在会话中运行也出现在类型提前中，在名称旁边显示其状态。您也可以手动输入提及而不使用选择器：`@agent-<name>` 用于本地 subagents，或 `@agent-<plugin-name>:<agent-name>` 用于 plugin subagents。
+由启用的 [plugin](/zh-CN/plugins) 提供的 Subagents 在类型提前中显示为其作用域名称，例如 `my-plugin:code-reviewer` 或 `my-plugin:review:security`，当 plugin [将 agents 组织到子文件夹中](#choose-the-subagent-scope)。命名背景 subagents 当前在会话中运行也出现在类型提前中，在名称旁边显示其状态。您也可以手动输入提及而不使用选择器：`@agent-<name>` 用于本地 subagents，或 `@agent-` 后跟 plugin subagents 的作用域名称，例如 `@agent-my-plugin:code-reviewer`。
 
 **将整个会话作为 subagent 运行。** 传递 [`--agent <name>`](/zh-CN/cli-reference) 以启动一个会话，其中主线程本身采用该 subagent 的系统提示、工具限制和模型：
 
@@ -650,7 +652,7 @@ Subagent 的系统提示完全替换默认 Claude Code 系统提示，就像 [`-
 
 这适用于内置和自定义 subagents，当您恢复会话时选择会持续。
 
-对于 plugin 提供的 subagent，传递作用域名称：`claude --agent <plugin-name>:<agent-name>`。
+对于 plugin 提供的 subagent，传递作用域名称：`claude --agent <plugin-name>:<agent-name>`。如果 plugin 将 agent 放在其 `agents/` 目录的子文件夹中，请在作用域名称中包含子文件夹，例如 `claude --agent my-plugin:review:security`。
 
 要使其成为项目中每个会话的默认值，在 `.claude/settings.json` 中设置 `agent`：
 

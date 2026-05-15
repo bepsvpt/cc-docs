@@ -297,7 +297,7 @@ Esses campos se aplicam a todos os tipos de hook:
 | :-------------- | :---------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `type`          | sim         | `"command"`, `"http"`, `"mcp_tool"`, `"prompt"` ou `"agent"`                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `if`            | não         | Sintaxe de regra de permissão para filtrar quando este hook executa, como `"Bash(git *)"` ou `"Edit(*.ts)"`. O hook apenas é gerado se a chamada de ferramenta corresponde ao padrão, ou se um comando Bash é muito complexo para analisar. Apenas avaliado em eventos de ferramenta: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest` e `PermissionDenied`. Em outros eventos, um hook com `if` definido nunca executa. Usa a mesma sintaxe que [regras de permissão](/pt/permissions) |
-| `timeout`       | não         | Segundos antes de cancelar. Padrões: 600 para comando, 30 para prompt, 60 para agente                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `timeout`       | não         | Segundos antes de cancelar. Padrões: 600 para `command`, `http` e `mcp_tool`; 30 para `prompt`; 60 para `agent`. [`UserPromptSubmit`](#userpromptsubmit) reduz o padrão de `command`, `http` e `mcp_tool` para 30                                                                                                                                                                                                                                                                                             |
 | `statusMessage` | não         | Mensagem de spinner personalizada exibida enquanto o hook executa                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | `once`          | não         | Se `true`, executa apenas uma vez por sessão e depois é removido. Apenas honrado para hooks declarados em [frontmatter de skill](#hooks-in-skills-and-agents); ignorado em arquivos de configurações e frontmatter de agente                                                                                                                                                                                                                                                                                  |
 
@@ -558,6 +558,8 @@ Edições diretas a hooks em arquivos de configurações são normalmente captur
 
 Hooks de comando recebem dados JSON via stdin e comunicam resultados através de códigos de saída, stdout e stderr. Hooks HTTP recebem o mesmo JSON como corpo da solicitação POST e comunicam resultados através do corpo da resposta HTTP. Esta seção cobre campos e comportamento comuns a todos os eventos. Cada seção de evento sob [Eventos de hook](#hook-events) inclui seu esquema de entrada específico e opções de controle de decisão.
 
+No macOS e Linux, hooks de comando executam em sua própria sessão sem um terminal controlador a partir de v2.1.139. O processo de hook e qualquer processo filho não podem abrir `/dev/tty` ou enviar sequências de escape diretamente para a interface do Claude Code. Windows não tem `/dev/tty`. Para exibir uma mensagem ao usuário em qualquer plataforma, retorne [`systemMessage`](#json-output) na saída JSON. Para disparar uma notificação de desktop, definir um título de janela ou tocar o sino, retorne [`terminalSequence`](#emit-terminal-notifications) em vez disso.
+
 ### Campos de entrada comuns
 
 Eventos de hook recebem esses campos como JSON, além de campos específicos do evento documentados em cada seção [evento de hook](#hook-events). Para hooks de comando, este JSON chega via stdin. Para hooks HTTP, chega como corpo da solicitação POST.
@@ -693,18 +695,53 @@ O objeto JSON suporta três tipos de campos:
 * **`decision` e `reason` de nível superior** são usados por alguns eventos para bloquear ou fornecer feedback.
 * **`hookSpecificOutput`** é um objeto aninhado para eventos que precisam de controle mais rico. Requer um campo `hookEventName` definido para o nome do evento.
 
-| Campo            | Padrão  | Descrição                                                                                                                                    |
-| :--------------- | :------ | :------------------------------------------------------------------------------------------------------------------------------------------- |
-| `continue`       | `true`  | Se `false`, Claude para de processar inteiramente após o hook executar. Tem precedência sobre qualquer campo de decisão específico do evento |
-| `stopReason`     | nenhum  | Mensagem mostrada ao usuário quando `continue` é `false`. Não mostrada ao Claude                                                             |
-| `suppressOutput` | `false` | Se `true`, oculta stdout do log de debug                                                                                                     |
-| `systemMessage`  | nenhum  | Mensagem de aviso mostrada ao usuário                                                                                                        |
+| Campo              | Padrão  | Descrição                                                                                                                                                                                                                                                                                                                                      |
+| :----------------- | :------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `continue`         | `true`  | Se `false`, Claude para de processar inteiramente após o hook executar. Tem precedência sobre qualquer campo de decisão específico do evento                                                                                                                                                                                                   |
+| `stopReason`       | nenhum  | Mensagem mostrada ao usuário quando `continue` é `false`. Não mostrada ao Claude                                                                                                                                                                                                                                                               |
+| `suppressOutput`   | `false` | Se `true`, oculta stdout do log de debug                                                                                                                                                                                                                                                                                                       |
+| `systemMessage`    | nenhum  | Mensagem de aviso mostrada ao usuário                                                                                                                                                                                                                                                                                                          |
+| `terminalSequence` | nenhum  | Uma sequência de escape de terminal para Claude Code emitir em seu nome, como uma notificação de desktop, título de janela ou sino. Restrito a OSC `0`/`1`/`2`/`9`/`99`/`777` e BEL. Se o valor contiver algo fora da lista de permissões, o campo é ignorado. Use isso em vez de escrever para `/dev/tty`, que não está disponível para hooks |
 
 Para parar Claude inteiramente independentemente do tipo de evento:
 
 ```json theme={null}
 { "continue": false, "stopReason": "Build failed, fix errors before continuing" }
 ```
+
+#### Emitir notificações de terminal
+
+O campo `terminalSequence` requer Claude Code v2.1.141 ou posterior.
+
+Hooks executam sem um terminal controlador, então escrever sequências de escape diretamente para `/dev/tty` falha. Em vez disso, retorne a sequência de escape no campo `terminalSequence` e Claude Code a emite para você através de seu próprio caminho de escrita de terminal. Isso é livre de corrida, funciona dentro de tmux e GNU screen, e funciona no Windows onde não há `/dev/tty`.
+
+O campo aceita uma string de uma ou mais sequências de escape na lista de permissões:
+
+* OSC `0`, `1`, `2`: títulos de janela e ícone
+* OSC `9`: notificações iTerm2, ConEmu, Windows Terminal e WezTerm, incluindo progresso de barra de tarefas `9;4`
+* OSC `99`: notificações Kitty
+* OSC `777`: notificações urxvt, Ghostty e Warp
+* BEL simples
+
+Sequências podem ser terminadas com BEL ou com ST. Qualquer coisa fora da lista de permissões, incluindo sequências de cursor e cor CSI, sequências de paleta OSC, hiperlinks OSC 8, escritas de área de transferência OSC 52 e OSC 1337, é rejeitada e o campo é ignorado.
+
+O exemplo abaixo dispara uma notificação de desktop de um hook `Notification`. A sequência de escape é construída com `printf` escapes octais para que os bytes de controle nunca apareçam na linha de comando do shell, e `jq -n --arg` constrói a saída JSON para que aspas, barras invertidas e quebras de linha na mensagem de notificação sejam escapadas corretamente:
+
+```bash theme={null}
+#!/bin/bash
+# Hook de notificação: ping no desktop quando Claude Code precisa de atenção.
+input=$(cat)
+title="Claude Code'
+body=$(jq -r '.message // 'Needs your attention"' <<<"$input")
+seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
+jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
+```
+
+A forma `{ "terminalSequence": "..." }` é a mesma de qualquer shell ou linguagem. No Windows, construa a string de escape em PowerShell ou um script e emita o mesmo objeto JSON.
+
+<Note>
+  `terminalSequence` é a substituição suportada para hooks que anteriormente escreviam sequências de escape diretamente para `/dev/tty`. A lista de permissões é restrita a sequências que não podem mover o cursor ou alterar cores, para que um hook nunca possa corromper um prompt na tela.
+</Note>
 
 #### Adicionar contexto para Claude
 
@@ -989,6 +1026,8 @@ Hooks InstructionsLoaded não têm controle de decisão. Eles não podem bloquea
 
 Executa quando o usuário submete um prompt, antes do Claude processá-lo. Isso permite que você adicione contexto adicional baseado no prompt/conversa, valide prompts ou bloqueie certos tipos de prompts.
 
+Hooks `UserPromptSubmit` têm um timeout padrão de 30 segundos para tipos `command`, `http` e `mcp_tool`, mais curto que o padrão de 600 segundos para esses tipos em outros eventos. Porque este hook executa antes de cada prompt e bloqueia processamento do modelo até que seja concluído, um hook travado paralisa a sessão. Se seu hook precisa de mais tempo, defina o campo `timeout` na entrada do hook.
+
 #### Entrada de UserPromptSubmit
 
 Além dos [campos de entrada comuns](#common-input-fields), hooks UserPromptSubmit recebem o campo `prompt` contendo o texto que o usuário submeteu.
@@ -1190,6 +1229,20 @@ Gera um [subagente](/pt/sub-agents).
 | `description`   | string | `"Find API endpoints"`     | Descrição curta da tarefa                           |
 | `subagent_type` | string | `"Explore"`                | Tipo de agente especializado a usar                 |
 | `model`         | string | `"sonnet"`                 | Alias de modelo opcional para sobrescrever o padrão |
+
+Em `PostToolUse`, `tool_response` para uma chamada Agent concluída carrega o texto final do subagente junto com telemetria de uso. Leia esses campos para registrar custo por subagente de um hook:
+
+| Campo               | Tipo   | Exemplo                                               | Descrição                                                                                                             |
+| :------------------ | :----- | :---------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
+| `status`            | string | `"completed"`                                         | `"completed"` para chamadas síncronas, `"async_launched"` para `run_in_background: true`                              |
+| `agentId`           | string | `"a4d2c8f1e0b3a297"`                                  | Identificador para a execução do subagente                                                                            |
+| `content`           | array  | `[{"type": "text", "text": "Found 12 endpoints..."}]` | Os blocos de texto final do subagente                                                                                 |
+| `totalTokens`       | number | `12450`                                               | Total de tokens cobrados através dos turnos do subagente                                                              |
+| `totalDurationMs`   | number | `48211`                                               | Duração de relógio de parede da execução do subagente                                                                 |
+| `totalToolUseCount` | number | `7`                                                   | Contagem de chamadas de ferramenta que o subagente fez                                                                |
+| `usage`             | object | `{"input_tokens": 8320, ...}`                         | Divisão de tokens por tipo: `input_tokens`, `output_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens` |
+
+Para chamadas `run_in_background: true`, a ferramenta retorna imediatamente após lançar o subagente, então `tool_response` não carrega campos de uso. Tem `status: "async_launched"`, `agentId`, `description`, `prompt` e `outputFile` em vez disso.
 
 ##### AskUserQuestion
 
@@ -2598,7 +2651,7 @@ O campo `timeout` define o tempo máximo em segundos para o processo em backgrou
 
 Quando um hook assíncrono dispara, Claude Code inicia o processo do hook e imediatamente continua sem esperar que termine. O hook recebe a mesma entrada JSON via stdin que um hook síncrono.
 
-Após o processo em background sair, se o hook produziu uma resposta JSON com um campo `systemMessage` ou `additionalContext`, esse conteúdo é entregue ao Claude como contexto no próximo turno de conversa.
+Após o processo em background sair, se o hook produziu uma resposta JSON com um campo `additionalContext`, esse conteúdo é entregue ao Claude como contexto no próximo turno de conversa. Um campo `systemMessage` é mostrado para você, não para Claude.
 
 Notificações de conclusão de hook assíncrono são suprimidas por padrão. Para vê-las, ative modo verbose com `Ctrl+O` ou inicie Claude Code com `--verbose`.
 
@@ -2619,15 +2672,16 @@ if [[ "$FILE_PATH" != *.ts && "$FILE_PATH" != *.js ]]; then
   exit 0
 fi
 
-# Execute testes e relate resultados via systemMessage
+# Execute testes e relate resultados ao Claude via additionalContext
 RESULT=$(npm test 2>&1)
 EXIT_CODE=$?
 
 if [ $EXIT_CODE -eq 0 ]; then
-  echo "{\"systemMessage\": \"Tests passed after editing $FILE_PATH\"}"
+  MSG="Tests passed after editing $FILE_PATH"
 else
-  echo "{\"systemMessage\": \"Tests failed after editing $FILE_PATH: $RESULT\"}"
+  MSG="Tests failed after editing $FILE_PATH: $RESULT"
 fi
+jq -nc --arg msg "$MSG" '{hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: $msg}}'
 ```
 
 Então adicione esta configuração a `.claude/settings.json` na raiz do seu projeto. A flag `async: true` permite que Claude continue trabalhando enquanto testes executam:

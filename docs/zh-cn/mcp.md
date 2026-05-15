@@ -458,7 +458,7 @@ claude mcp add --transport stdio db -- npx -y @bytebase/dbhub \
 
 许多基于云的 MCP 服务器需要身份验证。Claude Code 支持 OAuth 2.0 以实现安全连接。
 
-当服务器响应 `401 Unauthorized` 和指向其授权服务器的 `WWW-Authenticate` 标头时，Claude Code 将远程服务器标记为需要身份验证。任何返回该响应的自定义服务器都会获得与任何其他远程服务器相同的 `/mcp` 身份验证流程。
+当服务器响应 `401 Unauthorized` 或 `403 Forbidden` 时，Claude Code 将远程服务器标记为需要身份验证。任一状态代码都会在 `/mcp` 中标记该服务器，以便您可以完成 OAuth 流程。返回指向其授权服务器的 `WWW-Authenticate` 标头的自定义服务器获得与任何其他远程服务器相同的自动发现。
 
 <Steps>
   <Step title="添加需要身份验证的服务器">

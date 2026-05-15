@@ -158,8 +158,6 @@ Markdown 파일로 subagent를 수동으로 만들거나, CLI 플래그를 통�
 
 이것이 subagent를 만들고 관리하는 권장 방법입니다. 수동 생성 또는 자동화의 경우 subagent 파일을 직접 추가할 수도 있습니다.
 
-명령줄에서 [agent view](/ko/agent-view)를 열지 않고 구성된 모든 subagent를 나열하려면 `claude agents`의 출력을 파이프합니다. 예를 들어 `claude agents | cat`은 소스별로 그룹화된 에이전트를 인쇄하고 더 높은 우선순위 정의로 재정의되는 에이전트를 나타냅니다.
-
 ### Subagent 범위 선택
 
 Subagent는 YAML frontmatter가 있는 Markdown 파일입니다. 범위에 따라 다른 위치에 저장합니다. 여러 subagent가 같은 이름을 공유할 때 더 높은 우선순위 위치가 우선합니다.
@@ -177,6 +175,10 @@ Subagent는 YAML frontmatter가 있는 Markdown 파일입니다. 범위에 따�
 프로젝트 subagent는 현재 작업 디렉토리에서 위로 이동하여 검색됩니다. `--add-dir`로 추가된 디렉토리는 [파일 액세스만 부여](/ko/permissions#additional-directories-grant-file-access-not-configuration)하며 subagent를 검색하지 않습니다. 프로젝트 간에 subagent를 공유하려면 `~/.claude/agents/`를 사용하거나 [플러그인](/ko/plugins)을 사용합니다.
 
 **사용자 subagent** (`~/.claude/agents/`)는 모든 프로젝트에서 사용 가능한 개인 subagent입니다.
+
+Claude Code는 `.claude/agents/` 및 `~/.claude/agents/`를 재귀적으로 스캔하므로 `agents/review/` 또는 `agents/research/`와 같은 하위 폴더로 정의를 구성할 수 있습니다. 하위 디렉토리 경로는 subagent가 식별되거나 호출되는 방식에 영향을 주지 않습니다. 왜냐하면 ID는 `name` frontmatter 필드에서만 나오기 때문입니다. 전체 트리에서 `name` 값을 고유하게 유지합니다: 한 범위 내의 두 파일이 같은 이름을 선언하면 Claude Code는 경고 없이 하나를 유지하고 다른 하나를 버립니다.
+
+플러그인 `agents/` 디렉토리도 재귀적으로 스캔됩니다. 프로젝트 및 사용자 범위와 달리 플러그인의 `agents/` 디렉토리 내의 하위 폴더는 [범위가 지정된 식별자](#invoke-subagents-explicitly)의 일부가 됩니다: 플러그인 `my-plugin`의 `agents/review/security.md`에 있는 파일은 `my-plugin:review:security`로 등록됩니다.
 
 **CLI 정의 subagent**는 Claude Code를 시작할 때 JSON으로 전달됩니다. 해당 세션에만 존재하며 디스크에 저장되지 않으므로 빠른 테스트 또는 자동화 스크립트에 유용합니다. 단일 `--agents` 호출에서 여러 subagent를 정의할 수 있습니다:
 
@@ -638,7 +640,7 @@ Have the code-reviewer subagent look at my recent changes
 
 전체 메시지는 여전히 Claude로 이동하며, Claude는 요청한 내용을 기반으로 subagent의 작업 프롬프트를 작성합니다. @-mention은 Claude가 호출하는 subagent를 제어하며, 받는 프롬프트는 제어하지 않습니다.
 
-활성화된 [플러그인](/ko/plugins)에서 제공하는 Subagent는 typeahead에 `<plugin-name>:<agent-name>`으로 나타납니다. 세션에서 현재 실행 중인 명명된 background subagent도 typeahead에 나타나며 이름 옆에 상태를 표시합니다. 선택기를 사용하지 않고 수동으로 mention을 입력할 수도 있습니다: 로컬 subagent의 경우 `@agent-<name>`, 플러그인 subagent의 경우 `@agent-<plugin-name>:<agent-name>`.
+활성화된 [플러그인](/ko/plugins)에서 제공하는 Subagent는 typeahead에 `my-plugin:code-reviewer` 또는 플러그인이 [agents를 하위 폴더로 구성](#choose-the-subagent-scope)할 때 `my-plugin:review:security`와 같은 범위가 지정된 이름으로 나타납니다. 세션에서 현재 실행 중인 명명된 background subagent도 typeahead에 나타나며 이름 옆에 상태를 표시합니다. 선택기를 사용하지 않고 수동으로 mention을 입력할 수도 있습니다: 로컬 subagent의 경우 `@agent-<name>`, 플러그인 subagent의 경우 범위가 지정된 이름 뒤에 `@agent-`를 입력합니다. 예를 들어 `@agent-my-plugin:code-reviewer`입니다.
 
 **전체 세션을 subagent로 실행합니다.** [`--agent <name>`](/ko/cli-reference)을 전달하여 주 스레드 자체가 해당 subagent의 시스템 프롬프트, 도구 제한 및 모델을 취하는 세션을 시작합니다:
 
@@ -650,7 +652,7 @@ Subagent의 시스템 프롬프트는 [`--system-prompt`](/ko/cli-reference)와 
 
 이것은 내장 및 사용자 정의 subagent에서 작동하며, 세션을 재개할 때 선택이 유지됩니다.
 
-플러그인 제공 subagent의 경우 범위가 지정된 이름을 전달합니다: `claude --agent <plugin-name>:<agent-name>`.
+플러그인 제공 subagent의 경우 범위가 지정된 이름을 전달합니다: `claude --agent <plugin-name>:<agent-name>`. 플러그인이 에이전트를 `agents/` 디렉토리의 하위 폴더에 배치하면 범위가 지정된 이름에 하위 폴더를 포함합니다. 예를 들어 `claude --agent my-plugin:review:security`입니다.
 
 프로젝트의 모든 세션에 대한 기본값으로 만들려면 `.claude/settings.json`에서 `agent`를 설정합니다:
 

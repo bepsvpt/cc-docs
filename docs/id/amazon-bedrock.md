@@ -170,7 +170,10 @@ Kunci API Bedrock menyediakan metode autentikasi yang lebih sederhana tanpa meme
 
 Claude Code mendukung penyegaran kredensial otomatis untuk AWS SSO dan penyedia identitas perusahaan. Tambahkan pengaturan ini ke file pengaturan Claude Code Anda (lihat [Settings](/id/settings) untuk lokasi file).
 
-Ketika Claude Code mendeteksi bahwa kredensial AWS Anda telah kedaluwarsa (baik secara lokal berdasarkan stempel waktu mereka atau ketika Bedrock mengembalikan kesalahan kredensial), Claude Code akan secara otomatis menjalankan perintah `awsAuthRefresh` dan/atau `awsCredentialExport` yang dikonfigurasi untuk mendapatkan kredensial baru sebelum mencoba ulang permintaan.
+Kedua pengaturan ini memiliki kondisi pemicu yang berbeda:
+
+* **`awsAuthRefresh`**: berjalan hanya ketika Claude Code mendeteksi bahwa kredensial AWS Anda telah kedaluwarsa, baik secara lokal berdasarkan stempel waktu mereka atau ketika Bedrock mengembalikan kesalahan kredensial, kemudian mencoba ulang permintaan dengan kredensial yang disegarkan.
+* **`awsCredentialExport`**: berjalan saat awal sesi dan pada setiap pemuatan ulang kredensial, bahkan ketika kredensial di rantai penyedia kredensial default AWS Anda masih valid. Gunakan ini ketika akun Bedrock Anda memerlukan kredensial lintas akun yang berbeda dari yang akan diselesaikan oleh rantai penyedia default.
 
 ##### Contoh konfigurasi
 
@@ -187,7 +190,7 @@ Ketika Claude Code mendeteksi bahwa kredensial AWS Anda telah kedaluwarsa (baik 
 
 **`awsAuthRefresh`**: Gunakan ini untuk perintah yang memodifikasi direktori `.aws`, seperti memperbarui kredensial, cache SSO, atau file konfigurasi. Output perintah ditampilkan kepada pengguna, tetapi input interaktif tidak didukung. Ini bekerja dengan baik untuk alur SSO berbasis browser di mana CLI menampilkan URL atau kode dan Anda menyelesaikan autentikasi di browser.
 
-**`awsCredentialExport`**: Hanya gunakan ini jika Anda tidak dapat memodifikasi `.aws` dan harus secara langsung mengembalikan kredensial. Output ditangkap secara diam-diam dan tidak ditampilkan kepada pengguna. Perintah harus menampilkan JSON dalam format ini:
+**`awsCredentialExport`**: Hanya gunakan ini jika Anda tidak dapat memodifikasi `.aws` dan harus secara langsung mengembalikan kredensial. Perintah ini berjalan setiap kali kredensial perlu disegarkan, bukan hanya ketika kredensial telah kedaluwarsa. Output ditangkap secara diam-diam dan tidak ditampilkan kepada pengguna. Perintah harus menampilkan JSON dalam format ini:
 
 ```json theme={null}
 {

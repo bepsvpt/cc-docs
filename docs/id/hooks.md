@@ -297,7 +297,7 @@ Bidang-bidang ini berlaku untuk semua tipe hook:
 | :-------------- | :--------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `type`          | ya         | `"command"`, `"http"`, `"mcp_tool"`, `"prompt"`, atau `"agent"`                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | `if`            | tidak      | Sintaks aturan izin untuk memfilter kapan hook ini dijalankan, seperti `"Bash(git *)"` atau `"Edit(*.ts)"`. Hook hanya spawn jika pemanggilan tool cocok dengan pola, atau jika perintah Bash terlalu kompleks untuk diurai. Hanya dievaluasi pada tool events: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, dan `PermissionDenied`. Pada event lain, hook dengan `if` yang ditetapkan tidak akan pernah dijalankan. Menggunakan sintaks yang sama seperti [aturan izin](/id/permissions) |
-| `timeout`       | tidak      | Detik sebelum membatalkan. Default: 600 untuk command, 30 untuk prompt, 60 untuk agent                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `timeout`       | tidak      | Detik sebelum membatalkan. Default: 600 untuk `command`, `http`, dan `mcp_tool`; 30 untuk `prompt`; 60 untuk `agent`. [`UserPromptSubmit`](#userpromptsubmit) menurunkan default `command`, `http`, dan `mcp_tool` menjadi 30                                                                                                                                                                                                                                                                                        |
 | `statusMessage` | tidak      | Pesan spinner kustom ditampilkan saat hook dijalankan                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | `once`          | tidak      | Jika `true`, dijalankan hanya sekali per sesi kemudian dihapus. Hanya dihormati untuk hooks yang dideklarasikan dalam [skill frontmatter](#hooks-in-skills-and-agents); diabaikan dalam file pengaturan dan agent frontmatter                                                                                                                                                                                                                                                                                        |
 
@@ -558,6 +558,8 @@ Pengeditan langsung ke hooks dalam file pengaturan biasanya diambil secara otoma
 
 Command hooks menerima data JSON melalui stdin dan mengkomunikasikan hasil melalui kode keluar, stdout, dan stderr. HTTP hooks menerima JSON yang sama sebagai badan permintaan POST dan mengkomunikasikan hasil melalui badan respons HTTP. Bagian ini mencakup bidang dan perilaku yang umum untuk semua events. Setiap bagian event di bawah [Hook events](#hook-events) mencakup skema input spesifiknya dan opsi kontrol keputusan.
 
+Pada macOS dan Linux, command hooks berjalan dalam sesi mereka sendiri tanpa terminal pengontrol sejak v2.1.139. Proses hook dan proses anak apa pun tidak dapat membuka `/dev/tty` atau mengirim urutan escape langsung ke antarmuka Claude Code. Windows tidak memiliki `/dev/tty`. Untuk menampilkan pesan kepada pengguna di platform apa pun, kembalikan [`systemMessage`](#json-output) dalam output JSON. Untuk memicu notifikasi desktop, atur judul jendela, atau bunyikan bel, kembalikan [`terminalSequence`](#emit-terminal-notifications) sebagai gantinya.
+
 ### Bidang input umum
 
 Hook events menerima bidang-bidang ini sebagai JSON, selain bidang spesifik event yang didokumentasikan dalam setiap bagian [hook event](#hook-events). Untuk command hooks, JSON ini tiba melalui stdin. Untuk HTTP hooks, itu tiba sebagai badan permintaan POST.
@@ -685,7 +687,7 @@ Kode keluar memungkinkan Anda mengizinkan atau memblokir, tetapi output JSON mem
 
 Stdout hook Anda harus berisi hanya objek JSON. Jika profil shell Anda mencetak teks saat startup, itu dapat mengganggu parsing JSON. Lihat [JSON validation failed](/id/hooks-guide#json-validation-failed) dalam panduan troubleshooting.
 
-Hook output yang disuntikkan ke dalam konteks (`additionalContext`, `systemMessage`, atau plain stdout) dibatasi pada 10.000 karakter. Output yang melebihi batas ini disimpan ke file dan diganti dengan pratinjau dan path file, dengan cara yang sama seperti hasil tool besar ditangani.
+String output hook, termasuk `additionalContext`, `systemMessage`, dan plain stdout, dibatasi pada 10.000 karakter. Output yang melebihi batas ini disimpan ke file dan diganti dengan pratinjau dan path file, dengan cara yang sama seperti hasil tool besar ditangani.
 
 Objek JSON mendukung tiga jenis bidang:
 
@@ -693,18 +695,53 @@ Objek JSON mendukung tiga jenis bidang:
 * **Top-level `decision` dan `reason`** digunakan oleh beberapa events untuk memblokir atau memberikan umpan balik.
 * **`hookSpecificOutput`** adalah objek bersarang untuk events yang memerlukan kontrol yang lebih kaya. Ini memerlukan bidang `hookEventName` yang diatur ke nama event.
 
-| Bidang           | Default   | Deskripsi                                                                                                                          |
-| :--------------- | :-------- | :--------------------------------------------------------------------------------------------------------------------------------- |
-| `continue`       | `true`    | Jika `false`, Claude berhenti memproses sepenuhnya setelah hook dijalankan. Mengambil alih bidang keputusan spesifik event apa pun |
-| `stopReason`     | tidak ada | Pesan ditampilkan ke pengguna saat `continue` adalah `false`. Tidak ditampilkan ke Claude                                          |
-| `suppressOutput` | `false`   | Jika `true`, menyembunyikan stdout dari debug log                                                                                  |
-| `systemMessage`  | tidak ada | Pesan peringatan ditampilkan ke pengguna                                                                                           |
+| Bidang             | Default   | Deskripsi                                                                                                                                                                                                                                                                                                                                |
+| :----------------- | :-------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `continue`         | `true`    | Jika `false`, Claude berhenti memproses sepenuhnya setelah hook dijalankan. Mengambil alih bidang keputusan spesifik event apa pun                                                                                                                                                                                                       |
+| `stopReason`       | tidak ada | Pesan ditampilkan ke pengguna saat `continue` adalah `false`. Tidak ditampilkan ke Claude                                                                                                                                                                                                                                                |
+| `suppressOutput`   | `false`   | Jika `true`, menyembunyikan stdout dari debug log                                                                                                                                                                                                                                                                                        |
+| `systemMessage`    | tidak ada | Pesan peringatan ditampilkan ke pengguna                                                                                                                                                                                                                                                                                                 |
+| `terminalSequence` | tidak ada | Urutan escape terminal untuk Claude Code yang akan dipancarkan atas nama Anda, seperti notifikasi desktop, judul jendela, atau bel. Dibatasi pada OSC `0`/`1`/`2`/`9`/`99`/`777` dan BEL. Jika nilai berisi apa pun di luar daftar putih, bidang diabaikan. Gunakan ini alih-alih menulis ke `/dev/tty`, yang tidak tersedia untuk hooks |
 
 Untuk menghentikan Claude sepenuhnya terlepas dari tipe event:
 
 ```json theme={null}
 { "continue": false, "stopReason": "Build failed, fix errors before continuing" }
 ```
+
+#### Emit terminal notifications
+
+Bidang `terminalSequence` memerlukan Claude Code v2.1.141 atau lebih baru.
+
+Hooks berjalan tanpa terminal pengontrol, jadi menulis urutan escape langsung ke `/dev/tty` gagal. Sebagai gantinya, kembalikan urutan escape dalam bidang `terminalSequence` dan Claude Code memancarkannya untuk Anda melalui jalur penulisan terminal miliknya sendiri. Ini bebas race, bekerja di dalam tmux dan GNU screen, dan bekerja di Windows di mana tidak ada `/dev/tty`.
+
+Bidang menerima string dari satu atau lebih urutan escape yang diizinkan:
+
+* OSC `0`, `1`, `2`: judul jendela dan ikon
+* OSC `9`: notifikasi iTerm2, ConEmu, Windows Terminal, dan WezTerm, termasuk `9;4` kemajuan taskbar
+* OSC `99`: notifikasi Kitty
+* OSC `777`: notifikasi urxvt, Ghostty, dan Warp
+* BEL telanjang
+
+Urutan dapat diakhiri dengan BEL atau dengan ST. Apa pun di luar daftar putih, termasuk urutan kursor dan warna CSI, urutan palet OSC, hyperlink OSC 8, penulisan clipboard OSC 52, dan OSC 1337, ditolak dan bidang diabaikan.
+
+Contoh di bawah menjalankan notifikasi desktop dari hook `Notification`. Urutan escape dibangun dengan `printf` octal escapes sehingga byte kontrol tidak pernah muncul di baris perintah shell, dan `jq -n --arg` membangun output JSON sehingga tanda kutip, backslash, dan newline dalam pesan notifikasi diloloskan dengan benar:
+
+```bash theme={null}
+#!/bin/bash
+# Notification hook: ping desktop ketika Claude Code membutuhkan perhatian.
+input=$(cat)
+title="Claude Code'
+body=$(jq -r '.message // 'Needs your attention"' <<<"$input")
+seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
+jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
+```
+
+Bentuk `{ "terminalSequence": "..." }` sama dari shell atau bahasa apa pun. Di Windows, bangun string escape di PowerShell atau skrip dan pancarkan objek JSON yang sama.
+
+<Note>
+  `terminalSequence` adalah pengganti yang didukung untuk hooks yang sebelumnya menulis urutan escape langsung ke `/dev/tty`. Daftar putih dibatasi pada urutan yang tidak dapat memindahkan kursor atau mengubah warna, jadi hook tidak pernah dapat merusak prompt di layar.
+</Note>
 
 #### Tambahkan konteks untuk Claude
 
@@ -989,6 +1026,8 @@ InstructionsLoaded hooks tidak memiliki kontrol keputusan. Mereka tidak dapat me
 
 Dijalankan ketika pengguna mengirimkan prompt, sebelum Claude memproses. Ini memungkinkan Anda menambahkan konteks tambahan berdasarkan prompt/percakapan, memvalidasi prompts, atau memblokir jenis prompts tertentu.
 
+Hooks `UserPromptSubmit` memiliki timeout default 30 detik untuk tipe `command`, `http`, dan `mcp_tool`, lebih pendek dari default 600 detik untuk tipe tersebut pada event lain. Karena hook ini dijalankan sebelum setiap prompt dan memblokir pemrosesan model sampai selesai, hook yang macet menghentikan sesi. Jika hook Anda memerlukan lebih banyak waktu, atur bidang `timeout` dalam entri hook.
+
 #### Input UserPromptSubmit
 
 Selain [bidang input umum](#common-input-fields), UserPromptSubmit hooks menerima bidang `prompt` yang berisi teks yang dikirimkan pengguna.
@@ -1190,6 +1229,20 @@ Spawn [subagent](/id/sub-agents).
 | `description`   | string | `"Find API endpoints"`     | Deskripsi singkat tugas                    |
 | `subagent_type` | string | `"Explore"`                | Tipe agent khusus untuk digunakan          |
 | `model`         | string | `"sonnet"`                 | Alias model opsional untuk menimpa default |
+
+Dalam `PostToolUse`, `tool_response` untuk panggilan Agent yang selesai membawa teks akhir subagent bersama dengan telemetri penggunaan. Baca bidang-bidang ini untuk mencatat biaya per-subagent dari hook:
+
+| Bidang              | Tipe   | Contoh                                                | Deskripsi                                                                                                           |
+| :------------------ | :----- | :---------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------ |
+| `status`            | string | `"completed"`                                         | `"completed"` untuk panggilan sinkron, `"async_launched"` untuk `run_in_background: true`                           |
+| `agentId`           | string | `"a4d2c8f1e0b3a297"`                                  | Pengenal untuk run subagent                                                                                         |
+| `content`           | array  | `[{"type": "text", "text": "Found 12 endpoints..."}]` | Blok teks akhir subagent                                                                                            |
+| `totalTokens`       | number | `12450`                                               | Total tokens yang ditagih di seluruh giliran subagent                                                               |
+| `totalDurationMs`   | number | `48211`                                               | Durasi wall-clock dari run subagent                                                                                 |
+| `totalToolUseCount` | number | `7`                                                   | Jumlah pemanggilan tool yang dibuat subagent                                                                        |
+| `usage`             | object | `{"input_tokens": 8320, ...}`                         | Breakdown token per-tipe: `input_tokens`, `output_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens` |
+
+Untuk panggilan `run_in_background: true`, tool mengembalikan segera setelah meluncurkan subagent, jadi `tool_response` tidak membawa bidang penggunaan. Itu memiliki `status: "async_launched"`, `agentId`, `description`, `prompt`, dan `outputFile` sebagai gantinya.
 
 ##### AskUserQuestion
 
@@ -2598,7 +2651,7 @@ Bidang `timeout` menetapkan waktu maksimum dalam detik untuk proses latar belaka
 
 Ketika async hook dijalankan, Claude Code memulai proses hook dan segera melanjutkan tanpa menunggu selesai. Hook menerima JSON input yang sama melalui stdin seperti hook sinkron.
 
-Setelah proses latar belakang keluar, jika hook menghasilkan respons JSON dengan bidang `systemMessage` atau `additionalContext`, konten itu disampaikan ke Claude sebagai konteks pada turn percakapan berikutnya.
+Setelah proses latar belakang keluar, jika hook menghasilkan respons JSON dengan bidang `additionalContext`, konten itu disampaikan ke Claude sebagai konteks pada turn percakapan berikutnya. Bidang `systemMessage` ditampilkan kepada Anda, bukan kepada Claude.
 
 Notifikasi penyelesaian async hook ditekan secara default. Untuk melihatnya, aktifkan mode verbose dengan `Ctrl+O` atau mulai Claude Code dengan `--verbose`.
 
@@ -2619,15 +2672,16 @@ if [[ "$FILE_PATH" != *.ts && "$FILE_PATH" != *.js ]]; then
   exit 0
 fi
 
-# Jalankan tests dan laporkan hasil via systemMessage
+# Jalankan tests dan laporkan hasil ke Claude via additionalContext
 RESULT=$(npm test 2>&1)
 EXIT_CODE=$?
 
 if [ $EXIT_CODE -eq 0 ]; then
-  echo "{\"systemMessage\": \"Tests passed after editing $FILE_PATH\"}"
+  MSG="Tests passed after editing $FILE_PATH"
 else
-  echo "{\"systemMessage\": \"Tests failed after editing $FILE_PATH: $RESULT\"}"
+  MSG="Tests failed after editing $FILE_PATH: $RESULT"
 fi
+jq -nc --arg msg "$MSG" '{hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: $msg}}'
 ```
 
 Kemudian tambahkan konfigurasi ini ke `.claude/settings.json` dalam akar proyek Anda. Flag `async: true` memungkinkan Claude terus bekerja sementara tests dijalankan:
@@ -2655,7 +2709,7 @@ Kemudian tambahkan konfigurasi ini ke `.claude/settings.json` dalam akar proyek 
 
 ### Keterbatasan
 
-Async hooks memiliki beberapa keterbatasan dibandingkan dengan hooks sinkron:
+Async hooks memiliki beberapa batasan dibandingkan dengan hooks sinkron:
 
 * Hanya hooks `type: "command"` yang mendukung `async`. Prompt-based hooks tidak dapat dijalankan secara asinkron.
 * Async hooks tidak dapat memblokir pemanggilan tool atau mengembalikan keputusan. Pada saat hook selesai, tindakan pemicu sudah dilanjutkan.

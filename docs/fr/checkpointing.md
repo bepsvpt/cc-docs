@@ -28,23 +28,24 @@ Appuyez sur `Esc` deux fois (`Esc` + `Esc`) ou utilisez la commande `/rewind` po
 * **Restaurer la conversation** : rembobiner jusqu'à ce message tout en conservant le code actuel
 * **Restaurer le code** : annuler les modifications de fichiers tout en conservant la conversation
 * **Résumer à partir d'ici** : compresser la conversation à partir de ce moment en avant dans un résumé, libérant de l'espace de context window
+* **Résumer jusqu'à ici** : compresser la conversation avant ce moment dans un résumé, en conservant les messages ultérieurs intacts
 * **Annuler** : revenir à la liste des messages sans apporter de modifications
 
-Après la restauration de la conversation ou la résumé, l'invite originale du message sélectionné est restaurée dans le champ de saisie afin que vous puissiez la renvoyer ou la modifier.
+Après la restauration de la conversation ou le choix de Résumer à partir d'ici, l'invite originale du message sélectionné est restaurée dans le champ de saisie afin que vous puissiez la renvoyer ou la modifier.
+
+Le choix de Résumer jusqu'à ici vous laisse à la fin de la conversation avec le champ de saisie vide.
 
 #### Restaurer vs. résumer
 
-Les trois options de restauration annulent l'état : elles annulent les modifications de code, l'historique de conversation, ou les deux. « Résumer à partir d'ici » fonctionne différemment :
+Les options de restauration annulent l'état : elles annulent les modifications de code, l'historique de conversation, ou les deux. Les options de résumé compriment une partie de la conversation dans un résumé généré par l'IA sans modifier les fichiers sur le disque :
 
-* Les messages avant le message sélectionné restent intacts
-* Le message sélectionné et tous les messages suivants sont remplacés par un résumé compact généré par l'IA
-* Aucun fichier sur le disque n'est modifié
-* Les messages originaux sont conservés dans la transcription de session, afin que Claude puisse référencer les détails si nécessaire
+* **Résumer à partir d'ici** : les messages avant le message sélectionné restent intacts. Le message sélectionné et tout ce qui suit sont remplacés par un résumé. Utilisez ceci pour abandonner une discussion secondaire tout en conservant le contexte initial en détail complet.
+* **Résumer jusqu'à ici** : les messages avant le message sélectionné sont remplacés par un résumé. Le message sélectionné et tout ce qui suit restent intacts, et vous restez à la fin de la conversation. Utilisez ceci pour compresser la discussion de configuration initiale tout en conservant le travail récent en détail complet.
 
-C'est similaire à `/compact`, mais ciblé : au lieu de résumer l'ensemble de la conversation, vous conservez le contexte initial en détail complet et ne compressez que les parties qui utilisent de l'espace. Vous pouvez taper des instructions optionnelles pour guider sur quoi le résumé se concentre.
+Dans les deux cas, les messages originaux sont conservés dans la transcription de session, afin que Claude puisse référencer les détails si nécessaire. Vous pouvez taper des instructions optionnelles pour guider sur quoi le résumé se concentre. C'est similaire à `/compact`, mais ciblé : au lieu de résumer l'ensemble de la conversation, vous choisissez quel côté du message sélectionné compresser.
 
 <Note>
-  Résumer vous garde dans la même session et compresse le contexte. Si vous souhaitez vous brancher et essayer une approche différente tout en préservant la session originale intacte, utilisez plutôt [fork](/fr/how-claude-code-works#resume-or-fork-sessions) (`claude --continue --fork-session`).
+  Résumer vous garde dans la même session et compresse le contexte. Si vous souhaitez vous brancher et essayer une approche différente tout en préservant la session originale intacte, utilisez plutôt [fork](/fr/sessions#branch-a-session) (`claude --continue --fork-session`).
 </Note>
 
 ## Cas d'usage courants
@@ -85,5 +86,5 @@ Les checkpoints sont conçus pour une récupération rapide au niveau de la sess
 ## Voir aussi
 
 * [Mode interactif](/fr/interactive-mode) - Raccourcis clavier et contrôles de session
-* [Commandes intégrées](/fr/commands) - Accès aux checkpoints en utilisant `/rewind`
+* [Commandes](/fr/commands) - Accès aux checkpoints en utilisant `/rewind`
 * [Référence CLI](/fr/cli-reference) - Options de ligne de commande

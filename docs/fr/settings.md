@@ -533,7 +533,9 @@ Par exemple, si vos paramètres utilisateur autorisent `Bash(npm run *)` mais qu
 
 ### Vérifier les paramètres actifs
 
-Exécutez `/status` dans Claude Code pour voir quelles sources de paramètres sont actives et d'où elles proviennent. La sortie affiche chaque couche de configuration (gérée, utilisateur, projet) ainsi que son origine, telle que `Enterprise managed settings (remote)`, `Enterprise managed settings (plist)`, `Enterprise managed settings (HKLM)`, `Enterprise managed settings (HKCU)`, ou `Enterprise managed settings (file)`. Si un fichier de paramètres contient des erreurs, `/status` signale le problème pour que vous puissiez le corriger.
+Exécutez `/status` dans Claude Code pour voir quelles sources de paramètres sont actives. L'onglet Status inclut une ligne `Setting sources` qui énumère chaque couche que Claude Code a chargée pour la session actuelle, telle que `User settings` ou `Project local settings`. Quand les [paramètres gérés](/fr/managed-settings) sont en vigueur, l'entrée affiche le canal de livraison entre parenthèses, par exemple `Enterprise managed settings (remote)`, `(plist)`, `(HKLM)`, `(HKCU)`, ou `(file)`. Une couche n'apparaît dans la liste que quand cette source est chargée avec au moins une clé, donc une liste vide signifie qu'aucune source de paramètres n'a été trouvée.
+
+La ligne `Setting sources` confirme quelles sources sont lues. Elle n'affiche pas quelle couche a fourni chaque clé individuelle. L'onglet Config dans le même dialogue est un éditeur pour un ensemble fixe de bascules telles que le thème et la sortie détaillée, pas une vue du contenu de votre `settings.json`. Si un fichier de paramètres contient des erreurs, telles que du JSON invalide ou une valeur qui échoue la validation, `/status` signale le problème pour que vous puissiez le corriger.
 
 ### Points clés du système de configuration
 

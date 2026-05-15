@@ -28,23 +28,24 @@ Tekan `Esc` dua kali (`Esc` + `Esc`) atau gunakan perintah `/rewind` untuk membu
 * **Pulihkan percakapan**: putar ulang ke pesan tersebut sambil mempertahankan kode saat ini
 * **Pulihkan kode**: kembalikan perubahan file sambil mempertahankan percakapan
 * **Ringkas dari sini**: kompres percakapan dari titik ini ke depan menjadi ringkasan, membebaskan ruang context window
+* **Ringkas hingga di sini**: kompres percakapan sebelum titik ini menjadi ringkasan, menjaga pesan-pesan selanjutnya tetap utuh
 * **Tidak jadi**: kembali ke daftar pesan tanpa membuat perubahan
 
-Setelah memulihkan percakapan atau meringkas, prompt asli dari pesan yang dipilih dipulihkan ke dalam bidang input sehingga Anda dapat mengirimnya kembali atau mengeditnya.
+Setelah memulihkan percakapan atau memilih Ringkas dari sini, prompt asli dari pesan yang dipilih dipulihkan ke dalam bidang input sehingga Anda dapat mengirimnya kembali atau mengeditnya.
+
+Memilih Ringkas hingga di sini membuat Anda tetap berada di akhir percakapan dengan input kosong.
 
 #### Pulihkan vs. ringkas
 
-Tiga opsi pemulihan mengembalikan status: mereka membatalkan perubahan kode, riwayat percakapan, atau keduanya. "Ringkas dari sini" bekerja berbeda:
+Opsi pemulihan mengembalikan status: mereka membatalkan perubahan kode, riwayat percakapan, atau keduanya. Opsi ringkas mengompres bagian dari percakapan menjadi ringkasan yang dihasilkan AI tanpa mengubah file di disk:
 
-* Pesan sebelum pesan yang dipilih tetap utuh
-* Pesan yang dipilih dan semua pesan berikutnya diganti dengan ringkasan yang dihasilkan AI yang ringkas
-* Tidak ada file di disk yang diubah
-* Pesan asli disimpan dalam transkrip sesi, sehingga Claude dapat mereferensikan detail jika diperlukan
+* **Ringkas dari sini**: pesan sebelum pesan yang dipilih tetap utuh. Pesan yang dipilih dan semua pesan berikutnya diganti dengan ringkasan. Gunakan ini untuk membuang diskusi sampingan sambil menjaga konteks awal dalam detail lengkap.
+* **Ringkas hingga di sini**: pesan sebelum pesan yang dipilih diganti dengan ringkasan. Pesan yang dipilih dan semua pesan berikutnya tetap utuh, dan Anda tetap berada di akhir percakapan. Gunakan ini untuk mengompres diskusi setup awal sambil menjaga pekerjaan terbaru dalam detail lengkap.
 
-Ini mirip dengan `/compact`, tetapi ditargetkan: alih-alih meringkas seluruh percakapan, Anda menyimpan konteks awal dalam detail lengkap dan hanya mengompres bagian yang menggunakan ruang. Anda dapat mengetik instruksi opsional untuk memandu fokus ringkasan.
+Dalam kedua kasus, pesan asli disimpan dalam transkrip sesi, sehingga Claude dapat mereferensikan detail jika diperlukan. Anda dapat mengetik instruksi opsional untuk memandu fokus ringkasan. Ini mirip dengan `/compact`, tetapi ditargetkan: alih-alih meringkas seluruh percakapan, Anda memilih sisi mana dari pesan yang dipilih untuk dikompres.
 
 <Note>
-  Ringkas membuat Anda tetap berada di sesi yang sama dan mengompres konteks. Jika Anda ingin bercabang dan mencoba pendekatan berbeda sambil mempertahankan sesi asli tetap utuh, gunakan [fork](/id/how-claude-code-works#resume-or-fork-sessions) sebagai gantinya (`claude --continue --fork-session`).
+  Ringkas membuat Anda tetap berada di sesi yang sama dan mengompres konteks. Jika Anda ingin bercabang dan mencoba pendekatan berbeda sambil mempertahankan sesi asli tetap utuh, gunakan [fork](/id/sessions#branch-a-session) sebagai gantinya (`claude --continue --fork-session`).
 </Note>
 
 ## Kasus penggunaan umum
@@ -85,5 +86,5 @@ Checkpoints dirancang untuk pemulihan cepat tingkat sesi. Untuk riwayat versi pe
 ## Lihat juga
 
 * [Mode interaktif](/id/interactive-mode) - Pintasan keyboard dan kontrol sesi
-* [Perintah bawaan](/id/commands) - Mengakses checkpoints menggunakan `/rewind`
-* [Referensi CLI](/id/cli-reference) - Opsi baris perintah
+* [Commands](/id/commands) - Mengakses checkpoints menggunakan `/rewind`
+* [CLI reference](/id/cli-reference) - Opsi baris perintah

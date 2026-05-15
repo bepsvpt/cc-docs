@@ -297,7 +297,7 @@ Diese Felder gelten für alle Hook-Typen:
 | :-------------- | :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `type`          | ja           | `"command"`, `"http"`, `"mcp_tool"`, `"prompt"` oder `"agent"`                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `if`            | nein         | Berechtigungsregel-Syntax zum Filtern, wann dieser Hook ausgeführt wird, wie `"Bash(git *)"` oder `"Edit(*.ts)"`. Der Hook wird nur ausgeführt, wenn der Tool-Aufruf dem Muster entspricht, oder wenn ein Bash-Befehl zu komplex zum Analysieren ist. Wird nur auf Tool-Ereignisse evaluiert: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest` und `PermissionDenied`. Bei anderen Ereignissen wird ein Hook mit `if` gesetzt nie ausgeführt. Verwendet die gleiche Syntax wie [Berechtigungsregeln](/de/permissions) |
-| `timeout`       | nein         | Sekunden vor dem Abbruch. Standardwerte: 600 für Command, 30 für Prompt, 60 für Agent                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `timeout`       | nein         | Sekunden vor dem Abbruch. Standardwerte: 600 für `command`, `http` und `mcp_tool`; 30 für `prompt`; 60 für `agent`. [`UserPromptSubmit`](#userpromptsubmit) senkt den Standardwert für `command`, `http` und `mcp_tool` auf 30                                                                                                                                                                                                                                                                                                              |
 | `statusMessage` | nein         | Benutzerdefinierte Spinner-Nachricht, die angezeigt wird, während der Hook ausgeführt wird                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `once`          | nein         | Wenn `true`, wird nur einmal pro Sitzung ausgeführt und dann entfernt. Nur für Hooks, die in [Skill-Frontmatter](#hooks-in-skills-and-agents) deklariert sind; wird in Einstellungsdateien und Agent-Frontmatter ignoriert                                                                                                                                                                                                                                                                                                                  |
 
@@ -558,6 +558,8 @@ Direkte Bearbeitungen von Hooks in Einstellungsdateien werden normalerweise auto
 
 Command-Hooks erhalten JSON-Daten über stdin und kommunizieren Ergebnisse über Exit-Codes, stdout und stderr. HTTP-Hooks erhalten die gleiche JSON als POST-Request-Body und kommunizieren Ergebnisse über den HTTP-Response-Body. Dieser Abschnitt behandelt Felder und Verhalten, die allen Ereignissen gemeinsam sind. Jeder Abschnitt eines Ereignisses unter [Hook-Ereignisse](#hook-events) enthält sein spezifisches Eingabeschema und Optionen zur Entscheidungskontrolle.
 
+Auf macOS und Linux werden Command-Hooks seit v2.1.139 in ihrer eigenen Sitzung ohne steuerndes Terminal ausgeführt. Der Hook-Prozess und alle untergeordneten Prozesse können `/dev/tty` nicht öffnen oder Escape-Sequenzen direkt an die Claude Code-Benutzeroberfläche senden. Windows hat kein `/dev/tty`. Um eine Nachricht dem Benutzer auf jeder Plattform anzuzeigen, geben Sie [`systemMessage`](#json-output) in der JSON-Ausgabe zurück. Um eine Desktop-Benachrichtigung auszulösen, einen Fenstertitel zu setzen oder die Glocke zu läuten, geben Sie stattdessen [`terminalSequence`](#emit-terminal-notifications) zurück.
+
 ### Gemeinsame Eingabefelder
 
 Hook-Ereignisse erhalten diese Felder als JSON, zusätzlich zu ereignisspezifischen Feldern, die in jedem Abschnitt [Hook-Ereignis](#hook-events) dokumentiert sind. Für Command-Hooks kommt diese JSON über stdin an. Für HTTP-Hooks kommt sie als POST-Request-Body an.
@@ -685,7 +687,7 @@ Exit-Codes ermöglichen es Ihnen, zuzulassen oder zu blockieren, aber JSON-Ausga
 
 Die stdout Ihres Hooks darf nur das JSON-Objekt enthalten. Wenn Ihr Shell-Profil beim Start Text ausgibt, kann dies die JSON-Analyse beeinträchtigen. Siehe [JSON-Validierung fehlgeschlagen](/de/hooks-guide#json-validation-failed) in der Fehlerbehebungsanleitung.
 
-Hook-Ausgabe, die in Kontext injiziert wird (`additionalContext`, `systemMessage` oder Plain-stdout), ist auf 10.000 Zeichen begrenzt. Ausgabe, die dieses Limit überschreitet, wird in einer Datei gespeichert und durch eine Vorschau und einen Dateipfad ersetzt, auf die gleiche Weise wie große Tool-Ergebnisse behandelt werden.
+Hook-Ausgabe-Strings, einschließlich `additionalContext`, `systemMessage` und Plain-stdout, sind auf 10.000 Zeichen begrenzt. Ausgabe, die dieses Limit überschreitet, wird in einer Datei gespeichert und durch eine Vorschau und einen Dateipfad ersetzt, auf die gleiche Weise wie große Tool-Ergebnisse behandelt werden.
 
 Das JSON-Objekt unterstützt drei Arten von Feldern:
 
@@ -693,18 +695,53 @@ Das JSON-Objekt unterstützt drei Arten von Feldern:
 * **Top-Level `decision` und `reason`** werden von einigen Ereignissen verwendet, um zu blockieren oder Feedback zu geben.
 * **`hookSpecificOutput`** ist ein verschachteltes Objekt für Ereignisse, die reichere Kontrolle benötigen. Es erfordert ein `hookEventName`-Feld, das auf den Ereignisnamen gesetzt ist.
 
-| Feld             | Standard | Beschreibung                                                                                                                                                 |
-| :--------------- | :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `continue`       | `true`   | Wenn `false`, stoppt Claude die Verarbeitung vollständig, nachdem der Hook ausgeführt wurde. Hat Vorrang vor allen ereignisspezifischen Entscheidungsfeldern |
-| `stopReason`     | keine    | Nachricht, die dem Benutzer angezeigt wird, wenn `continue` `false` ist. Wird Claude nicht angezeigt                                                         |
-| `suppressOutput` | `false`  | Wenn `true`, verbirgt stdout aus dem Debug-Log                                                                                                               |
-| `systemMessage`  | keine    | Warnmeldung, die dem Benutzer angezeigt wird                                                                                                                 |
+| Feld               | Standard | Beschreibung                                                                                                                                                                                                                                                                                                                                                                             |
+| :----------------- | :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `continue`         | `true`   | Wenn `false`, stoppt Claude die Verarbeitung vollständig, nachdem der Hook ausgeführt wurde. Hat Vorrang vor allen ereignisspezifischen Entscheidungsfeldern                                                                                                                                                                                                                             |
+| `stopReason`       | keine    | Nachricht, die dem Benutzer angezeigt wird, wenn `continue` `false` ist. Wird Claude nicht angezeigt                                                                                                                                                                                                                                                                                     |
+| `suppressOutput`   | `false`  | Wenn `true`, verbirgt stdout aus dem Debug-Log                                                                                                                                                                                                                                                                                                                                           |
+| `systemMessage`    | keine    | Warnmeldung, die dem Benutzer angezeigt wird                                                                                                                                                                                                                                                                                                                                             |
+| `terminalSequence` | keine    | Eine Terminal-Escape-Sequenz, die Claude Code in Ihrem Namen ausgeben soll, wie eine Desktop-Benachrichtigung, ein Fenstertitel oder eine Glocke. Beschränkt auf OSC `0`/`1`/`2`/`9`/`99`/`777` und BEL. Wenn der Wert etwas außerhalb der Zulassungsliste enthält, wird das Feld ignoriert. Verwenden Sie dies anstelle des Schreibens zu `/dev/tty`, das für Hooks nicht verfügbar ist |
 
 Um Claude unabhängig vom Ereignistyp vollständig zu stoppen:
 
 ```json theme={null}
 { "continue": false, "stopReason": "Build failed, fix errors before continuing" }
 ```
+
+#### Terminal-Benachrichtigungen ausgeben
+
+Das Feld `terminalSequence` erfordert Claude Code v2.1.141 oder später.
+
+Hooks werden ohne steuerndes Terminal ausgeführt, daher schlägt das direkte Schreiben von Escape-Sequenzen zu `/dev/tty` fehl. Geben Sie stattdessen die Escape-Sequenz im Feld `terminalSequence` zurück und Claude Code gibt sie für Sie über seinen eigenen Terminal-Schreibpfad aus. Dies ist race-frei, funktioniert innerhalb von tmux und GNU screen und funktioniert unter Windows, wo es kein `/dev/tty` gibt.
+
+Das Feld akzeptiert einen String aus einer oder mehreren zugelassenen Escape-Sequenzen:
+
+* OSC `0`, `1`, `2`: Fenster- und Symboltitel
+* OSC `9`: iTerm2-, ConEmu-, Windows Terminal- und WezTerm-Benachrichtigungen, einschließlich `9;4` Taskleisten-Fortschritt
+* OSC `99`: Kitty-Benachrichtigungen
+* OSC `777`: urxvt-, Ghostty- und Warp-Benachrichtigungen
+* Bare BEL
+
+Sequenzen können mit BEL oder mit ST beendet werden. Alles außerhalb der Zulassungsliste, einschließlich CSI-Cursor- und Farbsequenzen, OSC-Palettensequenzen, OSC-8-Hyperlinks, OSC-52-Zwischenablage-Schreibvorgänge und OSC-1337, wird abgelehnt und das Feld wird ignoriert.
+
+Das folgende Beispiel löst eine Desktop-Benachrichtigung aus einem `Notification`-Hook aus. Die Escape-Sequenz wird mit `printf`-Oktalescapes erstellt, sodass die Steuerbytes niemals auf der Shell-Befehlszeile erscheinen, und `jq -n --arg` erstellt die JSON-Ausgabe, sodass Anführungszeichen, Backslashes und Zeilenumbrüche in der Benachrichtigungsmeldung korrekt escaped werden:
+
+```bash theme={null}
+#!/bin/bash
+# Notification-Hook: Ping des Desktops, wenn Claude Code Aufmerksamkeit benötigt.
+input=$(cat)
+title="Claude Code'
+body=$(jq -r '.message // 'Needs your attention"' <<<"$input")
+seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
+jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
+```
+
+Die Form `{ "terminalSequence": "..." }` ist die gleiche aus jeder Shell oder Sprache. Unter Windows erstellen Sie die Escape-Zeichenkette in PowerShell oder einem Skript und geben das gleiche JSON-Objekt aus.
+
+<Note>
+  `terminalSequence` ist der unterstützte Ersatz für Hooks, die zuvor Escape-Sequenzen direkt zu `/dev/tty` schrieben. Die Zulassungsliste ist auf Sequenzen beschränkt, die den Cursor nicht bewegen oder Farben ändern können, sodass ein Hook niemals eine On-Screen-Eingabeaufforderung beschädigen kann.
+</Note>
 
 #### Kontext für Claude hinzufügen
 
@@ -989,6 +1026,8 @@ InstructionsLoaded-Hooks haben keine Entscheidungskontrolle. Sie können das Lad
 
 Wird ausgeführt, wenn der Benutzer einen Prompt einreicht, bevor Claude ihn verarbeitet. Dies ermöglicht es Ihnen, zusätzlichen Kontext basierend auf dem Prompt/Gespräch hinzuzufügen, Prompts zu validieren oder bestimmte Arten von Prompts zu blockieren.
 
+`UserPromptSubmit`-Hooks haben ein Standard-Timeout von 30 Sekunden für `command`-, `http`- und `mcp_tool`-Typen, kürzer als das 600-Sekunden-Standard für diese Typen bei anderen Ereignissen. Da dieser Hook vor jedem Prompt ausgeführt wird und die Modellverarbeitung blockiert, bis er abgeschlossen ist, stellt ein feststeckender Hook die Sitzung still. Wenn Ihr Hook mehr Zeit benötigt, setzen Sie das Feld `timeout` im Hook-Eintrag.
+
 #### UserPromptSubmit-Eingabe
 
 Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten UserPromptSubmit-Hooks das Feld `prompt`, das den Text enthält, den der Benutzer eingereicht hat.
@@ -1190,6 +1229,20 @@ Spawnt einen [Subagenten](/de/sub-agents).
 | `description`   | Zeichenkette | `"Find API endpoints"`     | Kurze Beschreibung der Aufgabe                          |
 | `subagent_type` | Zeichenkette | `"Explore"`                | Typ des zu verwendenden spezialisierten Agenten         |
 | `model`         | Zeichenkette | `"sonnet"`                 | Optionaler Modell-Alias zum Überschreiben des Standards |
+
+In `PostToolUse` trägt `tool_response` für einen abgeschlossenen Agent-Aufruf den abschließenden Text des Subagenten zusammen mit Nutzungstelemetrie. Lesen Sie diese Felder, um Pro-Subagent-Kosten aus einem Hook zu erfassen:
+
+| Feld                | Typ          | Beispiel                                              | Beschreibung                                                                                                             |
+| :------------------ | :----------- | :---------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------- |
+| `status`            | Zeichenkette | `"completed"`                                         | `"completed"` für synchrone Aufrufe, `"async_launched"` für `run_in_background: true`                                    |
+| `agentId`           | Zeichenkette | `"a4d2c8f1e0b3a297"`                                  | Kennung für die Subagenten-Ausführung                                                                                    |
+| `content`           | Array        | `[{"type": "text", "text": "Found 12 endpoints..."}]` | Die abschließenden Textblöcke des Subagenten                                                                             |
+| `totalTokens`       | Zahl         | `12450`                                               | Gesamttokens, die über die Runden des Subagenten abgerechnet werden                                                      |
+| `totalDurationMs`   | Zahl         | `48211`                                               | Wanduhr-Dauer der Subagenten-Ausführung                                                                                  |
+| `totalToolUseCount` | Zahl         | `7`                                                   | Anzahl der Tool-Aufrufe, die der Subagent gemacht hat                                                                    |
+| `usage`             | Objekt       | `{"input_tokens": 8320, ...}`                         | Pro-Typ-Token-Aufschlüsselung: `input_tokens`, `output_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens` |
+
+Für `run_in_background: true`-Aufrufe gibt das Tool sofort nach dem Starten des Subagenten zurück, daher trägt `tool_response` keine Nutzungsfelder. Es hat stattdessen `status: "async_launched"`, `agentId`, `description`, `prompt` und `outputFile`.
 
 ##### AskUserQuestion
 
@@ -2598,7 +2651,7 @@ Das Feld `timeout` setzt die maximale Zeit in Sekunden für den Hintergrund-Proz
 
 Wenn ein asynchroner Hook ausgelöst wird, startet Claude Code den Hook-Prozess und setzt sofort fort, ohne auf den Abschluss zu warten. Der Hook erhält die gleiche JSON-Eingabe über stdin wie ein synchroner Hook.
 
-Nachdem der Hintergrund-Prozess beendet ist, wenn der Hook eine JSON-Response mit einem `systemMessage`- oder `additionalContext`-Feld erzeugt hat, wird dieser Inhalt Claude beim nächsten Gesprächsturn als Kontext geliefert.
+Nachdem der Hintergrund-Prozess beendet ist, wenn der Hook eine JSON-Response mit einem `additionalContext`-Feld erzeugt hat, wird dieser Inhalt Claude beim nächsten Gesprächsturn als Kontext geliefert. Ein `systemMessage`-Feld wird Ihnen angezeigt, nicht Claude.
 
 Benachrichtigungen über den Abschluss asynchroner Hooks werden standardmäßig unterdrückt. Um sie zu sehen, aktivieren Sie den ausführlichen Modus mit `Ctrl+O` oder starten Sie Claude Code mit `--verbose`.
 
@@ -2619,15 +2672,16 @@ if [[ "$FILE_PATH" != *.ts && "$FILE_PATH" != *.js ]]; then
   exit 0
 fi
 
-# Tests ausführen und Ergebnisse über systemMessage melden
+# Tests ausführen und Ergebnisse über additionalContext an Claude melden
 RESULT=$(npm test 2>&1)
 EXIT_CODE=$?
 
 if [ $EXIT_CODE -eq 0 ]; then
-  echo "{\"systemMessage\": \"Tests passed after editing $FILE_PATH\"}"
+  MSG="Tests passed after editing $FILE_PATH"
 else
-  echo "{\"systemMessage\": \"Tests failed after editing $FILE_PATH: $RESULT\"}"
+  MSG="Tests failed after editing $FILE_PATH: $RESULT"
 fi
+jq -nc --arg msg "$MSG" '{hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: $msg}}'
 ```
 
 Fügen Sie dann diese Konfiguration zu `.claude/settings.json` im Projekt-Root hinzu. Das Flag `async: true` ermöglicht es Claude, weiterarbeiten zu können, während Tests ausgeführt werden:

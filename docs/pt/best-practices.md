@@ -52,7 +52,7 @@ Sua verificação também pode ser um conjunto de testes, um linter ou um comand
   Separe pesquisa e planejamento da implementação para evitar resolver o problema errado.
 </Tip>
 
-Deixar Claude pular direto para codificação pode produzir código que resolve o problema errado. Use [Plan Mode](/pt/common-workflows#use-plan-mode-for-safe-code-analysis) para separar exploração de execução.
+Deixar Claude pular direto para codificação pode produzir código que resolve o problema errado. Use [Plan Mode](/pt/permission-modes#analyze-before-you-edit-with-plan-mode) para separar exploração de execução.
 
 O fluxo de trabalho recomendado tem quatro fases:
 
@@ -60,7 +60,7 @@ O fluxo de trabalho recomendado tem quatro fases:
   <Step title="Explore">
     Entre em Plan Mode. Claude lê arquivos e responde perguntas sem fazer alterações.
 
-    ```txt claude (Plan Mode) theme={null}
+    ```txt claude (plan mode) theme={null}
     read /src/auth and understand how we handle sessions and login.
     also look at how we manage environment variables for secrets.
     ```
@@ -69,7 +69,7 @@ O fluxo de trabalho recomendado tem quatro fases:
   <Step title="Plan">
     Peça ao Claude para criar um plano de implementação detalhado.
 
-    ```txt claude (Plan Mode) theme={null}
+    ```txt claude (plan mode) theme={null}
     I want to add Google OAuth. What files need to change?
     What's the session flow? Create a plan.
     ```
@@ -78,9 +78,9 @@ O fluxo de trabalho recomendado tem quatro fases:
   </Step>
 
   <Step title="Implement">
-    Volte para Normal Mode e deixe Claude codificar, verificando contra seu plano.
+    Saia de Plan Mode e deixe Claude codificar, verificando contra seu plano.
 
-    ```txt claude (Normal Mode) theme={null}
+    ```txt claude (default mode) theme={null}
     implement the OAuth flow from your plan. write tests for the
     callback handler, run the test suite and fix any failures.
     ```
@@ -89,7 +89,7 @@ O fluxo de trabalho recomendado tem quatro fases:
   <Step title="Commit">
     Peça ao Claude para fazer commit com uma mensagem descritiva e criar um PR.
 
-    ```txt claude (Normal Mode) theme={null}
+    ```txt claude (default mode) theme={null}
     commit with a descriptive message and open a PR
     ```
   </Step>
@@ -396,7 +396,7 @@ Durante sessões longas, a janela de contexto do Claude pode se encher com conve
 * Use `/clear` frequentemente entre tarefas para redefinir a janela de contexto inteiramente
 * Quando auto compaction dispara, Claude resume o que importa mais, incluindo padrões de código, estados de arquivo e decisões-chave
 * Para mais controle, execute `/compact <instructions>`, como `/compact Focus on the API changes`
-* Para compactar apenas parte da conversa, use `Esc + Esc` ou `/rewind`, selecione um checkpoint de mensagem e escolha **Summarize from here**. Isso condensa mensagens daquele ponto em diante enquanto mantém contexto anterior intacto.
+* Para compactar apenas parte da conversa, use `Esc + Esc` ou `/rewind`, selecione um checkpoint de mensagem e escolha **Summarize from here** ou **Summarize up to here**. O primeiro condensa mensagens daquele ponto em diante enquanto mantém contexto anterior intacto; o segundo condensa mensagens anteriores enquanto mantém as recentes em cheio. Veja [Restore vs. summarize](/pt/checkpointing#restore-vs-summarize).
 * Customize comportamento de compaction em CLAUDE.md com instruções como `"When compacting, always preserve the full list of modified files and any test commands"` para garantir que contexto crítico sobreviva à sumarização
 * Para perguntas rápidas que não precisam ficar em contexto, use [`/btw`](/pt/interactive-mode#side-questions-with-%2Fbtw). A resposta aparece em uma sobreposição dispensável e nunca entra no histórico de conversa, então você pode verificar um detalhe sem crescer contexto.
 
@@ -424,10 +424,10 @@ use a subagent to review this code for edge cases
 ### Rewind com checkpoints
 
 <Tip>
-  Cada ação que Claude faz cria um checkpoint. Você pode restaurar conversa, código ou ambos para qualquer checkpoint anterior.
+  Cada prompt que você envia cria um checkpoint. Você pode restaurar conversa, código ou ambos para qualquer checkpoint anterior.
 </Tip>
 
-Claude automaticamente faz checkpoint antes de mudanças. Pressione Escape duas vezes ou execute `/rewind` para abrir o menu de rewind. Você pode restaurar apenas conversa, restaurar apenas código, restaurar ambos ou resumir a partir de uma mensagem selecionada. Veja [Checkpointing](/pt/checkpointing) para detalhes.
+Claude automaticamente faz snapshots de arquivos antes de cada mudança para que um checkpoint possa restaurá-los. Pressione Escape duas vezes ou execute `/rewind` para abrir o menu de rewind. Você pode restaurar apenas conversa, restaurar apenas código, restaurar ambos ou resumir a partir de uma mensagem selecionada. Veja [Checkpointing](/pt/checkpointing) para detalhes.
 
 Em vez de planejar cuidadosamente cada movimento, você pode dizer ao Claude para tentar algo arriscado. Se não funcionar, rewind e tente uma abordagem diferente. Checkpoints persistem entre sessões, então você pode fechar seu terminal e ainda fazer rewind depois.
 
@@ -438,17 +438,10 @@ Em vez de planejar cuidadosamente cada movimento, você pode dizer ao Claude par
 ### Retome conversas
 
 <Tip>
-  Execute `claude --continue` para continuar de onde parou, ou `--resume` para escolher entre sessões recentes.
+  Nomeie sessões com `/rename` e trate-as como branches: cada fluxo de trabalho obtém seu próprio contexto persistente.
 </Tip>
 
-Claude Code salva conversas localmente. Quando uma tarefa abrange múltiplas sessões, você não tem que re-explicar o contexto:
-
-```bash theme={null}
-claude --continue    # Resume the most recent conversation
-claude --resume      # Select from recent conversations
-```
-
-Use `/rename` para dar às sessões nomes descritivos como `"oauth-migration"` ou `"debugging-memory-leak"` para que você possa encontrá-las depois. Trate sessões como branches: diferentes fluxos de trabalho podem ter contextos separados e persistentes.
+Claude Code salva conversas localmente, então quando uma tarefa abrange múltiplas sessões você não tem que re-explicar o contexto. Execute `claude --continue` para continuar a sessão mais recente, ou `claude --resume` para escolher de uma lista. Dê às sessões nomes descritivos como `oauth-migration` para que você possa encontrá-las depois. Veja [Manage sessions](/pt/sessions) para o conjunto completo de controles de resume, branch e nomeação.
 
 ***
 
@@ -464,7 +457,7 @@ Tudo até agora assume um humano, um Claude e uma conversa. Mas Claude Code dime
   Use `claude -p "prompt"` em CI, pre-commit hooks ou scripts. Adicione `--output-format stream-json` para saída JSON em streaming.
 </Tip>
 
-Com `claude -p "your prompt"`, você pode executar Claude não-interativamente, sem uma sessão. Modo não-interativo é como você integra Claude em pipelines CI, pre-commit hooks ou qualquer fluxo de trabalho automatizado. Os formatos de saída permitem você analisar resultados programaticamente: texto simples, JSON ou JSON em streaming.
+Com `claude -p "your prompt"`, você pode executar Claude não-interativamente, sem uma sessão. [Modo não-interativo](/pt/headless) é como você integra Claude em pipelines CI, pre-commit hooks ou qualquer fluxo de trabalho automatizado. Os formatos de saída permitem que você analise resultados programaticamente: texto simples, JSON ou JSON em streaming.
 
 ```bash theme={null}
 # One-off queries
@@ -483,11 +476,12 @@ claude -p "Analyze this log file" --output-format stream-json
   Execute múltiplas sessões Claude em paralelo para acelerar desenvolvimento, executar experimentos isolados ou iniciar fluxos de trabalho complexos.
 </Tip>
 
-Existem três maneiras principais de executar sessões paralelas:
+Escolha a abordagem paralela que se adequa a quanto de coordenação você quer fazer por conta própria:
 
-* [Claude Code desktop app](/pt/desktop#work-in-parallel-with-sessions): Gerencie múltiplas sessões locais visualmente. Cada sessão obtém seu próprio worktree isolado.
-* [Claude Code on the web](/pt/claude-code-on-the-web): Execute na infraestrutura de nuvem segura da Anthropic em VMs isoladas.
-* [Agent teams](/pt/agent-teams): Coordenação automatizada de múltiplas sessões com tarefas compartilhadas, mensagens e um team lead.
+* [Worktrees](/pt/worktrees): execute sessões CLI separadas em checkouts git isolados para que edições não colidam
+* [Aplicativo desktop](/pt/desktop#work-in-parallel-with-sessions): gerencie múltiplas sessões locais visualmente, cada uma em seu próprio worktree
+* [Claude Code na web](/pt/claude-code-on-the-web): execute sessões na infraestrutura de nuvem gerenciada pela Anthropic em VMs isoladas
+* [Equipes de agentes](/pt/agent-teams): coordenação automatizada de múltiplas sessões com tarefas compartilhadas, mensagens e um líder de equipe
 
 Além de paralelizar trabalho, múltiplas sessões habilitam fluxos de trabalho focados em qualidade. Um contexto fresco melhora revisão de código já que Claude não será enviesado para código que acabou de escrever.
 
@@ -504,7 +498,7 @@ Você pode fazer algo similar com testes: ter um Claude escrever testes, depois 
 ### Fan out entre arquivos
 
 <Tip>
-  Loop através de tarefas chamando `claude -p` para cada. Use `--allowedTools` para escopear permissões para operações em lote.
+  Faça loop através de tarefas chamando `claude -p` para cada uma. Use `--allowedTools` para escopear permissões para operações em lote.
 </Tip>
 
 Para grandes migrações ou análises, você pode distribuir trabalho entre muitas invocações Claude paralelas:

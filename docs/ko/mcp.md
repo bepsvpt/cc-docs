@@ -458,7 +458,7 @@ claude mcp add --transport stdio db -- npx -y @bytebase/dbhub \
 
 많은 클라우드 기반 MCP 서버는 인증이 필요합니다. Claude Code는 보안 연결을 위해 OAuth 2.0을 지원합니다.
 
-Claude Code는 서버가 `401 Unauthorized`로 응답하고 인증 서버를 가리키는 `WWW-Authenticate` 헤더를 포함할 때 원격 서버를 인증이 필요한 것으로 표시합니다. 해당 응답을 반환하는 모든 사용자 정의 서버는 다른 원격 서버와 동일한 `/mcp` 인증 흐름을 받습니다.
+Claude Code는 서버가 `401 Unauthorized` 또는 `403 Forbidden`으로 응답할 때 원격 서버를 인증이 필요한 것으로 표시합니다. 두 상태 코드 모두 서버를 `/mcp`에 플래그하여 OAuth 흐름을 완료할 수 있습니다. 인증 서버를 가리키는 `WWW-Authenticate` 헤더를 반환하는 사용자 정의 서버는 다른 원격 서버와 동일한 자동 검색을 받습니다.
 
 <Steps>
   <Step title="인증이 필요한 서버 추가">
@@ -576,7 +576,7 @@ claude mcp add --transport http \
 
 ### OAuth 메타데이터 검색 재정의
 
-특정 OAuth 인증 서버 메타데이터 URL을 가리켜 기본 검색 체인을 우회하도록 Claude Code를 설정합니다. MCP 서버의 표준 엔드포인트가 오류를 반환하거나 내부 프록시를 통해 검색을 라우팅하려는 경우에 설정합니다. 기본적으로 Claude Code는 먼저 `/.well-known/oauth-protected-resource`에서 RFC 9728 보호된 리소스 메타데이터를 확인한 다음 `/.well-known/oauth-authorization-server`에서 RFC 8414 인증 서버 메타데이터로 돌아갑니다.
+특정 OAuth 인증 서버 메타데이터 URL을 가리켜 기본 검색 체인을 우회하도록 Claude Code를 설정합니다. MCP 서버의 표준 엔드포인트가 오류를 반환하거나 내부 프록시를 통해 검색을 라우팅하려는 경우에 `authServerMetadataUrl`을 설정합니다. 기본적으로 Claude Code는 먼저 `/.well-known/oauth-protected-resource`에서 RFC 9728 보호된 리소스 메타데이터를 확인한 다음 `/.well-known/oauth-authorization-server`에서 RFC 8414 인증 서버 메타데이터로 돌아갑니다.
 
 `.mcp.json`의 서버 구성의 `oauth` 객체에 `authServerMetadataUrl`을 설정합니다:
 

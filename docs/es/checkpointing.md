@@ -28,23 +28,24 @@ Presione `Esc` dos veces (`Esc` + `Esc`) o use el comando `/rewind` para abrir e
 * **Restaurar conversación**: revierte a ese mensaje mientras mantiene el código actual
 * **Restaurar código**: revierte los cambios de archivo mientras mantiene la conversación
 * **Resumir desde aquí**: comprime la conversación desde este punto en adelante en un resumen, liberando espacio de context window
+* **Resumir hasta aquí**: comprime la conversación antes de este punto en un resumen, manteniendo los mensajes posteriores intactos
 * **Cancelar**: regresa a la lista de mensajes sin hacer cambios
 
-Después de restaurar la conversación o resumir, la solicitud original del mensaje seleccionado se restaura en el campo de entrada para que pueda reenviarlo o editarlo.
+Después de restaurar la conversación o elegir Resumir desde aquí, la solicitud original del mensaje seleccionado se restaura en el campo de entrada para que pueda reenviarlo o editarlo.
+
+Al elegir Resumir hasta aquí, se queda al final de la conversación con la entrada vacía.
 
 #### Restaurar vs. resumir
 
-Las tres opciones de restauración revierten el estado: deshacen cambios de código, historial de conversación, o ambos. "Resumir desde aquí" funciona de manera diferente:
+Las opciones de restauración revierten el estado: deshacen cambios de código, historial de conversación, o ambos. Las opciones de resumir comprimen parte de la conversación en un resumen generado por IA sin cambiar archivos en el disco:
 
-* Los mensajes anteriores al mensaje seleccionado permanecen intactos
-* El mensaje seleccionado y todos los mensajes posteriores se reemplazan con un resumen compacto generado por IA
-* No se cambian archivos en el disco
-* Los mensajes originales se conservan en la transcripción de la sesión, por lo que Claude puede hacer referencia a los detalles si es necesario
+* **Resumir desde aquí**: los mensajes anteriores al mensaje seleccionado permanecen intactos. El mensaje seleccionado y todo lo que viene después se reemplazan con un resumen. Utilice esto para descartar una discusión secundaria mientras mantiene el contexto inicial en detalle completo.
+* **Resumir hasta aquí**: los mensajes anteriores al mensaje seleccionado se reemplazan con un resumen. El mensaje seleccionado y todo lo que viene después permanecen intactos, y usted permanece al final de la conversación. Utilice esto para comprimir la discusión de configuración inicial mientras mantiene el trabajo reciente en detalle completo.
 
-Esto es similar a `/compact`, pero dirigido: en lugar de resumir toda la conversación, mantiene el contexto inicial en detalle completo y solo comprime las partes que están usando espacio. Puede escribir instrucciones opcionales para guiar en qué se enfoca el resumen.
+En ambos casos, los mensajes originales se conservan en la transcripción de la sesión, por lo que Claude puede hacer referencia a los detalles si es necesario. Puede escribir instrucciones opcionales para guiar en qué se enfoca el resumen. Esto es similar a `/compact`, pero dirigido: en lugar de resumir toda la conversación, elige qué lado del mensaje seleccionado comprimir.
 
 <Note>
-  Resumir lo mantiene en la misma sesión y comprime el contexto. Si desea ramificarse e intentar un enfoque diferente mientras preserva la sesión original intacta, use [fork](/es/how-claude-code-works#resume-or-fork-sessions) en su lugar (`claude --continue --fork-session`).
+  Resumir lo mantiene en la misma sesión y comprime el contexto. Si desea ramificarse e intentar un enfoque diferente mientras preserva la sesión original intacta, use [fork](/es/sessions#branch-a-session) en su lugar (`claude --continue --fork-session`).
 </Note>
 
 ## Casos de uso comunes
@@ -85,5 +86,5 @@ Los checkpoints están diseñados para recuperación rápida a nivel de sesión.
 ## Ver también
 
 * [Modo interactivo](/es/interactive-mode) - Atajos de teclado y controles de sesión
-* [Comandos integrados](/es/commands) - Acceso a checkpoints usando `/rewind`
+* [Comandos](/es/commands) - Acceso a checkpoints usando `/rewind`
 * [Referencia de CLI](/es/cli-reference) - Opciones de línea de comandos

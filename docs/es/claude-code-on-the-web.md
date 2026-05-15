@@ -782,7 +782,7 @@ Si una nueva sesión no se inicia con `Session creation failed` o se detiene en 
 
 ### Sesión de Control Remoto expirada o acceso denegado
 
-`--teleport` se conecta a través de la misma infraestructura de sesión de Control Remoto que usan las sesiones en la nube, por lo que los errores de autenticación y vencimiento de sesión aparecen con la redacción de Control Remoto. Puede ver `Remote Control session has expired` o `Access denied`. El token de conexión es de corta duración y está limitado a su cuenta.
+`--teleport` se conecta a través de la misma infraestructura de sesión de Control Remoto que usan las sesiones en la nube, por lo que los errores de autenticación y vencimiento de sesión aparecen con la redacción de Control Remoto. Puede ver `Remote Control session expired` o `Access denied`. El token de conexión es de corta duración y está limitado a su cuenta.
 
 * Ejecute `/login` localmente para actualizar sus credenciales, luego reconecte
 * Confirme que está conectado a la misma cuenta que posee la sesión

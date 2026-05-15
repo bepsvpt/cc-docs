@@ -148,7 +148,7 @@ Code 標籤是圍繞您可以以任何佈局排列的窗格構建的：聊天、
 
 ### 在終端機中執行命令
 
-整合終端機讓您在會話旁執行命令，而無需切換到另一個應用程式。從 **Views** 選單開啟它，或在 macOS 或 Windows 上按 **Ctrl+\`**。終端機在您會話的工作目錄中開啟，並與 Claude 共用相同的環境，因此 `npm test` 或 `git status` 等命令會看到 Claude 正在編輯的相同檔案。終端機僅在本機會話中可用。
+整合終端機讓您在會話旁執行命令，而無需切換到另一個應用程式。從 **Views** 選單開啟它，或在 macOS 或 Windows 上按 **Ctrl+\`**。終端機在您會話的工作目錄中開啟，並與 Claude 共用相同的環境，因此 `npm test` 或 `git status` 等命令會看到 Claude 正在編輯的相同檔案。若要開啟第二個終端機標籤，請點擊終端機窗格標題中的 **+** 或右鍵點擊聊天中的資料夾以選擇 **Open in terminal**。終端機僅在本機會話中可用。
 
 ### 開啟和編輯檔案
 
@@ -295,6 +295,8 @@ Worktrees 預設儲存在 `<project-root>/.claude/worktrees/` 中。您可以在
 </Note>
 
 使用側邊欄頂部的控制項按狀態、專案或環境篩選會話，並按專案分組會話。若要重新命名會話，請點擊活動會話頂部工具列中的會話標題。若要檢查上下文使用情況，請參閱[檢查使用情況](#check-usage)。當上下文填滿時，Claude 會自動總結對話並繼續工作。您也可以輸入 `/compact` 來更早觸發總結並釋放上下文空間。有關壓縮如何運作的詳細資訊，請參閱[上下文視窗](/zh-TW/how-claude-code-works#the-context-window)。
+
+桌面應用程式會在 Code 會話完成任務且您目前未檢視該會話時傳送作業系統通知。
 
 ### 在不偏離會話的情況下詢問側邊問題
 
@@ -597,13 +599,14 @@ Teams 或 Enterprise 計畫上的組織可以透過管理員主控台控制、�
 
 受管設定會覆蓋專案和使用者設定，並在 Desktop 產生 CLI 會話時套用。您可以在您組織的[受管設定](/zh-TW/settings#settings-precedence)檔案中設定這些金鑰，或透過管理員主控台遠端推送它們。
 
-| 金鑰                                         | 描述                                                                                                                                |
-| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
-| `permissions.disableBypassPermissionsMode` | 設定為 `"disable"` 以防止使用者啟用略過權限模式。                                                                                                   |
-| `disableAutoMode`                          | 設定為 `"disable"` 以防止使用者啟用 [Auto](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode) 模式。從模式選擇器中移除 Auto。也在 `permissions` 下接受。 |
-| `autoMode`                                 | 自訂 auto 模式分類器在您的組織中信任和阻止的內容。請參閱[配置 auto 模式](/zh-TW/auto-mode-config)。                                                             |
-| `sshConfigs`                               | 預先配置[SSH 連線](#pre-configure-ssh-connections-for-your-team)，在環境下拉式選單中顯示。使用者無法編輯或刪除受管連線。                                            |
-| `sshHostAllowlist`                         | 限制 [SSH 會話](#restrict-which-ssh-hosts-users-can-connect-to)連線到已解析主機名稱符合這些模式之一的主機。空陣列會停用 SSH 會話。僅從受管設定讀取。                          |
+| 金鑰                                         | 描述                                                                                                                                          |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `permissions.disableBypassPermissionsMode` | 設定為 `"disable"` 以防止使用者啟用略過權限模式。                                                                                                             |
+| `disableAutoMode`                          | 設定為 `"disable"` 以防止使用者啟用 [Auto](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode) 模式。從模式選擇器中移除 Auto。也在 `permissions` 下接受。           |
+| `autoMode`                                 | 自訂 auto 模式分類器在您的組織中信任和阻止的內容。請參閱[配置 auto 模式](/zh-TW/auto-mode-config)。                                                                       |
+| `sshConfigs`                               | 預先配置[SSH 連線](#pre-configure-ssh-connections-for-your-team)，在環境下拉式選單中顯示。使用者無法編輯或刪除受管連線。                                                      |
+| `sshHostAllowlist`                         | 限制 [SSH 會話](#restrict-which-ssh-hosts-users-can-connect-to)連線到已解析主機名稱符合這些模式之一的主機。空陣列會停用 SSH 會話。僅從受管設定讀取。                                    |
+| `managedMcpServers`                        | 將 MCP 伺服器配置推送到第三方部署中的所有使用者。每個項目指定 `"http"`、`"sse"` 或 `"stdio"` 的傳輸、連線詳細資訊，以及可選的 `toolPolicy` 對應，限制該伺服器中使用者可以叫用的工具。僅在第三方 (3P) Desktop 部署中可用。 |
 
 部署到每台機器上磁碟的受管設定檔案適用於 Desktop 會話。透過管理員主控台推送的遠端受管設定目前僅適用於 CLI 和 IDE 會話，因此對於 Desktop 部署，請透過 MDM 分發檔案或使用上面的[管理員主控台控制](#admin-console-controls)。
 

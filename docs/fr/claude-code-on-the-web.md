@@ -782,7 +782,7 @@ Si une nouvelle session ne démarre pas avec `Session creation failed` ou stagne
 
 ### Session Remote Control expirée ou accès refusé
 
-`--teleport` se connecte via la même infrastructure de session Remote Control que les sessions cloud, donc les erreurs d'authentification et d'expiration de session apparaissent avec la terminologie Remote Control. Vous pouvez voir `Remote Control session has expired` ou `Access denied`. Le jeton de connexion est de courte durée et limité à votre compte.
+`--teleport` se connecte via la même infrastructure de session Remote Control que les sessions cloud, donc les erreurs d'authentification et d'expiration de session apparaissent avec la terminologie Remote Control. Vous pouvez voir `Remote Control session expired` ou `Access denied`. Le jeton de connexion est de courte durée et limité à votre compte.
 
 * Exécutez `/login` localement pour actualiser vos identifiants, puis reconnectez-vous
 * Confirmez que vous êtes connecté au même compte qui possède la session

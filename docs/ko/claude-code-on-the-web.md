@@ -782,7 +782,7 @@ Claude는 GitHub의 검토 주석 스레드에 회신할 수 있습니다. 이�
 
 ### Remote Control 세션 만료 또는 액세스 거부
 
-`--teleport`는 클라우드 세션이 사용하는 동일한 Remote Control 세션 인프라를 통해 연결되므로 인증 및 세션 만료 오류는 Remote Control 용어로 표시됩니다. `Remote Control session has expired` 또는 `Access denied`가 표시될 수 있습니다. 연결 토큰은 단기이며 계정으로 범위가 지정됩니다.
+`--teleport`는 클라우드 세션이 사용하는 동일한 Remote Control 세션 인프라를 통해 연결되므로 인증 및 세션 만료 오류는 Remote Control 용어로 표시됩니다. `Remote Control session expired` 또는 `Access denied`가 표시될 수 있습니다. 연결 토큰은 단기이며 계정으로 범위가 지정됩니다.
 
 * 로컬에서 `/login`을 실행하여 자격 증명을 새로 고친 다음 다시 연결하세요
 * 세션을 소유한 동일한 계정으로 로그인했는지 확인하세요

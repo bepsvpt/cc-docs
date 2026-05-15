@@ -458,7 +458,7 @@ Encontre clientes que não fizeram uma compra em 90 dias
 
 Muitos servidores MCP baseados em nuvem exigem autenticação. Claude Code suporta OAuth 2.0 para conexões seguras.
 
-Claude Code marca um servidor remoto como necessitando autenticação quando o servidor responde com `401 Unauthorized` e um cabeçalho `WWW-Authenticate` apontando para seu servidor de autorização. Qualquer servidor personalizado que retorna essa resposta obtém o mesmo fluxo de autenticação `/mcp` que qualquer outro servidor remoto.
+Claude Code marca um servidor remoto como necessitando autenticação quando o servidor responde com `401 Unauthorized` ou `403 Forbidden`. Qualquer código de status sinaliza o servidor em `/mcp` para que você possa completar o fluxo OAuth. Um servidor personalizado que retorna um cabeçalho `WWW-Authenticate` apontando para seu servidor de autorização obtém a mesma descoberta automática que qualquer outro servidor remoto.
 
 <Steps>
   <Step title="Adicione o servidor que requer autenticação">

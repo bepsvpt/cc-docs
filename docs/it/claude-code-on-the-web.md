@@ -782,7 +782,7 @@ Se una nuova sessione non si avvia con `Session creation failed` o si blocca al 
 
 ### Sessione Remote Control scaduta o accesso negato
 
-`--teleport` si connette attraverso la stessa infrastruttura della sessione Remote Control che le sessioni cloud utilizzano, quindi gli errori di autenticazione e scadenza della sessione si presentano con la terminologia Remote Control. Potresti vedere `Remote Control session has expired` o `Access denied`. Il token di connessione è di breve durata e limitato al tuo account.
+`--teleport` si connette attraverso la stessa infrastruttura della sessione Remote Control che le sessioni cloud utilizzano, quindi gli errori di autenticazione e scadenza della sessione si presentano con la terminologia Remote Control. Potresti vedere `Remote Control session expired` o `Access denied`. Il token di connessione è di breve durata e limitato al tuo account.
 
 * Esegui `/login` localmente per aggiornare le tue credenziali, quindi riconnettiti
 * Conferma che sei connesso allo stesso account che possiede la sessione

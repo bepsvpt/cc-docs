@@ -458,7 +458,7 @@ Find customers who haven't made a purchase in 90 days
 
 Banyak server MCP berbasis cloud memerlukan autentikasi. Claude Code mendukung OAuth 2.0 untuk koneksi yang aman.
 
-Claude Code menandai server jarak jauh sebagai memerlukan autentikasi ketika server merespons dengan `401 Unauthorized` dan header `WWW-Authenticate` yang menunjuk ke server otorisasinya. Server kustom apa pun yang mengembalikan respons tersebut mendapatkan alur autentikasi `/mcp` yang sama seperti server jarak jauh lainnya.
+Claude Code menandai server jarak jauh sebagai memerlukan autentikasi ketika server merespons dengan `401 Unauthorized` atau `403 Forbidden`. Salah satu kode status ini menandai server di `/mcp` sehingga Anda dapat menyelesaikan alur OAuth. Server kustom yang mengembalikan header `WWW-Authenticate` yang menunjuk ke server otorisasinya mendapatkan penemuan otomatis yang sama seperti server jarak jauh lainnya.
 
 <Steps>
   <Step title="Tambahkan server yang memerlukan autentikasi">

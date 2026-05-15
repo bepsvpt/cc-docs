@@ -170,7 +170,10 @@ Les clés API Bedrock offrent une méthode d'authentification plus simple sans a
 
 Claude Code prend en charge l'actualisation automatique des identifiants pour AWS SSO et les fournisseurs d'identité d'entreprise. Ajoutez ces paramètres à votre fichier de paramètres Claude Code (voir [Paramètres](/fr/settings) pour les emplacements des fichiers).
 
-Lorsque Claude Code détecte que vos identifiants AWS ont expiré (soit localement en fonction de leur horodatage, soit lorsque Bedrock retourne une erreur d'identifiants), il exécutera automatiquement vos commandes `awsAuthRefresh` et/ou `awsCredentialExport` configurées pour obtenir de nouveaux identifiants avant de réessayer la demande.
+Ces deux paramètres ont des conditions de déclenchement différentes :
+
+* **`awsAuthRefresh`** : s'exécute uniquement lorsque Claude Code détecte que vos identifiants AWS ont expiré, soit localement en fonction de leur horodatage, soit lorsque Bedrock retourne une erreur d'identifiants, puis réessaye la demande avec des identifiants actualisés.
+* **`awsCredentialExport`** : s'exécute au démarrage de la session et à chaque rechargement des identifiants, même lorsque les identifiants de votre chaîne de fournisseurs d'identifiants AWS par défaut sont toujours valides. Utilisez ceci lorsque votre compte Bedrock nécessite des identifiants inter-comptes qui diffèrent de ceux que la chaîne de fournisseurs par défaut résoudrait.
 
 ##### Exemple de configuration
 
@@ -187,7 +190,7 @@ Lorsque Claude Code détecte que vos identifiants AWS ont expiré (soit localeme
 
 **`awsAuthRefresh`** : Utilisez ceci pour les commandes qui modifient le répertoire `.aws`, comme la mise à jour des identifiants, du cache SSO ou des fichiers de configuration. La sortie de la commande s'affiche à l'utilisateur, mais l'entrée interactive n'est pas prise en charge. Cela fonctionne bien pour les flux SSO basés sur un navigateur où l'interface de ligne de commande affiche une URL ou un code et vous complétez l'authentification dans le navigateur.
 
-**`awsCredentialExport`** : Utilisez ceci uniquement si vous ne pouvez pas modifier `.aws` et devez retourner directement les identifiants. La sortie est capturée silencieusement et non affichée à l'utilisateur. La commande doit générer du JSON dans ce format :
+**`awsCredentialExport`** : Utilisez ceci uniquement si vous ne pouvez pas modifier `.aws` et devez retourner directement les identifiants. Cette commande s'exécute chaque fois que les identifiants doivent être actualisés, pas seulement lorsque les identifiants ont expiré. La sortie est capturée silencieusement et non affichée à l'utilisateur. La commande doit générer du JSON dans ce format :
 
 ```json theme={null}
 {

@@ -1,5 +1,268 @@
 # Documentation Changes
 
+## 2026-05-15
+
+156 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Claude Code auf Amazon Bedrock** (`amazon-bedrock.md`): 5 lines added, 2 removed
+- **Best Practices für Claude Code** (`best-practices.md`): 20 lines added, 26 removed
+- **Checkpointing** (`checkpointing.md`): 10 lines added, 10 removed
+- **Claude Code im Web verwenden** (`claude-code-on-the-web.md`): 1 lines added, 1 removed
+- **CLI-Referenz** (`cli-reference.md`): 1 lines added, 1 removed
+- **Claude Code Desktop verwenden** (`desktop.md`): 11 lines added, 8 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 21 lines added, 11 removed
+- **Automatisieren Sie Workflows mit Hooks** (`hooks-guide.md`): 5 lines added, 2 removed
+- **Hooks-Referenz** (`hooks.md`): 66 lines added, 12 removed
+  - New section: "#### Terminal-Benachrichtigungen ausgeben"
+  - New section: "# Tests ausführen und Ergebnisse über additionalContext an Claude melden"
+- **Claude Code mit Tools über MCP verbinden** (`mcp.md`): 1 lines added, 1 removed
+- **Lokale Sitzungen von jedem Gerät aus mit Remote Control fortsetzen** (`remote-control.md`): 14 lines added, 13 removed
+- **Benutzerdefinierte Subagenten erstellen** (`sub-agents.md`): 6 lines added, 4 removed
+
+### English
+
+
+**Modified**
+
+- **Claude Code on Amazon Bedrock** (`amazon-bedrock.md`): 6 lines added, 3 removed
+- **Best practices for Claude Code** (`best-practices.md`): 3 lines added, 3 removed
+- **Changelog** (`changelog.md`): 27 lines added, 0 removed
+- **Checkpointing** (`checkpointing.md`): 8 lines added, 7 removed
+- **Use Claude Code on the web** (`claude-code-on-the-web.md`): 1 lines added, 1 removed
+- **CLI reference** (`cli-reference.md`): 1 lines added, 1 removed
+- **Commands** (`commands.md`): 1 lines added, 1 removed
+- **Use Claude Code Desktop** (`desktop.md`): 11 lines added, 8 removed
+- **Environment variables** (`env-vars.md`): 5 lines added, 2 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 21 lines added, 11 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 4 lines added, 1 removed
+- **Hooks reference** (`hooks.md`): 66 lines added, 12 removed
+  - New section: "#### Emit terminal notifications"
+  - New section: "# Run tests and report results to Claude via additionalContext"
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 1 lines added, 1 removed
+- **Continue local sessions from any device with Remote Control** (`remote-control.md`): 1 lines added, 1 removed
+- **Claude Code settings** (`settings.md`): 3 lines added, 1 removed
+- **Create custom subagents** (`sub-agents.md`): 6 lines added, 4 removed
+
+### Español
+
+
+**Modified**
+
+- **Claude Code en Amazon Bedrock** (`amazon-bedrock.md`): 5 lines added, 2 removed
+- **Mejores prácticas para Claude Code** (`best-practices.md`): 19 lines added, 25 removed
+- **Checkpointing** (`checkpointing.md`): 10 lines added, 9 removed
+- **Usar Claude Code en la web** (`claude-code-on-the-web.md`): 1 lines added, 1 removed
+- **Referencia de CLI** (`cli-reference.md`): 1 lines added, 1 removed
+- **Usar Claude Code Desktop** (`desktop.md`): 11 lines added, 8 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 21 lines added, 11 removed
+- **Automatizar flujos de trabajo con hooks** (`hooks-guide.md`): 4 lines added, 1 removed
+- **Referencia de hooks** (`hooks.md`): 66 lines added, 12 removed
+  - New section: "#### Emitir notificaciones de terminal"
+  - New section: "# Ejecute pruebas e informe resultados a Claude a través de additionalContext"
+- **Conectar Claude Code a herramientas mediante MCP** (`mcp.md`): 1 lines added, 1 removed
+- **Continúe sesiones locales desde cualquier dispositivo con Remote Control** (`remote-control.md`): 13 lines added, 12 removed
+- **Configuración de Claude Code** (`settings.md`): 4 lines added, 2 removed
+- **Crear subagentes personalizados** (`sub-agents.md`): 7 lines added, 5 removed
+
+### Français
+
+
+**Modified**
+
+- **Claude Code sur Amazon Bedrock** (`amazon-bedrock.md`): 5 lines added, 2 removed
+- **Meilleures pratiques pour Claude Code** (`best-practices.md`): 21 lines added, 27 removed
+- **Checkpointing** (`checkpointing.md`): 10 lines added, 9 removed
+- **Utiliser Claude Code sur le web** (`claude-code-on-the-web.md`): 1 lines added, 1 removed
+- **Référence CLI** (`cli-reference.md`): 1 lines added, 1 removed
+- **Utiliser Claude Code Desktop** (`desktop.md`): 11 lines added, 8 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 21 lines added, 11 removed
+- **Automatiser les workflows avec les hooks** (`hooks-guide.md`): 4 lines added, 1 removed
+- **Référence des hooks** (`hooks.md`): 65 lines added, 11 removed
+  - New section: "#### Émettre des notifications de terminal"
+  - New section: "# Exécutez les tests et rapportez les résultats à Claude via additionalContext"
+- **Connecter Claude Code aux outils via MCP** (`mcp.md`): 1 lines added, 1 removed
+- **Continuer les sessions locales depuis n'importe quel appareil avec Remote Control** (`remote-control.md`): 14 lines added, 13 removed
+- **Paramètres Claude Code** (`settings.md`): 3 lines added, 1 removed
+- **Créer des sous-agents personnalisés** (`sub-agents.md`): 6 lines added, 4 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Claude Code di Amazon Bedrock** (`amazon-bedrock.md`): 5 lines added, 2 removed
+- **Praktik Terbaik untuk Claude Code** (`best-practices.md`): 17 lines added, 23 removed
+- **Checkpointing** (`checkpointing.md`): 11 lines added, 10 removed
+- **Gunakan Claude Code di web** (`claude-code-on-the-web.md`): 1 lines added, 1 removed
+- **Referensi CLI** (`cli-reference.md`): 1 lines added, 1 removed
+- **Gunakan Claude Code Desktop** (`desktop.md`): 11 lines added, 8 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 21 lines added, 11 removed
+- **Otomatisasi alur kerja dengan hooks** (`hooks-guide.md`): 5 lines added, 2 removed
+- **Referensi hooks** (`hooks.md`): 67 lines added, 13 removed
+  - New section: "#### Emit terminal notifications"
+  - New section: "# Jalankan tests dan laporkan hasil ke Claude via additionalContext"
+- **Hubungkan Claude Code ke alat melalui MCP** (`mcp.md`): 1 lines added, 1 removed
+- **Lanjutkan sesi lokal dari perangkat apa pun dengan Remote Control** (`remote-control.md`): 14 lines added, 13 removed
+  - New section: "## Pemecahan Masalah"
+- **Buat subagent khusus** (`sub-agents.md`): 6 lines added, 4 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Claude Code su Amazon Bedrock** (`amazon-bedrock.md`): 5 lines added, 2 removed
+- **Best practices for Claude Code** (`best-practices.md`): 18 lines added, 24 removed
+  - New section: "# Best practices for Claude Code"
+- **Checkpointing** (`checkpointing.md`): 10 lines added, 9 removed
+- **Usa Claude Code sul web** (`claude-code-on-the-web.md`): 1 lines added, 1 removed
+- **Riferimento CLI** (`cli-reference.md`): 1 lines added, 1 removed
+- **Usa Claude Code Desktop** (`desktop.md`): 11 lines added, 8 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 21 lines added, 11 removed
+- **Automatizzare i flussi di lavoro con hooks** (`hooks-guide.md`): 4 lines added, 1 removed
+- **Riferimento dei hooks** (`hooks.md`): 65 lines added, 11 removed
+  - New section: "#### Emettere notifiche del terminale"
+  - New section: "# Eseguire i test e segnalare i risultati a Claude tramite additionalContext"
+- **Connetti Claude Code ai tuoi strumenti tramite MCP** (`mcp.md`): 1 lines added, 1 removed
+- **Continua le sessioni locali da qualsiasi dispositivo con Remote Control** (`remote-control.md`): 13 lines added, 12 removed
+- **Impostazioni di Claude Code** (`settings.md`): 4 lines added, 2 removed
+- **Creare subagent personalizzati** (`sub-agents.md`): 6 lines added, 4 removed
+
+### 日本語
+
+
+**Modified**
+
+- **Amazon Bedrock 上の Claude Code** (`amazon-bedrock.md`): 8 lines added, 5 removed
+- **Claude Code のベストプラクティス** (`best-practices.md`): 21 lines added, 27 removed
+- **チェックポイント** (`checkpointing.md`): 10 lines added, 9 removed
+- **ウェブ上の Claude Code を使用する** (`claude-code-on-the-web.md`): 1 lines added, 1 removed
+- **CLI リファレンス** (`cli-reference.md`): 1 lines added, 1 removed
+- **Claude Code Desktop を使用する** (`desktop.md`): 11 lines added, 8 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 21 lines added, 11 removed
+- **hooks でワークフローを自動化する** (`hooks-guide.md`): 4 lines added, 1 removed
+- **Hooks リファレンス** (`hooks.md`): 68 lines added, 14 removed
+  - New section: "#### ターミナル通知を発行"
+  - New section: "# テストを実行し、additionalContext 経由で結果を Claude に報告"
+- **MCP を使用して Claude Code をツールに接続する** (`mcp.md`): 1 lines added, 1 removed
+- **任意のデバイスからローカルセッションを続行する Remote Control** (`remote-control.md`): 19 lines added, 18 removed
+- **カスタムサブエージェントの作成** (`sub-agents.md`): 6 lines added, 4 removed
+
+### 한국어
+
+
+**Modified**
+
+- **Amazon Bedrock의 Claude Code** (`amazon-bedrock.md`): 5 lines added, 2 removed
+- **Claude Code 모범 사례** (`best-practices.md`): 28 lines added, 34 removed
+- **Checkpointing** (`checkpointing.md`): 10 lines added, 9 removed
+- **웹에서 Claude Code 사용하기** (`claude-code-on-the-web.md`): 1 lines added, 1 removed
+- **CLI 참조** (`cli-reference.md`): 1 lines added, 1 removed
+- **Claude Code Desktop 사용하기** (`desktop.md`): 11 lines added, 8 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 21 lines added, 11 removed
+- **hooks를 사용하여 워크플로우 자동화** (`hooks-guide.md`): 5 lines added, 2 removed
+- **Hooks 참조** (`hooks.md`): 67 lines added, 13 removed
+  - New section: "#### 터미널 알림 내보내기"
+  - New section: "# 테스트를 실행하고 additionalContext를 통해 결과를 Claude에 보고합니다"
+- **MCP를 통해 Claude Code를 도구에 연결하기** (`mcp.md`): 2 lines added, 2 removed
+- **모든 기기에서 로컬 세션 계속하기 (Remote Control)** (`remote-control.md`): 13 lines added, 12 removed
+- **Claude Code 설정** (`settings.md`): 1 lines added, 1 removed
+- **사용자 정의 subagent 만들기** (`sub-agents.md`): 6 lines added, 4 removed
+
+### Português
+
+
+**Modified**
+
+- **Claude Code no Amazon Bedrock** (`amazon-bedrock.md`): 5 lines added, 2 removed
+- **Melhores práticas para Claude Code** (`best-practices.md`): 18 lines added, 24 removed
+- **Checkpointing** (`checkpointing.md`): 11 lines added, 10 removed
+- **Use Claude Code na web** (`claude-code-on-the-web.md`): 1 lines added, 1 removed
+- **Referência de CLI** (`cli-reference.md`): 1 lines added, 1 removed
+- **Use Claude Code Desktop** (`desktop.md`): 11 lines added, 8 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 21 lines added, 11 removed
+- **Automatizar fluxos de trabalho com hooks** (`hooks-guide.md`): 4 lines added, 1 removed
+- **Referência de hooks** (`hooks.md`): 65 lines added, 11 removed
+  - New section: "#### Emitir notificações de terminal"
+  - New section: "# Execute testes e relate resultados ao Claude via additionalContext"
+- **Conectar Claude Code a ferramentas via MCP** (`mcp.md`): 1 lines added, 1 removed
+- **Continue sessões locais de qualquer dispositivo com Remote Control** (`remote-control.md`): 13 lines added, 12 removed
+- **Configurações do Claude Code** (`settings.md`): 4 lines added, 2 removed
+- **Criar subagentes personalizados** (`sub-agents.md`): 6 lines added, 4 removed
+
+### Русский
+
+
+**Modified**
+
+- **Claude Code на Amazon Bedrock** (`amazon-bedrock.md`): 5 lines added, 2 removed
+- **Лучшие практики для Claude Code** (`best-practices.md`): 17 lines added, 23 removed
+- **Checkpointing** (`checkpointing.md`): 10 lines added, 9 removed
+- **Использование Claude Code в веб-интерфейсе** (`claude-code-on-the-web.md`): 1 lines added, 1 removed
+- **Справочник CLI** (`cli-reference.md`): 1 lines added, 1 removed
+- **Использование Claude Code Desktop** (`desktop.md`): 12 lines added, 9 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 21 lines added, 11 removed
+- **Автоматизация рабочих процессов с помощью hooks** (`hooks-guide.md`): 4 lines added, 1 removed
+- **Справочник по hooks** (`hooks.md`): 67 lines added, 13 removed
+  - New section: "#### Выдача уведомлений терминала"
+  - New section: "# Run tests and report results to Claude via additionalContext"
+- **Подключите Claude Code к инструментам через MCP** (`mcp.md`): 1 lines added, 1 removed
+- **Продолжайте локальные сеансы с любого устройства с помощью Remote Control** (`remote-control.md`): 13 lines added, 12 removed
+- **Параметры Claude Code** (`settings.md`): 3 lines added, 1 removed
+- **Создание пользовательских subagents** (`sub-agents.md`): 6 lines added, 4 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **Amazon Bedrock 上的 Claude Code** (`amazon-bedrock.md`): 5 lines added, 2 removed
+- **Claude Code 最佳实践** (`best-practices.md`): 17 lines added, 23 removed
+- **Checkpointing** (`checkpointing.md`): 10 lines added, 10 removed
+  - New section: "# Checkpointing"
+- **在网络上使用 Claude Code** (`claude-code-on-the-web.md`): 1 lines added, 1 removed
+- **CLI 参考** (`cli-reference.md`): 1 lines added, 1 removed
+- **使用 Claude Code Desktop** (`desktop.md`): 11 lines added, 8 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 21 lines added, 11 removed
+- **使用 hooks 自动化工作流** (`hooks-guide.md`): 4 lines added, 1 removed
+- **Hooks 参考** (`hooks.md`): 67 lines added, 13 removed
+  - New section: "#### 发出终端通知"
+  - New section: "# 运行测试并通过 additionalContext 向 Claude 报告结果"
+- **通过 MCP 将 Claude Code 连接到工具** (`mcp.md`): 1 lines added, 1 removed
+- **使用 Remote Control 从任何设备继续本地会话** (`remote-control.md`): 13 lines added, 12 removed
+- **Claude Code 设置** (`settings.md`): 3 lines added, 1 removed
+- **创建自定义 subagents** (`sub-agents.md`): 6 lines added, 4 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **Amazon Bedrock 上的 Claude Code** (`amazon-bedrock.md`): 5 lines added, 2 removed
+- **Claude Code 最佳實踐** (`best-practices.md`): 19 lines added, 25 removed
+- **Checkpointing** (`checkpointing.md`): 9 lines added, 9 removed
+- **在網頁上使用 Claude Code** (`claude-code-on-the-web.md`): 1 lines added, 1 removed
+- **CLI 參考** (`cli-reference.md`): 1 lines added, 1 removed
+- **使用 Claude Code Desktop** (`desktop.md`): 11 lines added, 8 removed
+- **Claude Code GitHub Actions** (`github-actions.md`): 21 lines added, 11 removed
+- **使用 hooks 自動化工作流程** (`hooks-guide.md`): 4 lines added, 1 removed
+- **Hooks 參考** (`hooks.md`): 68 lines added, 14 removed
+  - New section: "#### 發出終端通知"
+  - New section: "#### 為 Claude 新增上下文"
+  - New section: "# 執行測試並通過 additionalContext 報告結果給 Claude"
+- **透過 MCP 將 Claude Code 連接到工具** (`mcp.md`): 1 lines added, 1 removed
+- **使用 Remote Control 從任何裝置繼續本地會話** (`remote-control.md`): 13 lines added, 12 removed
+- **Claude Code 設定** (`settings.md`): 3 lines added, 1 removed
+- **建立自訂 subagents** (`sub-agents.md`): 6 lines added, 4 removed
+
+---
+
 ## 2026-05-14
 
 99 pages modified
