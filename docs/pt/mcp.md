@@ -953,17 +953,19 @@ Claude Code trunca descrições de ferramentas e instruções de servidor em 2KB
 
 ### Configurar pesquisa de ferramentas
 
-Tool Search é ativado por padrão: as ferramentas MCP são adiadas e descobertas sob demanda. Está desabilitado por padrão no Vertex AI, que não aceita o cabeçalho beta de pesquisa de ferramentas, e quando `ANTHROPIC_BASE_URL` aponta para um host que não é de primeira parte, já que a maioria dos proxies não encaminha blocos `tool_reference`. Se seu proxy encaminha blocos `tool_reference`, defina `ENABLE_TOOL_SEARCH` explicitamente para substituir o fallback. Este recurso requer modelos que suportam blocos `tool_reference`: Sonnet 4 e posterior, ou Opus 4 e posterior. Os modelos Haiku não suportam pesquisa de ferramentas.
+Tool Search é ativado por padrão: as ferramentas MCP são adiadas e descobertas sob demanda. Claude Code desabilita-o por padrão no Vertex AI. Também é desabilitado quando `ANTHROPIC_BASE_URL` aponta para um host que não é de primeira parte, já que a maioria dos proxies não encaminha blocos `tool_reference`. Defina `ENABLE_TOOL_SEARCH` explicitamente para substituir qualquer fallback.
+
+Tool Search requer um modelo que suporte blocos `tool_reference`: Sonnet 4 e posterior, ou Opus 4 e posterior. Os modelos Haiku não suportam. No Vertex AI, tool search é suportado para Claude Sonnet 4.5 e posterior e Claude Opus 4.5 e posterior.
 
 Controle o comportamento da pesquisa de ferramentas com a variável de ambiente `ENABLE_TOOL_SEARCH`:
 
-| Valor          | Comportamento                                                                                                                                                                         |
-| :------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| (não definido) | Todas as ferramentas MCP adiadas e carregadas sob demanda. Volta a carregar antecipadamente no Vertex AI ou quando `ANTHROPIC_BASE_URL` é um host que não é de primeira parte         |
-| `true`         | Todas as ferramentas MCP adiadas. Claude Code envia o cabeçalho beta mesmo no Vertex AI e através de proxies. As solicitações falham se o backend não suporta blocos `tool_reference` |
-| `auto`         | Modo de limite: ferramentas carregam antecipadamente se se encaixarem em 10% da janela de contexto, adiadas caso contrário                                                            |
-| `auto:<N>`     | Modo de limite com uma porcentagem personalizada, onde `<N>` é 0-100 (por exemplo, `auto:5` para 5%)                                                                                  |
-| `false`        | Todas as ferramentas MCP carregadas antecipadamente, sem adiamento                                                                                                                    |
+| Valor          | Comportamento                                                                                                                                                                                                                                         |
+| :------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (não definido) | Todas as ferramentas MCP adiadas e carregadas sob demanda. Volta a carregar antecipadamente no Vertex AI ou quando `ANTHROPIC_BASE_URL` é um host que não é de primeira parte                                                                         |
+| `true`         | Todas as ferramentas MCP adiadas. Claude Code envia o cabeçalho beta mesmo no Vertex AI e através de proxies. As solicitações falham em modelos Vertex AI anteriores a Sonnet 4.5 ou Opus 4.5, ou em proxies que não suportam blocos `tool_reference` |
+| `auto`         | Modo de limite: ferramentas carregam antecipadamente se se encaixarem em 10% da janela de contexto, adiadas caso contrário                                                                                                                            |
+| `auto:N`       | Modo de limite com uma porcentagem personalizada, onde `N` é 0-100. Por exemplo, `auto:5` para 5%                                                                                                                                                     |
+| `false`        | Todas as ferramentas MCP carregadas antecipadamente, sem adiamento                                                                                                                                                                                    |
 
 ```bash theme={null}
 # Use um limite personalizado de 5%

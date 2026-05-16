@@ -211,8 +211,9 @@ Establezca las siguientes variables de entorno para habilitar Bedrock:
 export CLAUDE_CODE_USE_BEDROCK=1
 export AWS_REGION=us-east-1  # or your preferred region
 
-# Optional: Override the region for the small/fast model (Haiku).
-# Also applies to Bedrock Mantle.
+# Optional: Override the AWS region for the small/fast model (Bedrock and Mantle).
+# On Bedrock, has no effect without ANTHROPIC_DEFAULT_HAIKU_MODEL
+# or the deprecated ANTHROPIC_SMALL_FAST_MODEL set.
 export ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION=us-west-2
 
 # Optional: Override the Bedrock endpoint URL for custom endpoints or gateways
@@ -248,7 +249,9 @@ Claude Code utiliza estos modelos predeterminados cuando no se establecen variab
 | Tipo de modelo        | Valor predeterminado                           |
 | :-------------------- | :--------------------------------------------- |
 | Modelo principal      | `us.anthropic.claude-sonnet-4-5-20250929-v1:0` |
-| Modelo pequeño/rápido | `us.anthropic.claude-haiku-4-5-20251001-v1:0`  |
+| Modelo pequeño/rápido | Igual que el modelo principal                  |
+
+Las tareas en segundo plano, como la generación de títulos de sesión, utilizan el modelo pequeño/rápido, normalmente un modelo de clase Haiku. En Bedrock, Claude Code establece por defecto esto al modelo principal porque Haiku puede no estar habilitado en todas las cuentas o regiones. Para usar Haiku para tareas en segundo plano, establezca `ANTHROPIC_DEFAULT_HAIKU_MODEL` en un ID de modelo que esté disponible en su cuenta.
 
 Para personalizar modelos aún más, utilice uno de estos métodos:
 

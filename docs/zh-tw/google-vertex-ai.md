@@ -202,7 +202,7 @@ export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 
 [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) 會自動啟用。若要停用它，請設定 `DISABLE_PROMPT_CACHING=1`。若要要求 1 小時 cache TTL 而不是 5 分鐘預設值，請設定 `ENABLE_PROMPT_CACHING_1H=1`；具有 1 小時 TTL 的 cache 寫入會以更高費率計費。如需提高速率限制，請聯絡 Google Cloud 支援。使用 Vertex AI 時，`/login` 和 `/logout` 命令會被停用，因為驗證是透過 Google Cloud 認證處理的。
 
-[MCP tool search](/zh-TW/mcp#scale-with-mcp-tool-search) 在 Vertex AI 上預設為停用，因為端點不接受所需的 beta 標頭。所有 MCP 工具定義會改為預先載入。若要選擇加入，請設定 `ENABLE_TOOL_SEARCH=true`。
+Claude Code 在 Vertex AI 上預設停用 [MCP tool search](/zh-TW/mcp#scale-with-mcp-tool-search)，因此 MCP 工具定義會預先載入。Vertex AI 支援 Claude Sonnet 4.5 及更新版本以及 Claude Opus 4.5 及更新版本的工具搜尋。設定 `ENABLE_TOOL_SEARCH=true` 以在這些模型上啟用它。Vertex AI 上的較早模型不接受所需的 beta 標頭，如果您使用它們啟用工具搜尋，要求會失敗。
 
 ### 5. 固定模型版本
 
@@ -222,12 +222,14 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5@20251001'
 
 如需目前和舊版模型 ID，請參閱[模型概覽](https://platform.claude.com/docs/en/about-claude/models/overview)。如需完整的環境變數清單，請參閱[模型設定](/zh-TW/model-config#pin-models-for-third-party-deployments)。
 
-未設定固定變數時，Claude Code 使用這些預設模型：
+Claude Code 使用這些預設模型，當未設定固定變數時：
 
 | 模型類型    | 預設值                          |
 | :------ | :--------------------------- |
 | 主要模型    | `claude-sonnet-4-5@20250929` |
-| 小型/快速模型 | `claude-haiku-4-5@20251001`  |
+| 小型/快速模型 | 與主要模型相同                      |
+
+背景工作（例如工作階段標題產生）使用小型/快速模型，通常是 Haiku 級模型。在 Vertex AI 上，Claude Code 預設為主要模型，因為 Haiku 可能不會在每個專案或區域中啟用。若要使用 Haiku 進行背景工作，請將 `ANTHROPIC_DEFAULT_HAIKU_MODEL` 設定為您專案中可用的模型 ID。
 
 若要進一步自訂模型：
 

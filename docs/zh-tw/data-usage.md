@@ -97,9 +97,11 @@ Claude Code 建立在 Anthropic 的 API 上。有關 API 安全控制的詳細�
 
 Claude Code 從使用者的機器連接到 Anthropic 以記錄延遲、可靠性和使用模式等操作指標。此記錄不包括任何程式碼或檔案路徑。資料在傳輸中和靜止時都經過加密。若要選擇退出遙測，請設定 `DISABLE_TELEMETRY` 環境變數。
 
-Claude Code 從使用者的機器連接到 Sentry 進行操作錯誤記錄。資料在傳輸中使用 TLS 加密，在靜止時使用 256 位 AES 加密。在 [Sentry 安全文件](https://sentry.io/security/)中閱讀更多資訊。若要選擇退出錯誤記錄，請設定 `DISABLE_ERROR_REPORTING` 環境變數。
+Claude Code 從使用者的機器連接到 Sentry 進行操作錯誤記錄。資料在傳輸中使用 TLS 加密，在靜止時使用 256 位 AES 加密。在 [Sentry 安全文件](https://sentry.io/security/) 中閱讀更多資訊。若要選擇退出錯誤記錄，請設定 `DISABLE_ERROR_REPORTING` 環境變數。
 
-當使用者執行 `/feedback` 命令時，他們的完整對話歷史記錄（包括程式碼）的副本會發送到 Anthropic。資料在傳輸中使用 TLS 加密。可選地，在公開儲存庫中建立 GitHub 問題。若要選擇退出，請設定 `DISABLE_FEEDBACK_COMMAND` 環境變數為 `1`。
+當使用者執行 `/feedback` 命令時，他們的完整對話歷史記錄（包括程式碼）的副本會發送到 Anthropic。在提交前，使用者可以選擇要包含多少歷史記錄：僅限目前工作階段（預設值），或也包括同一專案在過去 24 小時或 7 天內的其他工作階段。資料在傳輸中使用 TLS 加密。可選地，在公開儲存庫中建立 GitHub 問題。若要選擇退出，請設定 `DISABLE_FEEDBACK_COMMAND` 環境變數為 `1`。
+
+當使用者使用第三方提供者（例如 Bedrock 或 Vertex）或未設定 Anthropic 認證時，`/feedback` 會將報告寫入 `~/.claude/feedback-bundles/` 下的本機封存，而不是將其發送到 Anthropic。已知的 API 金鑰和權杖模式在寫入封存前會被編輯。在使用者將該檔案發送給 Anthropic 帳戶代表或將其附加到支援請求之前，任何內容都不會離開使用者的機器。
 
 ## 按 API 提供者的預設行為
 

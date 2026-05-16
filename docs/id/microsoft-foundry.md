@@ -163,6 +163,8 @@ export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5'
 ```
 
+Tugas latar belakang seperti pembuatan judul sesi menggunakan model kecil/cepat, biasanya model kelas Haiku. Di Foundry, Claude Code secara default menggunakan model utama karena tidak setiap akun memiliki deployment Haiku. Untuk menggunakan Haiku untuk tugas latar belakang, atur `ANTHROPIC_DEFAULT_HAIKU_MODEL` ke deployment Haiku yang tersedia di akun Anda, seperti yang ditunjukkan di atas.
+
 Untuk ID model saat ini dan legacy, lihat [Models overview](https://platform.claude.com/docs/en/about-claude/models/overview). Lihat [Model configuration](/id/model-config#pin-models-for-third-party-deployments) untuk daftar lengkap variabel lingkungan.
 
 [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) diaktifkan secara otomatis. Untuk meminta TTL cache 1 jam alih-alih default 5 menit, atur variabel berikut; cache writes dengan TTL 1 jam ditagih dengan tarif yang lebih tinggi:

@@ -99,7 +99,9 @@ Claude Code terhubung dari mesin pengguna ke Anthropic untuk mencatat metrik ope
 
 Claude Code terhubung dari mesin pengguna ke Sentry untuk logging kesalahan operasional. Data dienkripsi dalam transit menggunakan TLS dan saat istirahat menggunakan enkripsi AES 256-bit. Baca lebih lanjut di [dokumentasi keamanan Sentry](https://sentry.io/security/). Untuk menolak logging kesalahan, atur variabel lingkungan `DISABLE_ERROR_REPORTING`.
 
-Ketika pengguna menjalankan perintah `/feedback`, salinan riwayat percakapan lengkap mereka termasuk kode dikirim ke Anthropic. Data dienkripsi dalam transit menggunakan TLS. Secara opsional, masalah GitHub dibuat di repositori publik. Untuk menolak, atur variabel lingkungan `DISABLE_FEEDBACK_COMMAND` ke `1`.
+Ketika Anda menjalankan perintah `/feedback`, salinan riwayat percakapan lengkap Anda termasuk kode dikirim ke Anthropic. Sebelum mengirimkan, Anda memilih berapa banyak riwayat yang akan disertakan: sesi saat ini saja, yang merupakan default, atau juga sesi lain dari proyek yang sama selama 24 jam atau 7 hari terakhir. Data dienkripsi dalam transit melalui TLS. Secara opsional, masalah GitHub dibuat di repositori publik. Untuk menolak, atur variabel lingkungan `DISABLE_FEEDBACK_COMMAND` ke `1`.
+
+Ketika Anda menggunakan penyedia pihak ketiga seperti Bedrock atau Vertex, atau tidak memiliki kredensial Anthropic yang dikonfigurasi, `/feedback` menulis laporan ke arsip lokal di bawah `~/.claude/feedback-bundles/` alih-alih mengirimkannya ke Anthropic. Pola kunci API dan token yang diketahui dihapus sebelum arsip ditulis. Tidak ada yang meninggalkan mesin Anda sampai Anda mengirim file tersebut ke perwakilan akun Anthropic Anda atau melampirkannya ke permintaan dukungan.
 
 ## Perilaku default menurut penyedia API
 

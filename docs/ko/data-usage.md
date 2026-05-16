@@ -99,7 +99,9 @@ Claude Code는 사용자의 머신에서 Anthropic에 연결하여 지연 시간
 
 Claude Code는 사용자의 머신에서 Sentry에 연결하여 운영 오류 로깅을 수행합니다. 데이터는 TLS를 사용하여 전송 중에 암호화되고 256비트 AES 암호화를 사용하여 저장 시에 암호화됩니다. [Sentry 보안 문서](https://sentry.io/security/)에서 자세히 알아보세요. 오류 로깅을 거부하려면 `DISABLE_ERROR_REPORTING` 환경 변수를 설정합니다.
 
-사용자가 `/feedback` 명령을 실행하면 코드를 포함한 전체 대화 기록의 복사본이 Anthropic으로 전송됩니다. 데이터는 전송 중 TLS를 통해 암호화됩니다. 선택적으로 공개 저장소에 GitHub 이슈가 생성됩니다. 거부하려면 `DISABLE_FEEDBACK_COMMAND` 환경 변수를 `1`로 설정합니다.
+`/feedback` 명령을 실행하면 코드를 포함한 대화 기록의 복사본이 Anthropic으로 전송됩니다. 제출하기 전에 포함할 기록의 양을 선택합니다. 기본값인 현재 세션만 포함하거나, 지난 24시간 또는 7일 동안 같은 프로젝트의 다른 세션도 포함할 수 있습니다. 데이터는 TLS를 통해 전송 중에 암호화됩니다. 선택적으로 공개 저장소에 GitHub 이슈가 생성됩니다. 거부하려면 `DISABLE_FEEDBACK_COMMAND` 환경 변수를 `1`로 설정합니다.
+
+Bedrock 또는 Vertex와 같은 타사 제공자를 사용하거나 Anthropic 자격 증명이 구성되지 않은 경우, `/feedback`은 보고서를 Anthropic으로 전송하는 대신 `~/.claude/feedback-bundles/` 아래의 로컬 아카이브에 작성합니다. 알려진 API 키 및 토큰 패턴은 아카이브가 작성되기 전에 제거됩니다. 파일을 Anthropic 계정 담당자에게 보내거나 지원 요청에 첨부할 때까지 머신을 벗어나지 않습니다.
 
 ## API 제공자별 기본 동작
 

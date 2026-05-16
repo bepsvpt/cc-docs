@@ -202,7 +202,7 @@ export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 
 [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) 会自动启用。要禁用它，请设置 `DISABLE_PROMPT_CACHING=1`。要请求 1 小时的缓存 TTL 而不是 5 分钟的默认值，请设置 `ENABLE_PROMPT_CACHING_1H=1`；具有 1 小时 TTL 的缓存写入按更高费率计费。如需提高速率限制，请联系 Google Cloud 支持。使用 Vertex AI 时，`/login` 和 `/logout` 命令被禁用，因为身份验证通过 Google Cloud 凭证处理。
 
-[MCP tool search](/zh-CN/mcp#scale-with-mcp-tool-search) 在 Vertex AI 上默认被禁用，因为端点不接受所需的 beta 标头。所有 MCP 工具定义会预先加载。要选择加入，请设置 `ENABLE_TOOL_SEARCH=true`。
+Claude Code 在 Vertex AI 上默认禁用 [MCP tool search](/zh-CN/mcp#scale-with-mcp-tool-search)，因此 MCP 工具定义会预先加载。Vertex AI 支持 Claude Sonnet 4.5 及更高版本以及 Claude Opus 4.5 及更高版本的工具搜索。设置 `ENABLE_TOOL_SEARCH=true` 以在这些模型上启用它。Vertex AI 上的早期模型不接受所需的 beta 标头，如果您对它们启用工具搜索，请求将失败。
 
 ### 5. 固定模型版本
 
@@ -227,7 +227,9 @@ Claude Code 在未设置固定变量时使用这些默认模型：
 | 模型类型    | 默认值                          |
 | :------ | :--------------------------- |
 | 主模型     | `claude-sonnet-4-5@20250929` |
-| 小型/快速模型 | `claude-haiku-4-5@20251001`  |
+| 小型/快速模型 | 与主模型相同                       |
+
+后台任务（如会话标题生成）使用小型/快速模型，通常是 Haiku 级别的模型。在 Vertex AI 上，Claude Code 默认将其设置为主模型，因为 Haiku 可能不会在每个项目或区域中启用。要为后台任务使用 Haiku，请将 `ANTHROPIC_DEFAULT_HAIKU_MODEL` 设置为在您的项目中可用的模型 ID。
 
 要进一步自定义模型：
 

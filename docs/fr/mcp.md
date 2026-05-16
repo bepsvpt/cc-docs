@@ -953,17 +953,19 @@ Claude Code tronque les descriptions d'outils et les instructions du serveur à 
 
 ### Configurer la recherche d'outils
 
-La recherche d'outils est activée par défaut : les outils MCP sont différés et découverts à la demande. Elle est désactivée par défaut sur Vertex AI, qui n'accepte pas l'en-tête bêta de recherche d'outils, et lorsque `ANTHROPIC_BASE_URL` pointe vers un hôte non-propriétaire, car la plupart des proxies ne transfèrent pas les blocs `tool_reference`. Si votre proxy transfère les blocs `tool_reference`, définissez `ENABLE_TOOL_SEARCH` explicitement pour opter pour. Cette fonctionnalité nécessite des modèles qui supportent les blocs `tool_reference` : Sonnet 4 et ultérieur, ou Opus 4 et ultérieur. Les modèles Haiku ne supportent pas la recherche d'outils.
+La recherche d'outils est activée par défaut : les outils MCP sont différés et découverts à la demande. Claude Code la désactive par défaut sur Vertex AI. Elle est également désactivée lorsque `ANTHROPIC_BASE_URL` pointe vers un hôte non-propriétaire, car la plupart des proxies ne transfèrent pas les blocs `tool_reference`. Définissez `ENABLE_TOOL_SEARCH` explicitement pour remplacer l'un ou l'autre des mécanismes de secours.
+
+La recherche d'outils nécessite un modèle qui supporte les blocs `tool_reference` : Sonnet 4 et ultérieur, ou Opus 4 et ultérieur. Les modèles Haiku ne le supportent pas. Sur Vertex AI, la recherche d'outils est supportée pour Claude Sonnet 4.5 et ultérieur et Claude Opus 4.5 et ultérieur.
 
 Contrôlez le comportement de la recherche d'outils avec la variable d'environnement `ENABLE_TOOL_SEARCH` :
 
-| Valeur       | Comportement                                                                                                                                                                          |
-| :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| (non défini) | Tous les outils MCP différés et chargés à la demande. Revient au chargement à l'avance sur Vertex AI ou lorsque `ANTHROPIC_BASE_URL` est un hôte non-propriétaire                     |
-| `true`       | Tous les outils MCP différés. Claude Code envoie l'en-tête bêta même sur Vertex AI et via les proxies. Les demandes échouent si le backend ne supporte pas les blocs `tool_reference` |
-| `auto`       | Mode seuil : les outils se chargent à l'avance s'ils s'ajustent dans 10 % de la fenêtre de contexte, différés sinon                                                                   |
-| `auto:<N>`   | Mode seuil avec un pourcentage personnalisé, où `<N>` est 0-100 (par exemple, `auto:5` pour 5 %)                                                                                      |
-| `false`      | Tous les outils MCP chargés à l'avance, pas de différé                                                                                                                                |
+| Valeur       | Comportement                                                                                                                                                                                                                                                    |
+| :----------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (non défini) | Tous les outils MCP différés et chargés à la demande. Revient au chargement à l'avance sur Vertex AI ou lorsque `ANTHROPIC_BASE_URL` est un hôte non-propriétaire                                                                                               |
+| `true`       | Tous les outils MCP différés. Claude Code envoie l'en-tête bêta même sur Vertex AI et via les proxies. Les demandes échouent sur les modèles Vertex AI antérieurs à Sonnet 4.5 ou Opus 4.5, ou sur les proxies qui ne supportent pas les blocs `tool_reference` |
+| `auto`       | Mode seuil : les outils se chargent à l'avance s'ils s'ajustent dans 10 % de la fenêtre de contexte, différés sinon                                                                                                                                             |
+| `auto:N`     | Mode seuil avec un pourcentage personnalisé, où `N` est 0-100. Par exemple, `auto:5` pour 5 %                                                                                                                                                                   |
+| `false`      | Tous les outils MCP chargés à l'avance, pas de différé                                                                                                                                                                                                          |
 
 ```bash theme={null}
 # Utiliser un seuil personnalisé de 5 %

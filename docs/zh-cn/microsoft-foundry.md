@@ -163,6 +163,8 @@ export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5'
 ```
 
+后台任务（如会话标题生成）使用小型/快速模型，通常是 Haiku 级别的模型。在 Foundry 上，Claude Code 默认使用主模型，因为并非每个账户都有 Haiku 部署。要为后台任务使用 Haiku，请将 `ANTHROPIC_DEFAULT_HAIKU_MODEL` 设置为您账户中可用的 Haiku 部署，如上所示。
+
 有关当前和旧版模型 ID，请参阅[模型概览](https://platform.claude.com/docs/en/about-claude/models/overview)。有关完整的环境变量列表，请参阅[模型配置](/zh-CN/model-config#pin-models-for-third-party-deployments)。
 
 [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) 会自动启用。要请求 1 小时的缓存 TTL 而不是 5 分钟的默认值，请设置以下变量；具有 1 小时 TTL 的缓存写入按更高的费率计费：

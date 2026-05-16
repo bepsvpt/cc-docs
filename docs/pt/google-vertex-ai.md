@@ -202,7 +202,7 @@ A maioria das versões de modelo tem uma variável `VERTEX_REGION_CLAUDE_*` corr
 
 [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) é ativado automaticamente. Para desativá-lo, defina `DISABLE_PROMPT_CACHING=1`. Para solicitar um TTL de cache de 1 hora em vez do padrão de 5 minutos, defina `ENABLE_PROMPT_CACHING_1H=1`; gravações de cache com TTL de 1 hora são cobradas a uma taxa mais alta. Para limites de taxa aumentados, entre em contato com o suporte do Google Cloud. Ao usar Vertex AI, os comandos `/login` e `/logout` são desativados, pois a autenticação é tratada através das credenciais do Google Cloud.
 
-[MCP tool search](/pt/mcp#scale-with-mcp-tool-search) é desativado por padrão no Vertex AI porque o endpoint não aceita o cabeçalho beta necessário. Todas as definições de ferramenta MCP são carregadas antecipadamente. Para aceitar, defina `ENABLE_TOOL_SEARCH=true`.
+Claude Code desativa [MCP tool search](/pt/mcp#scale-with-mcp-tool-search) por padrão no Vertex AI, portanto as definições de ferramenta MCP são carregadas antecipadamente. Vertex AI suporta busca de ferramentas para Claude Sonnet 4.5 e posterior e Claude Opus 4.5 e posterior. Defina `ENABLE_TOOL_SEARCH=true` para ativá-lo nesses modelos. Modelos anteriores no Vertex AI não aceitam o cabeçalho beta necessário, e as solicitações falham se você ativar a busca de ferramentas com eles.
 
 ### 5. Fixar versões de modelo
 
@@ -227,7 +227,9 @@ Claude Code usa estes modelos padrão quando nenhuma variável de fixação est�
 | Tipo de modelo        | Valor padrão                 |
 | :-------------------- | :--------------------------- |
 | Modelo primário       | `claude-sonnet-4-5@20250929` |
-| Modelo pequeno/rápido | `claude-haiku-4-5@20251001`  |
+| Modelo pequeno/rápido | Mesmo que o modelo primário  |
+
+Tarefas em segundo plano, como geração de título de sessão, usam o modelo pequeno/rápido, normalmente um modelo da classe Haiku. No Vertex AI, Claude Code usa como padrão o modelo primário porque Haiku pode não estar ativado em todos os projetos ou regiões. Para usar Haiku para tarefas em segundo plano, defina `ANTHROPIC_DEFAULT_HAIKU_MODEL` para um ID de modelo que esteja disponível no seu projeto.
 
 Para personalizar modelos ainda mais:
 

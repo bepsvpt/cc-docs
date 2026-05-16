@@ -202,7 +202,7 @@ Sebagian besar versi model memiliki variabel `VERTEX_REGION_CLAUDE_*` yang sesua
 
 [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) diaktifkan secara otomatis. Untuk menonaktifkannya, atur `DISABLE_PROMPT_CACHING=1`. Untuk meminta TTL cache 1 jam alih-alih default 5 menit, atur `ENABLE_PROMPT_CACHING_1H=1`; penulisan cache dengan TTL 1 jam ditagih dengan tarif yang lebih tinggi. Untuk batas laju yang lebih tinggi, hubungi dukungan Google Cloud. Saat menggunakan Vertex AI, perintah `/login` dan `/logout` dinonaktifkan karena autentikasi ditangani melalui kredensial Google Cloud.
 
-[Pencarian alat MCP](/id/mcp#scale-with-mcp-tool-search) dinonaktifkan secara default di Vertex AI karena titik akhir tidak menerima header beta yang diperlukan. Semua definisi alat MCP dimuat di muka sebagai gantinya. Untuk memilih, atur `ENABLE_TOOL_SEARCH=true`.
+Claude Code menonaktifkan [pencarian alat MCP](/id/mcp#scale-with-mcp-tool-search) secara default di Vertex AI, sehingga definisi alat MCP dimuat di muka. Vertex AI mendukung pencarian alat untuk Claude Sonnet 4.5 dan lebih baru serta Claude Opus 4.5 dan lebih baru. Atur `ENABLE_TOOL_SEARCH=true` untuk mengaktifkannya pada model tersebut. Model sebelumnya di Vertex AI tidak menerima header beta yang diperlukan, dan permintaan gagal jika Anda mengaktifkan pencarian alat dengan model tersebut.
 
 ### 5. Pin versi model
 
@@ -227,7 +227,9 @@ Claude Code menggunakan model default ini ketika tidak ada variabel pinning yang
 | Jenis model       | Nilai default                |
 | :---------------- | :--------------------------- |
 | Model utama       | `claude-sonnet-4-5@20250929` |
-| Model kecil/cepat | `claude-haiku-4-5@20251001`  |
+| Model kecil/cepat | Sama dengan model utama      |
+
+Tugas latar belakang seperti pembuatan judul sesi menggunakan model kecil/cepat, biasanya model kelas Haiku. Di Vertex AI, Claude Code menganggap default ini ke model utama karena Haiku mungkin tidak diaktifkan di setiap proyek atau wilayah. Untuk menggunakan Haiku untuk tugas latar belakang, atur `ANTHROPIC_DEFAULT_HAIKU_MODEL` ke ID model yang tersedia di proyek Anda.
 
 Untuk menyesuaikan model lebih lanjut:
 

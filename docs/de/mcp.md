@@ -953,17 +953,19 @@ Claude Code schneidet Tool-Beschreibungen und Server-Anweisungen bei 2 KB ab. Ha
 
 ### Tool-Suche konfigurieren
 
-Die Tool-Suche ist standardmäßig aktiviert: MCP-Tools werden aufgeschoben und bei Bedarf entdeckt. Sie ist standardmäßig auf Vertex AI deaktiviert, das den Tool-Search-Beta-Header nicht akzeptiert, und wenn `ANTHROPIC_BASE_URL` auf einen Host von Drittanbietern verweist, da die meisten Proxys `tool_reference`-Blöcke nicht weiterleiten. Wenn Ihr Proxy `tool_reference`-Blöcke weiterleitet, setzen Sie `ENABLE_TOOL_SEARCH` explizit fest, um die Fallback-Einstellung zu überschreiben. Diese Funktion erfordert Modelle, die `tool_reference`-Blöcke unterstützen: Sonnet 4 und später oder Opus 4 und später. Haiku-Modelle unterstützen die Tool-Suche nicht.
+Die Tool-Suche ist standardmäßig aktiviert: MCP-Tools werden aufgeschoben und bei Bedarf entdeckt. Claude Code deaktiviert sie standardmäßig auf Vertex AI. Sie ist auch deaktiviert, wenn `ANTHROPIC_BASE_URL` auf einen Host von Drittanbietern verweist, da die meisten Proxys `tool_reference`-Blöcke nicht weiterleiten. Setzen Sie `ENABLE_TOOL_SEARCH` explizit fest, um eine der beiden Fallback-Einstellungen zu überschreiben.
+
+Die Tool-Suche erfordert ein Modell, das `tool_reference`-Blöcke unterstützt: Sonnet 4 und später oder Opus 4 und später. Haiku-Modelle unterstützen dies nicht. Auf Vertex AI wird die Tool-Suche für Claude Sonnet 4.5 und später sowie Claude Opus 4.5 und später unterstützt.
 
 Steuern Sie das Verhalten der Tool-Suche mit der Umgebungsvariablen `ENABLE_TOOL_SEARCH`:
 
-| Wert            | Verhalten                                                                                                                                                                                      |
-| :-------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| (nicht gesetzt) | Alle MCP-Tools werden aufgeschoben und bei Bedarf geladen. Fällt auf das Laden vorab zurück auf Vertex AI oder wenn `ANTHROPIC_BASE_URL` ein Host von Drittanbietern ist                       |
-| `true`          | Alle MCP-Tools werden aufgeschoben. Claude Code sendet den Beta-Header auch auf Vertex AI und durch Proxys. Anfragen schlagen fehl, wenn das Backend `tool_reference`-Blöcke nicht unterstützt |
-| `auto`          | Schwellenmodus: Tools werden vorab geladen, wenn sie in 10 % des Kontextfensters passen, andernfalls aufgeschoben                                                                              |
-| `auto:<N>`      | Schwellenmodus mit benutzerdefiniertem Prozentsatz, wobei `<N>` 0-100 ist (z. B. `auto:5` für 5 %)                                                                                             |
-| `false`         | Alle MCP-Tools werden vorab geladen, keine Verschiebung                                                                                                                                        |
+| Wert            | Verhalten                                                                                                                                                                                                                                                    |
+| :-------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (nicht gesetzt) | Alle MCP-Tools werden aufgeschoben und bei Bedarf geladen. Fällt auf das Laden vorab zurück auf Vertex AI oder wenn `ANTHROPIC_BASE_URL` ein Host von Drittanbietern ist                                                                                     |
+| `true`          | Alle MCP-Tools werden aufgeschoben. Claude Code sendet den Beta-Header auch auf Vertex AI und durch Proxys. Anfragen schlagen fehl bei Vertex AI-Modellen älter als Sonnet 4.5 oder Opus 4.5 oder bei Proxys, die `tool_reference`-Blöcke nicht unterstützen |
+| `auto`          | Schwellenmodus: Tools werden vorab geladen, wenn sie in 10 % des Kontextfensters passen, andernfalls aufgeschoben                                                                                                                                            |
+| `auto:N`        | Schwellenmodus mit benutzerdefiniertem Prozentsatz, wobei `N` 0-100 ist. Beispiel: `auto:5` für 5 %                                                                                                                                                          |
+| `false`         | Alle MCP-Tools werden vorab geladen, keine Verschiebung                                                                                                                                                                                                      |
 
 ```bash theme={null}
 # Verwenden Sie eine benutzerdefinierte 5%-Schwelle

@@ -211,8 +211,9 @@ Claude Code поддерживает автоматическое обновле
 export CLAUDE_CODE_USE_BEDROCK=1
 export AWS_REGION=us-east-1  # or your preferred region
 
-# Optional: Override the region for the small/fast model (Haiku).
-# Also applies to Bedrock Mantle.
+# Optional: Override the AWS region for the small/fast model (Bedrock and Mantle).
+# On Bedrock, has no effect without ANTHROPIC_DEFAULT_HAIKU_MODEL
+# or the deprecated ANTHROPIC_SMALL_FAST_MODEL set.
 export ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION=us-west-2
 
 # Optional: Override the Bedrock endpoint URL for custom endpoints or gateways
@@ -248,7 +249,9 @@ Claude Code использует эти модели по умолчанию, к
 | Тип модели           | Значение по умолчанию                          |
 | :------------------- | :--------------------------------------------- |
 | Основная модель      | `us.anthropic.claude-sonnet-4-5-20250929-v1:0` |
-| Малая/быстрая модель | `us.anthropic.claude-haiku-4-5-20251001-v1:0`  |
+| Малая/быстрая модель | То же, что и основная модель                   |
+
+Фоновые задачи, такие как генерация заголовка сеанса, используют малую/быструю модель, обычно модель класса Haiku. На Bedrock Claude Code по умолчанию использует основную модель, потому что Haiku может быть не включен в каждой учетной записи или регионе. Чтобы использовать Haiku для фоновых задач, установите `ANTHROPIC_DEFAULT_HAIKU_MODEL` на ID модели, который доступен в вашей учетной записи.
 
 Для дальнейшей настройки моделей используйте один из этих методов:
 
@@ -267,7 +270,7 @@ export DISABLE_PROMPT_CACHING=1
 export ENABLE_PROMPT_CACHING_1H=1
 ```
 
-<Note>[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) может быть недоступен во всех регионах. Записи кэша с TTL в 1 час выставляются по более высокому тарифу, чем записи в 5 минут.</Note>
+<Note>[Prompt caching](https://platform.claude.com/docs/ru/build-with-claude/prompt-caching) может быть недоступен во всех регионах. Записи кэша с TTL в 1 час выставляются по более высокому тарифу, чем записи в 5 минут.</Note>
 
 #### Сопоставьте каждую версию модели с профилем вывода
 

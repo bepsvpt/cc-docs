@@ -99,7 +99,9 @@ Claude Code 从用户的机器连接到 Anthropic 以记录操作指标，例如
 
 Claude Code 从用户的机器连接到 Sentry 以进行操作错误日志记录。数据使用 TLS 在传输中加密，使用 256 位 AES 加密在静止时加密。在 [Sentry 安全文档](https://sentry.io/security/) 中了解更多。要选择退出错误日志记录，请设置 `DISABLE_ERROR_REPORTING` 环境变量。
 
-当用户运行 `/feedback` 命令时，他们的完整对话历史记录（包括代码）的副本被发送到 Anthropic。数据在传输中使用 TLS 加密。可选地，在公共存储库中创建 GitHub 问题。要选择退出，请设置 `DISABLE_FEEDBACK_COMMAND` 环境变量为 `1`。
+当您运行 `/feedback` 命令时，您的对话历史记录（包括代码）的副本被发送到 Anthropic。在提交之前，您可以选择包含多少历史记录：仅当前会话（这是默认设置），或者也包括来自同一项目在过去 24 小时或 7 天内的其他会话。数据通过 TLS 在传输中加密。可选地，在公共存储库中创建 GitHub 问题。要选择退出，请将 `DISABLE_FEEDBACK_COMMAND` 环境变量设置为 `1`。
+
+当您使用第三方提供商（如 Bedrock 或 Vertex）或未配置 Anthropic 凭据时，`/feedback` 会将报告写入 `~/.claude/feedback-bundles/` 下的本地存档，而不是将其发送到 Anthropic。已知的 API 密钥和令牌模式在写入存档之前被编辑。在您将该文件发送给您的 Anthropic 账户代表或将其附加到支持请求之前，没有任何内容离开您的机器。
 
 ## 按 API 提供商的默认行为
 

@@ -953,17 +953,19 @@ Claude Code trunca descripciones de herramientas e instrucciones del servidor en
 
 ### Configurar búsqueda de herramientas
 
-Tool Search está habilitado de forma predeterminada: las herramientas MCP se difieren y se descubren bajo demanda. Está deshabilitado de forma predeterminada en Vertex AI, que no acepta el encabezado beta de búsqueda de herramientas, y cuando `ANTHROPIC_BASE_URL` apunta a un host que no es de primera parte, ya que la mayoría de los proxies no reenvían bloques `tool_reference`. Si su proxy reenvía bloques `tool_reference`, establezca `ENABLE_TOOL_SEARCH` explícitamente para optar por participar. Esta característica requiere modelos que admitan bloques `tool_reference`: Sonnet 4 y posterior, u Opus 4 y posterior. Los modelos Haiku no admiten búsqueda de herramientas.
+Tool Search está habilitado de forma predeterminada: las herramientas MCP se difieren y se descubren bajo demanda. Claude Code lo desactiva de forma predeterminada en Vertex AI. También se desactiva cuando `ANTHROPIC_BASE_URL` apunta a un host que no es de primera parte, ya que la mayoría de los proxies no reenvían bloques `tool_reference`. Establezca `ENABLE_TOOL_SEARCH` explícitamente para anular cualquiera de estos comportamientos predeterminados.
+
+Tool Search requiere un modelo que admita bloques `tool_reference`: Sonnet 4 y posterior, u Opus 4 y posterior. Los modelos Haiku no lo admiten. En Vertex AI, Tool Search se admite para Claude Sonnet 4.5 y posterior y Claude Opus 4.5 y posterior.
 
 Controle el comportamiento de búsqueda de herramientas con la variable de entorno `ENABLE_TOOL_SEARCH`:
 
-| Valor            | Comportamiento                                                                                                                                                                                 |
-| :--------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| (sin establecer) | Todas las herramientas MCP diferidas y cargadas bajo demanda. Recurre a carga de antemano en Vertex AI o cuando `ANTHROPIC_BASE_URL` es un host que no es de primera parte                     |
-| `true`           | Todas las herramientas MCP diferidas. Claude Code envía el encabezado beta incluso en Vertex AI y a través de proxies. Las solicitudes fallan si el backend no admite bloques `tool_reference` |
-| `auto`           | Modo de umbral: las herramientas se cargan de antemano si se ajustan dentro del 10% de la ventana de contexto, diferidas de lo contrario                                                       |
-| `auto:<N>`       | Modo de umbral con un porcentaje personalizado, donde `<N>` es 0-100 (p. ej., `auto:5` para 5%)                                                                                                |
-| `false`          | Todas las herramientas MCP cargadas de antemano, sin diferimiento                                                                                                                              |
+| Valor            | Comportamiento                                                                                                                                                                                                                                                 |
+| :--------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (sin establecer) | Todas las herramientas MCP diferidas y cargadas bajo demanda. Recurre a carga de antemano en Vertex AI o cuando `ANTHROPIC_BASE_URL` es un host que no es de primera parte                                                                                     |
+| `true`           | Todas las herramientas MCP diferidas. Claude Code envía el encabezado beta incluso en Vertex AI y a través de proxies. Las solicitudes fallan en modelos de Vertex AI anteriores a Sonnet 4.5 u Opus 4.5, o en proxies que no admiten bloques `tool_reference` |
+| `auto`           | Modo de umbral: las herramientas se cargan de antemano si se ajustan dentro del 10% de la ventana de contexto, diferidas de lo contrario                                                                                                                       |
+| `auto:N`         | Modo de umbral con un porcentaje personalizado, donde `N` es 0-100. Por ejemplo, `auto:5` para 5%                                                                                                                                                              |
+| `false`          | Todas las herramientas MCP cargadas de antemano, sin diferimiento                                                                                                                                                                                              |
 
 ```bash theme={null}
 # Usar un umbral personalizado del 5%

@@ -163,6 +163,8 @@ export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5'
 ```
 
+Фоновые задачи, такие как генерация заголовков сеансов, используют небольшую/быструю модель, обычно модель класса Haiku. На Foundry Claude Code по умолчанию использует основную модель, потому что не каждая учетная запись имеет развертывание Haiku. Чтобы использовать Haiku для фоновых задач, установите `ANTHROPIC_DEFAULT_HAIKU_MODEL` на развертывание Haiku, доступное в вашей учетной записи, как показано выше.
+
 Для получения текущих и устаревших идентификаторов моделей см. [Обзор моделей](https://platform.claude.com/docs/en/about-claude/models/overview). Полный список переменных окружения см. в разделе [Конфигурация модели](/ru/model-config#pin-models-for-third-party-deployments).
 
 [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) включен автоматически. Чтобы запросить TTL кэша в 1 час вместо стандартного 5-минутного, установите следующую переменную; записи кэша с TTL в 1 час выставляются по более высокому тарифу:

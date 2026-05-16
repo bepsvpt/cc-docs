@@ -211,8 +211,9 @@ Imposta le seguenti variabili di ambiente per abilitare Bedrock:
 export CLAUDE_CODE_USE_BEDROCK=1
 export AWS_REGION=us-east-1  # o la tua regione preferita
 
-# Facoltativo: Sovrascrivi la regione per il modello piccolo/veloce (Haiku).
-# Si applica anche a Bedrock Mantle.
+# Facoltativo: Sovrascrivi la regione AWS per il modello piccolo/veloce (Bedrock e Mantle).
+# Su Bedrock, non ha effetto senza ANTHROPIC_DEFAULT_HAIKU_MODEL
+# o il deprecato ANTHROPIC_SMALL_FAST_MODEL impostato.
 export ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION=us-west-2
 
 # Facoltativo: Sovrascrivi l'URL dell'endpoint Bedrock per endpoint personalizzati o gateway
@@ -248,7 +249,9 @@ Claude Code utilizza questi modelli predefiniti quando non sono impostate variab
 | Tipo di modello        | Valore predefinito                             |
 | :--------------------- | :--------------------------------------------- |
 | Modello primario       | `us.anthropic.claude-sonnet-4-5-20250929-v1:0` |
-| Modello piccolo/veloce | `us.anthropic.claude-haiku-4-5-20251001-v1:0`  |
+| Modello piccolo/veloce | Uguale al modello primario                     |
+
+Le attività in background come la generazione del titolo della sessione utilizzano il modello piccolo/veloce, normalmente un modello della classe Haiku. Su Bedrock, Claude Code imposta per impostazione predefinita questo al modello primario perché Haiku potrebbe non essere abilitato in ogni account o regione. Per utilizzare Haiku per le attività in background, imposta `ANTHROPIC_DEFAULT_HAIKU_MODEL` su un ID di modello disponibile nel tuo account.
 
 Per personalizzare ulteriormente i modelli, utilizza uno di questi metodi:
 
@@ -271,7 +274,7 @@ export ENABLE_PROMPT_CACHING_1H=1
 
 #### Mappa ogni versione del modello a un profilo di inferenza
 
-Le variabili di ambiente `ANTHROPIC_DEFAULT_*_MODEL` configurano un profilo di inferenza per famiglia di modelli. Se la tua organizzazione ha bisogno di esporre diverse versioni della stessa famiglia nel selettore `/model`, ciascuna instradato al suo ARN del profilo di inferenza dell'applicazione, utilizza invece l'impostazione `modelOverrides` nel tuo [file di impostazioni](/it/settings#settings-files).
+Le variabili di ambiente `ANTHROPIC_DEFAULT_*_MODEL` configurano un profilo di inferenza per famiglia di modelli. Se la tua organizzazione ha bisogno di esporre diverse versioni della stessa famiglia nel selettore `/model`, ciascuna instradata al suo ARN del profilo di inferenza dell'applicazione, utilizza invece l'impostazione `modelOverrides` nel tuo [file di impostazioni](/it/settings#settings-files).
 
 Questo esempio mappa quattro versioni di Opus a ARN distinti in modo che gli utenti possano passare da uno all'altro senza aggirare i profili di inferenza della tua organizzazione:
 

@@ -99,7 +99,9 @@ Claude Code se connecte à partir des machines des utilisateurs à Anthropic pou
 
 Claude Code se connecte à partir des machines des utilisateurs à Sentry pour la journalisation des erreurs opérationnelles. Les données sont chiffrées en transit à l'aide de TLS et au repos à l'aide du chiffrement AES 256 bits. Lisez-en plus dans la [documentation de sécurité Sentry](https://sentry.io/security/). Pour refuser la journalisation des erreurs, définissez la variable d'environnement `DISABLE_ERROR_REPORTING`.
 
-Lorsque les utilisateurs exécutent la commande `/feedback`, une copie de leur historique de conversation complet, y compris le code, est envoyée à Anthropic. Les données sont chiffrées en transit via TLS. Optionnellement, un problème GitHub est créé dans le référentiel public. Pour refuser, définissez la variable d'environnement `DISABLE_FEEDBACK_COMMAND` sur `1`.
+Lorsque vous exécutez la commande `/feedback`, une copie de votre historique de conversation complet, y compris le code, est envoyée à Anthropic. Avant de soumettre, vous choisissez la quantité d'historique à inclure : la session actuelle uniquement, qui est la valeur par défaut, ou également d'autres sessions du même projet au cours des 24 dernières heures ou 7 derniers jours. Les données sont chiffrées en transit via TLS. Optionnellement, un problème GitHub est créé dans le référentiel public. Pour refuser, définissez la variable d'environnement `DISABLE_FEEDBACK_COMMAND` sur `1`.
+
+Lorsque vous utilisez un fournisseur tiers tel que Bedrock ou Vertex, ou que vous n'avez pas d'identifiants Anthropic configurés, `/feedback` écrit le rapport dans une archive locale sous `~/.claude/feedback-bundles/` au lieu de l'envoyer à Anthropic. Les modèles de clé API et de jeton connus sont masqués avant que l'archive ne soit écrite. Rien ne quitte votre machine jusqu'à ce que vous envoyiez ce fichier à votre représentant du compte Anthropic ou que vous le joigniez à une demande d'assistance.
 
 ## Comportements par défaut par fournisseur d'API
 

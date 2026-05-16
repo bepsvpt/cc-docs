@@ -147,7 +147,7 @@ export ANTHROPIC_FOUNDRY_RESOURCE={resource}
 # export ANTHROPIC_FOUNDRY_BASE_URL=https://{resource}.services.ai.azure.com/anthropic
 ```
 
-### 4. Pin model versions
+### 4. Fixar versões de modelo
 
 <Warning>
   Fixe versões de modelo específicas para cada implantação. Se você usar aliases de modelo (`sonnet`, `opus`, `haiku`) sem fixar, Claude Code pode tentar usar uma versão de modelo mais recente que não está disponível em sua conta Foundry, quebrando usuários existentes quando Anthropic lançar atualizações. Quando você criar implantações do Azure, selecione uma versão de modelo específica em vez de "atualizar automaticamente para a mais recente".
@@ -162,6 +162,8 @@ export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7'
 export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5'
 ```
+
+As tarefas em segundo plano, como geração de título de sessão, usam o modelo pequeno/rápido, normalmente um modelo da classe Haiku. No Foundry, Claude Code usa como padrão o modelo primário porque nem toda conta tem uma implantação Haiku. Para usar Haiku para tarefas em segundo plano, defina `ANTHROPIC_DEFAULT_HAIKU_MODEL` para uma implantação Haiku que esteja disponível em sua conta, conforme mostrado acima.
 
 Para IDs de modelo atuais e legados, consulte [Visão geral de modelos](https://platform.claude.com/docs/en/about-claude/models/overview). Consulte [Configuração de modelo](/pt/model-config#pin-models-for-third-party-deployments) para a lista completa de variáveis de ambiente.
 

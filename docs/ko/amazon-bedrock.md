@@ -211,8 +211,9 @@ Bedrock을 활성화하려면 다음 환경 변수를 설정하십시오:
 export CLAUDE_CODE_USE_BEDROCK=1
 export AWS_REGION=us-east-1  # 또는 선호하는 지역
 
-# 선택 사항: 소형/빠른 모델(Haiku)의 지역 재정의
-# Bedrock Mantle에도 적용됩니다.
+# 선택 사항: 소형/빠른 모델(Bedrock 및 Mantle)의 AWS 지역 재정의
+# Bedrock에서는 ANTHROPIC_DEFAULT_HAIKU_MODEL
+# 또는 더 이상 사용되지 않는 ANTHROPIC_SMALL_FAST_MODEL이 설정되지 않으면 효과가 없습니다.
 export ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION=us-west-2
 
 # 선택 사항: 사용자 정의 엔드포인트 또는 게이트웨이를 위한 Bedrock 엔드포인트 URL 재정의
@@ -248,7 +249,9 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='us.anthropic.claude-haiku-4-5-20251001-v1:
 | 모델 유형    | 기본값                                            |
 | :------- | :--------------------------------------------- |
 | 기본 모델    | `us.anthropic.claude-sonnet-4-5-20250929-v1:0` |
-| 소형/빠른 모델 | `us.anthropic.claude-haiku-4-5-20251001-v1:0`  |
+| 소형/빠른 모델 | 기본 모델과 동일                                      |
+
+세션 제목 생성과 같은 백그라운드 작업은 소형/빠른 모델(일반적으로 Haiku 클래스 모델)을 사용합니다. Bedrock에서 Claude Code는 모든 계정 또는 지역에서 Haiku를 사용할 수 없을 수 있으므로 기본적으로 이를 기본 모델로 설정합니다. 백그라운드 작업에 Haiku를 사용하려면 `ANTHROPIC_DEFAULT_HAIKU_MODEL`을 계정에서 사용 가능한 모델 ID로 설정하십시오.
 
 모델을 추가로 사용자 정의하려면 다음 방법 중 하나를 사용하십시오:
 

@@ -163,6 +163,8 @@ export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5'
 ```
 
+Las tareas en segundo plano, como la generación de títulos de sesión, utilizan el modelo pequeño/rápido, normalmente un modelo de clase Haiku. En Foundry, Claude Code establece por defecto esto al modelo principal porque no todas las cuentas tienen una implementación de Haiku. Para usar Haiku para tareas en segundo plano, establezca `ANTHROPIC_DEFAULT_HAIKU_MODEL` en una implementación de Haiku que esté disponible en su cuenta, como se muestra arriba.
+
 Para los ID de modelos actuales y heredados, consulte [Descripción general de modelos](https://platform.claude.com/docs/en/about-claude/models/overview). Consulte [Configuración de modelo](/es/model-config#pin-models-for-third-party-deployments) para la lista completa de variables de entorno.
 
 [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) está habilitado automáticamente. Para solicitar un TTL de caché de 1 hora en lugar del predeterminado de 5 minutos, establezca la siguiente variable; las escrituras de caché con un TTL de 1 hora se facturan a una tasa más alta:

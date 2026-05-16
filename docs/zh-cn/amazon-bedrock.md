@@ -211,8 +211,9 @@ Claude Code 支持 AWS SSO 和企业身份提供商的自动凭证刷新。将�
 export CLAUDE_CODE_USE_BEDROCK=1
 export AWS_REGION=us-east-1  # 或您首选的区域
 
-# 可选：覆盖小型/快速模型 (Haiku) 的区域。
-# 也适用于 Bedrock Mantle。
+# 可选：覆盖小型/快速模型 (Bedrock 和 Mantle) 的 AWS 区域。
+# 在 Bedrock 上，如果未设置 ANTHROPIC_DEFAULT_HAIKU_MODEL
+# 或已弃用的 ANTHROPIC_SMALL_FAST_MODEL，则无效。
 export ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION=us-west-2
 
 # 可选：覆盖 Bedrock 端点 URL 以用于自定义端点或网关
@@ -248,7 +249,9 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='us.anthropic.claude-haiku-4-5-20251001-v1:
 | 模型类型    | 默认值                                            |
 | :------ | :--------------------------------------------- |
 | 主模型     | `us.anthropic.claude-sonnet-4-5-20250929-v1:0` |
-| 小型/快速模型 | `us.anthropic.claude-haiku-4-5-20251001-v1:0`  |
+| 小型/快速模型 | 与主模型相同                                         |
+
+后台任务（如会话标题生成）使用小型/快速模型，通常是 Haiku 级别的模型。在 Bedrock 上，Claude Code 默认将其设置为主模型，因为并非每个账户或区域都启用了 Haiku。要为后台任务使用 Haiku，请将 `ANTHROPIC_DEFAULT_HAIKU_MODEL` 设置为您账户中可用的模型 ID。
 
 要进一步自定义模型，请使用以下方法之一：
 

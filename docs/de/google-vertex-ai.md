@@ -202,7 +202,7 @@ Die meisten Modellversionen haben eine entsprechende `VERTEX_REGION_CLAUDE_*`-Va
 
 [Prompt Caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) wird automatisch aktiviert. Um es zu deaktivieren, legen Sie `DISABLE_PROMPT_CACHING=1` fest. Um eine 1-Stunden-Cache-TTL statt des 5-Minuten-Standards anzufordern, legen Sie `ENABLE_PROMPT_CACHING_1H=1` fest; Cache-Schreibvorgänge mit einer 1-Stunden-TTL werden mit einem höheren Satz abgerechnet. Für erhöhte Ratenlimits wenden Sie sich an den Google Cloud-Support. Bei Verwendung von Vertex AI sind die Befehle `/login` und `/logout` deaktiviert, da die Authentifizierung über Google Cloud-Anmeldedaten erfolgt.
 
-[MCP-Toolsuche](/de/mcp#scale-with-mcp-tool-search) ist standardmäßig auf Vertex AI deaktiviert, da der Endpunkt den erforderlichen Beta-Header nicht akzeptiert. Alle MCP-Tool-Definitionen werden stattdessen beim Start geladen. Um sich anzumelden, legen Sie `ENABLE_TOOL_SEARCH=true` fest.
+Claude Code deaktiviert [MCP-Toolsuche](/de/mcp#scale-with-mcp-tool-search) standardmäßig auf Vertex AI, sodass MCP-Tool-Definitionen beim Start geladen werden. Vertex AI unterstützt Toolsuche für Claude Sonnet 4.5 und später sowie Claude Opus 4.5 und später. Legen Sie `ENABLE_TOOL_SEARCH=true` fest, um sie auf diesen Modellen zu aktivieren. Frühere Modelle auf Vertex AI akzeptieren den erforderlichen Beta-Header nicht, und Anfragen schlagen fehl, wenn Sie die Toolsuche mit ihnen aktivieren.
 
 ### 5. Fixieren Sie Modellversionen
 
@@ -227,7 +227,9 @@ Claude Code verwendet diese Standardmodelle, wenn keine Fixierungsvariablen gese
 | Modelltyp                | Standardwert                 |
 | :----------------------- | :--------------------------- |
 | Primäres Modell          | `claude-sonnet-4-5@20250929` |
-| Kleines/schnelles Modell | `claude-haiku-4-5@20251001`  |
+| Kleines/schnelles Modell | Gleich wie primäres Modell   |
+
+Hintergrundaufgaben wie die Generierung von Sitzungstiteln verwenden das kleine/schnelle Modell, normalerweise ein Haiku-Klasse-Modell. Auf Vertex AI setzt Claude Code dies standardmäßig auf das primäre Modell, da Haiku möglicherweise nicht in jedem Projekt oder jeder Region aktiviert ist. Um Haiku für Hintergrundaufgaben zu verwenden, legen Sie `ANTHROPIC_DEFAULT_HAIKU_MODEL` auf eine Modell-ID fest, die in Ihrem Projekt verfügbar ist.
 
 Um Modelle weiter anzupassen:
 

@@ -90,7 +90,7 @@ Bevor Sie Claude Code mit Microsoft Foundry konfigurieren, stellen Sie sicher, d
   Wenn Sie Claude Code für mehrere Benutzer bereitstellen, [fixieren Sie Ihre Modellversionen](#4-pin-model-versions), um Fehler zu vermeiden, wenn Anthropic neue Modelle veröffentlicht.
 </Note>
 
-## Setup
+## Einrichtung
 
 ### 1. Microsoft Foundry-Ressource bereitstellen
 
@@ -162,6 +162,8 @@ export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7'
 export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5'
 ```
+
+Hintergrundaufgaben wie die Generierung von Sitzungstiteln verwenden das kleine/schnelle Modell, normalerweise ein Haiku-Klasse-Modell. Bei Foundry setzt Claude Code dies standardmäßig auf das primäre Modell, da nicht jedes Konto eine Haiku-Bereitstellung hat. Um Haiku für Hintergrundaufgaben zu verwenden, legen Sie `ANTHROPIC_DEFAULT_HAIKU_MODEL` auf eine Haiku-Bereitstellung fest, die in Ihrem Konto verfügbar ist, wie oben gezeigt.
 
 Aktuelle und ältere Modell-IDs finden Sie unter [Modellübersicht](https://platform.claude.com/docs/en/about-claude/models/overview). Siehe [Modellkonfiguration](/de/model-config#pin-models-for-third-party-deployments) für die vollständige Liste der Umgebungsvariablen.
 

@@ -953,17 +953,19 @@ Claude Code tronca le descrizioni degli strumenti e le istruzioni del server a 2
 
 ### Configura tool search
 
-Tool search è abilitato per impostazione predefinita: gli strumenti MCP vengono rimandati e scoperti su richiesta. È disabilitato per impostazione predefinita su Vertex AI, che non accetta l'intestazione beta tool search, e quando `ANTHROPIC_BASE_URL` punta a un host non di prima parte, poiché la maggior parte dei proxy non inoltrano blocchi `tool_reference`. Se il tuo proxy inoltra blocchi `tool_reference`, imposta `ENABLE_TOOL_SEARCH` esplicitamente per ignorare il fallback. Questa funzionalità richiede modelli che supportano blocchi `tool_reference`: Sonnet 4 e successivi, oppure Opus 4 e successivi. I modelli Haiku non supportano tool search.
+Tool search è abilitato per impostazione predefinita: gli strumenti MCP vengono rimandati e scoperti su richiesta. Claude Code lo disabilita per impostazione predefinita su Vertex AI. È anche disabilitato quando `ANTHROPIC_BASE_URL` punta a un host non di prima parte, poiché la maggior parte dei proxy non inoltrano blocchi `tool_reference`. Imposta `ENABLE_TOOL_SEARCH` esplicitamente per ignorare uno qualsiasi dei fallback.
+
+Tool search richiede un modello che supporta blocchi `tool_reference`: Sonnet 4 e successivi, oppure Opus 4 e successivi. I modelli Haiku non lo supportano. Su Vertex AI, tool search è supportato per Claude Sonnet 4.5 e successivi e Claude Opus 4.5 e successivi.
 
 Controlla il comportamento di tool search con la variabile di ambiente `ENABLE_TOOL_SEARCH`:
 
-| Valore          | Comportamento                                                                                                                                                                                   |
-| :-------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| (non impostato) | Tutti gli strumenti MCP rimandati e caricati su richiesta. Ricade al caricamento in anticipo su Vertex AI o quando `ANTHROPIC_BASE_URL` è un host non di prima parte                            |
-| `true`          | Tutti gli strumenti MCP rimandati. Claude Code invia l'intestazione beta anche su Vertex AI e attraverso i proxy. Le richieste non riescono se il backend non supporta blocchi `tool_reference` |
-| `auto`          | Modalità soglia: gli strumenti vengono caricati in anticipo se si adattano entro il 10% della finestra di contesto, rimandati altrimenti                                                        |
-| `auto:<N>`      | Modalità soglia con una percentuale personalizzata, dove `<N>` è 0-100 (ad es. `auto:5` per il 5%)                                                                                              |
-| `false`         | Tutti gli strumenti MCP caricati in anticipo, nessun rinvio                                                                                                                                     |
+| Valore          | Comportamento                                                                                                                                                                                                                                               |
+| :-------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (non impostato) | Tutti gli strumenti MCP rimandati e caricati su richiesta. Ricade al caricamento in anticipo su Vertex AI o quando `ANTHROPIC_BASE_URL` è un host non di prima parte                                                                                        |
+| `true`          | Tutti gli strumenti MCP rimandati. Claude Code invia l'intestazione beta anche su Vertex AI e attraverso i proxy. Le richieste non riescono su modelli Vertex AI precedenti a Sonnet 4.5 o Opus 4.5, o su proxy che non supportano blocchi `tool_reference` |
+| `auto`          | Modalità soglia: gli strumenti vengono caricati in anticipo se si adattano entro il 10% della finestra di contesto, rimandati altrimenti                                                                                                                    |
+| `auto:N`        | Modalità soglia con una percentuale personalizzata, dove `N` è 0-100. Ad esempio, `auto:5` per il 5%                                                                                                                                                        |
+| `false`         | Tutti gli strumenti MCP caricati in anticipo, nessun rinvio                                                                                                                                                                                                 |
 
 ```bash theme={null}
 # Utilizza una soglia personalizzata del 5%

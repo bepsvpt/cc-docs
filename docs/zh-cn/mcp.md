@@ -953,17 +953,19 @@ Claude Code 将工具描述和服务器说明截断为每个 2KB。保持它们�
 
 ### 配置工具搜索
 
-工具搜索默认启用：MCP 工具被延迟并按需发现。在 Vertex AI 上默认禁用，它不接受工具搜索 beta 标头，以及当 `ANTHROPIC_BASE_URL` 指向非第一方主机时，因为大多数代理不转发 `tool_reference` 块。如果您的代理转发 `tool_reference` 块，请显式设置 `ENABLE_TOOL_SEARCH` 以覆盖回退。此功能需要支持 `tool_reference` 块的模型：Sonnet 4 及更高版本，或 Opus 4 及更高版本。Haiku 模型不支持工具搜索。
+工具搜索默认启用：MCP 工具被延迟并按需发现。Claude Code 在 Vertex AI 上默认禁用它。当 `ANTHROPIC_BASE_URL` 指向非第一方主机时，它也被禁用，因为大多数代理不转发 `tool_reference` 块。显式设置 `ENABLE_TOOL_SEARCH` 以覆盖任一回退。
+
+工具搜索需要支持 `tool_reference` 块的模型：Sonnet 4 及更高版本，或 Opus 4 及更高版本。Haiku 模型不支持它。在 Vertex AI 上，工具搜索支持 Claude Sonnet 4.5 及更高版本以及 Claude Opus 4.5 及更高版本。
 
 使用 `ENABLE_TOOL_SEARCH` 环境变量控制工具搜索行为：
 
-| 值          | 行为                                                                                         |
-| :--------- | :----------------------------------------------------------------------------------------- |
-| （未设置）      | 所有 MCP 工具被延迟并按需加载。在 Vertex AI 上或当 `ANTHROPIC_BASE_URL` 是非第一方主机时回退到预先加载                     |
-| `true`     | 所有 MCP 工具被延迟。Claude Code 即使在 Vertex AI 上和通过代理也会发送 beta 标头。如果后端不支持 `tool_reference` 块，请求会失败 |
-| `auto`     | 阈值模式：如果工具适合上下文窗口的 10% 内，则预先加载，否则延迟                                                         |
-| `auto:<N>` | 阈值模式，带有自定义百分比，其中 `<N>` 是 0-100（例如，`auto:5` 表示 5%）                                          |
-| `false`    | 所有 MCP 工具预先加载，无延迟                                                                          |
+| 值        | 行为                                                                                                                                                         |
+| :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| （未设置）    | 所有 MCP 工具被延迟并按需加载。在 Vertex AI 上或当 `ANTHROPIC_BASE_URL` 是非第一方主机时回退到预先加载                                                                                     |
+| `true`   | 所有 MCP 工具被延迟。Claude Code 即使在 Vertex AI 上和通过代理也会发送 beta 标头。对于不支持 `tool_reference` 块的 Vertex AI 模型（早于 Sonnet 4.5 或 Opus 4.5）或不支持 `tool_reference` 块的代理，请求会失败 |
+| `auto`   | 阈值模式：如果工具适合上下文窗口的 10% 内，则预先加载，否则延迟                                                                                                                         |
+| `auto:N` | 阈值模式，带有自定义百分比，其中 `N` 是 0-100。例如，`auto:5` 表示 5%                                                                                                             |
+| `false`  | 所有 MCP 工具预先加载，无延迟                                                                                                                                          |
 
 ```bash theme={null}
 # 使用自定义 5% 阈值
@@ -973,7 +975,7 @@ ENABLE_TOOL_SEARCH=auto:5 claude
 ENABLE_TOOL_SEARCH=false claude
 ```
 
-或在您的[settings.json `env` 字段](/zh-CN/settings#available-settings)中设置值。
+或在您的 [settings.json `env` 字段](/zh-CN/settings#available-settings) 中设置值。
 
 您也可以专门禁用 `ToolSearch` 工具：
 

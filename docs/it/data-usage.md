@@ -99,7 +99,9 @@ Claude Code si connette dalle macchine degli utenti ad Anthropic per registrare 
 
 Claude Code si connette dalle macchine degli utenti a Sentry per la registrazione degli errori operativi. I dati vengono crittografati in transito utilizzando TLS e a riposo utilizzando la crittografia AES a 256 bit. Scopri di più nella [documentazione sulla sicurezza di Sentry](https://sentry.io/security/). Per rinunciare alla registrazione degli errori, impostate la variabile di ambiente `DISABLE_ERROR_REPORTING`.
 
-Quando gli utenti eseguono il comando `/feedback`, una copia della loro cronologia completa della conversazione incluso il codice viene inviata ad Anthropic. I dati vengono crittografati in transito via TLS. Facoltativamente, viene creato un problema GitHub nel repository pubblico. Per rinunciare, impostate la variabile di ambiente `DISABLE_FEEDBACK_COMMAND` su `1`.
+Quando eseguite il comando `/feedback`, una copia della cronologia della conversazione incluso il codice viene inviata ad Anthropic. Prima di inviare, scegliete quanta cronologia includere: la sessione corrente soltanto, che è l'impostazione predefinita, oppure anche altre sessioni dello stesso progetto negli ultimi 24 ore o 7 giorni. I dati vengono crittografati in transito via TLS. Facoltativamente, viene creato un problema GitHub nel repository pubblico. Per rinunciare, impostate la variabile di ambiente `DISABLE_FEEDBACK_COMMAND` su `1`.
+
+Quando utilizzate un provider di terze parti come Bedrock o Vertex, oppure non avete credenziali Anthropic configurate, `/feedback` scrive il rapporto in un archivio locale sotto `~/.claude/feedback-bundles/` invece di inviarlo ad Anthropic. I modelli di chiave API e token noti vengono oscurati prima che l'archivio venga scritto. Nulla lascia la vostra macchina finché non inviate quel file al vostro rappresentante dell'account Anthropic o lo allegate a una richiesta di supporto.
 
 ## Comportamenti predefiniti per provider API
 

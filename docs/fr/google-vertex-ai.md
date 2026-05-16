@@ -202,7 +202,7 @@ La plupart des versions de modèle ont une variable `VERTEX_REGION_CLAUDE_*` cor
 
 [La mise en cache des invites](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) est activée automatiquement. Pour la désactiver, définissez `DISABLE_PROMPT_CACHING=1`. Pour demander une TTL de cache d'1 heure au lieu de la valeur par défaut de 5 minutes, définissez `ENABLE_PROMPT_CACHING_1H=1` ; les écritures de cache avec une TTL d'1 heure sont facturées à un taux plus élevé. Pour des limites de débit accrues, contactez le support Google Cloud. Lors de l'utilisation de Vertex AI, les commandes `/login` et `/logout` sont désactivées car l'authentification est gérée via les identifiants Google Cloud.
 
-[La recherche d'outils MCP](/fr/mcp#scale-with-mcp-tool-search) est désactivée par défaut sur Vertex AI car le point de terminaison n'accepte pas l'en-tête bêta requis. Toutes les définitions d'outils MCP se chargent à l'avance à la place. Pour participer, définissez `ENABLE_TOOL_SEARCH=true`.
+Claude Code désactive la [recherche d'outils MCP](/fr/mcp#scale-with-mcp-tool-search) par défaut sur Vertex AI, de sorte que les définitions d'outils MCP se chargent à l'avance. Vertex AI prend en charge la recherche d'outils pour Claude Sonnet 4.5 et versions ultérieures et Claude Opus 4.5 et versions ultérieures. Définissez `ENABLE_TOOL_SEARCH=true` pour l'activer sur ces modèles. Les modèles antérieurs sur Vertex AI n'acceptent pas l'en-tête bêta requis, et les demandes échouent si vous activez la recherche d'outils avec eux.
 
 ### 5. Épingler les versions de modèle
 
@@ -224,10 +224,12 @@ Pour les ID de modèle actuels et hérités, consultez [Aperçu des modèles](ht
 
 Claude Code utilise ces modèles par défaut lorsqu'aucune variable d'épinglage n'est définie :
 
-| Type de modèle      | Valeur par défaut            |
-| :------------------ | :--------------------------- |
-| Modèle principal    | `claude-sonnet-4-5@20250929` |
-| Modèle petit/rapide | `claude-haiku-4-5@20251001`  |
+| Type de modèle      | Valeur par défaut             |
+| :------------------ | :---------------------------- |
+| Modèle principal    | `claude-sonnet-4-5@20250929`  |
+| Modèle petit/rapide | Identique au modèle principal |
+
+Les tâches en arrière-plan telles que la génération de titre de session utilisent le modèle petit/rapide, normalement un modèle de classe Haiku. Sur Vertex AI, Claude Code utilise par défaut le modèle principal car Haiku peut ne pas être activé dans tous les projets ou régions. Pour utiliser Haiku pour les tâches en arrière-plan, définissez `ANTHROPIC_DEFAULT_HAIKU_MODEL` sur un ID de modèle disponible dans votre projet.
 
 Pour personnaliser davantage les modèles :
 

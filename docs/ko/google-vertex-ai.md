@@ -202,7 +202,7 @@ export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 
 [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)은 자동으로 활성화됩니다. 이를 비활성화하려면 `DISABLE_PROMPT_CACHING=1`을 설정하십시오. 기본 5분 대신 1시간 캐시 TTL을 요청하려면 `ENABLE_PROMPT_CACHING_1H=1`을 설정하십시오. 1시간 TTL을 사용한 캐시 쓰기는 더 높은 요금으로 청구됩니다. 높은 속도 제한을 위해 Google Cloud 지원팀에 문의하십시오. Vertex AI를 사용할 때 `/login` 및 `/logout` 명령은 Google Cloud 자격증명을 통해 인증이 처리되므로 비활성화됩니다.
 
-[MCP tool search](/ko/mcp#scale-with-mcp-tool-search)는 엔드포인트가 필요한 베타 헤더를 허용하지 않으므로 Vertex AI에서 기본적으로 비활성화됩니다. 모든 MCP 도구 정의는 대신 미리 로드됩니다. 옵트인하려면 `ENABLE_TOOL_SEARCH=true`를 설정하십시오.
+Claude Code는 [MCP tool search](/ko/mcp#scale-with-mcp-tool-search)를 Vertex AI에서 기본적으로 비활성화합니다. 따라서 모든 MCP 도구 정의는 미리 로드됩니다. Vertex AI는 Claude Sonnet 4.5 이상 및 Claude Opus 4.5 이상에 대해 도구 검색을 지원합니다. 이러한 모델에서 도구 검색을 활성화하려면 `ENABLE_TOOL_SEARCH=true`를 설정하십시오. Vertex AI의 이전 모델은 필요한 베타 헤더를 허용하지 않으며, 이러한 모델에서 도구 검색을 활성화하면 요청이 실패합니다.
 
 ### 5. 모델 버전 고정
 
@@ -227,7 +227,9 @@ Claude Code는 고정 변수가 설정되지 않았을 때 이러한 기본 모�
 | 모델 유형    | 기본값                          |
 | :------- | :--------------------------- |
 | 주 모델     | `claude-sonnet-4-5@20250929` |
-| 소형/빠른 모델 | `claude-haiku-4-5@20251001`  |
+| 소형/빠른 모델 | 주 모델과 동일                     |
+
+백그라운드 작업(예: 세션 제목 생성)은 소형/빠른 모델(일반적으로 Haiku 클래스 모델)을 사용합니다. Vertex AI에서 Claude Code는 모든 프로젝트 또는 지역에서 Haiku가 활성화되지 않을 수 있으므로 이를 주 모델로 기본 설정합니다. 백그라운드 작업에 Haiku를 사용하려면 `ANTHROPIC_DEFAULT_HAIKU_MODEL`을 프로젝트에서 사용 가능한 모델 ID로 설정합니다.
 
 모델을 추가로 사용자 정의하려면:
 

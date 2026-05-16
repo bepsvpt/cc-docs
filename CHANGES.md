@@ -1,5 +1,184 @@
 # Documentation Changes
 
+## 2026-05-16
+
+62 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Claude Code auf Amazon Bedrock** (`amazon-bedrock.md`): 6 lines added, 3 removed
+  - New section: "# Optional: Region für das kleine/schnelle Modell (Bedrock und Mantle) überschreiben."
+  - New section: "# Auf Bedrock hat dies keine Auswirkung ohne ANTHROPIC_DEFAULT_HAIKU_MODEL"
+  - New section: "# oder das veraltete ANTHROPIC_SMALL_FAST_MODEL gesetzt."
+- **Datennutzung** (`data-usage.md`): 3 lines added, 1 removed
+- **Claude Code auf Google Vertex AI** (`google-vertex-ai.md`): 4 lines added, 2 removed
+- **Claude Code mit Tools über MCP verbinden** (`mcp.md`): 10 lines added, 8 removed
+- **Claude Code auf Microsoft Foundry** (`microsoft-foundry.md`): 3 lines added, 1 removed
+  - New section: "## Einrichtung"
+
+### English
+
+
+**Modified**
+
+- **Claude Code on Amazon Bedrock** (`amazon-bedrock.md`): 6 lines added, 3 removed
+  - New section: "# Optional: Override the AWS region for the small/fast model (Bedrock and Mantle)."
+  - New section: "# On Bedrock, has no effect without ANTHROPIC_DEFAULT_HAIKU_MODEL"
+  - New section: "# or the deprecated ANTHROPIC_SMALL_FAST_MODEL set."
+- **Changelog** (`changelog.md`): 36 lines added, 0 removed
+- **Data usage** (`data-usage.md`): 3 lines added, 1 removed
+- **Environment variables** (`env-vars.md`): 2 lines added, 2 removed
+- **Claude Code on Google Vertex AI** (`google-vertex-ai.md`): 4 lines added, 2 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 10 lines added, 8 removed
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 2 lines added, 0 removed
+
+### Español
+
+
+**Modified**
+
+- **Claude Code en Amazon Bedrock** (`amazon-bedrock.md`): 6 lines added, 3 removed
+  - New section: "# Optional: Override the AWS region for the small/fast model (Bedrock and Mantle)."
+  - New section: "# On Bedrock, has no effect without ANTHROPIC_DEFAULT_HAIKU_MODEL"
+  - New section: "# or the deprecated ANTHROPIC_SMALL_FAST_MODEL set."
+- **Uso de datos** (`data-usage.md`): 3 lines added, 1 removed
+- **Claude Code en Google Vertex AI** (`google-vertex-ai.md`): 7 lines added, 5 removed
+- **Conectar Claude Code a herramientas mediante MCP** (`mcp.md`): 10 lines added, 8 removed
+- **Claude Code en Microsoft Foundry** (`microsoft-foundry.md`): 2 lines added, 0 removed
+
+### Français
+
+
+**Modified**
+
+- **Claude Code sur Amazon Bedrock** (`amazon-bedrock.md`): 6 lines added, 3 removed
+  - New section: "# Optional: Override the AWS region for the small/fast model (Bedrock and Mantle)."
+  - New section: "# On Bedrock, has no effect without ANTHROPIC_DEFAULT_HAIKU_MODEL"
+  - New section: "# or the deprecated ANTHROPIC_SMALL_FAST_MODEL set."
+- **Utilisation des données** (`data-usage.md`): 3 lines added, 1 removed
+- **Claude Code sur Google Vertex AI** (`google-vertex-ai.md`): 7 lines added, 5 removed
+- **Connecter Claude Code aux outils via MCP** (`mcp.md`): 10 lines added, 8 removed
+- **Claude Code sur Microsoft Foundry** (`microsoft-foundry.md`): 2 lines added, 0 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Claude Code di Amazon Bedrock** (`amazon-bedrock.md`): 6 lines added, 3 removed
+  - New section: "# Opsional: Ganti wilayah AWS untuk model kecil/cepat (Bedrock dan Mantle)."
+  - New section: "# Di Bedrock, tidak berpengaruh tanpa ANTHROPIC_DEFAULT_HAIKU_MODEL"
+  - New section: "# atau ANTHROPIC_SMALL_FAST_MODEL yang sudah usang diatur."
+- **Penggunaan data** (`data-usage.md`): 3 lines added, 1 removed
+- **Claude Code di Google Vertex AI** (`google-vertex-ai.md`): 4 lines added, 2 removed
+- **Hubungkan Claude Code ke alat melalui MCP** (`mcp.md`): 10 lines added, 8 removed
+- **Claude Code di Microsoft Foundry** (`microsoft-foundry.md`): 2 lines added, 0 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Claude Code su Amazon Bedrock** (`amazon-bedrock.md`): 7 lines added, 4 removed
+  - New section: "# Facoltativo: Sovrascrivi la regione AWS per il modello piccolo/veloce (Bedrock e Mantle)."
+  - New section: "# Su Bedrock, non ha effetto senza ANTHROPIC_DEFAULT_HAIKU_MODEL"
+  - New section: "# o il deprecato ANTHROPIC_SMALL_FAST_MODEL impostato."
+- **Utilizzo dei dati** (`data-usage.md`): 3 lines added, 1 removed
+- **Claude Code su Google Vertex AI** (`google-vertex-ai.md`): 4 lines added, 2 removed
+- **Connetti Claude Code ai tuoi strumenti tramite MCP** (`mcp.md`): 10 lines added, 8 removed
+- **Claude Code su Microsoft Foundry** (`microsoft-foundry.md`): 2 lines added, 0 removed
+
+### 日本語
+
+
+**Modified**
+
+- **Amazon Bedrock 上の Claude Code** (`amazon-bedrock.md`): 6 lines added, 3 removed
+  - New section: "# オプション：小型/高速モデル（Bedrock および Mantle）の AWS リージョンをオーバーライド"
+  - New section: "# Bedrock では、ANTHROPIC_DEFAULT_HAIKU_MODEL"
+  - New section: "# または非推奨の ANTHROPIC_SMALL_FAST_MODEL が設定されていない場合、効果がありません。"
+- **データ使用** (`data-usage.md`): 3 lines added, 1 removed
+- **Google Vertex AI 上の Claude Code** (`google-vertex-ai.md`): 4 lines added, 2 removed
+- **MCP を使用して Claude Code をツールに接続する** (`mcp.md`): 11 lines added, 9 removed
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 2 lines added, 0 removed
+
+### 한국어
+
+
+**Modified**
+
+- **Amazon Bedrock의 Claude Code** (`amazon-bedrock.md`): 6 lines added, 3 removed
+  - New section: "# 선택 사항: 소형/빠른 모델(Bedrock 및 Mantle)의 AWS 지역 재정의"
+  - New section: "# Bedrock에서는 ANTHROPIC_DEFAULT_HAIKU_MODEL"
+  - New section: "# 또는 더 이상 사용되지 않는 ANTHROPIC_SMALL_FAST_MODEL이 설정되지 않으면 효과가 없습니다."
+- **데이터 사용** (`data-usage.md`): 3 lines added, 1 removed
+- **Google Vertex AI에서 Claude Code 사용하기** (`google-vertex-ai.md`): 4 lines added, 2 removed
+- **MCP를 통해 Claude Code를 도구에 연결하기** (`mcp.md`): 10 lines added, 8 removed
+- **Microsoft Foundry의 Claude Code** (`microsoft-foundry.md`): 2 lines added, 0 removed
+
+### Português
+
+
+**Modified**
+
+- **Claude Code no Amazon Bedrock** (`amazon-bedrock.md`): 6 lines added, 3 removed
+  - New section: "# Opcional: Substituir a região AWS para o modelo pequeno/rápido (Bedrock e Mantle)."
+  - New section: "# No Bedrock, não tem efeito sem ANTHROPIC_DEFAULT_HAIKU_MODEL"
+  - New section: "# ou o ANTHROPIC_SMALL_FAST_MODEL definido (descontinuado)."
+- **Uso de dados** (`data-usage.md`): 3 lines added, 1 removed
+- **Claude Code no Google Vertex AI** (`google-vertex-ai.md`): 4 lines added, 2 removed
+- **Conectar Claude Code a ferramentas via MCP** (`mcp.md`): 10 lines added, 8 removed
+- **Claude Code no Microsoft Foundry** (`microsoft-foundry.md`): 3 lines added, 1 removed
+  - New section: "### 4. Fixar versões de modelo"
+
+### Русский
+
+
+**Modified**
+
+- **Claude Code на Amazon Bedrock** (`amazon-bedrock.md`): 7 lines added, 4 removed
+  - New section: "# Optional: Override the AWS region for the small/fast model (Bedrock and Mantle)."
+  - New section: "# On Bedrock, has no effect without ANTHROPIC_DEFAULT_HAIKU_MODEL"
+  - New section: "# or the deprecated ANTHROPIC_SMALL_FAST_MODEL set."
+- **Использование данных** (`data-usage.md`): 3 lines added, 1 removed
+- **Claude Code на Google Vertex AI** (`google-vertex-ai.md`): 4 lines added, 2 removed
+- **Подключите Claude Code к инструментам через MCP** (`mcp.md`): 11 lines added, 9 removed
+- **Claude Code на Microsoft Foundry** (`microsoft-foundry.md`): 2 lines added, 0 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **Amazon Bedrock 上的 Claude Code** (`amazon-bedrock.md`): 6 lines added, 3 removed
+  - New section: "# 可选：覆盖小型/快速模型 (Bedrock 和 Mantle) 的 AWS 区域。"
+  - New section: "# 在 Bedrock 上，如果未设置 ANTHROPIC_DEFAULT_HAIKU_MODEL"
+  - New section: "# 或已弃用的 ANTHROPIC_SMALL_FAST_MODEL，则无效。"
+- **数据使用** (`data-usage.md`): 3 lines added, 1 removed
+- **Google Vertex AI 上的 Claude Code** (`google-vertex-ai.md`): 4 lines added, 2 removed
+- **通过 MCP 将 Claude Code 连接到工具** (`mcp.md`): 11 lines added, 9 removed
+- **Microsoft Foundry 上的 Claude Code** (`microsoft-foundry.md`): 2 lines added, 0 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **Amazon Bedrock 上的 Claude Code** (`amazon-bedrock.md`): 6 lines added, 3 removed
+  - New section: "# 選用：覆寫小型/快速模型 (Bedrock 和 Mantle) 的 AWS 區域。"
+  - New section: "# 在 Bedrock 上，如果沒有設定 ANTHROPIC_DEFAULT_HAIKU_MODEL"
+  - New section: "# 或已棄用的 ANTHROPIC_SMALL_FAST_MODEL，則無效。"
+- **資料使用** (`data-usage.md`): 4 lines added, 2 removed
+- **Google Vertex AI 上的 Claude Code** (`google-vertex-ai.md`): 5 lines added, 3 removed
+- **透過 MCP 將 Claude Code 連接到工具** (`mcp.md`): 10 lines added, 8 removed
+- **Microsoft Foundry 上的 Claude Code** (`microsoft-foundry.md`): 2 lines added, 0 removed
+
+---
+
 ## 2026-05-15
 
 156 pages modified

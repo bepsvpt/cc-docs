@@ -953,17 +953,19 @@ Claude Code memotong deskripsi alat dan instruksi server pada 2KB masing-masing.
 
 ### Konfigurasi pencarian alat
 
-Pencarian alat diaktifkan secara default: alat MCP ditangguhkan dan ditemukan sesuai permintaan. Pencarian alat dinonaktifkan secara default di Vertex AI, yang tidak menerima header beta pencarian alat, dan ketika `ANTHROPIC_BASE_URL` menunjuk ke host non-pihak pertama, karena sebagian besar proxy tidak meneruskan blok `tool_reference`. Jika proxy Anda meneruskan blok `tool_reference`, atur `ENABLE_TOOL_SEARCH` secara eksplisit untuk mengganti fallback. Fitur ini memerlukan model yang mendukung blok `tool_reference`: Sonnet 4 dan lebih baru, atau Opus 4 dan lebih baru. Model Haiku tidak mendukung pencarian alat.
+Pencarian alat diaktifkan secara default: alat MCP ditangguhkan dan ditemukan sesuai permintaan. Claude Code menonaktifkannya secara default di Vertex AI. Pencarian alat juga dinonaktifkan ketika `ANTHROPIC_BASE_URL` menunjuk ke host non-pihak pertama, karena sebagian besar proxy tidak meneruskan blok `tool_reference`. Atur `ENABLE_TOOL_SEARCH` secara eksplisit untuk mengganti fallback mana pun.
+
+Pencarian alat memerlukan model yang mendukung blok `tool_reference`: Sonnet 4 dan lebih baru, atau Opus 4 dan lebih baru. Model Haiku tidak mendukungnya. Di Vertex AI, pencarian alat didukung untuk Claude Sonnet 4.5 dan lebih baru serta Claude Opus 4.5 dan lebih baru.
 
 Kontrol perilaku pencarian alat dengan variabel lingkungan `ENABLE_TOOL_SEARCH`:
 
-| Nilai          | Perilaku                                                                                                                                                                 |
-| :------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| (tidak diatur) | Semua alat MCP ditangguhkan dan dimuat sesuai permintaan. Kembali ke pemuatan sebelumnya di Vertex AI atau ketika `ANTHROPIC_BASE_URL` adalah host non-pihak pertama     |
-| `true`         | Semua alat MCP ditangguhkan. Claude Code mengirim header beta bahkan di Vertex AI dan melalui proxy. Permintaan gagal jika backend tidak mendukung blok `tool_reference` |
-| `auto`         | Mode ambang batas: alat dimuat sebelumnya jika cocok dalam 10% jendela konteks, ditangguhkan sebaliknya                                                                  |
-| `auto:<N>`     | Mode ambang batas dengan persentase khusus, di mana `<N>` adalah 0-100 (misalnya, `auto:5` untuk 5%)                                                                     |
-| `false`        | Semua alat MCP dimuat sebelumnya, tidak ada penundaan                                                                                                                    |
+| Nilai          | Perilaku                                                                                                                                                                                                                                        |
+| :------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (tidak diatur) | Semua alat MCP ditangguhkan dan dimuat sesuai permintaan. Kembali ke pemuatan sebelumnya di Vertex AI atau ketika `ANTHROPIC_BASE_URL` adalah host non-pihak pertama                                                                            |
+| `true`         | Semua alat MCP ditangguhkan. Claude Code mengirim header beta bahkan di Vertex AI dan melalui proxy. Permintaan gagal pada model Vertex AI lebih awal dari Sonnet 4.5 atau Opus 4.5, atau pada proxy yang tidak mendukung blok `tool_reference` |
+| `auto`         | Mode ambang batas: alat dimuat sebelumnya jika cocok dalam 10% jendela konteks, ditangguhkan sebaliknya                                                                                                                                         |
+| `auto:N`       | Mode ambang batas dengan persentase khusus, di mana `N` adalah 0-100. Misalnya, `auto:5` untuk 5%                                                                                                                                               |
+| `false`        | Semua alat MCP dimuat sebelumnya, tidak ada penundaan                                                                                                                                                                                           |
 
 ```bash theme={null}
 # Gunakan ambang batas khusus 5%

@@ -953,17 +953,19 @@ Claude Code 將工具描述和 server 指示截斷為每個 2KB。保持簡潔�
 
 ### 配置 tool search
 
-Tool search 預設啟用：MCP 工具被延遲並按需探索。當 `ANTHROPIC_BASE_URL` 指向非第一方主機時，tool search 預設停用，因為大多數代理不轉發 `tool_reference` 區塊。如果您的代理轉發 `tool_reference` 區塊，請明確設定 `ENABLE_TOOL_SEARCH` 以覆蓋回退。此功能需要支援 `tool_reference` 區塊的模型：Sonnet 4 及更新版本，或 Opus 4 及更新版本。Haiku 模型不支援 tool search。
+Tool search 預設啟用：MCP 工具被延遲並按需探索。Claude Code 在 Vertex AI 上預設停用它。當 `ANTHROPIC_BASE_URL` 指向非第一方主機時，它也被停用，因為大多數代理不轉發 `tool_reference` 區塊。設定 `ENABLE_TOOL_SEARCH` 明確以覆蓋任一回退。
+
+Tool search 需要支援 `tool_reference` 區塊的模型：Sonnet 4 及更新版本，或 Opus 4 及更新版本。Haiku 模型不支援它。在 Vertex AI 上，tool search 支援 Claude Sonnet 4.5 及更新版本和 Claude Opus 4.5 及更新版本。
 
 使用 `ENABLE_TOOL_SEARCH` 環境變數控制 tool search 行為：
 
-| 值          | 行為                                                                                          |
-| :--------- | :------------------------------------------------------------------------------------------ |
-| (未設定)      | 所有 MCP 工具被延遲並按需載入。當 `ANTHROPIC_BASE_URL` 是非第一方主機時回退到預先載入                                    |
-| `true`     | 所有 MCP 工具被延遲。Claude Code 即使在 Vertex AI 上和透過代理也會傳送 beta 標頭。如果後端不支援 `tool_reference` 區塊，請求會失敗 |
-| `auto`     | 閾值模式：如果工具適合內容視窗的 10% 內，則預先載入，否則延遲                                                           |
-| `auto:<N>` | 閾值模式，具有自訂百分比，其中 `<N>` 是 0-100 (例如，`auto:5` 表示 5%)                                           |
-| `false`    | 所有 MCP 工具預先載入，無延遲                                                                           |
+| 值        | 行為                                                                                                                                   |
+| :------- | :----------------------------------------------------------------------------------------------------------------------------------- |
+| (未設定)    | 所有 MCP 工具被延遲並按需載入。在 Vertex AI 上或當 `ANTHROPIC_BASE_URL` 是非第一方主機時回退到預先載入                                                               |
+| `true`   | 所有 MCP 工具被延遲。Claude Code 即使在 Vertex AI 上和透過代理也會傳送 beta 標頭。在不支援 `tool_reference` 區塊的 Vertex AI 模型上或在不支援 `tool_reference` 區塊的代理上，請求會失敗 |
+| `auto`   | 閾值模式：如果工具適合內容視窗的 10% 內，則預先載入，否則延遲                                                                                                    |
+| `auto:N` | 閾值模式，具有自訂百分比，其中 `N` 是 0-100。例如，`auto:5` 表示 5%                                                                                        |
+| `false`  | 所有 MCP 工具預先載入，無延遲                                                                                                                    |
 
 ```bash theme={null}
 # 使用自訂 5% 閾值
