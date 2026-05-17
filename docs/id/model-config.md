@@ -204,7 +204,7 @@ Anda dapat mengubah usaha melalui salah satu dari berikut ini:
 * **Dalam `/model`**: gunakan tombol panah kiri/kanan untuk menyesuaikan slider usaha saat memilih model
 * **Flag `--effort`**: teruskan nama tingkat untuk menetapkannya untuk sesi tunggal saat meluncurkan Claude Code
 * **Variabel lingkungan**: atur `CLAUDE_CODE_EFFORT_LEVEL` ke nama tingkat atau `auto`
-* **Pengaturan**: atur `effortLevel` di file pengaturan Anda
+* **Pengaturan**: atur `effortLevel` ke `low`, `medium`, `high`, atau `xhigh` dalam file pengaturan Anda. `max` adalah [hanya sesi](#adjust-effort-level) dan tidak diterima di sini
 * **Skill dan subagent frontmatter**: atur `effort` dalam file markdown [skill](/id/skills#frontmatter-reference) atau [subagent](/id/sub-agents#supported-frontmatter-fields) untuk mengganti tingkat usaha ketika skill atau subagent itu berjalan
 
 Variabel lingkungan mengambil alih semua metode lain, kemudian tingkat yang Anda konfigurasi, kemudian default model. Usaha frontmatter berlaku ketika skill atau subagent itu aktif, mengganti tingkat sesi tetapi bukan variabel lingkungan.

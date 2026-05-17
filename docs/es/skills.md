@@ -407,6 +407,8 @@ Cuando se ejecuta este skill:
 
 Esto es preprocesamiento, no algo que Claude ejecute. Claude solo ve el resultado final.
 
+La sustitución se ejecuta una sola vez sobre el archivo original. La salida del comando se inserta como texto sin formato y no se vuelve a escanear para buscar más marcadores de posición `` !`<command>` ``, por lo que un comando no puede emitir un marcador de posición para que una pasada posterior lo expanda.
+
 Para comandos de varias líneas, utilice un bloque de código cercado abierto con ` ```! ` en lugar de la forma en línea:
 
 ````markdown theme={null}

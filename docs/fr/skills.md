@@ -407,6 +407,8 @@ Quand cette skill s'exécute :
 
 C'est du prétraitement, pas quelque chose que Claude exécute. Claude ne voit que le résultat final.
 
+La substitution s'exécute une seule fois sur le fichier original. La sortie de la commande est insérée en tant que texte brut et n'est pas réanalysée pour d'autres espaces réservés `` !`<command>` ``, donc une commande ne peut pas émettre un espace réservé pour qu'une passe ultérieure l'étende.
+
 Pour les commandes multi-lignes, utilisez un bloc de code clôturé ouvert avec ` ```! ` au lieu de la forme en ligne :
 
 ````markdown theme={null}

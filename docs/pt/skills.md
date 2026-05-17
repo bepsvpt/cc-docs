@@ -407,6 +407,8 @@ Quando esta skill é executada:
 
 Isto é pré-processamento, não algo que Claude executa. Claude apenas vê o resultado final.
 
+A substituição é executada uma vez sobre o arquivo original. A saída do comando é inserida como texto simples e não é verificada novamente para placeholders `` !`<command>` `` adicionais, portanto um comando não pode emitir um placeholder para uma passagem posterior expandir.
+
 Para comandos de múltiplas linhas, use um bloco de código cercado aberto com ` ```! ` em vez da forma inline:
 
 ````markdown theme={null}

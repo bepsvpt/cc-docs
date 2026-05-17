@@ -407,6 +407,8 @@ Saat skill ini berjalan:
 
 Ini adalah preprocessing, bukan sesuatu yang dijalankan Claude. Claude hanya melihat hasil akhir.
 
+Substitusi berjalan sekali di atas file asli. Output perintah dimasukkan sebagai teks biasa dan tidak dipindai ulang untuk placeholder `` !`<command>` `` lebih lanjut, jadi perintah tidak dapat mengeluarkan placeholder untuk pass yang lebih lambat untuk diperluas.
+
 Untuk perintah multi-baris, gunakan blok kode yang dibuka dengan ` ```! ` sebagai gantinya dari bentuk inline:
 
 ````markdown theme={null}

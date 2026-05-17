@@ -173,6 +173,16 @@ Pour les ID de modèle actuels et hérités, consultez [Aperçu des modèles](ht
 export ENABLE_PROMPT_CACHING_1H=1
 ```
 
+### 5. Exécuter Claude Code
+
+Avec les variables d'environnement définies, démarrez Claude Code à partir de votre répertoire de projet :
+
+```bash theme={null}
+claude
+```
+
+Claude Code lit `CLAUDE_CODE_USE_FOUNDRY` et les autres variables Foundry à partir de l'environnement et se connecte à votre ressource Azure à la première invite. Contrairement à Bedrock et Vertex AI, Foundry n'a pas d'assistant de configuration interactif, donc les variables d'environnement des étapes 3 et 4 sont le seul chemin de configuration.
+
 ## Configuration Azure RBAC
 
 Les rôles par défaut `Azure AI User` et `Cognitive Services User` incluent toutes les autorisations requises pour invoquer les modèles Claude.

@@ -200,7 +200,7 @@ Includi `ultrathink` in qualsiasi punto del prompt per richiedere un ragionament
 * **In `/model`**: utilizzare i tasti freccia sinistra/destra per regolare il cursore dello sforzo quando si seleziona un modello
 * **Flag `--effort`**: passare un nome di livello per impostarlo per una singola sessione quando si avvia Claude Code
 * **Variabile di ambiente**: impostare `CLAUDE_CODE_EFFORT_LEVEL` su un nome di livello o `auto`
-* **Impostazioni**: impostare `effortLevel` nel file delle impostazioni
+* **Impostazioni**: impostare `effortLevel` su `low`, `medium`, `high` o `xhigh` nel file delle impostazioni. `max` è [solo per la sessione](#adjust-effort-level) e non è accettato qui
 * **Frontmatter di skill e subagent**: impostare `effort` in un file markdown di [skill](/it/skills#frontmatter-reference) o [subagent](/it/sub-agents#supported-frontmatter-fields) per sovrascrivere il livello di sforzo quando quella skill o subagent viene eseguita
 
 La variabile di ambiente ha la precedenza su tutti gli altri metodi, quindi il livello configurato, quindi il valore predefinito del modello. Lo sforzo del frontmatter si applica quando quella skill o subagent è attiva, sovrascrivendo il livello della sessione ma non la variabile di ambiente.

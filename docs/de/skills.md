@@ -407,6 +407,8 @@ Wenn dieser Skill ausgeführt wird:
 
 Dies ist Vorverarbeitung, nicht etwas, das Claude ausführt. Claude sieht nur das Endergebnis.
 
+Die Substitution wird einmal über die ursprüngliche Datei ausgeführt. Die Befehlsausgabe wird als Klartext eingefügt und wird nicht erneut auf weitere `` !`<command>` `` Platzhalter gescannt, sodass ein Befehl keinen Platzhalter für einen späteren Durchgang ausgeben kann.
+
 Für mehrzeilige Befehle verwenden Sie einen Codeblock, der mit ` ```! ` statt der Inline-Form geöffnet wird:
 
 ````markdown theme={null}

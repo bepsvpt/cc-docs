@@ -200,7 +200,7 @@ Opus 4.7、Opus 4.6 和 Sonnet 4.6 支持工作量。可用的级别取决于模
 * **在 `/model` 中**：选择模型时使用左右箭头键调整工作量滑块
 * **`--effort` 标志**：在启动 Claude Code 时传递级别名称为单个会话设置
 * **环境变量**：设置 `CLAUDE_CODE_EFFORT_LEVEL` 为级别名称或 `auto`
-* **设置**：在设置文件中设置 `effortLevel`
+* **设置**：在设置文件中将 `effortLevel` 设置为 `low`、`medium`、`high` 或 `xhigh`。`max` 是[仅限会话](#adjust-effort-level)的，此处不接受
 * **Skill 和 subagent frontmatter**：在 [skill](/zh-CN/skills#frontmatter-reference) 或 [subagent](/zh-CN/sub-agents#supported-frontmatter-fields) markdown 文件中设置 `effort` 以在该 skill 或 subagent 运行时覆盖工作量级别
 
 环境变量优先于所有其他方法，然后是您配置的级别，然后是模型默认值。Frontmatter 工作量在该 skill 或 subagent 活跃时应用，覆盖会话级别但不覆盖环境变量。

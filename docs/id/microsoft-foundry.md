@@ -173,6 +173,16 @@ Untuk ID model saat ini dan legacy, lihat [Models overview](https://platform.cla
 export ENABLE_PROMPT_CACHING_1H=1
 ```
 
+### 5. Jalankan Claude Code
+
+Dengan variabel lingkungan yang diatur, mulai Claude Code dari direktori proyek Anda:
+
+```bash theme={null}
+claude
+```
+
+Claude Code membaca `CLAUDE_CODE_USE_FOUNDRY` dan variabel Foundry lainnya dari lingkungan dan terhubung ke sumber daya Azure Anda pada prompt pertama. Tidak seperti Bedrock dan Vertex AI, Foundry tidak memiliki wizard setup interaktif, jadi variabel lingkungan di langkah 3 dan 4 adalah satu-satunya jalur konfigurasi.
+
 ## Konfigurasi Azure RBAC
 
 Peran default `Azure AI User` dan `Cognitive Services User` mencakup semua izin yang diperlukan untuk memanggil model Claude.

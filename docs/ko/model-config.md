@@ -200,7 +200,7 @@ Opus 4.7을 처음 실행할 때 Claude Code는 이전에 Opus 4.6 또는 Sonnet
 * **`/model`에서**: 모델을 선택할 때 좌우 화살표 키를 사용하여 노력 슬라이더 조정
 * **`--effort` 플래그**: Claude Code를 시작할 때 단일 세션에 대한 수준 이름을 전달
 * **환경 변수**: `CLAUDE_CODE_EFFORT_LEVEL`을 수준 이름 또는 `auto`로 설정
-* **설정**: 설정 파일에서 `effortLevel`을 설정
+* **설정**: 설정 파일에서 `effortLevel`을 `low`, `medium`, `high` 또는 `xhigh`로 설정합니다. `max`는 [세션 전용](#adjust-effort-level)이며 여기서는 허용되지 않습니다
 * **Skill 및 subagent frontmatter**: [skill](/ko/skills#frontmatter-reference) 또는 [subagent](/ko/sub-agents#supported-frontmatter-fields) markdown 파일에서 `effort`를 설정하여 해당 skill 또는 subagent가 실행될 때 노력 수준을 재정의
 
 환경 변수가 모든 다른 방법보다 우선하고, 그 다음 구성된 수준, 그 다음 모델 기본값입니다. Frontmatter 노력은 해당 skill 또는 subagent가 활성화될 때 적용되어 세션 수준을 재정의하지만 환경 변수는 재정의하지 않습니다.

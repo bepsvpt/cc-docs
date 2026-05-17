@@ -173,6 +173,16 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5'
 export ENABLE_PROMPT_CACHING_1H=1
 ```
 
+### 5. 執行 Claude Code
+
+設定環境變數後，從您的專案目錄啟動 Claude Code：
+
+```bash theme={null}
+claude
+```
+
+Claude Code 從環境中讀取 `CLAUDE_CODE_USE_FOUNDRY` 和其他 Foundry 變數，並在第一個提示時連接到您的 Azure 資源。與 Bedrock 和 Vertex AI 不同，Foundry 沒有互動式設定精靈，因此步驟 3 和 4 中的環境變數是唯一的配置路徑。
+
 ## Azure RBAC 配置
 
 `Azure AI User` 和 `Cognitive Services User` 預設角色包含叫用 Claude 模型所需的所有權限。

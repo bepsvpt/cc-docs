@@ -200,7 +200,7 @@ Plan Mode Opus 階段使用標準 200K context window 執行。[擴展 context](
 * **在 `/model` 中**：選擇模型時使用左/右箭頭鍵調整努力滑塊
 * **`--effort` 旗標**：在啟動 Claude Code 時傳遞等級名稱以為單一會話設定
 * **環境變數**：設定 `CLAUDE_CODE_EFFORT_LEVEL` 為等級名稱或 `auto`
-* **設定**：在設定檔中設定 `effortLevel`
+* **設定**：在設定檔中設定 `effortLevel` 為 `low`、`medium`、`high` 或 `xhigh`。`max` 是[僅限會話](#adjust-effort-level)，此處不接受
 * **Skill 和 subagent frontmatter**：在 [skill](/zh-TW/skills#frontmatter-reference) 或 [subagent](/zh-TW/sub-agents#supported-frontmatter-fields) markdown 檔案中設定 `effort` 以在該 skill 或 subagent 執行時覆蓋努力等級
 
 環境變數優先於所有其他方法，然後是您配置的等級，然後是模型預設值。Frontmatter 努力在該 skill 或 subagent 活動時適用，覆蓋會話等級但不覆蓋環境變數。

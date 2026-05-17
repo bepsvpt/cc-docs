@@ -202,7 +202,7 @@ Vous pouvez modifier l'effort par l'une des méthodes suivantes :
 * **Dans `/model`** : utilisez les touches fléchées gauche/droite pour ajuster le curseur d'effort lors de la sélection d'un modèle
 * **Drapeau `--effort`** : passez un nom de niveau pour le définir pour une seule session lors du lancement de Claude Code
 * **Variable d'environnement** : définissez `CLAUDE_CODE_EFFORT_LEVEL` sur un nom de niveau ou `auto`
-* **Paramètres** : définissez `effortLevel` dans votre fichier de paramètres
+* **Paramètres** : définissez `effortLevel` sur `low`, `medium`, `high` ou `xhigh` dans votre fichier de paramètres. `max` est [session uniquement](#adjust-effort-level) et n'est pas accepté ici
 * **Frontmatter de skill et de subagent** : définissez `effort` dans un fichier markdown de [skill](/fr/skills#frontmatter-reference) ou de [subagent](/fr/sub-agents#supported-frontmatter-fields) pour remplacer le niveau d'effort lorsque ce skill ou subagent s'exécute
 
 La variable d'environnement prend la priorité sur toutes les autres méthodes, puis votre niveau configuré, puis la valeur par défaut du modèle. L'effort du frontmatter s'applique lorsque ce skill ou subagent est actif, remplaçant le niveau de session mais pas la variable d'environnement.

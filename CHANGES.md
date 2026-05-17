@@ -1,5 +1,132 @@
 # Documentation Changes
 
+## 2026-05-17
+
+36 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Claude Code auf Microsoft Foundry** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "### 5. Claude Code ausführen"
+- **Modellkonfiguration** (`model-config.md`): 4 lines added, 4 removed
+- **Claude mit Skills erweitern** (`skills.md`): 2 lines added, 0 removed
+
+### English
+
+
+**Modified**
+
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "### 5. Run Claude Code"
+- **Model configuration** (`model-config.md`): 1 lines added, 1 removed
+- **Extend Claude with skills** (`skills.md`): 2 lines added, 0 removed
+
+### Español
+
+
+**Modified**
+
+- **Claude Code en Microsoft Foundry** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "### 5. Ejecutar Claude Code"
+- **Configuración del modelo** (`model-config.md`): 1 lines added, 1 removed
+- **Ampliar Claude con skills** (`skills.md`): 2 lines added, 0 removed
+
+### Français
+
+
+**Modified**
+
+- **Claude Code sur Microsoft Foundry** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "### 5. Exécuter Claude Code"
+- **Configuration du modèle** (`model-config.md`): 1 lines added, 1 removed
+- **Étendre Claude avec des skills** (`skills.md`): 2 lines added, 0 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Claude Code di Microsoft Foundry** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "### 5. Jalankan Claude Code"
+- **Konfigurasi model** (`model-config.md`): 1 lines added, 1 removed
+- **Perluas Claude dengan skills** (`skills.md`): 2 lines added, 0 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Claude Code su Microsoft Foundry** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "### 5. Esegui Claude Code"
+- **Configurazione del modello** (`model-config.md`): 1 lines added, 1 removed
+- **Estendi Claude con skills** (`skills.md`): 2 lines added, 0 removed
+
+### 日本語
+
+
+**Modified**
+
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "### 5. Claude Code を実行する"
+- **モデル設定** (`model-config.md`): 1 lines added, 1 removed
+- **スキルで Claude を拡張する** (`skills.md`): 2 lines added, 0 removed
+
+### 한국어
+
+
+**Modified**
+
+- **Microsoft Foundry의 Claude Code** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "### 5. Claude Code 실행"
+- **모델 구성** (`model-config.md`): 1 lines added, 1 removed
+- **Claude를 skills로 확장하기** (`skills.md`): 2 lines added, 0 removed
+
+### Português
+
+
+**Modified**
+
+- **Claude Code no Microsoft Foundry** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "### 5. Executar Claude Code"
+- **Configuração de modelo** (`model-config.md`): 1 lines added, 1 removed
+- **Estenda Claude com skills** (`skills.md`): 2 lines added, 0 removed
+
+### Русский
+
+
+**Modified**
+
+- **Claude Code на Microsoft Foundry** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "### 5. Запуск Claude Code"
+- **Конфигурация модели** (`model-config.md`): 1 lines added, 1 removed
+- **Расширьте Claude с помощью skills** (`skills.md`): 2 lines added, 0 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **Microsoft Foundry 上的 Claude Code** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "### 5. 运行 Claude Code"
+- **模型配置** (`model-config.md`): 1 lines added, 1 removed
+- **使用 skills 扩展 Claude** (`skills.md`): 2 lines added, 0 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **Microsoft Foundry 上的 Claude Code** (`microsoft-foundry.md`): 10 lines added, 0 removed
+  - New section: "### 5. 執行 Claude Code"
+- **模型配置** (`model-config.md`): 1 lines added, 1 removed
+- **使用 skills 擴展 Claude** (`skills.md`): 2 lines added, 0 removed
+
+---
+
 ## 2026-05-16
 
 62 pages modified

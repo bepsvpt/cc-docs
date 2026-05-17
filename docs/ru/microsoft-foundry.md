@@ -173,6 +173,16 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5'
 export ENABLE_PROMPT_CACHING_1H=1
 ```
 
+### 5. Запуск Claude Code
+
+С установленными переменными окружения запустите Claude Code из каталога вашего проекта:
+
+```bash theme={null}
+claude
+```
+
+Claude Code читает `CLAUDE_CODE_USE_FOUNDRY` и другие переменные Foundry из окружения и подключается к вашему ресурсу Azure при первом запросе. В отличие от Bedrock и Vertex AI, Foundry не имеет интерактивного мастера установки, поэтому переменные окружения на шагах 3 и 4 являются единственным путем конфигурации.
+
 ## Конфигурация Azure RBAC
 
 Роли по умолчанию `Azure AI User` и `Cognitive Services User` включают все необходимые разрешения для вызова моделей Claude.
