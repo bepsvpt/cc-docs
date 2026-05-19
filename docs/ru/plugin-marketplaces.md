@@ -161,7 +161,7 @@
 | `plugins` | array  | Список доступных плагинов                                                                                                                                                           | См. ниже       |
 
 <Note>
-  **Зарезервированные имена**: Следующие имена marketplace зарезервированы для официального использования Anthropic и не могут использоваться сторонними marketplace: `claude-code-marketplace`, `claude-code-plugins`, `claude-plugins-official`, `anthropic-marketplace`, `anthropic-plugins`, `agent-skills`, `knowledge-work-plugins`, `life-sciences`. Имена, которые выдают себя за официальные marketplace (например, `official-claude-plugins` или `anthropic-tools-v2`), также заблокированы.
+  **Зарезервированные имена**: Следующие имена marketplace зарезервированы для официального использования Anthropic и не могут использоваться сторонними marketplace: `claude-code-marketplace`, `claude-code-plugins`, `claude-plugins-official`, `anthropic-marketplace`, `anthropic-plugins`, `agent-skills`, `anthropic-agent-skills`, `knowledge-work-plugins`, `life-sciences`. Имена, которые выдают себя за официальные marketplace, такие как `official-claude-plugins` или `anthropic-tools-v2`, также заблокированы.
 </Note>
 
 ### Поля владельца
@@ -200,6 +200,7 @@
 
 | Поле          | Тип     | Описание                                                                                                                                                                                                                                                                  |
 | :------------ | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `displayName` | string  | {/* min-version: 2.1.143 */}Удобочитаемое имя, отображаемое в интерфейсе. Возвращается к `name` при отсутствии. Может содержать пробелы и любой регистр. Не используется для пространства имён или поиска. Требуется Claude Code v2.1.143 или позже.                      |
 | `description` | string  | Краткое описание плагина                                                                                                                                                                                                                                                  |
 | `version`     | string  | Версия плагина. Если установлено (здесь или в `plugin.json`), плагин закреплен на этой строке и пользователи получают обновления только при её изменении. Опустите, чтобы вернуться к SHA коммита git. См. [Разрешение версий](#version-resolution-and-release-channels). |
 | `author`      | object  | Информация об авторе плагина (`name` обязательно, `email` опционально)                                                                                                                                                                                                    |

@@ -436,12 +436,12 @@ Tambahkan `context: fork` ke frontmatter Anda saat Anda ingin skill berjalan dal
 
 Skills dan [subagents](/id/sub-agents) bekerja bersama dalam dua arah:
 
-| Pendekatan                      | System prompt                            | Tugas                 | Juga memuat                               |
-| :------------------------------ | :--------------------------------------- | :-------------------- | :---------------------------------------- |
-| Skill dengan `context: fork`    | Dari jenis agen (`Explore`, `Plan`, dll) | Konten SKILL.md       | CLAUDE.md                                 |
-| Subagent dengan bidang `skills` | Badan markdown subagent                  | Pesan delegasi Claude | Skills yang dimuat sebelumnya + CLAUDE.md |
+| Pendekatan                      | System prompt           | Tugas                 | Juga memuat                                             |
+| :------------------------------ | :---------------------- | :-------------------- | :------------------------------------------------------ |
+| Skill dengan `context: fork`    | Dari jenis agen         | Konten SKILL.md       | CLAUDE.md, kecuali ketika agen adalah Explore atau Plan |
+| Subagent dengan bidang `skills` | Badan markdown subagent | Pesan delegasi Claude | Skills yang dimuat sebelumnya + CLAUDE.md               |
 
-Dengan `context: fork`, Anda menulis tugas dalam skill Anda dan memilih jenis agen untuk menjalankannya. Untuk kebalikannya (mendefinisikan subagent kustom yang menggunakan skills sebagai materi referensi), lihat [Subagents](/id/sub-agents#preload-skills-into-subagents).
+Dengan `context: fork`, Anda menulis tugas dalam skill Anda dan memilih jenis agen untuk menjalankannya. Agen Explore dan Plan bawaan [melewati CLAUDE.md dan git status](/id/sub-agents#what-loads-at-startup) untuk menjaga konteks mereka tetap kecil, jadi skill yang di-fork menggunakan `agent: Explore` hanya melihat konten SKILL.md dan system prompt agen itu sendiri. Untuk kebalikannya, di mana Anda mendefinisikan subagent kustom yang menggunakan skills sebagai materi referensi, lihat [Subagents](/id/sub-agents#preload-skills-into-subagents).
 
 #### Contoh: Skill penelitian menggunakan agen Explore
 

@@ -37,6 +37,8 @@ Claude Code mencakup beberapa subagent bawaan seperti **Explore**, **Plan**, dan
 
 Claude Code mencakup subagent bawaan yang Claude gunakan secara otomatis jika sesuai. Masing-masing mewarisi izin percakapan induk dengan pembatasan alat tambahan.
 
+Explore dan Plan melewati file CLAUDE.md Anda dan status git sesi induk untuk menjaga penelitian tetap cepat dan hemat biaya. Setiap subagent bawaan lainnya dan [subagent khusus](#configure-subagents) memuat keduanya. Untuk rincian lengkap tentang apa yang mencapai subagent, lihat [apa yang dimuat saat startup](#what-loads-at-startup).
+
 <Tabs>
   <Tab title="Explore">
     Agen cepat yang dioptimalkan hanya-baca untuk mencari dan menganalisis basis kode.
@@ -652,7 +654,19 @@ Prompt sistem subagent menggantikan prompt sistem Claude Code default sepenuhnya
 
 Ini berfungsi dengan subagent bawaan dan khusus, dan pilihan bertahan ketika Anda melanjutkan sesi.
 
-Untuk subagent yang disediakan plugin, lewatkan nama yang dibatasi: `claude --agent <plugin-name>:<agent-name>`. Jika plugin menempatkan agen dalam subfolder dari direktori `agents/` nya, sertakan subfolder dalam nama yang dibatasi, misalnya `claude --agent my-plugin:review:security`.
+Untuk subagent yang disediakan plugin, Anda dapat melewatkan hanya nama agen dan Claude Code akan menemukannya:
+
+```bash theme={null}
+claude --agent security-reviewer
+```
+
+Jika beberapa plugin menyediakan agen dengan nama yang sama, lewatkan nama yang dibatasi untuk membedakan:
+
+```bash theme={null}
+claude --agent my-plugin:security-reviewer
+```
+
+Jika plugin menempatkan agen dalam subfolder dari direktori `agents/` nya, sertakan subfolder dalam nama yang dibatasi, misalnya `claude --agent my-plugin:review:security`.
 
 Untuk menjadikannya default untuk setiap sesi dalam proyek, atur `agent` dalam `.claude/settings.json`:
 
@@ -740,6 +754,22 @@ Untuk pertanyaan cepat tentang sesuatu yang sudah ada dalam percakapan Anda, gun
 </Note>
 
 ### Kelola konteks subagent
+
+#### Apa yang dimuat saat startup
+
+Setiap subagent dimulai dengan jendela konteks yang segar dan terisolasi. Ini tidak melihat riwayat percakapan Anda, skills yang sudah Anda panggil, atau file yang sudah Claude baca. Claude menyusun pesan delegasi yang merangkum tugas, dan subagent bekerja dari sana. Pengecualiannya adalah [fork](#fork-the-current-conversation), yang mewarisi percakapan induk daripada memulai segar.
+
+Konteks awal subagent non-fork berisi:
+
+* **Prompt sistem**: prompt agen itu sendiri ditambah detail lingkungan yang Claude Code tambahkan, bukan prompt sistem Claude Code lengkap. Subagent khusus mendefinisikan milik mereka dalam [badan markdown](#write-subagent-files) atau bidang `prompt`. Agen bawaan memiliki prompt yang telah ditentukan sebelumnya.
+* **Pesan tugas**: prompt delegasi yang Claude tulis ketika menyerahkan pekerjaan.
+* **CLAUDE.md dan memori**: setiap level dari [hierarki memori](/id/memory#how-claude-md-files-load) yang dimuat percakapan utama, termasuk `~/.claude/CLAUDE.md`, aturan proyek, `CLAUDE.local.md`, dan file kebijakan yang dikelola. Agen Explore dan Plan bawaan melewati ini.
+* **Status Git**: snapshot yang diambil di awal sesi induk. Tidak ada ketika direktori kerja bukan repositori Git atau ketika [`includeGitInstructions`](/id/settings#available-settings) adalah `false`. Explore dan Plan melewatinya terlepas.
+* **Skills yang dimuat sebelumnya**: konten lengkap dari skill apa pun yang dinamai dalam bidang [`skills`](#preload-skills-into-subagents) agen. Agen bawaan tidak memuat skills sebelumnya.
+
+Explore dan Plan adalah satu-satunya subagent yang menghilangkan CLAUDE.md dan status git. Tidak ada bidang frontmatter atau pengaturan per-agen untuk mengubah agen mana yang melewatinya.
+
+Percakapan utama membaca hasil Explore dan Plan dengan konteks CLAUDE.md penuh, jadi sebagian besar aturan tidak perlu mencapai subagent itu sendiri. Jika aturan harus, seperti "abaikan direktori `vendor/`," nyatakan kembali dalam prompt yang Anda berikan Claude saat mendelegasikan.
 
 #### Lanjutkan subagent
 

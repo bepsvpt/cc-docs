@@ -161,7 +161,7 @@
 | `plugins` | array  | 可用 plugin 的清單                                                                                             | 請參閱下面          |
 
 <Note>
-  **保留名稱**：以下 marketplace 名稱保留供 Anthropic 官方使用，第三方 marketplace 無法使用：`claude-code-marketplace`、`claude-code-plugins`、`claude-plugins-official`、`anthropic-marketplace`、`anthropic-plugins`、`agent-skills`、`knowledge-work-plugins`、`life-sciences`。模仿官方 marketplace 的名稱（如 `official-claude-plugins` 或 `anthropic-tools-v2`）也被阻止。
+  **保留名稱**：以下 marketplace 名稱保留供 Anthropic 官方使用，第三方 marketplace 無法使用：`claude-code-marketplace`、`claude-code-plugins`、`claude-plugins-official`、`anthropic-marketplace`、`anthropic-plugins`、`agent-skills`、`anthropic-agent-skills`、`knowledge-work-plugins`、`life-sciences`。模仿官方 marketplace 的名稱（如 `official-claude-plugins` 或 `anthropic-tools-v2`）也被阻止。
 </Note>
 
 ### 擁有者欄位
@@ -200,6 +200,7 @@
 
 | 欄位            | 類型      | 描述                                                                                                                                                 |
 | :------------ | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `displayName` | string  | {/* min-version: 2.1.143 */}在 UI 介面中顯示的人類可讀名稱。當省略時回退到 `name`。可以包含空格和任何大小寫。不用於命名空間或查詢。需要 Claude Code v2.1.143 或更新版本。                                |
 | `description` | string  | 簡短的 plugin 描述                                                                                                                                      |
 | `version`     | string  | Plugin 版本。如果設定（在此處或在 `plugin.json` 中），plugin 會固定到此字串，使用者只有在版本變更時才會收到更新。省略以回退到 git commit SHA。請參閱 [版本解析](#version-resolution-and-release-channels)。 |
 | `author`      | object  | Plugin 作者資訊（`name` 必需，`email` 選用）                                                                                                                  |

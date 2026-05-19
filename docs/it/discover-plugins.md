@@ -138,7 +138,9 @@ Anthropic mantiene anche un [marketplace di plugin demo](https://github.com/anth
   </Step>
 
   <Step title="Installare un plugin">
-    Selezionate un plugin per visualizzare i suoi dettagli, quindi scegliete un ambito di installazione:
+    Selezionate un plugin per visualizzare i suoi dettagli. {/* min-version: 2.1.143 */}Su Claude Code v2.1.143 e versioni successive, il riquadro dei dettagli include una stima di **Context cost** in modo da poter vedere quanti token il plugin aggiungerà alla vostra [finestra di contesto](/it/features-overview#understand-context-costs) ad ogni turno prima di installarlo.
+
+    Scegliete un ambito di installazione:
 
     * **User scope**: installate per voi stessi in tutti i progetti
     * **Project scope**: installate per tutti i collaboratori su questo repository

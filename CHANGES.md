@@ -1,5 +1,379 @@
 # Documentation Changes
 
+## 2026-05-19
+
+247 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **CLI-Referenz** (`cli-reference.md`): 29 lines added, 28 removed
+- **Code Review** (`code-review.md`): 4 lines added, 4 removed
+- **Desktop-Anwendung** (`desktop.md`): 4 lines added, 3 removed
+  - New section: "# Desktop-Anwendung"
+- **Entdecken und installieren Sie vorgefertigte Plugins über Marktplätze** (`discover-plugins.md`): 3 lines added, 1 removed
+- **Beschleunigen Sie Antworten mit dem Schnellmodus** (`fast-mode.md`): 15 lines added, 49 removed
+- **Claude Code erweitern** (`features-overview.md`): 2 lines added, 2 removed
+- **Automatisieren Sie Workflows mit Hooks** (`hooks-guide.md`): 5 lines added, 3 removed
+  - New section: "### Stop-Hook trifft die Blockierungsgrenze"
+- **Hooks-Referenz** (`hooks.md`): 2 lines added, 2 removed
+- **Claude Code mit Tools über MCP verbinden** (`mcp.md`): 3 lines added, 1 removed
+- **Modellkonfiguration** (`model-config.md`): 6 lines added, 6 removed
+- **Übersicht** (`overview.md`): 1 lines added, 1 removed
+  - New section: "# Übersicht"
+- **Erstellen und Verteilen eines Plugin-Marktplatzes** (`plugin-marketplaces.md`): 14 lines added, 13 removed
+- **Plugins-Referenz** (`plugins-reference.md`): 16 lines added, 11 removed
+- **Lokale Sitzungen von jedem Gerät aus mit Remote Control fortsetzen** (`remote-control.md`): 1 lines added, 1 removed
+- **Prompts nach Zeitplan ausführen** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Sicherheit** (`security.md`): 1 lines added, 0 removed
+- **Claude Code-Einstellungen** (`settings.md`): 14 lines added, 11 removed
+- **Claude mit Skills erweitern** (`skills.md`): 5 lines added, 5 removed
+- **Passen Sie Ihre Statuszeile an** (`statusline.md`): 9 lines added, 4 removed
+- **Benutzerdefinierte Subagenten erstellen** (`sub-agents.md`): 31 lines added, 1 removed
+  - New section: "#### Was wird beim Start geladen"
+
+### English
+
+
+**Modified**
+
+- **Changelog** (`changelog.md`): 55 lines added, 0 removed
+- **CLI reference** (`cli-reference.md`): 29 lines added, 28 removed
+- **Code Review** (`code-review.md`): 2 lines added, 2 removed
+- **Commands** (`commands.md`): 2 lines added, 2 removed
+- **Desktop application** (`desktop.md`): 2 lines added, 1 removed
+  - New section: "# Desktop application"
+- **Discover and install prebuilt plugins through marketplaces** (`discover-plugins.md`): 3 lines added, 1 removed
+- **Environment variables** (`env-vars.md`): 13 lines added, 10 removed
+- **Speed up responses with fast mode** (`fast-mode.md`): 15 lines added, 49 removed
+- **Extend Claude Code** (`features-overview.md`): 2 lines added, 2 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 5 lines added, 3 removed
+  - New section: "### Stop hook hits the block cap"
+- **Hooks reference** (`hooks.md`): 4 lines added, 2 removed
+- **JetBrains IDEs** (`jetbrains.md`): 1 lines added, 1 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 3 lines added, 1 removed
+- **Model configuration** (`model-config.md`): 18 lines added, 14 removed
+- **Overview** (`overview.md`): 1 lines added, 1 removed
+  - New section: "# Overview"
+- **Configure permissions** (`permissions.md`): 1 lines added, 1 removed
+- **Create and distribute a plugin marketplace** (`plugin-marketplaces.md`): 2 lines added, 1 removed
+- **Plugins reference** (`plugins-reference.md`): 9 lines added, 4 removed
+- **Continue local sessions from any device with Remote Control** (`remote-control.md`): 1 lines added, 1 removed
+- **Run prompts on a schedule** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Security** (`security.md`): 1 lines added, 0 removed
+- **Claude Code settings** (`settings.md`): 11 lines added, 10 removed
+- **Extend Claude with skills** (`skills.md`): 5 lines added, 5 removed
+- **Customize your status line** (`statusline.md`): 6 lines added, 1 removed
+- **Create custom subagents** (`sub-agents.md`): 31 lines added, 1 removed
+  - New section: "#### What loads at startup"
+- **Tools reference** (`tools-reference.md`): 2 lines added, 1 removed
+- **Use Claude Code in VS Code** (`vs-code.md`): 2 lines added, 0 removed
+
+### Español
+
+
+**Modified**
+
+- **Referencia de CLI** (`cli-reference.md`): 4 lines added, 3 removed
+- **Code Review** (`code-review.md`): 2 lines added, 2 removed
+- **Aplicación de escritorio** (`desktop.md`): 2 lines added, 1 removed
+  - New section: "# Aplicación de escritorio"
+- **Descubra e instale plugins pregenerados a través de mercados** (`discover-plugins.md`): 3 lines added, 1 removed
+- **Acelera las respuestas con el modo rápido** (`fast-mode.md`): 15 lines added, 49 removed
+- **Extender Claude Code** (`features-overview.md`): 2 lines added, 2 removed
+- **Automatizar flujos de trabajo con hooks** (`hooks-guide.md`): 5 lines added, 3 removed
+  - New section: "### El hook Stop alcanza el límite de bloqueo"
+- **Referencia de hooks** (`hooks.md`): 1 lines added, 1 removed
+- **Conectar Claude Code a herramientas mediante MCP** (`mcp.md`): 3 lines added, 1 removed
+- **Configuración del modelo** (`model-config.md`): 6 lines added, 6 removed
+- **Descripción general** (`overview.md`): 1 lines added, 1 removed
+  - New section: "# Descripción general"
+- **Crear y distribuir un marketplace de plugins** (`plugin-marketplaces.md`): 2 lines added, 1 removed
+- **Referencia de plugins** (`plugins-reference.md`): 9 lines added, 4 removed
+- **Continúe sesiones locales desde cualquier dispositivo con Remote Control** (`remote-control.md`): 1 lines added, 1 removed
+- **Ejecutar prompts en un horario** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Seguridad** (`security.md`): 1 lines added, 0 removed
+- **Configuración de Claude Code** (`settings.md`): 13 lines added, 11 removed
+- **Ampliar Claude con skills** (`skills.md`): 5 lines added, 5 removed
+- **Personaliza tu línea de estado** (`statusline.md`): 6 lines added, 1 removed
+- **Crear subagentes personalizados** (`sub-agents.md`): 32 lines added, 2 removed
+  - New section: "#### Qué se carga al inicio"
+
+### Français
+
+
+**Modified**
+
+- **Référence CLI** (`cli-reference.md`): 4 lines added, 3 removed
+- **Révision de code** (`code-review.md`): 6 lines added, 6 removed
+- **Application de bureau** (`desktop.md`): 2 lines added, 1 removed
+  - New section: "# Application de bureau"
+- **Découvrir et installer des plugins prédéfinis via les marketplaces** (`discover-plugins.md`): 3 lines added, 1 removed
+- **Accélérez les réponses avec le mode rapide** (`fast-mode.md`): 14 lines added, 48 removed
+- **Étendre Claude Code** (`features-overview.md`): 2 lines added, 2 removed
+- **Automatiser les workflows avec les hooks** (`hooks-guide.md`): 5 lines added, 3 removed
+  - New section: "### Le hook Stop atteint le plafond de blocage"
+- **Référence des hooks** (`hooks.md`): 2 lines added, 2 removed
+- **Connecter Claude Code aux outils via MCP** (`mcp.md`): 3 lines added, 1 removed
+- **Configuration du modèle** (`model-config.md`): 6 lines added, 6 removed
+- **Aperçu** (`overview.md`): 1 lines added, 1 removed
+  - New section: "# Aperçu"
+- **Créer et distribuer une place de marché de plugins** (`plugin-marketplaces.md`): 14 lines added, 13 removed
+- **Référence des plugins** (`plugins-reference.md`): 9 lines added, 4 removed
+- **Continuer les sessions locales depuis n'importe quel appareil avec Remote Control** (`remote-control.md`): 1 lines added, 1 removed
+- **Exécuter des prompts selon un calendrier** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Sécurité** (`security.md`): 1 lines added, 0 removed
+- **Paramètres Claude Code** (`settings.md`): 13 lines added, 12 removed
+- **Étendre Claude avec des skills** (`skills.md`): 5 lines added, 5 removed
+- **Personnalisez votre barre de statut** (`statusline.md`): 6 lines added, 1 removed
+- **Créer des sous-agents personnalisés** (`sub-agents.md`): 31 lines added, 1 removed
+  - New section: "#### Ce qui se charge au démarrage"
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Referensi CLI** (`cli-reference.md`): 29 lines added, 28 removed
+- **Code Review** (`code-review.md`): 2 lines added, 2 removed
+- **Aplikasi desktop** (`desktop.md`): 2 lines added, 1 removed
+  - New section: "# Aplikasi desktop"
+- **Temukan dan instal plugin yang sudah dibuat melalui marketplace** (`discover-plugins.md`): 3 lines added, 1 removed
+- **Percepat respons dengan mode cepat** (`fast-mode.md`): 15 lines added, 49 removed
+- **Perluas Claude Code** (`features-overview.md`): 2 lines added, 2 removed
+- **Otomatisasi alur kerja dengan hooks** (`hooks-guide.md`): 5 lines added, 3 removed
+  - New section: "### Stop hook mencapai batas blokir"
+- **Referensi hooks** (`hooks.md`): 3 lines added, 3 removed
+- **Hubungkan Claude Code ke alat melalui MCP** (`mcp.md`): 3 lines added, 1 removed
+- **Konfigurasi model** (`model-config.md`): 6 lines added, 6 removed
+- **Ikhtisar** (`overview.md`): 1 lines added, 1 removed
+  - New section: "# Ikhtisar"
+- **Buat dan distribusikan marketplace plugin** (`plugin-marketplaces.md`): 14 lines added, 13 removed
+- **Referensi Plugins** (`plugins-reference.md`): 9 lines added, 4 removed
+- **Lanjutkan sesi lokal dari perangkat apa pun dengan Remote Control** (`remote-control.md`): 1 lines added, 1 removed
+- **Jalankan prompt sesuai jadwal** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Keamanan** (`security.md`): 1 lines added, 0 removed
+- **Pengaturan Claude Code** (`settings.md`): 20 lines added, 17 removed
+- **Perluas Claude dengan skills** (`skills.md`): 5 lines added, 5 removed
+- **Sesuaikan baris status Anda** (`statusline.md`): 7 lines added, 2 removed
+- **Buat subagent khusus** (`sub-agents.md`): 31 lines added, 1 removed
+  - New section: "#### Apa yang dimuat saat startup"
+
+### Italiano
+
+
+**Modified**
+
+- **Riferimento CLI** (`cli-reference.md`): 4 lines added, 3 removed
+- **Code Review** (`code-review.md`): 2 lines added, 2 removed
+- **Applicazione desktop** (`desktop.md`): 2 lines added, 1 removed
+  - New section: "# Applicazione desktop"
+- **Scopri e installa plugin precostruiti tramite marketplace** (`discover-plugins.md`): 3 lines added, 1 removed
+- **Accelera le risposte con la modalità veloce** (`fast-mode.md`): 15 lines added, 49 removed
+- **Estendi Claude Code** (`features-overview.md`): 2 lines added, 2 removed
+- **Automatizzare i flussi di lavoro con hooks** (`hooks-guide.md`): 5 lines added, 3 removed
+  - New section: "### L'hook Stop colpisce il limite di blocco"
+- **Riferimento dei hooks** (`hooks.md`): 1 lines added, 1 removed
+- **Connetti Claude Code ai tuoi strumenti tramite MCP** (`mcp.md`): 3 lines added, 1 removed
+- **Configurazione del modello** (`model-config.md`): 6 lines added, 6 removed
+- **Panoramica** (`overview.md`): 1 lines added, 1 removed
+  - New section: "# Panoramica"
+- **Creare e distribuire un marketplace di plugin** (`plugin-marketplaces.md`): 14 lines added, 13 removed
+- **Riferimento dei plugin** (`plugins-reference.md`): 9 lines added, 4 removed
+- **Continua le sessioni locali da qualsiasi dispositivo con Remote Control** (`remote-control.md`): 1 lines added, 1 removed
+- **Eseguire prompt in base a una pianificazione** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Sicurezza** (`security.md`): 1 lines added, 0 removed
+- **Impostazioni di Claude Code** (`settings.md`): 17 lines added, 15 removed
+- **Estendi Claude con skills** (`skills.md`): 5 lines added, 5 removed
+- **Personalizza la tua barra di stato** (`statusline.md`): 6 lines added, 1 removed
+- **Creare subagent personalizzati** (`sub-agents.md`): 32 lines added, 2 removed
+  - New section: "#### Cosa si carica all'avvio"
+
+### 日本語
+
+
+**Modified**
+
+- **CLI リファレンス** (`cli-reference.md`): 29 lines added, 28 removed
+- **Code Review** (`code-review.md`): 2 lines added, 2 removed
+- **Desktop application** (`desktop.md`): 2 lines added, 1 removed
+  - New section: "# Desktop application"
+- **マーケットプレイスから事前構築されたプラグインを発見してインストールする** (`discover-plugins.md`): 3 lines added, 1 removed
+- **高速モードでレスポンスを高速化** (`fast-mode.md`): 11 lines added, 45 removed
+- **Claude Code を拡張する** (`features-overview.md`): 2 lines added, 2 removed
+- **hooks でワークフローを自動化する** (`hooks-guide.md`): 5 lines added, 3 removed
+  - New section: "### Stop hook がブロック上限に達する"
+- **Hooks リファレンス** (`hooks.md`): 2 lines added, 2 removed
+- **MCP を使用して Claude Code をツールに接続する** (`mcp.md`): 3 lines added, 1 removed
+- **モデル設定** (`model-config.md`): 27 lines added, 27 removed
+- **概要** (`overview.md`): 1 lines added, 1 removed
+  - New section: "# 概要"
+- **プラグインマーケットプレイスの作成と配布** (`plugin-marketplaces.md`): 2 lines added, 1 removed
+- **プラグインリファレンス** (`plugins-reference.md`): 9 lines added, 4 removed
+- **任意のデバイスからローカルセッションを続行する Remote Control** (`remote-control.md`): 1 lines added, 1 removed
+- **スケジュールに従ってプロンプトを実行する** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **セキュリティ** (`security.md`): 1 lines added, 0 removed
+- **Claude Code の設定** (`settings.md`): 18 lines added, 15 removed
+- **スキルで Claude を拡張する** (`skills.md`): 5 lines added, 5 removed
+- **ステータスラインをカスタマイズする** (`statusline.md`): 1 lines added, 0 removed
+- **カスタムサブエージェントの作成** (`sub-agents.md`): 31 lines added, 1 removed
+  - New section: "#### スタートアップで読み込まれるもの"
+
+### 한국어
+
+
+**Modified**
+
+- **CLI 참조** (`cli-reference.md`): 29 lines added, 28 removed
+- **Code Review** (`code-review.md`): 3 lines added, 3 removed
+- **Desktop 애플리케이션** (`desktop.md`): 2 lines added, 1 removed
+  - New section: "# Desktop 애플리케이션"
+- **마켓플레이스를 통해 미리 빌드된 플러그인 발견 및 설치** (`discover-plugins.md`): 3 lines added, 1 removed
+- **빠른 모드로 응답 속도 향상** (`fast-mode.md`): 15 lines added, 49 removed
+- **Claude Code 확장하기** (`features-overview.md`): 2 lines added, 2 removed
+- **hooks를 사용하여 워크플로우 자동화** (`hooks-guide.md`): 6 lines added, 4 removed
+  - New section: "### Stop hook이 블록 상한에 도달함"
+- **Hooks 참조** (`hooks.md`): 1 lines added, 1 removed
+- **MCP를 통해 Claude Code를 도구에 연결하기** (`mcp.md`): 3 lines added, 1 removed
+- **모델 구성** (`model-config.md`): 6 lines added, 6 removed
+- **개요** (`overview.md`): 1 lines added, 1 removed
+  - New section: "# 개요"
+- **플러그인 마켓플레이스 생성 및 배포** (`plugin-marketplaces.md`): 2 lines added, 1 removed
+- **플러그인 참조** (`plugins-reference.md`): 19 lines added, 14 removed
+- **모든 기기에서 로컬 세션 계속하기 (Remote Control)** (`remote-control.md`): 1 lines added, 1 removed
+- **일정에 따라 프롬프트 실행하기** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **보안** (`security.md`): 1 lines added, 0 removed
+- **Claude Code 설정** (`settings.md`): 20 lines added, 16 removed
+- **Claude를 skills로 확장하기** (`skills.md`): 5 lines added, 5 removed
+- **상태 표시줄 사용자 정의** (`statusline.md`): 7 lines added, 2 removed
+- **사용자 정의 subagent 만들기** (`sub-agents.md`): 31 lines added, 1 removed
+  - New section: "#### 시작 시 로드되는 항목"
+
+### Português
+
+
+**Modified**
+
+- **Referência de CLI** (`cli-reference.md`): 4 lines added, 3 removed
+- **Code Review** (`code-review.md`): 2 lines added, 2 removed
+- **Aplicativo Desktop** (`desktop.md`): 2 lines added, 1 removed
+  - New section: "# Aplicativo Desktop"
+- **Descubra e instale plugins pré-construídos através de marketplaces** (`discover-plugins.md`): 3 lines added, 1 removed
+- **Acelere respostas com modo rápido** (`fast-mode.md`): 15 lines added, 49 removed
+- **Estender Claude Code** (`features-overview.md`): 3 lines added, 3 removed
+- **Automatizar fluxos de trabalho com hooks** (`hooks-guide.md`): 5 lines added, 3 removed
+  - New section: "### Stop hook atinge o limite de bloqueio"
+- **Referência de hooks** (`hooks.md`): 2 lines added, 2 removed
+- **Conectar Claude Code a ferramentas via MCP** (`mcp.md`): 3 lines added, 1 removed
+- **Configuração de modelo** (`model-config.md`): 6 lines added, 6 removed
+- **Visão geral** (`overview.md`): 1 lines added, 1 removed
+  - New section: "# Visão geral"
+- **Criar e distribuir um marketplace de plugins** (`plugin-marketplaces.md`): 2 lines added, 1 removed
+- **Referência de plugins** (`plugins-reference.md`): 16 lines added, 11 removed
+- **Continue sessões locais de qualquer dispositivo com Remote Control** (`remote-control.md`): 1 lines added, 1 removed
+- **Executar prompts em um cronograma** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Segurança** (`security.md`): 1 lines added, 0 removed
+- **Configurações do Claude Code** (`settings.md`): 12 lines added, 11 removed
+- **Estenda Claude com skills** (`skills.md`): 5 lines added, 5 removed
+- **Personalize sua linha de status** (`statusline.md`): 6 lines added, 1 removed
+- **Criar subagentes personalizados** (`sub-agents.md`): 31 lines added, 1 removed
+  - New section: "#### O que carrega na inicialização"
+
+### Русский
+
+
+**Modified**
+
+- **Справочник CLI** (`cli-reference.md`): 29 lines added, 28 removed
+- **Code Review** (`code-review.md`): 3 lines added, 3 removed
+- **Настольное приложение** (`desktop.md`): 2 lines added, 1 removed
+  - New section: "# Настольное приложение"
+- **Откройте и установите готовые плагины через маркетплейсы** (`discover-plugins.md`): 3 lines added, 1 removed
+- **Ускорьте ответы с помощью быстрого режима** (`fast-mode.md`): 11 lines added, 45 removed
+- **Расширение Claude Code** (`features-overview.md`): 2 lines added, 2 removed
+- **Автоматизация рабочих процессов с помощью hooks** (`hooks-guide.md`): 5 lines added, 3 removed
+  - New section: "### Stop hook достигает предела блокировки"
+- **Справочник по hooks** (`hooks.md`): 1 lines added, 1 removed
+- **Подключите Claude Code к инструментам через MCP** (`mcp.md`): 3 lines added, 1 removed
+- **Конфигурация модели** (`model-config.md`): 6 lines added, 6 removed
+- **Обзор** (`overview.md`): 1 lines added, 1 removed
+  - New section: "# Обзор"
+- **Создание и распространение marketplace плагинов** (`plugin-marketplaces.md`): 2 lines added, 1 removed
+- **Справочник по плагинам** (`plugins-reference.md`): 10 lines added, 5 removed
+- **Продолжайте локальные сеансы с любого устройства с помощью Remote Control** (`remote-control.md`): 1 lines added, 1 removed
+- **Запуск подсказок по расписанию** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **Безопасность** (`security.md`): 1 lines added, 0 removed
+- **Параметры Claude Code** (`settings.md`): 11 lines added, 10 removed
+- **Расширьте Claude с помощью skills** (`skills.md`): 5 lines added, 5 removed
+- **Настройка строки состояния** (`statusline.md`): 12 lines added, 7 removed
+- **Создание пользовательских subagents** (`sub-agents.md`): 32 lines added, 2 removed
+  - New section: "#### Что загружается при запуске"
+
+### 简体中文
+
+
+**Modified**
+
+- **CLI 参考** (`cli-reference.md`): 29 lines added, 28 removed
+- **Code Review** (`code-review.md`): 2 lines added, 2 removed
+- **Desktop application** (`desktop.md`): 2 lines added, 1 removed
+  - New section: "# Desktop application"
+- **通过市场发现和安装预构建插件** (`discover-plugins.md`): 3 lines added, 1 removed
+- **使用快速模式加快响应速度** (`fast-mode.md`): 15 lines added, 49 removed
+- **扩展 Claude Code** (`features-overview.md`): 2 lines added, 2 removed
+- **使用 hooks 自动化工作流** (`hooks-guide.md`): 5 lines added, 3 removed
+  - New section: "### Stop hook 达到阻止上限"
+- **Hooks 参考** (`hooks.md`): 2 lines added, 2 removed
+- **通过 MCP 将 Claude Code 连接到工具** (`mcp.md`): 3 lines added, 1 removed
+- **模型配置** (`model-config.md`): 9 lines added, 9 removed
+- **概述** (`overview.md`): 1 lines added, 1 removed
+  - New section: "# 概述"
+- **创建和分发 plugin marketplace** (`plugin-marketplaces.md`): 2 lines added, 1 removed
+- **Plugins 参考** (`plugins-reference.md`): 18 lines added, 13 removed
+- **使用 Remote Control 从任何设备继续本地会话** (`remote-control.md`): 1 lines added, 1 removed
+- **按计划运行提示词** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **安全性** (`security.md`): 1 lines added, 0 removed
+- **Claude Code 设置** (`settings.md`): 15 lines added, 14 removed
+- **使用 skills 扩展 Claude** (`skills.md`): 5 lines added, 5 removed
+- **自定义你的状态行** (`statusline.md`): 6 lines added, 1 removed
+- **创建自定义 subagents** (`sub-agents.md`): 31 lines added, 1 removed
+  - New section: "#### 启动时加载的内容"
+
+### 繁體中文
+
+
+**Modified**
+
+- **CLI 參考** (`cli-reference.md`): 29 lines added, 28 removed
+- **Code Review** (`code-review.md`): 5 lines added, 5 removed
+- **Desktop 應用程式** (`desktop.md`): 2 lines added, 1 removed
+  - New section: "# Desktop 應用程式"
+- **透過市場探索和安裝預建外掛程式** (`discover-plugins.md`): 3 lines added, 1 removed
+- **使用快速模式加快回應速度** (`fast-mode.md`): 16 lines added, 50 removed
+- **擴展 Claude Code** (`features-overview.md`): 2 lines added, 2 removed
+- **使用 hooks 自動化工作流程** (`hooks-guide.md`): 5 lines added, 3 removed
+  - New section: "### Stop hook 觸發區塊上限"
+- **Hooks 參考** (`hooks.md`): 1 lines added, 1 removed
+- **透過 MCP 將 Claude Code 連接到工具** (`mcp.md`): 3 lines added, 1 removed
+- **模型配置** (`model-config.md`): 6 lines added, 6 removed
+- **概述** (`overview.md`): 1 lines added, 1 removed
+  - New section: "# 概述"
+- **建立並分發 plugin marketplace** (`plugin-marketplaces.md`): 2 lines added, 1 removed
+- **Plugins 參考** (`plugins-reference.md`): 8 lines added, 3 removed
+- **使用 Remote Control 從任何裝置繼續本地會話** (`remote-control.md`): 1 lines added, 1 removed
+- **按排程執行提示** (`scheduled-tasks.md`): 1 lines added, 1 removed
+- **安全性** (`security.md`): 1 lines added, 0 removed
+- **Claude Code 設定** (`settings.md`): 16 lines added, 14 removed
+- **使用 skills 擴展 Claude** (`skills.md`): 5 lines added, 5 removed
+- **自訂您的狀態列** (`statusline.md`): 2 lines added, 1 removed
+- **建立自訂 subagents** (`sub-agents.md`): 31 lines added, 1 removed
+  - New section: "#### 啟動時載入的內容"
+
+---
+
 ## 2026-05-17
 
 36 pages modified

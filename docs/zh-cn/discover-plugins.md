@@ -138,7 +138,9 @@ Anthropic 还维护一个[演示插件市场](https://github.com/anthropics/clau
   </Step>
 
   <Step title="安装插件">
-    选择一个插件以查看其详细信息，然后选择安装范围：
+    选择一个插件以查看其详细信息。{/* min-version: 2.1.143 */}在 Claude Code v2.1.143 及更高版本上，详细信息窗格包括**上下文成本**估计，因此您可以在安装插件之前查看插件将在每个回合中向您的[上下文窗口](/zh-CN/features-overview#understand-context-costs)添加多少个令牌。
+
+    选择安装范围：
 
     * **用户范围**：在所有项目中为自己安装
     * **项目范围**：为此存储库上的所有协作者安装

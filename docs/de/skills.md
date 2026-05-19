@@ -436,12 +436,12 @@ Fügen Sie `context: fork` zu Ihrem Frontmatter hinzu, wenn Sie möchten, dass e
 
 Skills und [Subagenten](/de/sub-agents) funktionieren in zwei Richtungen zusammen:
 
-| Ansatz                     | System-Prompt                           | Aufgabe                      | Lädt auch                      |
-| :------------------------- | :-------------------------------------- | :--------------------------- | :----------------------------- |
-| Skill mit `context: fork`  | Vom Agent-Typ (`Explore`, `Plan`, etc.) | SKILL.md-Inhalt              | CLAUDE.md                      |
-| Subagent mit `skills`-Feld | Subagent-Markdown-Body                  | Claudes Delegationsnachricht | Vorgeladene Skills + CLAUDE.md |
+| Ansatz                     | System-Prompt          | Aufgabe                      | Lädt auch                                             |
+| :------------------------- | :--------------------- | :--------------------------- | :---------------------------------------------------- |
+| Skill mit `context: fork`  | Vom Agent-Typ          | SKILL.md-Inhalt              | CLAUDE.md, außer wenn der Agent Explore oder Plan ist |
+| Subagent mit `skills`-Feld | Subagent-Markdown-Body | Claudes Delegationsnachricht | Vorgeladene Skills + CLAUDE.md                        |
 
-Mit `context: fork` schreiben Sie die Aufgabe in Ihren Skill und wählen einen Agent-Typ aus, um sie auszuführen. Für das Inverse (Definieren eines benutzerdefinierten Subagenten, der Skills als Referenzmaterial verwendet), siehe [Subagenten](/de/sub-agents#preload-skills-into-subagents).
+Mit `context: fork` schreiben Sie die Aufgabe in Ihren Skill und wählen einen Agent-Typ aus, um sie auszuführen. Die integrierten Explore- und Plan-Agenten [überspringen CLAUDE.md und Git-Status](/de/sub-agents#what-loads-at-startup), um ihren Kontext klein zu halten, sodass ein verzweigter Skill mit `agent: Explore` nur den SKILL.md-Inhalt und den eigenen System-Prompt des Agenten sieht. Für das Inverse, bei dem Sie einen benutzerdefinierten Subagenten definieren, der Skills als Referenzmaterial verwendet, siehe [Subagenten](/de/sub-agents#preload-skills-into-subagents).
 
 #### Beispiel: Research-Skill mit Explore-Agent
 

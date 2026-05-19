@@ -12,7 +12,7 @@
 
 Der Schnellmodus ist eine Hochgeschwindigkeitskonfiguration für Claude Opus, die das Modell 2,5x schneller macht, allerdings zu höheren Kosten pro Token. Aktivieren Sie ihn mit `/fast`, wenn Sie Geschwindigkeit für interaktive Arbeiten wie schnelle Iteration oder Live-Debugging benötigen, und deaktivieren Sie ihn, wenn Kosten wichtiger sind als Latenz.
 
-Der Schnellmodus ist kein anderes Modell. Er verwendet Claude Opus mit einer anderen API-Konfiguration, die Geschwindigkeit über Kosteneffizienz priorisiert. Sie erhalten identische Qualität und Funktionen, nur schnellere Antworten. Der Schnellmodus wird auf Opus 4.6 und Opus 4.7 unterstützt. Er ist nicht auf Sonnet, Haiku oder anderen Modellen verfügbar.
+Der Schnellmodus ist kein anderes Modell. Er verwendet Claude Opus mit einer anderen API-Konfiguration, die Geschwindigkeit über Kosteneffizienz priorisiert. Sie erhalten identische Qualität und Funktionen, nur schnellere Antworten. Der Schnellmodus wird auf Opus 4.7 und Opus 4.6 unterstützt. Er ist nicht auf Sonnet, Haiku oder anderen Modellen verfügbar.
 
 <Note>
   Der Schnellmodus erfordert Claude Code v2.1.36 oder später. Überprüfen Sie Ihre Version mit `claude --version`.
@@ -21,12 +21,11 @@ Der Schnellmodus ist kein anderes Modell. Er verwendet Claude Opus mit einer and
 Was Sie wissen sollten:
 
 * Verwenden Sie `/fast`, um den Schnellmodus in Claude Code CLI ein- oder auszuschalten. Auch über `/fast` in der Claude Code VS Code Extension verfügbar.
-* Standardmäßig wird `/fast` auf Opus 4.6 ausgeführt. Um den Schnellmodus stattdessen auf Opus 4.7 auszuführen, setzen Sie die Umgebungsvariable [`CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`](#use-fast-mode-on-opus-4-7).
-* Die Preisgestaltung für den Schnellmodus beträgt $30/$150 MTok auf Opus 4.6 und Opus 4.7.
+* Die Preisgestaltung für den Schnellmodus beträgt $30/$150 MTok auf Opus 4.7 und Opus 4.6.
 * Verfügbar für alle Claude Code-Benutzer mit Abonnementplänen (Pro/Max/Team/Enterprise) und Claude Console.
-* Für Claude Code-Benutzer mit Abonnementplänen (Pro/Max/Team/Enterprise) ist der Schnellmodus nur über zusätzliche Nutzung verfügbar und nicht in den Abonnement-Ratenlimits enthalten.
+* Für Claude Code-Benutzer mit Abonnementplänen (Pro/Max/Team/Enterprise) ist der Schnellmodus nur über Nutzungsguthaben verfügbar und nicht in den Abonnement-Ratenlimits enthalten.
 
-Diese Seite behandelt, wie Sie [den Schnellmodus aktivieren](#toggle-fast-mode), [den Schnellmodus auf Opus 4.7 verwenden](#use-fast-mode-on-opus-4-7), die [Kostenabwägung](#understand-the-cost-tradeoff), [wann Sie ihn verwenden](#decide-when-to-use-fast-mode), [Anforderungen](#requirements), [Opt-in pro Sitzung](#require-per-session-opt-in) und [Ratenlimit-Verhalten](#handle-rate-limits).
+Diese Seite behandelt, wie Sie [den Schnellmodus aktivieren](#toggle-fast-mode), die [Kostenabwägung](#understand-the-cost-tradeoff), [wann Sie ihn verwenden](#decide-when-to-use-fast-mode), [Anforderungen](#requirements), [Opt-in pro Sitzung](#require-per-session-opt-in) und [Ratenlimit-Verhalten](#handle-rate-limits).
 
 ## Schnellmodus aktivieren
 
@@ -41,55 +40,22 @@ Für die beste Kosteneffizienz aktivieren Sie den Schnellmodus am Anfang einer S
 
 Wenn Sie den Schnellmodus aktivieren:
 
-* Wenn Sie sich auf einem anderen Modell befinden, wechselt Claude Code automatisch zum Schnellmodus-Modell: Opus 4.6 standardmäßig oder Opus 4.7, wenn [`CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`](#use-fast-mode-on-opus-4-7) gesetzt ist.
+* Wenn Sie sich auf einem anderen Modell befinden, wechselt Claude Code automatisch zu Opus
 * Sie sehen eine Bestätigungsmeldung: „Fast mode ON"
 * Ein kleines `↯`-Symbol wird neben der Eingabeaufforderung angezeigt, während der Schnellmodus aktiv ist
 * Führen Sie `/fast` jederzeit erneut aus, um zu überprüfen, ob der Schnellmodus aktiviert oder deaktiviert ist
 
-Wenn Sie den Schnellmodus mit `/fast` erneut deaktivieren, bleiben Sie auf der gleichen Opus-Version, auf der der Schnellmodus ausgeführt wurde. Das Modell wird nicht auf Ihr vorheriges Modell zurückgesetzt. Um zu einem anderen Modell zu wechseln, verwenden Sie `/model`.
+Wenn Sie den Schnellmodus mit `/fast` erneut deaktivieren, bleiben Sie auf Opus. Das Modell wird nicht auf Ihr vorheriges Modell zurückgesetzt. Um zu einem anderen Modell zu wechseln, verwenden Sie `/model`.
 
-## Schnellmodus auf Opus 4.7 verwenden
-
-<Note>
-  Der Schnellmodus auf Opus 4.7 erfordert Claude Code v2.1.139 oder später.
-</Note>
-
-Der Schnellmodus für Claude Opus 4.7 befindet sich in Forschungsvorschau. Er wird mit der gleichen 2,5x-Geschwindigkeit und zum gleichen Preis wie der Schnellmodus für Opus 4.6 ausgeführt, ohne weitere Verhaltensänderungen.
-
-<Note>
-  Am 14. Mai 2026 wird Opus 4.7 zum Standard-Schnellmodus-Modell. Bis dahin können Sie sich anmelden, indem Sie `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1` setzen.
-</Note>
-
-Um sich anzumelden, setzen Sie `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1`, bevor Sie Claude Code starten. Mit der gesetzten Variablen wird `/fast` auf Opus 4.7 ausgeführt. Ohne sie wird `/fast` weiterhin auf Opus 4.6 ausgeführt.
-
-Sie können die Variable als Shell-Export setzen:
-
-```bash theme={null}
-export CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1
-```
-
-Oder in einer beliebigen Claude Code [Einstellungsdatei](/de/settings#settings-files), einschließlich Benutzer-, Projekt- und verwalteten Einstellungen, um die Anmeldung zu begrenzen:
-
-```json theme={null}
-{
-  "env": {
-    "CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE": "1"
-  }
-}
-```
-
-Der Schnellmodus für Opus 4.6 bleibt neben Opus 4.7 verfügbar. Die beiden teilen sich den gleichen Schnellmodus-Ratenlimit-Pool: Die Nutzung auf beiden Modellen wird von den gleichen Limits abgezogen.
-
-Um den Schnellmodus explizit auf Opus 4.6 festzulegen, setzen Sie `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE=1`. Diese Variable hat Vorrang, sodass der Schnellmodus auf Opus 4.6 ausgeführt wird, unabhängig davon, ob `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE` gesetzt ist.
+Opus 4.7 ist der Standard für den Schnellmodus in Claude Code v2.1.142 und später. Um den Schnellmodus stattdessen auf Opus 4.6 festzulegen, setzen Sie `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE=1`.
 
 ## Kostenabwägung verstehen
 
 Der Schnellmodus hat höhere Pro-Token-Preise als Standard-Opus:
 
-| Modus                     | Eingabe (MTok) | Ausgabe (MTok) |
-| ------------------------- | -------------- | -------------- |
-| Schnellmodus auf Opus 4.6 | \$30           | \$150          |
-| Schnellmodus auf Opus 4.7 | \$30           | \$150          |
+| Modus        | Eingabe (MTok) | Ausgabe (MTok) |
+| ------------ | -------------- | -------------- |
+| Schnellmodus | \$30           | \$150          |
 
 Die Preisgestaltung für den Schnellmodus ist über das gesamte 1M-Token-Kontextfenster einheitlich.
 
@@ -124,11 +90,11 @@ Sie können beide kombinieren: Verwenden Sie den Schnellmodus mit einer niedrige
 
 Der Schnellmodus erfordert alle folgenden Voraussetzungen:
 
-* **Nicht auf Cloud-Anbietern von Drittanbietern verfügbar**: Der Schnellmodus ist nicht auf Amazon Bedrock, Google Vertex AI oder Microsoft Azure Foundry verfügbar. Der Schnellmodus ist über die Anthropic Console API und für Claude-Abonnementpläne mit zusätzlicher Nutzung verfügbar.
-* **Zusätzliche Nutzung aktiviert**: Ihr Konto muss zusätzliche Nutzung aktiviert haben, die eine Abrechnung über die in Ihrem Plan enthaltene Nutzung hinaus ermöglicht. Aktivieren Sie dies für einzelne Konten in Ihren [Console-Abrechnungseinstellungen](https://platform.claude.com/settings/organization/billing). Für Teams und Enterprise muss ein Administrator die zusätzliche Nutzung für die Organisation aktivieren.
+* **Nicht auf Cloud-Anbietern von Drittanbietern verfügbar**: Der Schnellmodus ist nicht auf Amazon Bedrock, Google Vertex AI oder Microsoft Azure Foundry verfügbar. Der Schnellmodus ist über die Anthropic Console API und für Claude-Abonnementpläne mit Nutzungsguthaben verfügbar.
+* **Nutzungsguthaben aktiviert**: Ihr Konto muss Nutzungsguthaben aktiviert haben, was eine Abrechnung über die in Ihrem Plan enthaltene Nutzung hinaus ermöglicht. Aktivieren Sie dies für einzelne Konten in Ihren [Console-Abrechnungseinstellungen](https://platform.claude.com/settings/organization/billing). Für Teams und Enterprise muss ein Administrator die Nutzungsguthaben für die Organisation aktivieren.
 
 <Note>
-  Die Nutzung des Schnellmodus wird direkt zur zusätzlichen Nutzung abgerechnet, auch wenn Sie noch Nutzung in Ihrem Plan haben. Dies bedeutet, dass Schnellmodus-Token nicht gegen die in Ihrem Plan enthaltene Nutzung angerechnet werden und vom ersten Token an zum Schnellmodus-Tarif berechnet werden.
+  Die Nutzung des Schnellmodus wird direkt von Nutzungsguthaben abgerechnet, auch wenn Sie noch Nutzung in Ihrem Plan haben. Dies bedeutet, dass Schnellmodus-Token nicht gegen die in Ihrem Plan enthaltene Nutzung angerechnet werden und vom ersten Token an zum Schnellmodus-Tarif berechnet werden.
 </Note>
 
 * **Admin-Aktivierung für Teams und Enterprise**: Der Schnellmodus ist standardmäßig für Teams- und Enterprise-Organisationen deaktiviert. Ein Administrator muss den Schnellmodus explizit [aktivieren](#enable-fast-mode-for-your-organization), bevor Benutzer darauf zugreifen können.
@@ -160,9 +126,9 @@ Dies ist nützlich zur Kostenkontrolle in Organisationen, in denen Benutzer mehr
 
 ## Ratenlimits handhaben
 
-Der Schnellmodus hat separate Ratenlimits vom Standard-Opus. Der Schnellmodus für Opus 4.6 und Opus 4.7 teilen sich den gleichen Ratenlimit-Pool: Die Nutzung auf beiden Modellen wird von den gleichen Limits abgezogen. Wenn Sie das Ratenlimit des Schnellmodus erreichen oder keine zusätzlichen Nutzungsguthaben mehr haben:
+Der Schnellmodus hat separate Ratenlimits vom Standard-Opus. Der Schnellmodus für Opus 4.7 und Opus 4.6 teilen sich den gleichen Ratenlimit-Pool: Die Nutzung auf beiden Modellen wird von den gleichen Limits abgezogen. Wenn Sie das Ratenlimit des Schnellmodus erreichen oder keine Nutzungsguthaben mehr haben:
 
-1. Der Schnellmodus fällt automatisch auf Standard-Geschwindigkeit auf der gleichen Opus-Version zurück
+1. Der Schnellmodus fällt automatisch auf Standard-Geschwindigkeit auf
 2. Das `↯`-Symbol wird grau, um die Abkühlung anzuzeigen
 3. Sie arbeiten weiterhin mit Standard-Geschwindigkeit und -Preisen
 4. Wenn die Abkühlung abläuft, wird der Schnellmodus automatisch wieder aktiviert

@@ -29,7 +29,7 @@ Halaman ini mencakup:
 
 Setelah admin [mengaktifkan Code Review](#set-up-code-review) untuk organisasi Anda, ulasan dipicu ketika PR dibuka, pada setiap push, atau ketika diminta secara manual, tergantung pada perilaku yang dikonfigurasi repositori. Mengomentari `@claude review` [memulai ulasan pada PR](#manually-trigger-reviews) dalam mode apa pun.
 
-Ketika ulasan berjalan, beberapa agen menganalisis diff dan kode sekitarnya secara paralel pada infrastruktur Anthropic. Setiap agen mencari kelas masalah yang berbeda, kemudian langkah verifikasi memeriksa kandidat terhadap perilaku kode aktual untuk menyaring positif palsu. Hasilnya dideduplikasi, diurutkan berdasarkan tingkat keparahan, dan diposting sebagai komentar sebaris pada baris spesifik tempat masalah ditemukan, dengan ringkasan dalam badan ulasan. Jika tidak ada masalah yang ditemukan, Claude memposting komentar konfirmasi singkat pada PR.
+Ketika ulasan berjalan, beberapa agen menganalisis diff dan kode sekitarnya secara paralel pada infrastruktur Anthropic. Setiap agen mencari kelas masalah yang berbeda, kemudian langkah verifikasi memeriksa kandidat terhadap perilaku kode aktual untuk menyaring positif palsu. Hasilnya dideduplikasi, diurutkan berdasarkan tingkat keparahan, dan diposting sebagai komentar sebaris pada baris spesifik tempat masalah ditemukan, dengan ringkasan dalam badan ulasan. Jika tidak ada masalah yang ditemukan, Code Review memperbarui jalankan pemeriksaan GitHub untuk menunjukkan bahwa tidak ada masalah yang terdeteksi. Claude juga dapat memposting komentar konfirmasi singkat pada PR.
 
 Ulasan diskalakan dalam biaya dengan ukuran dan kompleksitas PR, selesai rata-rata dalam 20 menit. Admin dapat memantau aktivitas ulasan dan pengeluaran melalui [dasbor analitik](#view-usage).
 
@@ -231,7 +231,7 @@ Tabel repositori di pengaturan admin juga menampilkan biaya rata-rata per ulasan
 
 ## Harga
 
-Code Review ditagih berdasarkan penggunaan token. Setiap ulasan rata-rata \$15-25 dalam biaya, diskalakan dengan ukuran PR, kompleksitas basis kode, dan berapa banyak masalah yang memerlukan verifikasi. Penggunaan Code Review ditagih secara terpisah melalui [penggunaan ekstra](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) dan tidak dihitung terhadap penggunaan yang disertakan dalam paket Anda.
+Code Review ditagih berdasarkan penggunaan token. Setiap ulasan rata-rata \$15-25 dalam biaya, diskalakan dengan ukuran PR, kompleksitas basis kode, dan berapa banyak masalah yang memerlukan verifikasi. Penggunaan Code Review ditagih secara terpisah melalui [penggunaan ekstra](https://support.claude.com/id/articles/12429409-extra-usage-for-paid-claude-plans) dan tidak dihitung terhadap penggunaan yang disertakan dalam paket Anda.
 
 Pemicu ulasan yang Anda pilih mempengaruhi biaya total:
 

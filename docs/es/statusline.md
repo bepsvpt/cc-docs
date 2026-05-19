@@ -916,7 +916,11 @@ Cada script verifica si el archivo de caché falta o es más antiguo que 5 segun
 
 ### Configuración de Windows
 
-En Windows, Claude Code ejecuta comandos de línea de estado a través de Git Bash cuando Git Bash está instalado, o a través de PowerShell cuando Git Bash está ausente. Para ejecutar un script de PowerShell como tu línea de estado, invócalo mediante `powershell`; esto funciona desde cualquier shell:
+En Windows, Claude Code ejecuta comandos de línea de estado a través de Git Bash cuando Git Bash está instalado, o a través de PowerShell cuando Git Bash está ausente.
+
+Git Bash trata las barras invertidas sin comillas como caracteres de escape, por lo que una ruta de estilo Windows como `C:\Users\username\script.mjs` llega al ejecutor de scripts con sus separadores eliminados y el comando falla sin un error visible. Escribe rutas de archivo en la cadena `command` con barras diagonales, como se muestra en los ejemplos a continuación. El atajo `~` también funciona y se expande a tu directorio de inicio de Windows.
+
+Para ejecutar un script de PowerShell como tu línea de estado, invócalo mediante `powershell`. Esto funciona ya sea que Claude Code enrute el comando a través de Git Bash o PowerShell:
 
 <CodeGroup>
   ```json settings.json theme={null}
@@ -999,6 +1003,7 @@ Proyectos comunitarios como [ccstatusline](https://github.com/sirmalloc/ccstatus
 * Verifica que tu script sea ejecutable: `chmod +x ~/.claude/statusline.sh`
 * Comprueba que tu script genere salida a stdout, no stderr
 * Ejecuta tu script manualmente para verificar que produce salida
+* En Windows con Git Bash instalado, es probable que las barras invertidas en la ruta del `command` se consuman como caracteres de escape antes de que se ejecute el script. Usa barras diagonales en la ruta. Consulta [Configuración de Windows](#windows-configuration).
 * Si `disableAllHooks` está establecido en `true` en tu configuración, la línea de estado también está deshabilitada. Elimina esta configuración o establécela en `false` para volver a habilitarla.
 * Ejecuta `claude --debug` para registrar el código de salida y stderr de la primera invocación de línea de estado en una sesión
 * Pídele a Claude que lea tu archivo de configuración y ejecute el comando `statusLine` directamente para exponer errores

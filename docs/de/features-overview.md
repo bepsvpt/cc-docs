@@ -271,9 +271,9 @@ Jede Funktion wird an verschiedenen Punkten in Ihrer Sitzung geladen. Die Regist
 
     **Was lädt:** Frischer, isolierter Kontext, der Folgendes enthält:
 
-    * Der System-Prompt (geteilt mit Parent für Cache-Effizienz)
+    * Der Agent's eigener System-Prompt, nicht der vollständige Claude Code System-Prompt
     * Vollständiger Inhalt von Skills, die im `skills:`-Feld des Agenten aufgelistet sind
-    * CLAUDE.md und Git-Status (geerbt vom Parent)
+    * CLAUDE.md und Git-Status, außer die integrierten Explore- und Plan-Agenten [lassen beide weg](/de/sub-agents#what-loads-at-startup)
     * Welcher Kontext auch immer der Lead-Agent im Prompt übergibt
 
     **Kontextkosten:** Isoliert von Hauptsitzung. Subagents erben Ihre Konversationshistorie oder aufgerufenen Skills nicht.

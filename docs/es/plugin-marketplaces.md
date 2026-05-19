@@ -161,7 +161,7 @@ Cada entrada de plugin necesita como mínimo un `name` y `source` (dónde obtene
 | `plugins` | array  | Lista de plugins disponibles                                                                                                                                                 | Ver a continuación |
 
 <Note>
-  **Nombres reservados**: Los siguientes nombres de marketplace están reservados para uso oficial de Anthropic y no pueden ser utilizados por marketplaces de terceros: `claude-code-marketplace`, `claude-code-plugins`, `claude-plugins-official`, `anthropic-marketplace`, `anthropic-plugins`, `agent-skills`, `knowledge-work-plugins`, `life-sciences`. Los nombres que se hacen pasar por marketplaces oficiales (como `official-claude-plugins` o `anthropic-tools-v2`) también están bloqueados.
+  **Nombres reservados**: Los siguientes nombres de marketplace están reservados para uso oficial de Anthropic y no pueden ser utilizados por marketplaces de terceros: `claude-code-marketplace`, `claude-code-plugins`, `claude-plugins-official`, `anthropic-marketplace`, `anthropic-plugins`, `agent-skills`, `anthropic-agent-skills`, `knowledge-work-plugins`, `life-sciences`. Los nombres que se hacen pasar por marketplaces oficiales, como `official-claude-plugins` o `anthropic-tools-v2`, también están bloqueados.
 </Note>
 
 ### Campos del propietario
@@ -200,6 +200,7 @@ Cada entrada de plugin en el array `plugins` describe un plugin y dónde encontr
 
 | Campo         | Tipo    | Descripción                                                                                                                                                                                                                                                                           |
 | :------------ | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `displayName` | string  | {/* min-version: 2.1.143 */}Nombre legible mostrado en superficies de interfaz de usuario. Recurre a `name` cuando se omite. Puede contener espacios y cualquier capitalización. No se utiliza para espacios de nombres o búsqueda. Requiere Claude Code v2.1.143 o posterior.        |
 | `description` | string  | Descripción breve del plugin                                                                                                                                                                                                                                                          |
 | `version`     | string  | Versión del plugin. Si se establece (aquí o en `plugin.json`), el plugin se fija a esta cadena y los usuarios solo reciben actualizaciones cuando cambia. Omita para recurrir al SHA del commit de git. Consulte [Resolución de versiones](#version-resolution-and-release-channels). |
 | `author`      | object  | Información del autor del plugin (`name` requerido, `email` opcional)                                                                                                                                                                                                                 |

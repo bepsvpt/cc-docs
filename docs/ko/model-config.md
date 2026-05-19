@@ -283,12 +283,12 @@ Claude Code는 `ANTHROPIC_CUSTOM_MODEL_OPTION`에 설정된 모델 ID에 대한 
 
 다음 환경 변수를 사용할 수 있으며, 이는 별칭이 매핑되는 모델 이름을 제어하기 위해 전체 **모델 이름**(또는 API 제공자에 해당하는 이름)이어야 합니다.
 
-| 환경 변수                            | 설명                                                              |
-| -------------------------------- | --------------------------------------------------------------- |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL`   | `opus`에 사용할 모델 또는 Plan Mode가 활성화되었을 때 `opusplan`에 사용할 모델        |
-| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `sonnet`에 사용할 모델 또는 Plan Mode가 활성화되지 않았을 때 `opusplan`에 사용할 모델   |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL`  | `haiku`에 사용할 모델 또는 [백그라운드 기능](/ko/costs#background-token-usage) |
-| `CLAUDE_CODE_SUBAGENT_MODEL`     | [subagents](/ko/sub-agents)에 사용할 모델                             |
+| 환경 변수                            | 설명                                                                                                                      |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL`   | `opus`에 사용할 모델 또는 Plan Mode가 활성화되었을 때 `opusplan`에 사용할 모델                                                                |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `sonnet`에 사용할 모델 또는 Plan Mode가 활성화되지 않았을 때 `opusplan`에 사용할 모델                                                           |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL`  | `haiku`에 사용할 모델 또는 [백그라운드 기능](/ko/costs#background-token-usage)                                                         |
+| `CLAUDE_CODE_SUBAGENT_MODEL`     | 모든 [subagents](/ko/sub-agents#choose-a-model)에 사용할 모델입니다. 호출별 `model` 매개변수와 subagent 정의의 `model` frontmatter를 모두 재정의합니다 |
 
 참고: `ANTHROPIC_SMALL_FAST_MODEL`은 `ANTHROPIC_DEFAULT_HAIKU_MODEL`을 위해 더 이상 사용되지 않습니다.
 

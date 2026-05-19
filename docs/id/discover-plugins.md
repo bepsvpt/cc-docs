@@ -138,7 +138,9 @@ Anthropic juga memelihara [demo plugins marketplace](https://github.com/anthropi
   </Step>
 
   <Step title="Instal plugin">
-    Pilih plugin untuk melihat detailnya, kemudian pilih cakupan instalasi:
+    Pilih plugin untuk melihat detailnya. Pada Claude Code v2.1.143 dan yang lebih baru, pane detail mencakup estimasi **Context cost** sehingga Anda dapat melihat berapa banyak token yang akan ditambahkan plugin ke [context window](/id/features-overview#understand-context-costs) Anda setiap putaran sebelum Anda menginstalnya.
+
+    Pilih cakupan instalasi:
 
     * **User scope**: instal untuk diri sendiri di semua proyek
     * **Project scope**: instal untuk semua kolaborator di repositori ini

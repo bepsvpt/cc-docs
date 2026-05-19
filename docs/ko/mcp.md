@@ -143,6 +143,8 @@ claude mcp remove github
 
 `/mcp` 패널은 각 연결된 서버 옆에 도구 개수를 표시하고 도구 기능을 광고하지만 도구를 노출하지 않는 서버에 플래그를 지정합니다.
 
+요청이 백그라운드에서 아직 연결 중인 서버의 도구가 필요한 경우 Claude는 해당 서버가 연결될 때까지 기다립니다. [도구 검색](#scale-with-mcp-tool-search)이 활성화되어 있으면 (기본값), 대기는 `ToolSearch` 호출 내에서 발생합니다. Vertex AI, 사용자 정의 `ANTHROPIC_BASE_URL` 또는 `ENABLE_TOOL_SEARCH=false`와 같이 도구 검색이 없는 구성에서는 Claude가 대신 `WaitForMcpServers` 도구를 사용합니다.
+
 서버 이름 `workspace`는 내부 사용을 위해 예약되어 있습니다. 구성에서 해당 이름의 서버를 정의하면 Claude Code는 로드 시 이를 건너뛰고 이름을 바꾸도록 요청하는 경고를 표시합니다.
 
 ### 동적 도구 업데이트
@@ -1007,7 +1009,7 @@ ENABLE_TOOL_SEARCH=false claude
 
 `alwaysLoad` 필드는 모든 서버 유형에서 사용 가능하며 Claude Code v2.1.121 이상이 필요합니다. MCP 서버는 도구의 `_meta` 객체에 `"anthropic/alwaysLoad": true`를 포함하여 개별 도구를 항상 로드되도록 표시할 수도 있으며, 이는 해당 도구에만 동일한 효과를 갖습니다.
 
-`alwaysLoad: true`를 설정하면 서버가 연결될 때까지 시작이 차단되며, 표준 5초 연결 타임아웃으로 제한됩니다. 이는 [`MCP_CONNECTION_NONBLOCKING=1`](/ko/env-vars)이 설정된 경우에도 적용됩니다. 첫 번째 프롬프트가 빌드될 때 도구가 있어야 하기 때문입니다. 비차단이 활성화된 경우 다른 서버는 여전히 백그라운드에서 연결됩니다.
+`alwaysLoad: true`를 설정하면 서버가 연결될 때까지 시작이 차단되며, 표준 5초 연결 타임아웃으로 제한됩니다. 이는 MCP 시작이 기본적으로 [비차단](/ko/env-vars)이더라도 적용됩니다. 첫 번째 프롬프트가 빌드될 때 도구가 있어야 하기 때문입니다. 다른 서버는 계속해서 백그라운드에서 연결됩니다.
 
 ## MCP 프롬프트를 명령으로 사용
 

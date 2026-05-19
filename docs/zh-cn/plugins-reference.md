@@ -20,7 +20,7 @@
 
 Plugins 向 Claude Code 添加 skills，创建可由您或 Claude 调用的 `/name` 快捷方式。
 
-**位置**：插件根目录中的 `skills/` 或 `commands/` 目录
+**位置**：插件根目录中的 `skills/` 或 `commands/` 目录，或插件根目录中的单个 `SKILL.md` 文件
 
 **文件格式**：Skills 是包含 `SKILL.md` 的目录；commands 是简单的 markdown 文件
 
@@ -367,6 +367,7 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
 ```json theme={null}
 {
   "name": "plugin-name",
+  "displayName": "Plugin Name",
   "version": "1.2.0",
   "description": "Brief plugin description",
   "author": {
@@ -411,6 +412,7 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
 | 字段            | 类型     | 描述                                                                                                                                                                       | 示例                                                                |
 | :------------ | :----- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
 | `$schema`     | string | 用于编辑器自动完成和验证的 JSON Schema URL。Claude Code 在加载时忽略此字段。                                                                                                                     | `"https://json.schemastore.org/claude-code-plugin-manifest.json"` |
+| `displayName` | string | {/* min-version: 2.1.143 */}在 `/plugin` 选择器和其他 UI 界面中显示的人类可读名称。当省略时回退到 `name`。与 `name` 不同，可以包含空格和任何大小写。不用于命名空间或查找。需要 Claude Code v2.1.143 或更高版本。                         | `"Deployment Tools"`                                              |
 | `version`     | string | 可选。语义版本。设置此项会将 plugin 固定到该版本字符串，因此用户仅在您提升版本时才会收到更新。如果省略，Claude Code 会回退到 git commit SHA，因此每个 commit 都被视为新版本。如果也在市场条目中设置，`plugin.json` 优先。请参阅[版本管理](#version-management)。 | `"2.1.0"`                                                         |
 | `description` | string | plugin 目的的简要说明                                                                                                                                                           | `"Deployment automation tools"`                                   |
 | `author`      | object | 作者信息                                                                                                                                                                     | `{"name": "Dev Team", "email": "dev@company.com"}`                |
@@ -524,6 +526,8 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
 * 来自自定义路径的组件使用相同的命名和命名空间规则
 * 可以将多个路径指定为数组
 * 当 skill 路径指向直接包含 `SKILL.md` 的目录时，例如 `"skills": ["./"]` 指向 plugin 根目录，frontmatter 中的 `name` 字段确定 skill 的调用名称。这提供了一个稳定的名称，无论安装目录如何。如果 frontmatter 中未设置 `name`，则使用目录基名作为后备。
+
+在其根目录中具有 `SKILL.md`、没有 `skills/` 子目录且没有 `skills` 清单字段的 plugin 在 Claude Code v2.1.142 及更高版本中自动作为单一 skill plugin 加载。您不需要在 `plugin.json` 中设置 `"skills": ["./"]` 来使用此布局。skill 的调用名称遵循与上述相同的规则：frontmatter `name` 字段，或目录基名作为后备。
 
 **路径示例**：
 
@@ -780,7 +784,7 @@ claude plugin uninstall <plugin> [options]
 | `-s, --scope <scope>` | 从范围卸载：`user`、`project` 或 `local`                            | `user` |
 | `--keep-data`         | 保留插件的[持久数据目录](#persistent-data-directory)                   |        |
 | `--prune`             | 同时删除其他 plugin 不需要的自动安装依赖项。请参阅 [plugin prune](#plugin-prune) |        |
-| `-y, --yes`           | 跳过 `--prune` 确认提示。当 stdin 不是 TTY 时需要                        |        |
+| `-y, --yes`           | 跳过 `--prune` 确认提示。当 stdin 或 stdout 不是 TTY 时需要               |        |
 | `-h, --help`          | 显示命令帮助                                                      |        |
 
 **别名：** `remove`、`rm`
@@ -797,12 +801,12 @@ claude plugin prune [options]
 
 **选项：**
 
-| 选项                    | 描述                                | 默认值    |
-| :-------------------- | :-------------------------------- | :----- |
-| `-s, --scope <scope>` | 在范围处修剪：`user`、`project` 或 `local` | `user` |
-| `--dry-run`           | 列出将被删除的内容而不实际删除                   |        |
-| `-y, --yes`           | 跳过确认提示。当 stdin 不是 TTY 时需要         |        |
-| `-h, --help`          | 显示命令帮助                            |        |
+| 选项                    | 描述                                 | 默认值    |
+| :-------------------- | :--------------------------------- | :----- |
+| `-s, --scope <scope>` | 在范围处修剪：`user`、`project` 或 `local`  | `user` |
+| `--dry-run`           | 列出将被删除的内容而不实际删除                    |        |
+| `-y, --yes`           | 跳过确认提示。当 stdin 或 stdout 不是 TTY 时需要 |        |
+| `-h, --help`          | 显示命令帮助                             |        |
 
 **别名：** `autoremove`
 
@@ -814,7 +818,7 @@ claude plugin prune [options]
 
 ### plugin enable
 
-启用已禁用的 plugin。
+启用已禁用的 plugin。如果 plugin 声明了[依赖项](/zh-CN/plugin-dependencies)，Claude Code 会在同一范围内以传递方式启用它们，当依赖项未安装时命令会失败。
 
 ```bash theme={null}
 claude plugin enable <plugin> [options]
@@ -833,7 +837,7 @@ claude plugin enable <plugin> [options]
 
 ### plugin disable
 
-禁用 plugin 而不卸载它。
+禁用 plugin 而不卸载它。当另一个已启用的 plugin [依赖于](/zh-CN/plugin-dependencies#enable-or-disable-a-plugin-with-dependencies)目标时失败。错误消息包括一个链式命令，首先禁用每个依赖项。
 
 ```bash theme={null}
 claude plugin disable <plugin> [options]
@@ -889,7 +893,7 @@ claude plugin list [options]
 
 ### plugin details
 
-显示 plugin 的组件清单和预计令牌成本。输出列出 plugin 贡献的所有组件，分组为 Skills（技能和命令）、Agents、Hooks 和 MCP servers，以及它为每个会话添加多少令牌的估计。
+显示 plugin 的组件清单和预计令牌成本。输出列出 plugin 贡献的所有组件，分组为 Skills、Agents、Hooks、MCP servers 和 LSP servers，以及它为每个会话添加多少令牌的估计。Skills 组包括 `skills/` 和 `commands/` 条目。
 
 ```bash theme={null}
 claude plugin details <name>
@@ -907,10 +911,10 @@ claude plugin details <name>
 
 输出为每个组件显示两个成本数字：
 
-* **Always-on：** plugin 的列表文本（如技能描述、agent 描述和命令名称）添加到每个会话的令牌，无论是否有任何组件触发。
+* **Always-on：** plugin 的列表文本（如 skill 描述、agent 描述和命令名称）添加到每个会话的令牌，无论是否有任何组件触发。
 * **On-invoke：** 组件触发时的成本令牌。按组件显示，而不是作为 plugin 总计，因为典型会话仅调用组件的子集。
 
-此示例显示具有两个技能的 plugin 的输出外观：
+此示例显示具有两个 skills 的 plugin 的输出外观：
 
 ```
 security-guidance 1.2.0
@@ -922,6 +926,7 @@ Component inventory
   Agents (0)
   Hooks (1)  (harness-only — no model context cost)
   MCP servers (0)
+  LSP servers (0)
 
 Projected token cost
   Always-on:   ~180 tok   added to every session

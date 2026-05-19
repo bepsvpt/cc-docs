@@ -287,12 +287,12 @@ Claude Code melewati validasi untuk ID model yang ditetapkan dalam `ANTHROPIC_CU
 
 Anda dapat menggunakan variabel lingkungan berikut, yang harus berupa **nama model** lengkap (atau setara untuk penyedia API Anda), untuk mengontrol nama model yang dipetakan alias.
 
-| Variabel lingkungan              | Deskripsi                                                                                                  |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL`   | Model yang digunakan untuk `opus`, atau untuk `opusplan` ketika Plan Mode aktif.                           |
-| `ANTHROPIC_DEFAULT_SONNET_MODEL` | Model yang digunakan untuk `sonnet`, atau untuk `opusplan` ketika Plan Mode tidak aktif.                   |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL`  | Model yang digunakan untuk `haiku`, atau [fungsionalitas latar belakang](/id/costs#background-token-usage) |
-| `CLAUDE_CODE_SUBAGENT_MODEL`     | Model yang digunakan untuk [subagents](/id/sub-agents)                                                     |
+| Variabel lingkungan              | Deskripsi                                                                                                                                                                 |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL`   | Model yang digunakan untuk `opus`, atau untuk `opusplan` ketika Plan Mode aktif.                                                                                          |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` | Model yang digunakan untuk `sonnet`, atau untuk `opusplan` ketika Plan Mode tidak aktif.                                                                                  |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL`  | Model yang digunakan untuk `haiku`, atau [fungsionalitas latar belakang](/id/costs#background-token-usage)                                                                |
+| `CLAUDE_CODE_SUBAGENT_MODEL`     | Model yang digunakan untuk semua [subagents](/id/sub-agents#choose-a-model). Mengganti baik parameter `model` per-invocation maupun frontmatter `model` definisi subagent |
 
 Catatan: `ANTHROPIC_SMALL_FAST_MODEL` sudah usang dan digantikan oleh `ANTHROPIC_DEFAULT_HAIKU_MODEL`.
 

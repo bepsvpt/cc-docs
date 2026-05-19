@@ -12,7 +12,7 @@
 
 El modo rápido es una configuración de alta velocidad para Claude Opus, haciendo que el modelo sea 2.5x más rápido a un costo más alto por token. Actívalo con `/fast` cuando necesites velocidad para trabajo interactivo como iteración rápida o depuración en vivo, y desactívalo cuando el costo sea más importante que la latencia.
 
-El modo rápido no es un modelo diferente. Utiliza Claude Opus con una configuración de API diferente que prioriza la velocidad sobre la eficiencia de costos. Obtienes la misma calidad y capacidades, solo respuestas más rápidas. El modo rápido es compatible con Opus 4.6 y Opus 4.7. No está disponible en Sonnet, Haiku u otros modelos.
+El modo rápido no es un modelo diferente. Utiliza Claude Opus con una configuración de API diferente que prioriza la velocidad sobre la eficiencia de costos. Obtienes la misma calidad y capacidades con respuestas más rápidas. El modo rápido es compatible con Opus 4.7 y Opus 4.6. No está disponible en Sonnet, Haiku u otros modelos.
 
 <Note>
   El modo rápido requiere Claude Code v2.1.36 o posterior. Verifica tu versión con `claude --version`.
@@ -21,12 +21,11 @@ El modo rápido no es un modelo diferente. Utiliza Claude Opus con una configura
 Lo que debes saber:
 
 * Usa `/fast` para activar o desactivar el modo rápido en Claude Code CLI. También disponible a través de `/fast` en la Extensión Claude Code VS Code.
-* De forma predeterminada, `/fast` se ejecuta en Opus 4.6. Para ejecutar el modo rápido en Opus 4.7 en su lugar, establece la variable de entorno [`CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`](#use-fast-mode-on-opus-4-7).
-* Los precios del modo rápido son \$30/150 MTok tanto en Opus 4.6 como en Opus 4.7.
+* Los precios del modo rápido son $30/$150 MTok tanto en Opus 4.7 como en Opus 4.6.
 * Disponible para todos los usuarios de Claude Code en planes de suscripción (Pro/Max/Team/Enterprise) y Claude Console.
-* Para los usuarios de Claude Code en planes de suscripción (Pro/Max/Team/Enterprise), el modo rápido está disponible solo a través de uso adicional y no está incluido en los límites de velocidad de la suscripción.
+* Para los usuarios de Claude Code en planes de suscripción (Pro/Max/Team/Enterprise), el modo rápido está disponible solo a través de créditos de uso y no está incluido en los límites de velocidad de la suscripción.
 
-Esta página cubre cómo [activar el modo rápido](#toggle-fast-mode), [usar el modo rápido en Opus 4.7](#use-fast-mode-on-opus-4-7), la [compensación de costos](#understand-the-cost-tradeoff), [cuándo usarlo](#decide-when-to-use-fast-mode), [requisitos](#requirements), [opción de participación por sesión](#require-per-session-opt-in), y [comportamiento de límite de velocidad](#handle-rate-limits).
+Esta página cubre cómo [activar el modo rápido](#toggle-fast-mode), su [compensación de costos](#understand-the-cost-tradeoff), [cuándo usarlo](#decide-when-to-use-fast-mode), [requisitos](#requirements), [opción de participación por sesión](#require-per-session-opt-in), y [comportamiento de límite de velocidad](#handle-rate-limits).
 
 ## Activar el modo rápido
 
@@ -41,55 +40,22 @@ Para la mejor eficiencia de costos, habilita el modo rápido al inicio de una se
 
 Cuando habilitas el modo rápido:
 
-* Si estás en un modelo diferente, Claude Code cambia automáticamente al modelo de modo rápido: Opus 4.6 de forma predeterminada, u Opus 4.7 cuando [`CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`](#use-fast-mode-on-opus-4-7) está establecido.
+* Si estás en un modelo diferente, Claude Code cambia automáticamente a Opus
 * Verás un mensaje de confirmación: "Fast mode ON"
 * Un pequeño icono `↯` aparece junto al prompt mientras el modo rápido está activo
 * Ejecuta `/fast` nuevamente en cualquier momento para verificar si el modo rápido está activado o desactivado
 
-Cuando desactivas el modo rápido con `/fast` nuevamente, permaneces en la misma versión de Opus en la que se estaba ejecutando el modo rápido. El modelo no revierte a tu modelo anterior. Para cambiar a un modelo diferente, usa `/model`.
+Cuando desactivas el modo rápido con `/fast` nuevamente, permaneces en Opus. El modelo no revierte a tu modelo anterior. Para cambiar a un modelo diferente, usa `/model`.
 
-## Usar el modo rápido en Opus 4.7
-
-<Note>
-  El modo rápido en Opus 4.7 requiere Claude Code v2.1.139 o posterior.
-</Note>
-
-El modo rápido para Claude Opus 4.7 está en vista previa de investigación. Se ejecuta a la misma velocidad 2.5x y al mismo precio que el modo rápido para Opus 4.6, sin otros cambios de comportamiento.
-
-<Note>
-  El 14 de mayo de 2026, Opus 4.7 se convierte en el modelo de modo rápido predeterminado. Hasta entonces, participa estableciendo `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1`.
-</Note>
-
-Para participar, establece `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1` antes de lanzar Claude Code. Con la variable establecida, `/fast` se ejecuta en Opus 4.7. Sin ella, `/fast` continúa ejecutándose en Opus 4.6.
-
-Puedes establecer la variable como una exportación de shell:
-
-```bash theme={null}
-export CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1
-```
-
-O en cualquier [archivo de configuración](/es/settings#settings-files) de Claude Code, incluyendo configuración de usuario, proyecto y administrada, para limitar el alcance de la participación:
-
-```json theme={null}
-{
-  "env": {
-    "CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE": "1"
-  }
-}
-```
-
-El modo rápido para Opus 4.6 sigue estando disponible junto a Opus 4.7. Los dos comparten el mismo grupo de límite de velocidad del modo rápido: el uso en cualquiera de los modelos se extrae de los mismos límites.
-
-Para fijar el modo rápido a Opus 4.6 explícitamente, establece `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE=1`. Esta variable tiene prioridad, por lo que el modo rápido se ejecuta en Opus 4.6 independientemente de si `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE` está establecida.
+Opus 4.7 es el valor predeterminado del modo rápido en Claude Code v2.1.142 y posterior. Para fijar el modo rápido a Opus 4.6 en su lugar, establece `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE=1`.
 
 ## Comprender la compensación de costos
 
 El modo rápido tiene precios por token más altos que el Opus estándar:
 
-| Modo                    | Entrada (MTok) | Salida (MTok) |
-| ----------------------- | -------------- | ------------- |
-| Modo rápido en Opus 4.6 | \$30           | \$150         |
-| Modo rápido en Opus 4.7 | \$30           | \$150         |
+| Modo        | Entrada (MTok) | Salida (MTok) |
+| ----------- | -------------- | ------------- |
+| Modo rápido | \$30           | \$150         |
 
 Los precios del modo rápido son fijos en toda la ventana de contexto de 1M tokens.
 
@@ -124,11 +90,11 @@ Puedes combinar ambos: usa el modo rápido con un [nivel de esfuerzo](/es/model-
 
 El modo rápido requiere todos los siguientes:
 
-* **No disponible en proveedores de nube de terceros**: el modo rápido no está disponible en Amazon Bedrock, Google Vertex AI o Microsoft Azure Foundry. El modo rápido está disponible a través de la API de Anthropic Console y para planes de suscripción de Claude usando uso adicional.
-* **Uso adicional habilitado**: tu cuenta debe tener el uso adicional habilitado, lo que permite facturación más allá del uso incluido en tu plan. Para cuentas individuales, habilita esto en tu [configuración de facturación de Console](https://platform.claude.com/settings/organization/billing). Para Teams y Enterprise, un administrador debe habilitar el uso adicional para la organización.
+* **No disponible en proveedores de nube de terceros**: el modo rápido no está disponible en Amazon Bedrock, Google Vertex AI o Microsoft Azure Foundry. El modo rápido está disponible a través de la API de Anthropic Console y para planes de suscripción de Claude usando créditos de uso.
+* **Créditos de uso activados**: tu cuenta debe tener los créditos de uso activados, lo que permite facturación más allá del uso incluido en tu plan. Para cuentas individuales, activa esto en tu [configuración de facturación de Console](https://platform.claude.com/settings/organization/billing). Para Teams y Enterprise, un administrador debe activar los créditos de uso para la organización.
 
 <Note>
-  El uso del modo rápido se factura directamente al uso adicional, incluso si tienes uso restante en tu plan. Esto significa que los tokens del modo rápido no cuentan contra el uso incluido en tu plan y se cobran a la tarifa del modo rápido desde el primer token.
+  El uso del modo rápido se extrae directamente de los créditos de uso, incluso si tienes uso restante en tu plan. Esto significa que los tokens del modo rápido no cuentan contra el uso incluido en tu plan y se cobran a la tarifa del modo rápido desde el primer token.
 </Note>
 
 * **Habilitación del administrador para Teams y Enterprise**: el modo rápido está deshabilitado de forma predeterminada para organizaciones Teams y Enterprise. Un administrador debe [habilitar explícitamente el modo rápido](#enable-fast-mode-for-your-organization) antes de que los usuarios puedan acceder a él.
@@ -160,9 +126,9 @@ Esto es útil para controlar costos en organizaciones donde los usuarios ejecuta
 
 ## Manejar límites de velocidad
 
-El modo rápido tiene límites de velocidad separados del Opus estándar. El modo rápido para Opus 4.6 y Opus 4.7 comparten el mismo grupo de límite de velocidad: el uso en cualquiera de los modelos se extrae de los mismos límites. Cuando alcanzas el límite de velocidad del modo rápido o se agotan tus créditos de uso adicional:
+El modo rápido tiene límites de velocidad separados del Opus estándar. El modo rápido para Opus 4.7 y Opus 4.6 comparten el mismo grupo de límite de velocidad: el uso en cualquiera de los modelos se extrae de los mismos límites. Cuando alcanzas el límite de velocidad del modo rápido o se agotan tus créditos de uso:
 
-1. El modo rápido automáticamente vuelve a velocidad estándar en la misma versión de Opus
+1. El modo rápido automáticamente vuelve a velocidad estándar
 2. El icono `↯` se vuelve gris para indicar enfriamiento
 3. Continúas trabajando a velocidad y precios estándar
 4. Cuando expira el enfriamiento, el modo rápido se vuelve a habilitar automáticamente

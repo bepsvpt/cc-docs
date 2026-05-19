@@ -161,7 +161,7 @@
 | `plugins` | array  | 사용 가능한 플러그인 목록                                                                                                      | 아래 참조          |
 
 <Note>
-  **예약된 이름**: 다음 마켓플레이스 이름은 공식 Anthropic 사용을 위해 예약되어 있으며 타사 마켓플레이스에서 사용할 수 없습니다: `claude-code-marketplace`, `claude-code-plugins`, `claude-plugins-official`, `anthropic-marketplace`, `anthropic-plugins`, `agent-skills`, `knowledge-work-plugins`, `life-sciences`. 공식 마켓플레이스를 사칭하는 이름(예: `official-claude-plugins` 또는 `anthropic-tools-v2`)도 차단됩니다.
+  **예약된 이름**: 다음 마켓플레이스 이름은 공식 Anthropic 사용을 위해 예약되어 있으며 타사 마켓플레이스에서 사용할 수 없습니다: `claude-code-marketplace`, `claude-code-plugins`, `claude-plugins-official`, `anthropic-marketplace`, `anthropic-plugins`, `agent-skills`, `anthropic-agent-skills`, `knowledge-work-plugins`, `life-sciences`. 공식 마켓플레이스를 사칭하는 이름(예: `official-claude-plugins` 또는 `anthropic-tools-v2`)도 차단됩니다.
 </Note>
 
 ### 소유자 필드
@@ -200,6 +200,7 @@
 
 | 필드            | 유형      | 설명                                                                                                                                                                  |
 | :------------ | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `displayName` | string  | {/* min-version: 2.1.143 */}UI 표면에 표시되는 사람이 읽을 수 있는 이름입니다. 생략하면 `name`으로 돌아갑니다. 공백과 모든 대소문자를 포함할 수 있습니다. 네임스페이싱이나 조회에 사용되지 않습니다. Claude Code v2.1.143 이상이 필요합니다.    |
 | `description` | string  | 간단한 플러그인 설명                                                                                                                                                         |
 | `version`     | string  | 플러그인 버전. 설정된 경우(여기 또는 `plugin.json`에서), 플러그인은 이 문자열로 고정되며 사용자는 변경될 때만 업데이트를 받습니다. 생략하면 git 커밋 SHA로 돌아갑니다. [버전 해석](#version-resolution-and-release-channels)을 참조하세요. |
 | `author`      | object  | 플러그인 작성자 정보(`name` 필수, `email` 선택)                                                                                                                                  |

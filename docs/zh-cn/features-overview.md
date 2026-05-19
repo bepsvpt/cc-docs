@@ -271,9 +271,9 @@ Claude Code 结合了一个能够推理代码的模型和[内置工具](/zh-CN/h
 
     **加载内容：** 新鲜、隔离的上下文，包含：
 
-    * 系统提示（与父级共享以提高缓存效率）
+    * agent 的自己的系统提示，而不是完整的 Claude Code 系统提示
     * agent 的 `skills:` 字段中列出的 skills 的完整内容
-    * CLAUDE.md 和 git 状态（从父级继承）
+    * CLAUDE.md 和 git 状态，除了内置的 Explore 和 Plan agents [省略两者](/zh-CN/sub-agents#what-loads-at-startup)
     * 主 agent 在提示中传递的任何上下文
 
     **上下文成本：** 与主会话隔离。Subagents 不继承您的对话历史或调用的 skills。

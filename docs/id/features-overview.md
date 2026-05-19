@@ -271,9 +271,9 @@ Setiap fitur dimuat pada titik berbeda dalam sesi Anda. Tab di bawah menjelaskan
 
     **Apa yang dimuat:** Konteks segar dan terisolasi yang berisi:
 
-    * Prompt sistem (dibagikan dengan induk untuk efisiensi cache)
+    * Prompt sistem agen, bukan prompt sistem Claude Code lengkap
     * Konten penuh skills yang tercantum di field `skills:` agen
-    * CLAUDE.md dan status git (diwarisi dari induk)
+    * CLAUDE.md dan status git, kecuali agen Explore dan Plan bawaan [menghilangkan keduanya](/id/sub-agents#what-loads-at-startup)
     * Apa pun konteks yang agen utama lewatkan dalam prompt
 
     **Biaya konteks:** Terisolasi dari sesi utama. Subagents tidak mewarisi riwayat percakapan Anda atau skills yang dipanggil.

@@ -910,11 +910,11 @@ Vous avez modifié un fichier de paramètres mais les hooks n'apparaissent pas d
 * Vérifiez que votre JSON est valide (les virgules finales et les commentaires ne sont pas autorisés)
 * Confirmez que le fichier de paramètres est au bon emplacement : `.claude/settings.json` pour les hooks de projet, `~/.claude/settings.json` pour les hooks globaux
 
-### Le hook Stop s'exécute indéfiniment
+### Le hook Stop atteint le plafond de blocage
 
-Claude continue à travailler dans une boucle infinie au lieu de s'arrêter.
+Claude continue à travailler au lieu de s'arrêter, puis termine le tour avec un avertissement selon lequel le hook Stop a bloqué trop de fois consécutives.
 
-Votre script de hook Stop doit vérifier s'il a déjà déclenché une continuation. Analysez le champ `stop_hook_active` de l'entrée JSON et quittez tôt s'il est `true` :
+Claude Code remplace un hook Stop après qu'il ait bloqué 8 fois de suite sans progrès. Votre script de hook doit vérifier s'il a déjà déclenché une continuation. Analysez le champ `stop_hook_active` de l'entrée JSON et quittez tôt s'il est `true` :
 
 ```bash theme={null}
 #!/bin/bash
@@ -924,6 +924,8 @@ if [ "$(echo "$INPUT" | jq -r '.stop_hook_active')" = "true" ]; then
 fi
 # ... rest of your hook logic
 ```
+
+Si votre hook a légitimement besoin de plus de huit itérations pour converger, augmentez le plafond avec [`CLAUDE_CODE_STOP_HOOK_BLOCK_CAP`](/fr/env-vars).
 
 ### Validation JSON échouée
 

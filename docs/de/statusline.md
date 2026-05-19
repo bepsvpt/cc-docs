@@ -916,7 +916,11 @@ Jedes Skript prüft, ob die Cache-Datei fehlt oder älter als 5 Sekunden ist, be
 
 ### Windows-Konfiguration
 
-Unter Windows führt Claude Code Statuszeilen-Befehle über Git Bash aus, wenn Git Bash installiert ist, oder über PowerShell, wenn Git Bash nicht vorhanden ist. Um ein PowerShell-Skript als Statuszeile auszuführen, rufen Sie es über `powershell` auf; dies funktioniert von beiden Shells aus:
+Unter Windows führt Claude Code Statuszeilen-Befehle über Git Bash aus, wenn Git Bash installiert ist, oder über PowerShell, wenn Git Bash nicht vorhanden ist.
+
+Git Bash behandelt unquotierte Backslashes als Escape-Zeichen, daher erreicht ein Windows-Pfad wie `C:\Users\username\script.mjs` den Skript-Runner mit entfernten Trennzeichen und der Befehl schlägt ohne sichtbaren Fehler fehl. Schreiben Sie Dateipfade in der `command` Zeichenkette mit Schrägstrichen, wie in den folgenden Beispielen gezeigt. Die `~` Abkürzung funktioniert auch und wird zu Ihrem Windows-Basisverzeichnis erweitert.
+
+Um ein PowerShell-Skript als Statuszeile auszuführen, rufen Sie es über `powershell` auf. Dies funktioniert, ob Claude Code den Befehl über Git Bash oder PowerShell leitet:
 
 <CodeGroup>
   ```json settings.json theme={null}
@@ -999,9 +1003,10 @@ Community-Projekte wie [ccstatusline](https://github.com/sirmalloc/ccstatusline)
 * Überprüfen Sie, dass Ihr Skript ausführbar ist: `chmod +x ~/.claude/statusline.sh`
 * Überprüfen Sie, dass Ihr Skript auf stdout ausgibt, nicht auf stderr
 * Führen Sie Ihr Skript manuell aus, um zu überprüfen, dass es Ausgabe erzeugt
+* Unter Windows mit installiertem Git Bash werden Backslashes im `command`-Pfad wahrscheinlich als Escape-Zeichen verarbeitet, bevor das Skript ausgeführt wird. Verwenden Sie Schrägstriche im Pfad. Siehe [Windows-Konfiguration](#windows-configuration).
 * Wenn `disableAllHooks` in Ihren Einstellungen auf `true` gesetzt ist, ist die Statuszeile auch deaktiviert. Entfernen Sie diese Einstellung oder setzen Sie sie auf `false`, um sie erneut zu aktivieren.
 * Führen Sie `claude --debug` aus, um den Exit-Code und stderr aus der ersten Statuszeilen-Invokation in einer Sitzung zu protokollieren
-* Bitten Sie Claude, Ihre Einstellungsdatei zu lesen und den `statusLine` Befehl direkt auszuführen, um Fehler zu finden
+* Bitten Sie Claude, Ihre Einstellungsdatei zu lesen und den `statusLine`-Befehl direkt auszuführen, um Fehler zu finden
 
 **Statuszeile zeigt `--` oder leere Werte**
 
@@ -1012,7 +1017,7 @@ Community-Projekte wie [ccstatusline](https://github.com/sirmalloc/ccstatusline)
 **Kontextprozentsatz zeigt unerwartete Werte**
 
 * Verwenden Sie `used_percentage` für den einfachsten genauen Kontextzustand
-* Der Kontextprozentsatz kann sich von der `/context` Ausgabe unterscheiden, je nachdem, wann jeder berechnet wird
+* Der Kontextprozentsatz kann sich von der `/context`-Ausgabe unterscheiden, je nachdem, wann jeder berechnet wird
 
 **OSC 8-Links nicht anklickbar**
 
@@ -1020,7 +1025,7 @@ Community-Projekte wie [ccstatusline](https://github.com/sirmalloc/ccstatusline)
 
 * Terminal.app unterstützt keine anklickbaren Links
 
-* Wenn Link-Text angezeigt wird, aber nicht anklickbar ist, hat Claude Code möglicherweise keine Hyperlink-Unterstützung in Ihrem Terminal erkannt. Dies betrifft häufig Windows Terminal und andere Emulatoren, die nicht in der Auto-Erkennungsliste enthalten sind. Setzen Sie die `FORCE_HYPERLINK` Umgebungsvariable, um die Erkennung zu überschreiben, bevor Sie Claude Code starten:
+* Wenn Link-Text angezeigt wird, aber nicht anklickbar ist, hat Claude Code möglicherweise keine Hyperlink-Unterstützung in Ihrem Terminal erkannt. Dies betrifft häufig Windows Terminal und andere Emulatoren, die nicht in der Auto-Erkennungsliste enthalten sind. Setzen Sie die `FORCE_HYPERLINK`-Umgebungsvariable, um die Erkennung zu überschreiben, bevor Sie Claude Code starten:
 
   ```bash theme={null}
   FORCE_HYPERLINK=1 claude

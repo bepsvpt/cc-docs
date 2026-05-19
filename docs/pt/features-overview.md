@@ -249,7 +249,7 @@ Cada recurso carrega em diferentes pontos em sua sessão. As abas abaixo explica
 
     **Custo de contexto:** Baixo até ser usado. Skills apenas de usuário têm custo zero até invocação.
 
-    **Em subagents:** Skills funcionam diferentemente em subagents. Em vez de carregamento sob demanda, skills listadas no campo `skills:` do subagent são totalmente pré-carregadas em seu contexto no lançamento. Subagents ainda podem descobrir e invocar skills de projeto, usuário e plugin não listadas através da ferramenta Skill.
+    **Em subagents:** Skills funcionam diferentemente em subagents. Em vez de carregamento sob demanda, skills listadas no campo `skills` do subagent são totalmente pré-carregadas em seu contexto no lançamento. Subagents ainda podem descobrir e invocar skills de projeto, usuário e plugin não listadas através da ferramenta Skill.
 
     <Tip>Use `disable-model-invocation: true` para skills com efeitos colaterais. Isso economiza contexto e garante que apenas você as dispare.</Tip>
   </Tab>
@@ -271,9 +271,9 @@ Cada recurso carrega em diferentes pontos em sua sessão. As abas abaixo explica
 
     **O que carrega:** Contexto fresco e isolado contendo:
 
-    * O prompt do sistema (compartilhado com pai para eficiência de cache)
+    * O prompt do sistema do agente, não o prompt do sistema completo de Claude Code
     * Conteúdo completo de skills listadas no campo `skills:` do agente
-    * CLAUDE.md e status git (herdados do pai)
+    * CLAUDE.md e status git, exceto os agentes Explore e Plan integrados [omitem ambos](/pt/sub-agents#what-loads-at-startup)
     * Qualquer contexto que o agente principal passa no prompt
 
     **Custo de contexto:** Isolado da sessão principal. Subagents não herdam seu histórico de conversa ou skills invocadas.

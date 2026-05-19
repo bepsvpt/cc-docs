@@ -12,7 +12,7 @@
 
 스케줄된 작업을 사용하면 Claude가 일정한 간격으로 프롬프트를 자동으로 다시 실행할 수 있습니다. 배포를 폴링하거나, PR을 감시하거나, 오래 실행되는 빌드를 확인하거나, 나중에 세션에서 무언가를 하도록 자신에게 알림을 설정하는 데 사용합니다. 이벤트가 발생할 때 폴링하는 대신 반응하려면 [Channels](/ko/channels)를 참조하세요. CI가 실패를 세션에 직접 푸시할 수 있습니다. 세션이 조건이 충족될 때까지 한 번에 한 번씩 계속 작동하도록 하려면 일정한 간격이 아닌 경우 [`/goal`](/ko/goal)을 참조하세요.
 
-작업은 세션 범위입니다. 현재 대화에 존재하며 새로운 대화를 시작할 때 중지됩니다. `--resume` 또는 `--continue`로 재개하면 [만료](#seven-day-expiry)되지 않은 모든 작업이 복원됩니다. 지난 7일 이내에 생성된 반복 작업이거나 스케줄된 시간이 아직 지나지 않은 일회성 작업입니다. 세션과 독립적으로 지속되는 스케줄링의 경우 [Routines](/ko/routines), [Desktop scheduled tasks](/ko/desktop-scheduled-tasks), 또는 [GitHub Actions](/ko/github-actions)를 사용하세요.
+작업은 세션 범위입니다. 현재 대화에 존재하며 새로운 대화를 시작할 때 중지됩니다. `--resume` 또는 `--continue`로 재개하면 [만료](#seven-day-expiry)되지 않은 모든 작업이 복원됩니다. 지난 7일 이내에 생성된 반복 작업이거나 스케줄된 시간이 아직 지나지 않은 일회성 작업입니다. 세션과 독립적으로 지속되는 스케줄링의 경우 [Routines](/ko/routines)을 사용하여 Anthropic 관리 인프라에서 루틴을 생성하거나, [Desktop scheduled tasks](/ko/desktop-scheduled-tasks)를 설정하거나, [GitHub Actions](/ko/github-actions)를 사용하세요.
 
 ## 스케줄링 옵션 비교하기
 

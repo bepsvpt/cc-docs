@@ -732,7 +732,7 @@ L'exemple ci-dessous déclenche une notification de bureau à partir d'un hook `
 # Hook de notification : ping le bureau lorsque Claude Code a besoin d'attention.
 input=$(cat)
 title="Claude Code'
-body=$(jq -r '.message // 'Needs your attention"' <<<"$input")
+body=$(jq -r '.message // 'Needs your attention'' <<<"$input")
 seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
 jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 ```
@@ -2771,4 +2771,4 @@ Les détails d'exécution des hooks, y compris les hooks qui ont correspondu, le
 
 Pour plus de détails granulaires sur la correspondance des hooks, définissez `CLAUDE_CODE_DEBUG_LOG_LEVEL=verbose` pour voir des lignes de journal supplémentaires telles que les comptes de matcher de hook et la correspondance de requête.
 
-Pour dépanner les problèmes courants comme les hooks qui ne se déclenchent pas, les boucles infinies de hook Stop ou les erreurs de configuration, consultez [Limitations et dépannage](/fr/hooks-guide#limitations-and-troubleshooting) dans le guide. Pour une procédure de diagnostic plus large couvrant `/context`, `/doctor` et la précédence des paramètres, consultez [Déboguer votre configuration](/fr/debug-your-config).
+Pour dépanner les problèmes courants comme les hooks qui ne se déclenchent pas, les hooks Stop qui continuent à bloquer, ou les erreurs de configuration, consultez [Limitations et dépannage](/fr/hooks-guide#limitations-and-troubleshooting) dans le guide. Pour une procédure de diagnostic plus large couvrant `/context`, `/doctor` et la précédence des paramètres, consultez [Déboguer votre configuration](/fr/debug-your-config).

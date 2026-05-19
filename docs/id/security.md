@@ -60,6 +60,7 @@ Untuk detail lengkap, silakan tinjau [Commercial Terms of Service](https://www.a
 * **Jendela konteks terisolasi**: Web fetch menggunakan jendela konteks terpisah untuk menghindari injeksi prompt yang berpotensi berbahaya
 * **Verifikasi kepercayaan**: Jalankan codebase pertama kali dan server MCP baru memerlukan verifikasi kepercayaan
   * Catatan: Verifikasi kepercayaan dinonaktifkan saat menjalankan secara non-interaktif dengan flag `-p`. Pengecualiannya adalah [`--worktree`](/id/worktrees), yang masih memerlukan kepercayaan telah diterima untuk direktori
+  * Catatan: Ketika Anda memulai Claude Code langsung di direktori home Anda, penerimaan kepercayaan disimpan untuk sesi saat ini saja dan tidak ditulis ke disk, jadi prompt muncul kembali pada setiap peluncuran. Tidak ada pengaturan untuk mempertahankannya. Mulai Claude Code dari subdirektori proyek sebagai gantinya, di mana penerimaan kepercayaan disimpan per direktori
 * **Deteksi command injection**: Perintah bash yang mencurigakan memerlukan persetujuan manual bahkan jika sebelumnya allowlisted
 * **Pencocokan fail-closed**: Perintah yang tidak cocok secara default memerlukan persetujuan manual
 * **Deskripsi bahasa alami**: Perintah bash kompleks menyertakan penjelasan untuk pemahaman pengguna

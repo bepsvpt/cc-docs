@@ -910,11 +910,11 @@ Anda mengedit file pengaturan tetapi hooks tidak muncul dalam menu.
 * Verifikasi JSON Anda valid (trailing commas dan comments tidak diizinkan)
 * Konfirmkan file pengaturan berada di lokasi yang benar: `.claude/settings.json` untuk hook proyek, `~/.claude/settings.json` untuk hook global
 
-### Stop hook berjalan selamanya
+### Stop hook mencapai batas blokir
 
-Claude terus bekerja dalam loop tak terbatas daripada berhenti.
+Claude terus bekerja daripada berhenti, kemudian mengakhiri giliran dengan peringatan bahwa Stop hook memblokir terlalu banyak kali berturut-turut.
 
-Skrip Stop hook Anda perlu memeriksa apakah sudah memicu kelanjutan. Parse bidang `stop_hook_active` dari input JSON dan keluar lebih awal jika `true`:
+Claude Code menimpa Stop hook setelah memblokir 8 kali berturut-turut tanpa kemajuan. Skrip hook Anda perlu memeriksa apakah sudah memicu kelanjutan. Parse bidang `stop_hook_active` dari input JSON dan keluar lebih awal jika `true`:
 
 ```bash theme={null}
 #!/bin/bash
@@ -924,6 +924,8 @@ if [ "$(echo "$INPUT" | jq -r '.stop_hook_active')" = "true" ]; then
 fi
 # ... rest of your hook logic
 ```
+
+Jika hook Anda secara sah memerlukan lebih dari delapan iterasi untuk konvergen, naikkan batas dengan [`CLAUDE_CODE_STOP_HOOK_BLOCK_CAP`](/id/env-vars).
 
 ### JSON validation failed
 

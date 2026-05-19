@@ -2,7 +2,7 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Utiliser Claude Code Desktop
+# Application de bureau
 
 > Tirez le meilleur parti de Claude Code Desktop : sessions parallèles avec isolation Git, disposition des volets par glisser-déposer, terminal intégré et éditeur de fichiers, chats latéraux, utilisation informatique, sessions Dispatch depuis votre téléphone, examen visuel des différences, aperçus d'applications, surveillance des PR, connecteurs et configuration d'entreprise.
 
@@ -707,6 +707,7 @@ Les fonctionnalités suivantes sont disponibles uniquement dans la CLI ou l'exte
 * **Linux** : l'application de bureau est disponible sur macOS et Windows uniquement. Sur Linux, utilisez la [CLI](/fr/quickstart).
 * **Suggestions de code en ligne** : Desktop ne fournit pas de suggestions de style autocomplétion. Il fonctionne via des prompts conversationnels et des modifications de code explicites.
 * **Équipes d'agents** : l'orchestration multi-agents est disponible via la [CLI](/fr/agent-teams) et [Agent SDK](/fr/headless), pas dans Desktop.
+* **Commandes de dialogue terminal** : les commandes intégrées qui ouvrent un panneau interactif dans le terminal, telles que `/permissions`, `/config`, `/agents` et `/doctor`, ne sont pas disponibles dans l'onglet Code et répondent avec `n'est pas disponible dans cet environnement`. Modifiez les [fichiers de paramètres](/fr/settings) directement pour gérer les règles de permission et la configuration, ou exécutez la commande à partir de la CLI autonome.
 
 ## Dépannage
 

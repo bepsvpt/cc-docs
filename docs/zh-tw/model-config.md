@@ -283,12 +283,12 @@ Claude Code 會跳過在 `ANTHROPIC_CUSTOM_MODEL_OPTION` 中設定的模型 ID �
 
 您可以使用以下環境變數，這些變數必須是完整的**模型名稱**（或您的 API 提供者的等效項），以控制別名對應到的模型名稱。
 
-| 環境變數                             | 描述                                                          |
-| -------------------------------- | ----------------------------------------------------------- |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL`   | 用於 `opus` 的模型，或在 Plan Mode 活動時用於 `opusplan` 的模型。            |
-| `ANTHROPIC_DEFAULT_SONNET_MODEL` | 用於 `sonnet` 的模型，或在 Plan Mode 未活動時用於 `opusplan` 的模型。         |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL`  | 用於 `haiku` 的模型，或[背景功能](/zh-TW/costs#background-token-usage) |
-| `CLAUDE_CODE_SUBAGENT_MODEL`     | 用於 [subagents](/zh-TW/sub-agents) 的模型                       |
+| 環境變數                             | 描述                                                                                                          |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL`   | 用於 `opus` 的模型，或在 Plan Mode 活動時用於 `opusplan` 的模型。                                                            |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` | 用於 `sonnet` 的模型，或在 Plan Mode 未活動時用於 `opusplan` 的模型。                                                         |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL`  | 用於 `haiku` 的模型，或[背景功能](/zh-TW/costs#background-token-usage)                                                 |
+| `CLAUDE_CODE_SUBAGENT_MODEL`     | 用於所有 [subagents](/zh-TW/sub-agents#choose-a-model) 的模型。覆蓋每次調用的 `model` 參數和 subagent 定義的 `model` frontmatter |
 
 注意：`ANTHROPIC_SMALL_FAST_MODEL` 已棄用，改用 `ANTHROPIC_DEFAULT_HAIKU_MODEL`。
 

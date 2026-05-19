@@ -367,6 +367,7 @@ manifest 是選用的。如果省略，Claude Code 會自動探索[預設位置]
 ```json theme={null}
 {
   "name": "plugin-name",
+  "displayName": "Plugin Name",
   "version": "1.2.0",
   "description": "Brief plugin description",
   "author": {
@@ -411,6 +412,7 @@ manifest 是選用的。如果省略，Claude Code 會自動探索[預設位置]
 | 欄位            | 類型     | 描述                                                                                                                                                                                               | 範例                                                                |
 | :------------ | :----- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
 | `$schema`     | string | JSON Schema URL，用於編輯器自動完成和驗證。Claude Code 在載入時忽略此欄位。                                                                                                                                              | `"https://json.schemastore.org/claude-code-plugin-manifest.json"` |
+| `displayName` | string | {/* min-version: 2.1.143 */}在 `/plugin` 選擇器和其他 UI 介面中顯示的人類可讀名稱。當省略時回退到 `name`。與 `name` 不同，可能包含空格和任何大小寫。不用於命名空間或查詢。需要 Claude Code v2.1.143 或更新版本。                                                 | `"Deployment Tools"`                                              |
 | `version`     | string | 選用。語義版本。設定此項會將 plugin 固定到該版本字串，因此使用者只會在您提升版本時收到更新。如果省略，Claude Code 會回退到 git commit SHA，因此每個 commit 都被視為新版本。如果也在 marketplace 項目中設定，`plugin.json` 優先。請參閱[Version management](#version-management)。 | `"2.1.0"`                                                         |
 | `description` | string | plugin 用途的簡短說明                                                                                                                                                                                   | `"Deployment automation tools"`                                   |
 | `author`      | object | 作者資訊                                                                                                                                                                                             | `{"name": "Dev Team", "email": "dev@company.com"}`                |
@@ -524,6 +526,8 @@ manifest 是選用的。如果省略，Claude Code 會自動探索[預設位置]
 * 來自自訂路徑的元件使用相同的命名和命名空間規則
 * 可以將多個路徑指定為陣列
 * 當 skill 路徑指向直接包含 `SKILL.md` 的目錄時，例如 `"skills": ["./"]` 指向 plugin 根目錄，frontmatter 中的 `name` 欄位決定 skill 的叫用名稱。這提供了一個穩定的名稱，無論安裝目錄如何。如果 frontmatter 中未設定 `name`，目錄基名將用作後備。
+
+在其根目錄中具有 `SKILL.md`、沒有 `skills/` 子目錄且沒有 `skills` manifest 欄位的 plugin 在 Claude Code v2.1.142 及更新版本中會自動載入為單一 skill plugin。您不需要在 `plugin.json` 中設定 `"skills": ["./"]` 來進行此配置。skill 的叫用名稱遵循相同的規則：frontmatter `name` 欄位，或目錄基名作為後備。
 
 **路徑範例**：
 
@@ -814,7 +818,7 @@ claude plugin prune [options]
 
 ### plugin enable
 
-啟用已停用的 plugin。
+啟用已停用的 plugin。如果 plugin 宣告 [dependencies](/zh-TW/plugin-dependencies)，Claude Code 會在相同範圍內以傳遞方式啟用它們，當相依性未安裝時命令會失敗。
 
 ```bash theme={null}
 claude plugin enable <plugin> [options]
@@ -833,7 +837,7 @@ claude plugin enable <plugin> [options]
 
 ### plugin disable
 
-停用 plugin 而不卸載它。
+停用 plugin 而不卸載它。當另一個已啟用的 plugin [depends on](/zh-TW/plugin-dependencies#enable-or-disable-a-plugin-with-dependencies) 目標時失敗。錯誤訊息包含一個鏈式命令，該命令會先停用每個相依項。
 
 ```bash theme={null}
 claude plugin disable <plugin> [options]
@@ -889,7 +893,7 @@ claude plugin list [options]
 
 ### plugin details
 
-顯示 plugin 的元件清單和預計的 token 成本。輸出列出 plugin 貢獻的所有元件，分組為 Skills（技能和命令）、Agents、Hooks 和 MCP servers，以及它為每個工作階段新增多少 tokens 的估計。
+顯示 plugin 的元件清單和預計的 token 成本。輸出列出 plugin 貢獻的所有元件，分組為 Skills、Agents、Hooks、MCP servers 和 LSP servers，以及它為每個工作階段新增多少 tokens 的估計。Skills 群組包括 `skills/` 和 `commands/` 項目。
 
 ```bash theme={null}
 claude plugin details <name>
@@ -922,6 +926,7 @@ Component inventory
   Agents (0)
   Hooks (1)  (harness-only — no model context cost)
   MCP servers (0)
+  LSP servers (0)
 
 Projected token cost
   Always-on:   ~180 tok   added to every session

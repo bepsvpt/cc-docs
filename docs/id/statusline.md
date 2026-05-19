@@ -916,7 +916,11 @@ Setiap skrip memeriksa apakah file cache hilang atau lebih lama dari 5 detik seb
 
 ### Konfigurasi Windows
 
-Di Windows, Claude Code menjalankan perintah baris status melalui Git Bash ketika Git Bash diinstal, atau melalui PowerShell ketika Git Bash tidak ada. Untuk menjalankan skrip PowerShell sebagai baris status Anda, panggil melalui `powershell`; ini berfungsi dari shell mana pun:
+Di Windows, Claude Code menjalankan perintah baris status melalui Git Bash ketika Git Bash diinstal, atau melalui PowerShell ketika Git Bash tidak ada.
+
+Git Bash memperlakukan backslash yang tidak dikutip sebagai karakter escape, jadi jalur gaya Windows seperti `C:\Users\username\script.mjs` mencapai runner skrip dengan pemisahnya dihapus dan perintah gagal tanpa kesalahan yang terlihat. Tulis jalur file dalam string `command` dengan garis miring ke depan, seperti yang ditunjukkan dalam contoh di bawah ini. Pintasan `~` juga berfungsi dan berkembang ke direktori home Windows Anda.
+
+Untuk menjalankan skrip PowerShell sebagai baris status Anda, panggil melalui `powershell`. Ini berfungsi apakah Claude Code merutekan perintah melalui Git Bash atau PowerShell:
 
 <CodeGroup>
   ```json settings.json theme={null}
@@ -999,6 +1003,7 @@ Proyek komunitas seperti [ccstatusline](https://github.com/sirmalloc/ccstatuslin
 * Verifikasi skrip Anda dapat dieksekusi: `chmod +x ~/.claude/statusline.sh`
 * Periksa bahwa skrip Anda menampilkan ke stdout, bukan stderr
 * Jalankan skrip Anda secara manual untuk memverifikasi itu menghasilkan output
+* Di Windows dengan Git Bash terinstal, garis miring terbalik dalam jalur `command` kemungkinan besar dikonsumsi sebagai karakter escape sebelum skrip berjalan. Gunakan garis miring ke depan dalam jalur. Lihat [Konfigurasi Windows](#windows-configuration).
 * Jika `disableAllHooks` diatur ke `true` dalam pengaturan Anda, baris status juga dinonaktifkan. Hapus pengaturan ini atau atur ke `false` untuk mengaktifkan kembali.
 * Jalankan `claude --debug` untuk mencatat kode keluar dan stderr dari invokasi baris status pertama dalam sesi
 * Minta Claude untuk membaca file pengaturan Anda dan jalankan perintah `statusLine` secara langsung untuk mengungkap kesalahan
@@ -1011,7 +1016,7 @@ Proyek komunitas seperti [ccstatusline](https://github.com/sirmalloc/ccstatuslin
 
 **Persentase konteks menampilkan nilai yang tidak terduga**
 
-* Gunakan `used_percentage` untuk keadaan konteks yang paling akurat
+* Gunakan `used_percentage` untuk keadaan konteks yang paling akurat dan sederhana
 * Persentase konteks mungkin berbeda dari output `/context` karena kapan masing-masing dihitung
 
 **Tautan OSC 8 tidak dapat diklik**

@@ -12,7 +12,7 @@
 
 빠른 모드는 Claude Opus를 위한 고속 구성으로, 토큰당 더 높은 비용으로 모델을 2.5배 빠르게 만듭니다. 빠른 반복이나 라이브 디버깅과 같은 대화형 작업에서 속도가 필요할 때 `/fast`로 켜고, 비용이 지연 시간보다 중요할 때 끕니다.
 
-빠른 모드는 다른 모델이 아닙니다. 비용 효율성보다 속도를 우선시하는 다른 API 구성을 사용하는 동일한 Claude Opus를 사용합니다. 동일한 품질과 기능을 얻으며, 응답만 더 빠릅니다. 빠른 모드는 Opus 4.6 및 Opus 4.7에서 지원됩니다. Sonnet, Haiku 또는 다른 모델에서는 사용할 수 없습니다.
+빠른 모드는 다른 모델이 아닙니다. 비용 효율성보다 속도를 우선시하는 다른 API 구성을 사용하는 동일한 Claude Opus를 사용합니다. 동일한 품질과 기능을 얻으며, 응답만 더 빠릅니다. 빠른 모드는 Opus 4.7 및 Opus 4.6에서 지원됩니다. Sonnet, Haiku 또는 다른 모델에서는 사용할 수 없습니다.
 
 <Note>
   빠른 모드는 Claude Code v2.1.36 이상이 필요합니다. `claude --version`으로 버전을 확인합니다.
@@ -21,12 +21,11 @@
 알아야 할 사항:
 
 * Claude Code CLI에서 `/fast`를 사용하여 빠른 모드를 전환합니다. Claude Code VS Code 확장 프로그램에서도 `/fast`를 통해 사용할 수 있습니다.
-* 기본적으로 `/fast`는 Opus 4.6에서 실행됩니다. 대신 Opus 4.7에서 빠른 모드를 실행하려면 [`CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`](#use-fast-mode-on-opus-4-7) 환경 변수를 설정합니다.
-* 빠른 모드 가격은 Opus 4.6과 Opus 4.7 모두에서 \$30/150 MTok입니다.
+* 빠른 모드 가격은 Opus 4.7과 Opus 4.6 모두에서 $30/$150 MTok입니다.
 * 구독 요금제(Pro/Max/Team/Enterprise)의 모든 Claude Code 사용자 및 Claude Console에서 사용할 수 있습니다.
-* 구독 요금제(Pro/Max/Team/Enterprise)의 Claude Code 사용자의 경우, 빠른 모드는 추가 사용을 통해서만 사용 가능하며 구독 요금제 사용량 제한에 포함되지 않습니다.
+* 구독 요금제(Pro/Max/Team/Enterprise)의 Claude Code 사용자의 경우, 빠른 모드는 사용 크레딧을 통해서만 사용 가능하며 구독 요금제 사용량 제한에 포함되지 않습니다.
 
-이 페이지에서는 [빠른 모드 전환](#toggle-fast-mode), [Opus 4.7에서 빠른 모드 사용](#use-fast-mode-on-opus-4-7), [비용 트레이드오프](#understand-the-cost-tradeoff), [빠른 모드 사용 시기](#decide-when-to-use-fast-mode), [요구사항](#requirements), [세션별 옵트인](#require-per-session-opt-in) 및 [속도 제한 처리](#handle-rate-limits)를 다룹니다.
+이 페이지에서는 [빠른 모드 전환](#toggle-fast-mode), [비용 트레이드오프](#understand-the-cost-tradeoff), [빠른 모드 사용 시기](#decide-when-to-use-fast-mode), [요구사항](#requirements), [세션별 옵트인](#require-per-session-opt-in) 및 [속도 제한 처리](#handle-rate-limits)를 다룹니다.
 
 ## 빠른 모드 전환
 
@@ -41,55 +40,22 @@
 
 빠른 모드를 활성화하면:
 
-* 다른 모델을 사용 중인 경우 Claude Code가 자동으로 빠른 모드 모델로 전환됩니다: 기본적으로 Opus 4.6이거나 [`CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`](#use-fast-mode-on-opus-4-7)가 설정되어 있을 때 Opus 4.7입니다.
+* 다른 모델을 사용 중인 경우 Claude Code가 자동으로 Opus로 전환됩니다
 * 확인 메시지가 표시됩니다: "Fast mode ON"
 * 빠른 모드가 활성화되어 있는 동안 프롬프트 옆에 작은 `↯` 아이콘이 나타납니다
 * 언제든지 `/fast`를 다시 실행하여 빠른 모드가 켜져 있는지 꺼져 있는지 확인합니다
 
-`/fast`를 다시 실행하여 빠른 모드를 비활성화하면 빠른 모드가 실행 중이던 동일한 Opus 버전에 유지됩니다. 모델이 이전 모델로 되돌아가지 않습니다. 다른 모델로 전환하려면 `/model`을 사용합니다.
+`/fast`를 다시 실행하여 빠른 모드를 비활성화하면 Opus에 유지됩니다. 모델이 이전 모델로 되돌아가지 않습니다. 다른 모델로 전환하려면 `/model`을 사용합니다.
 
-## Opus 4.7에서 빠른 모드 사용
-
-<Note>
-  Opus 4.7의 빠른 모드는 Claude Code v2.1.139 이상이 필요합니다.
-</Note>
-
-Claude Opus 4.7의 빠른 모드는 연구 미리보기입니다. Opus 4.6의 빠른 모드와 동일한 2.5배 속도 및 동일한 가격으로 실행되며, 다른 동작 변경 사항은 없습니다.
-
-<Note>
-  2026년 5월 14일에 Opus 4.7이 기본 빠른 모드 모델이 됩니다. 그때까지 `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1`을 설정하여 옵트인합니다.
-</Note>
-
-옵트인하려면 Claude Code를 시작하기 전에 `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1`을 설정합니다. 변수가 설정되면 `/fast`는 Opus 4.7에서 실행됩니다. 설정되지 않으면 `/fast`는 계속 Opus 4.6에서 실행됩니다.
-
-변수를 셸 내보내기로 설정할 수 있습니다:
-
-```bash theme={null}
-export CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1
-```
-
-또는 사용자, 프로젝트 및 관리되는 설정을 포함한 모든 Claude Code [설정 파일](/ko/settings#settings-files)에서 옵트인 범위를 지정하려면:
-
-```json theme={null}
-{
-  "env": {
-    "CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE": "1"
-  }
-}
-```
-
-Opus 4.6의 빠른 모드는 Opus 4.7과 함께 계속 사용할 수 있습니다. 둘 다 동일한 빠른 모드 속도 제한 풀을 공유합니다: 어느 모델에서든 사용량은 동일한 제한에서 차감됩니다.
-
-빠른 모드를 Opus 4.6으로 명시적으로 고정하려면 `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE=1`을 설정합니다. 이 변수는 우선순위를 가지므로 `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`이 설정되었는지 여부와 관계없이 빠른 모드는 Opus 4.6에서 실행됩니다.
+Opus 4.7은 Claude Code v2.1.142 이상에서 빠른 모드 기본값입니다. 대신 빠른 모드를 Opus 4.6에 고정하려면 `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE=1`을 설정합니다.
 
 ## 비용 트레이드오프 이해
 
 빠른 모드는 표준 Opus보다 토큰당 가격이 높습니다:
 
-| 모드              | 입력 (MTok) | 출력 (MTok) |
-| --------------- | --------- | --------- |
-| Opus 4.6의 빠른 모드 | \$30      | \$150     |
-| Opus 4.7의 빠른 모드 | \$30      | \$150     |
+| 모드    | 입력 (MTok) | 출력 (MTok) |
+| ----- | --------- | --------- |
+| 빠른 모드 | \$30      | \$150     |
 
 빠른 모드 가격은 전체 1M 토큰 컨텍스트 윈도우에 걸쳐 고정입니다.
 
@@ -124,11 +90,11 @@ Opus 4.6의 빠른 모드는 Opus 4.7과 함께 계속 사용할 수 있습니�
 
 빠른 모드는 다음 모두를 필요로 합니다:
 
-* **타사 클라우드 제공자에서 사용 불가**: 빠른 모드는 Amazon Bedrock, Google Vertex AI 또는 Microsoft Azure Foundry에서 사용할 수 없습니다. 빠른 모드는 Anthropic Console API 및 추가 사용을 사용하는 Claude 구독 요금제를 통해 사용할 수 있습니다.
-* **추가 사용 활성화**: 계정에 추가 사용이 활성화되어 있어야 하며, 이를 통해 요금제의 포함된 사용량을 초과하여 청구할 수 있습니다. 개인 계정의 경우 [Console 청구 설정](https://platform.claude.com/settings/organization/billing)에서 활성화합니다. Team 및 Enterprise의 경우 관리자가 조직에 대해 추가 사용을 활성화해야 합니다.
+* **타사 클라우드 제공자에서 사용 불가**: 빠른 모드는 Amazon Bedrock, Google Vertex AI 또는 Microsoft Azure Foundry에서 사용할 수 없습니다. 빠른 모드는 Anthropic Console API 및 사용 크레딧을 사용하는 Claude 구독 요금제를 통해 사용할 수 있습니다.
+* **사용 크레딧 활성화**: 계정에 사용 크레딧이 활성화되어 있어야 하며, 이를 통해 요금제의 포함된 사용량을 초과하여 청구할 수 있습니다. 개인 계정의 경우 [Console 청구 설정](https://platform.claude.com/settings/organization/billing)에서 활성화합니다. Team 및 Enterprise의 경우 관리자가 조직에 대해 사용 크레딧을 활성화해야 합니다.
 
 <Note>
-  빠른 모드 사용량은 요금제에 남은 사용량이 있더라도 추가 사용으로 직접 청구됩니다. 이는 빠른 모드 토큰이 요금제의 포함된 사용량에 포함되지 않으며 첫 번째 토큰부터 빠른 모드 요금으로 청구됨을 의미합니다.
+  빠른 모드 사용량은 요금제에 남은 사용량이 있더라도 사용 크레딧에서 직접 인출됩니다. 이는 빠른 모드 토큰이 요금제의 포함된 사용량에 포함되지 않으며 첫 번째 토큰부터 빠른 모드 요금으로 청구됨을 의미합니다.
 </Note>
 
 * **Team 및 Enterprise의 관리자 활성화**: 빠른 모드는 Team 및 Enterprise 조직에 대해 기본적으로 비활성화됩니다. 사용자가 액세스할 수 있으려면 관리자가 명시적으로 [빠른 모드를 활성화](#enable-fast-mode-for-your-organization)해야 합니다.
@@ -160,9 +126,9 @@ Opus 4.6의 빠른 모드는 Opus 4.7과 함께 계속 사용할 수 있습니�
 
 ## 속도 제한 처리
 
-빠른 모드는 표준 Opus와 별도의 속도 제한을 가집니다. Opus 4.6 및 Opus 4.7의 빠른 모드는 동일한 속도 제한 풀을 공유합니다: 어느 모델에서든 사용량은 동일한 제한에서 차감됩니다. 빠른 모드 속도 제한에 도달하거나 추가 사용이 부족할 때:
+빠른 모드는 표준 Opus와 별도의 속도 제한을 가집니다. Opus 4.7과 Opus 4.6의 빠른 모드는 동일한 속도 제한 풀을 공유합니다: 어느 모델에서든 사용량은 동일한 제한에서 차감됩니다. 빠른 모드 속도 제한에 도달하거나 사용 크레딧이 부족할 때:
 
-1. 빠른 모드가 자동으로 동일한 Opus 버전의 표준 속도로 폴백됩니다
+1. 빠른 모드가 자동으로 표준 속도로 폴백됩니다
 2. `↯` 아이콘이 회색으로 변하여 쿨다운을 나타냅니다
 3. 표준 속도 및 가격으로 계속 작업합니다
 4. 쿨다운이 만료되면 빠른 모드가 자동으로 다시 활성화됩니다

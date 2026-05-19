@@ -37,6 +37,8 @@ Claude Code inclui vários subagentes integrados como **Explore**, **Plan** e **
 
 Claude Code inclui subagentes integrados que Claude usa automaticamente quando apropriado. Cada um herda as permissões da conversa pai com restrições de ferramentas adicionais.
 
+Explore e Plan pulam seus arquivos CLAUDE.md e o status git da sessão pai para manter a pesquisa rápida e econômica. Todos os outros subagentes integrados e [subagentes personalizados](#configure-subagents) carregam ambos. Para o detalhamento completo do que chega a um subagente, consulte [o que é carregado na inicialização](#what-loads-at-startup).
+
 <Tabs>
   <Tab title="Explore">
     Um agente rápido e somente leitura otimizado para pesquisar e analisar bases de código.
@@ -652,7 +654,19 @@ O prompt de sistema do subagente substitui completamente o prompt de sistema pad
 
 Isso funciona com subagentes integrados e personalizados, e a escolha persiste quando você retoma a sessão.
 
-Para um subagente fornecido por plugin, passe o nome com escopo: `claude --agent <plugin-name>:<agent-name>`. Se o plugin coloca o agente em uma subpasta de seu diretório `agents/`, inclua a subpasta no nome com escopo, por exemplo `claude --agent my-plugin:review:security`.
+Para um subagente fornecido por plugin, você pode passar apenas o nome do agente e Claude Code o encontrará:
+
+```bash theme={null}
+claude --agent security-reviewer
+```
+
+Se múltiplos plugins fornecem agentes com o mesmo nome, passe o nome com escopo para desambiguar:
+
+```bash theme={null}
+claude --agent my-plugin:security-reviewer
+```
+
+Se o plugin coloca o agente em uma subpasta de seu diretório `agents/`, inclua a subpasta no nome com escopo, por exemplo `claude --agent my-plugin:review:security`.
 
 Para torná-lo o padrão para cada sessão em um projeto, defina `agent` em `.claude/settings.json`:
 
@@ -740,6 +754,22 @@ Para uma pergunta rápida sobre algo já em sua conversa, use [`/btw`](/pt/inter
 </Note>
 
 ### Gerenciar contexto de subagente
+
+#### O que carrega na inicialização
+
+Cada subagente começa com uma janela de contexto fresca e isolada. Ele não vê seu histórico de conversa, as skills que você já invocou, ou os arquivos que Claude já leu. Claude compõe uma mensagem de delegação que resume a tarefa, e o subagente trabalha a partir daí. A exceção é um [fork](#fork-the-current-conversation), que herda a conversa pai em vez de começar do zero.
+
+O contexto inicial de um subagente não-fork contém:
+
+* **Prompt de sistema**: o prompt próprio do agente mais detalhes de ambiente que Claude Code acrescenta, não o prompt de sistema completo do Claude Code. Subagentes personalizados definem o seu no [corpo markdown](#write-subagent-files) ou campo `prompt`. Agentes integrados têm prompts predefinidos.
+* **Mensagem de tarefa**: o prompt de delegação que Claude escreve quando passa o trabalho.
+* **CLAUDE.md e memória**: cada nível da [hierarquia de memória](/pt/memory#how-claude-md-files-load) que a conversa principal carrega, incluindo `~/.claude/CLAUDE.md`, regras de projeto, `CLAUDE.local.md` e arquivos de política gerenciados. Os agentes integrados Explore e Plan pulam isso.
+* **Status do Git**: um snapshot tirado no início da sessão pai. Ausente quando o diretório de trabalho não é um repositório Git ou quando [`includeGitInstructions`](/pt/settings#available-settings) é `false`. Explore e Plan pulam isso independentemente.
+* **Skills pré-carregadas**: conteúdo completo de qualquer skill nomeada no campo [`skills`](#preload-skills-into-subagents) do agente. Agentes integrados não pré-carregam skills.
+
+Explore e Plan são os únicos subagentes que omitem CLAUDE.md e status do Git. Não há campo de frontmatter ou configuração por-agente para mudar quais agentes pulam isso.
+
+A conversa principal lê resultados de Explore e Plan com contexto completo de CLAUDE.md, então a maioria das regras não precisa alcançar o subagente em si. Se uma regra deve, como "ignore o diretório `vendor/`", reafirme-a no prompt que você dá a Claude ao delegar.
 
 #### Retomar subagentes
 

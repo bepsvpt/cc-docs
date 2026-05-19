@@ -732,7 +732,7 @@ Hooks 在沒有控制終端的情況下執行，因此直接寫入逃逸序列�
 # Notification hook：當 Claude Code 需要注意時 ping 桌面。
 input=$(cat)
 title="Claude Code'
-body=$(jq -r '.message // 'Needs your attention"' <<<"$input")
+body=$(jq -r '.message // 'Needs your attention'' <<<"$input")
 seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
 jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 ```

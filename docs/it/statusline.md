@@ -916,7 +916,11 @@ Ogni script verifica se il file di cache è mancante o più vecchio di 5 secondi
 
 ### Configurazione Windows
 
-Su Windows, Claude Code esegue i comandi della barra di stato tramite Git Bash quando Git Bash è installato, o tramite PowerShell quando Git Bash è assente. Per eseguire uno script PowerShell come barra di stato, invocalo tramite `powershell`; questo funziona da entrambi i shell:
+Su Windows, Claude Code esegue i comandi della barra di stato tramite Git Bash quando Git Bash è installato, o tramite PowerShell quando Git Bash è assente.
+
+Git Bash tratta i backslash non quotati come caratteri di escape, quindi un percorso in stile Windows come `C:\Users\username\script.mjs` raggiunge lo script runner con i suoi separatori rimossi e il comando fallisce senza un errore visibile. Scrivi i percorsi dei file nella stringa `command` con barre oblique, come mostrato negli esempi seguenti. La scorciatoia `~` funziona anche e si espande alla tua directory home di Windows.
+
+Per eseguire uno script PowerShell come barra di stato, invocalo tramite `powershell`. Questo funziona indipendentemente dal fatto che Claude Code instrada il comando tramite Git Bash o PowerShell:
 
 <CodeGroup>
   ```json settings.json theme={null}
@@ -999,6 +1003,7 @@ Progetti della comunità come [ccstatusline](https://github.com/sirmalloc/ccstat
 * Verifica che il tuo script sia eseguibile: `chmod +x ~/.claude/statusline.sh`
 * Controlla che il tuo script stampi su stdout, non su stderr
 * Esegui il tuo script manualmente per verificare che produca output
+* Su Windows con Git Bash installato, i backslash nel percorso `command` vengono probabilmente consumati come caratteri di escape prima che lo script venga eseguito. Usa barre oblique nel percorso. Vedi [Configurazione Windows](#windows-configuration).
 * Se `disableAllHooks` è impostato su `true` nelle tue impostazioni, anche la barra di stato è disabilitata. Rimuovi questa impostazione o impostala su `false` per riabilitarla.
 * Esegui `claude --debug` per registrare il codice di uscita e stderr dalla prima invocazione della barra di stato in una sessione
 * Chiedi a Claude di leggere il tuo file di impostazioni ed eseguire il comando `statusLine` direttamente per far emergere gli errori

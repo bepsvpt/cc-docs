@@ -732,7 +732,7 @@ Contoh di bawah menjalankan notifikasi desktop dari hook `Notification`. Urutan 
 # Notification hook: ping desktop ketika Claude Code membutuhkan perhatian.
 input=$(cat)
 title="Claude Code'
-body=$(jq -r '.message // 'Needs your attention"' <<<"$input")
+body=$(jq -r '.message // 'Needs your attention'' <<<"$input")
 seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
 jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 ```
@@ -2761,7 +2761,7 @@ Di Windows, Anda dapat menjalankan hook individual dalam PowerShell dengan menet
 
 ## Debug hooks
 
-Hook execution details, termasuk hooks mana yang cocok, kode keluar mereka, dan stdout dan stderr lengkap, ditulis ke file debug log. Mulai Claude Code dengan `claude --debug-file <path>` untuk menulis log ke lokasi yang diketahui, atau jalankan `claude --debug` dan baca log di `~/.claude/debug/<session-id>.txt`. Flag `--debug` tidak mencetak ke terminal.
+Detail eksekusi hook, termasuk hook mana yang cocok, kode keluar mereka, dan stdout dan stderr lengkap, ditulis ke file debug log. Mulai Claude Code dengan `claude --debug-file <path>` untuk menulis log ke lokasi yang diketahui, atau jalankan `claude --debug` dan baca log di `~/.claude/debug/<session-id>.txt`. Flag `--debug` tidak mencetak ke terminal.
 
 ```text theme={null}
 [DEBUG] Executing hooks for PostToolUse:Write
@@ -2772,4 +2772,4 @@ Hook execution details, termasuk hooks mana yang cocok, kode keluar mereka, dan 
 
 Untuk detail pencocokan hook yang lebih granular, atur `CLAUDE_CODE_DEBUG_LOG_LEVEL=verbose` untuk melihat baris log tambahan seperti jumlah matcher hook dan pencocokan query.
 
-Untuk troubleshooting masalah umum seperti hooks tidak dijalankan, infinite Stop hook loops, atau kesalahan konfigurasi, lihat [Limitations and troubleshooting](/id/hooks-guide#limitations-and-troubleshooting) dalam panduan. Untuk panduan diagnostik yang lebih luas mencakup `/context`, `/doctor`, dan precedence pengaturan, lihat [Debug your config](/id/debug-your-config).
+Untuk troubleshooting masalah umum seperti hooks tidak dijalankan, Stop hooks yang terus memblokir, atau kesalahan konfigurasi, lihat [Limitations and troubleshooting](/id/hooks-guide#limitations-and-troubleshooting) dalam panduan. Untuk panduan diagnostik yang lebih luas mencakup `/context`, `/doctor`, dan precedence pengaturan, lihat [Debug your config](/id/debug-your-config).

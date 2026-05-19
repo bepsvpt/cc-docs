@@ -732,7 +732,7 @@ O exemplo abaixo dispara uma notificação de desktop de um hook `Notification`.
 # Hook de notificação: ping no desktop quando Claude Code precisa de atenção.
 input=$(cat)
 title="Claude Code'
-body=$(jq -r '.message // 'Needs your attention"' <<<"$input")
+body=$(jq -r '.message // 'Needs your attention'' <<<"$input")
 seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
 jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 ```
@@ -2772,4 +2772,4 @@ Detalhes de execução de hook, incluindo quais hooks corresponderam, seus códi
 
 Para detalhes de correspondência de hook mais granulares, defina `CLAUDE_CODE_DEBUG_LOG_LEVEL=verbose` para ver linhas de log adicionais como contagens de matcher de hook e correspondência de consulta.
 
-Para troubleshooting de problemas comuns como hooks não disparando, loops infinitos de hook Stop ou erros de configuração, consulte [Limitações e troubleshooting](/pt/hooks-guide#limitations-and-troubleshooting) no guia. Para um passo a passo de diagnóstico mais amplo cobrindo `/context`, `/doctor` e precedência de configurações, consulte [Debug your config](/pt/debug-your-config).
+Para troubleshooting de problemas comuns como hooks não disparando, Stop hooks que continuam bloqueando, ou erros de configuração, consulte [Limitações e troubleshooting](/pt/hooks-guide#limitations-and-troubleshooting) no guia. Para um passo a passo de diagnóstico mais amplo cobrindo `/context`, `/doctor` e precedência de configurações, consulte [Debug your config](/pt/debug-your-config).

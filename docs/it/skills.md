@@ -436,12 +436,12 @@ Aggiungi `context: fork` al tuo frontmatter quando vuoi che una skill venga eseg
 
 Le skills e i [subagents](/it/sub-agents) funzionano insieme in due direzioni:
 
-| Approccio                   | System prompt                               | Attività                      | Carica anche                   |
-| :-------------------------- | :------------------------------------------ | :---------------------------- | :----------------------------- |
-| Skill con `context: fork`   | Dal tipo di agent (`Explore`, `Plan`, ecc.) | Contenuto di SKILL.md         | CLAUDE.md                      |
-| Subagent con campo `skills` | Corpo markdown del subagent                 | Messaggio di delega di Claude | Skills precaricate + CLAUDE.md |
+| Approccio                   | System prompt               | Attività                      | Carica anche                                       |
+| :-------------------------- | :-------------------------- | :---------------------------- | :------------------------------------------------- |
+| Skill con `context: fork`   | Dal tipo di agent           | Contenuto di SKILL.md         | CLAUDE.md, eccetto quando l'agent è Explore o Plan |
+| Subagent con campo `skills` | Corpo markdown del subagent | Messaggio di delega di Claude | Skills precaricate + CLAUDE.md                     |
 
-Con `context: fork`, scrivi l'attività nella tua skill e scegli un tipo di agent per eseguirla. Per l'inverso (definire un subagent personalizzato che usa le skills come materiale di riferimento), vedi [Subagents](/it/sub-agents#preload-skills-into-subagents).
+Con `context: fork`, scrivi l'attività nella tua skill e scegli un tipo di agent per eseguirla. Gli agent integrati Explore e Plan [saltano CLAUDE.md e git status](/it/sub-agents#what-loads-at-startup) per mantenere il loro contesto piccolo, quindi una skill con fork che utilizza `agent: Explore` vede solo il contenuto di SKILL.md e il system prompt dell'agent stesso. Per l'inverso, dove definisci un subagent personalizzato che usa le skills come materiale di riferimento, vedi [Subagents](/it/sub-agents#preload-skills-into-subagents).
 
 #### Esempio: Skill di ricerca usando l'agent Explore
 

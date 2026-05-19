@@ -29,7 +29,7 @@ Diese Seite behandelt:
 
 Sobald ein Administrator [Code Review aktiviert](#set-up-code-review) für Ihre Organisation, werden Reviews ausgelöst, wenn ein PR geöffnet wird, bei jedem Push oder auf manuelle Anfrage, je nach konfiguriertem Verhalten des Repositorys. Das Kommentieren von `@claude review` [startet Reviews auf einem PR](#manually-trigger-reviews) in jedem Modus.
 
-Wenn ein Review ausgeführt wird, analysieren mehrere Agenten parallel den Diff und den umgebenden Code auf Anthropic-Infrastruktur. Jeder Agent sucht nach einer anderen Klasse von Problemen, dann überprüft ein Verifizierungsschritt Kandidaten gegen das tatsächliche Codeverhalten, um falsch positive Ergebnisse zu filtern. Die Ergebnisse werden dedupliziert, nach Schweregrad eingestuft und als Inline-Kommentare auf den spezifischen Zeilen veröffentlicht, auf denen Probleme gefunden wurden, mit einer Zusammenfassung im Review-Text. Wenn keine Probleme gefunden werden, veröffentlicht Claude einen kurzen Bestätigungskommentar auf dem PR.
+Wenn ein Review ausgeführt wird, analysieren mehrere Agenten parallel den Diff und den umgebenden Code auf Anthropic-Infrastruktur. Jeder Agent sucht nach einer anderen Klasse von Problemen, dann überprüft ein Verifizierungsschritt Kandidaten gegen das tatsächliche Codeverhalten, um falsch positive Ergebnisse zu filtern. Die Ergebnisse werden dedupliziert, nach Schweregrad eingestuft und als Inline-Kommentare auf den spezifischen Zeilen veröffentlicht, auf denen Probleme gefunden wurden, mit einer Zusammenfassung im Review-Text. Wenn keine Probleme gefunden werden, aktualisiert Code Review die GitHub-Check-Run, um anzuzeigen, dass keine Probleme erkannt wurden. Claude kann auch einen kurzen Bestätigungskommentar auf dem PR veröffentlichen.
 
 Reviews skalieren in den Kosten mit PR-Größe und Komplexität und werden im Durchschnitt in 20 Minuten abgeschlossen. Administratoren können Review-Aktivität und Ausgaben über das [Analytics-Dashboard](#view-usage) überwachen.
 
@@ -230,7 +230,7 @@ Die Repositorys-Tabelle in den Admin-Einstellungen zeigt auch die durchschnittli
 
 ## Preisgestaltung
 
-Code Review wird basierend auf der Token-Nutzung abgerechnet. Jede Überprüfung kostet durchschnittlich \$15-25, skalierend mit PR-Größe, Codebasis-Komplexität und wie viele Probleme eine Überprüfung erfordern. Code Review Nutzung wird separat über [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) abgerechnet und zählt nicht gegen die in Ihrem Plan enthaltene Nutzung.
+Code Review wird basierend auf der Token-Nutzung abgerechnet. Jede Überprüfung kostet durchschnittlich \$15–25, skalierend mit PR-Größe, Codebasis-Komplexität und wie viele Probleme eine Überprüfung erfordern. Code Review-Nutzung wird separat über [Nutzungsguthaben](https://support.claude.com/de/articles/12429409-extra-usage-for-paid-claude-plans) abgerechnet und zählt nicht gegen die in Ihrem Plan enthaltene Nutzung.
 
 Der Review-Trigger, den Sie wählen, beeinflusst die Gesamtkosten:
 
@@ -240,9 +240,9 @@ Der Review-Trigger, den Sie wählen, beeinflusst die Gesamtkosten:
 
 In jedem Modus führt das Kommentieren von `@claude review` [den PR in Push-ausgelöste Reviews auf](#manually-trigger-reviews), sodass zusätzliche Kosten pro Push nach diesem Kommentar anfallen. Um eine einzelne Überprüfung auszuführen, ohne sich für zukünftige Pushes zu abonnieren, kommentieren Sie stattdessen `@claude review once`.
 
-Kosten erscheinen auf Ihrer Anthropic-Rechnung, unabhängig davon, ob Ihre Organisation Amazon Bedrock oder Google Vertex AI für andere Claude Code Funktionen verwendet. Um eine monatliche Ausgabenbegrenzung für Code Review festzulegen, gehen Sie zu [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) und konfigurieren Sie das Limit für den Claude Code Review Service.
+Kosten erscheinen auf Ihrer Anthropic-Rechnung, unabhängig davon, ob Ihre Organisation Amazon Bedrock oder Google Vertex AI für andere Claude Code-Funktionen verwendet. Um eine monatliche Ausgabenbegrenzung für Code Review festzulegen, gehen Sie zu [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) und konfigurieren Sie das Limit für den Claude Code Review-Service.
 
-Überwachen Sie die Ausgaben über das wöchentliche Kostendiagramm in [analytics](#view-usage) oder die durchschnittliche Kostenspalte pro Repo in den Admin-Einstellungen.
+Überwachen Sie die Ausgaben über das wöchentliche Kostendiagramm in [analytics](#view-usage) oder die durchschnittliche Kostenspalte pro Repository in den Admin-Einstellungen.
 
 ## Fehlerbehebung
 

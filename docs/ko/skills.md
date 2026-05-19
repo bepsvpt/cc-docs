@@ -436,12 +436,12 @@ skill을 격리 상태에서 실행하려면 frontmatter에 `context: fork`를 �
 
 Skills와 [subagents](/ko/sub-agents)는 두 방향으로 함께 작동합니다:
 
-| 접근 방식                     | 시스템 프롬프트                       | 작업             | 또한 로드                     |
-| :------------------------ | :----------------------------- | :------------- | :------------------------ |
-| `context: fork`가 있는 Skill | 에이전트 유형(`Explore`, `Plan` 등)에서 | SKILL.md 콘텐츠   | CLAUDE.md                 |
-| `skills` 필드가 있는 Subagent  | Subagent의 markdown 본문          | Claude의 위임 메시지 | 미리 로드된 skills + CLAUDE.md |
+| 접근 방식                     | 시스템 프롬프트              | 작업             | 또한 로드                                   |
+| :------------------------ | :-------------------- | :------------- | :-------------------------------------- |
+| `context: fork`가 있는 Skill | 에이전트 유형에서             | SKILL.md 콘텐츠   | CLAUDE.md, 에이전트가 Explore 또는 Plan인 경우 제외 |
+| `skills` 필드가 있는 Subagent  | Subagent의 markdown 본문 | Claude의 위임 메시지 | 미리 로드된 skills + CLAUDE.md               |
 
-`context: fork`를 사용하면 skill에 작업을 작성하고 실행할 에이전트 유형을 선택합니다. 역방향(skills를 참조 자료로 사용하는 사용자 정의 subagent 정의)은 [Subagents](/ko/sub-agents#preload-skills-into-subagents)를 참조하세요.
+`context: fork`를 사용하면 skill에 작업을 작성하고 실행할 에이전트 유형을 선택합니다. 기본 제공 Explore 및 Plan 에이전트는 [컨텍스트를 작게 유지하기 위해 CLAUDE.md 및 git status를 건너뜁니다](/ko/sub-agents#what-loads-at-startup). 따라서 `agent: Explore`를 사용하는 forked skill은 SKILL.md 콘텐츠와 에이전트 자체의 시스템 프롬프트만 봅니다. 역방향(skills를 참조 자료로 사용하는 사용자 정의 subagent 정의)은 [Subagents](/ko/sub-agents#preload-skills-into-subagents)를 참조하세요.
 
 #### 예제: Explore 에이전트를 사용하는 Research Skill
 

@@ -138,7 +138,9 @@ Anthropic은 또한 플러그인 시스템으로 가능한 것을 보여주는 �
   </Step>
 
   <Step title="플러그인 설치">
-    플러그인을 선택하여 세부 정보를 보고 설치 범위를 선택합니다:
+    플러그인을 선택하여 세부 정보를 봅니다. {/* min-version: 2.1.143 */}Claude Code v2.1.143 이상에서는 세부 정보 창에 **Context cost** 예상치가 포함되어 있으므로 설치하기 전에 플러그인이 매 턴마다 [컨텍스트 윈도우](/ko/features-overview#understand-context-costs)에 추가할 토큰 수를 확인할 수 있습니다.
+
+    설치 범위를 선택합니다:
 
     * **User scope**: 모든 프로젝트에서 자신을 위해 설치
     * **Project scope**: 이 저장소의 모든 협력자를 위해 설치

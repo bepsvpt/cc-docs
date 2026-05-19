@@ -37,6 +37,8 @@ Claude Code enthält mehrere integrierte Subagenten wie **Explore**, **Plan** un
 
 Claude Code enthält integrierte Subagenten, die Claude automatisch bei Bedarf verwendet. Jeder erbt die Berechtigungen der übergeordneten Konversation mit zusätzlichen Werkzeugbeschränkungen.
 
+Explore und Plan überspringen Ihre CLAUDE.md-Dateien und den Git-Status der übergeordneten Sitzung, um die Recherche schnell und kostengünstig zu halten. Alle anderen integrierten und [benutzerdefinierten Subagenten](#configure-subagents) laden beide. Für die vollständige Aufschlüsselung dessen, was einen Subagenten erreicht, siehe [was beim Start geladen wird](#what-loads-at-startup).
+
 <Tabs>
   <Tab title="Explore">
     Ein schneller, schreibgeschützter Agent, der für die Suche und Analyse von Codebases optimiert ist.
@@ -652,7 +654,19 @@ Der Systemprompt des Subagenten ersetzt den Standard-Claude Code-Systemprompt vo
 
 Dies funktioniert mit integrierten und benutzerdefinierten Subagenten, und die Wahl bleibt bestehen, wenn Sie die Sitzung fortsetzen.
 
-Für einen von einem Plugin bereitgestellten Subagenten übergeben Sie den scoped Namen: `claude --agent <plugin-name>:<agent-name>`. Wenn das Plugin den Agenten in einem Unterordner seines `agents/`-Verzeichnisses platziert, fügen Sie den Unterordner in den scoped Namen ein, z. B. `claude --agent my-plugin:review:security`.
+Für einen von einem Plugin bereitgestellten Subagenten können Sie einfach den Agent-Namen übergeben und Claude Code findet ihn:
+
+```bash theme={null}
+claude --agent security-reviewer
+```
+
+Wenn mehrere Plugins Agenten mit demselben Namen bereitstellen, übergeben Sie den scoped Namen zur Disambiguierung:
+
+```bash theme={null}
+claude --agent my-plugin:security-reviewer
+```
+
+Wenn das Plugin den Agenten in einem Unterordner seines `agents/`-Verzeichnisses platziert, fügen Sie den Unterordner in den scoped Namen ein, z. B. `claude --agent my-plugin:review:security`.
 
 Um es zum Standard für jede Sitzung in einem Projekt zu machen, setzen Sie `agent` in `.claude/settings.json`:
 
@@ -740,6 +754,22 @@ Für eine schnelle Frage zu etwas, das bereits in Ihrer Konversation ist, verwen
 </Note>
 
 ### Verwalten Sie den Subagenten-Kontext
+
+#### Was wird beim Start geladen
+
+Jeder Subagent startet mit einem frischen, isolierten Kontextfenster. Er sieht nicht Ihre Konversationshistorie, die Skills, die Sie bereits aufgerufen haben, oder die Dateien, die Claude bereits gelesen hat. Claude verfasst eine Delegierungsnachricht, die die Aufgabe zusammenfasst, und der Subagent arbeitet von dort aus. Die Ausnahme ist ein [Fork](#fork-the-current-conversation), der die übergeordnete Konversation erbt, anstatt von vorne zu beginnen.
+
+Der anfängliche Kontext eines Nicht-Fork-Subagenten enthält:
+
+* **Systemprompt**: Der eigene Prompt des Agenten plus Umgebungsdetails, die Claude Code anhängt, nicht der vollständige Claude Code-Systemprompt. Benutzerdefinierte Subagenten definieren ihren in der [Markdown-Datei](#write-subagent-files) oder im `prompt`-Feld. Integrierte Agenten haben vordefinierte Prompts.
+* **Task-Nachricht**: Der Delegierungsprompt, den Claude schreibt, wenn er die Arbeit übergibt.
+* **CLAUDE.md und Memory**: Jede Ebene der [Memory-Hierarchie](/de/memory#how-claude-md-files-load), die die Hauptkonversation lädt, einschließlich `~/.claude/CLAUDE.md`, Projektregeln, `CLAUDE.local.md` und verwaltete Richtliniendateien. Die integrierten Explore- und Plan-Agenten überspringen dies.
+* **Git-Status**: Ein Snapshot, der zu Beginn der übergeordneten Sitzung erstellt wurde. Fehlt, wenn das Arbeitsverzeichnis kein Git-Repository ist oder wenn [`includeGitInstructions`](/de/settings#available-settings) `false` ist. Explore und Plan überspringen es unabhängig davon.
+* **Vorgeladene Skills**: Vollständiger Inhalt aller Skills, die im [`skills`-Feld](#preload-skills-into-subagents) des Agenten benannt sind. Integrierte Agenten laden Skills nicht vor.
+
+Explore und Plan sind die einzigen Subagenten, die CLAUDE.md und Git-Status auslassen. Es gibt kein Frontmatter-Feld oder eine Pro-Agent-Einstellung, um zu ändern, welche Agenten sie überspringen.
+
+Die Hauptkonversation liest Explore- und Plan-Ergebnisse mit vollständigem CLAUDE.md-Kontext, daher müssen die meisten Regeln den Subagenten selbst nicht erreichen. Wenn eine Regel dies muss, z. B. "ignore the `vendor/` directory", wiederholen Sie sie in dem Prompt, den Sie Claude geben, wenn Sie delegieren.
 
 #### Setzen Sie Subagenten fort
 

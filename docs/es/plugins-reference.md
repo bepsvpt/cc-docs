@@ -20,7 +20,7 @@ Un **plugin** es un directorio independiente de componentes que extiende Claude 
 
 Los plugins añaden skills a Claude Code, creando atajos `/name` que usted o Claude pueden invocar.
 
-**Ubicación**: Directorio `skills/` o `commands/` en la raíz del plugin
+**Ubicación**: Directorio `skills/` o `commands/` en la raíz del plugin, o un único archivo `SKILL.md` en la raíz del plugin
 
 **Formato de archivo**: Los skills son directorios con `SKILL.md`; los comandos son archivos markdown simples
 
@@ -367,6 +367,7 @@ El manifiesto es opcional. Si se omite, Claude Code descubre automáticamente co
 ```json theme={null}
 {
   "name": "plugin-name",
+  "displayName": "Plugin Name",
   "version": "1.2.0",
   "description": "Brief plugin description",
   "author": {
@@ -411,6 +412,7 @@ Este nombre se utiliza para espacios de nombres de componentes. Por ejemplo, en 
 | Campo         | Tipo   | Descripción                                                                                                                                                                                                                                                                                                                                                                                                          | Ejemplo                                                           |
 | :------------ | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
 | `$schema`     | string | URL del esquema JSON para autocompletado y validación del editor. Claude Code ignora este campo en el momento de la carga.                                                                                                                                                                                                                                                                                           | `"https://json.schemastore.org/claude-code-plugin-manifest.json"` |
+| `displayName` | string | {/* min-version: 2.1.143 */}Nombre legible por humanos mostrado en el selector `/plugin` y otras superficies de interfaz de usuario. Recurre a `name` cuando se omite. A diferencia de `name`, puede contener espacios y cualquier capitalización. No se utiliza para espacios de nombres o búsqueda. Requiere Claude Code v2.1.143 o posterior.                                                                     | `"Deployment Tools"`                                              |
 | `version`     | string | Opcional. Versión semántica. Establecer esto fija el plugin a esa cadena de versión, por lo que los usuarios solo reciben actualizaciones cuando la incrementas. Si se omite, Claude Code recurre al SHA del commit de git, por lo que cada commit se trata como una nueva versión. Si también se establece en la entrada del marketplace, `plugin.json` gana. Consulta [Gestión de versiones](#version-management). | `"2.1.0"`                                                         |
 | `description` | string | Explicación breve del propósito del plugin                                                                                                                                                                                                                                                                                                                                                                           | `"Deployment automation tools"`                                   |
 | `author`      | object | Información del autor                                                                                                                                                                                                                                                                                                                                                                                                | `{"name": "Dev Team", "email": "dev@company.com"}`                |
@@ -524,6 +526,8 @@ Para todos los campos de ruta:
 * Los componentes de rutas personalizadas utilizan las mismas reglas de nomenclatura y espacios de nombres
 * Se pueden especificar múltiples rutas como arrays
 * Cuando una ruta de skill apunta a un directorio que contiene un `SKILL.md` directamente, por ejemplo `"skills": ["./"]` apuntando a la raíz del plugin, el campo frontmatter `name` en `SKILL.md` determina el nombre de invocación de la skill. Esto proporciona un nombre estable independientemente del directorio de instalación. Si `name` no se establece en el frontmatter, el nombre base del directorio se usa como alternativa.
+
+Un plugin que tiene un `SKILL.md` en su raíz, sin subdirectorio `skills/`, y sin campo de manifiesto `skills` se carga automáticamente como un plugin de una sola skill en Claude Code v2.1.142 y posterior. No necesitas establecer `"skills": ["./"]` en `plugin.json` para este diseño. El nombre de invocación de la skill sigue la misma regla que arriba: el campo frontmatter `name`, o el nombre base del directorio como alternativa.
 
 **Ejemplos de rutas**:
 
@@ -814,7 +818,7 @@ El comando lista las dependencias huérfanas y solicita confirmación antes de e
 
 ### plugin enable
 
-Habilita un plugin deshabilitado.
+Habilita un plugin deshabilitado. Si el plugin declara [dependencias](/es/plugin-dependencies), Claude Code las habilita transitivamente en el mismo alcance, y el comando falla cuando una dependencia no está instalada.
 
 ```bash theme={null}
 claude plugin enable <plugin> [options]
@@ -833,7 +837,7 @@ claude plugin enable <plugin> [options]
 
 ### plugin disable
 
-Deshabilita un plugin sin desinstalarlo.
+Deshabilita un plugin sin desinstalarlo. Falla cuando otro plugin habilitado [depende de](/es/plugin-dependencies#enable-or-disable-a-plugin-with-dependencies) el objetivo. El mensaje de error incluye un comando encadenado que deshabilita primero cada dependiente.
 
 ```bash theme={null}
 claude plugin disable <plugin> [options]
@@ -889,7 +893,7 @@ claude plugin list [options]
 
 ### plugin details
 
-Muestra el inventario de componentes de un plugin y el costo de tokens proyectado. La salida lista todos los componentes que el plugin contribuye, agrupados como Skills (skills y comandos), Agents, Hooks, y servidores MCP, junto con una estimación de cuántos tokens añade a cada sesión.
+Muestra el inventario de componentes de un plugin y el costo de tokens proyectado. La salida lista todos los componentes que el plugin contribuye, agrupados como Skills, Agents, Hooks, servidores MCP y servidores LSP, junto con una estimación de cuántos tokens añade a cada sesión. El grupo Skills incluye tanto entradas de `skills/` como de `commands/`.
 
 ```bash theme={null}
 claude plugin details <name>
@@ -922,6 +926,7 @@ Component inventory
   Agents (0)
   Hooks (1)  (harness-only — no model context cost)
   MCP servers (0)
+  LSP servers (0)
 
 Projected token cost
   Always-on:   ~180 tok   added to every session

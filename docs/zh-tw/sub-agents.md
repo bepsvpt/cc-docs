@@ -37,6 +37,8 @@ Claude Code 包括幾個內建 subagents，如 **Explore**、**Plan** 和 **gene
 
 Claude Code 包括內建 subagents，Claude 在適當時會自動使用。每個都繼承父對話的權限，並有額外的工具限制。
 
+Explore 和 Plan 會跳過您的 CLAUDE.md 檔案和父工作階段的 git status，以保持研究快速且經濟高效。其他所有內建和[自訂 subagent](#configure-subagents) 都會載入兩者。如需了解到達 subagent 的完整詳細資訊，請參閱[啟動時載入的內容](#what-loads-at-startup)。
+
 <Tabs>
   <Tab title="Explore">
     一個快速、唯讀的代理，針對搜尋和分析程式碼庫進行最佳化。
@@ -652,7 +654,19 @@ Subagent 的系統提示完全替換預設 Claude Code 系統提示，就像 [`-
 
 這適用於內建和自訂 subagents，選擇在您恢復工作階段時持續。
 
-對於外掛程式提供的 subagent，傳遞限定名稱：`claude --agent <plugin-name>:<agent-name>`。如果 plugin 將 agent 放在其 `agents/` 目錄的子資料夾中，請在限定名稱中包括子資料夾，例如 `claude --agent my-plugin:review:security`。
+對於外掛程式提供的 subagent，您可以只傳遞代理名稱，Claude Code 會找到它：
+
+```bash theme={null}
+claude --agent security-reviewer
+```
+
+如果多個外掛程式提供具有相同名稱的代理，傳遞限定名稱以消除歧義：
+
+```bash theme={null}
+claude --agent my-plugin:security-reviewer
+```
+
+如果外掛程式將代理放在其 `agents/` 目錄的子資料夾中，請在限定名稱中包括子資料夾，例如 `claude --agent my-plugin:review:security`。
 
 若要使其成為專案中每個工作階段的預設值，請在 `.claude/settings.json` 中設定 `agent`：
 
@@ -740,6 +754,22 @@ Use the code-reviewer subagent to find performance issues, then use the optimize
 </Note>
 
 ### 管理 subagent 上下文
+
+#### 啟動時載入的內容
+
+每個 subagent 都以新鮮、隔離的上下文視窗開始。它看不到您的對話歷史記錄、您已經呼叫的技能或 Claude 已經讀取的檔案。Claude 撰寫一條委派訊息來總結任務，subagent 從那裡開始工作。例外是 [fork](#fork-the-current-conversation)，它繼承父對話而不是從頭開始。
+
+非 fork subagent 的初始上下文包含：
+
+* **系統提示**：代理自己的提示加上 Claude Code 附加的環境詳細資訊，而不是完整的 Claude Code 系統提示。自訂 subagents 在 [markdown 正文](#write-subagent-files) 或 `prompt` 欄位中定義它們。內建代理有預定義的提示。
+* **任務訊息**：Claude 在交接工作時編寫的委派提示。
+* **CLAUDE.md 和記憶**：主要對話載入的 [記憶層級](/zh-TW/memory#how-claude-md-files-load) 的每個級別，包括 `~/.claude/CLAUDE.md`、專案規則、`CLAUDE.local.md` 和受管理的政策檔案。內建的 Explore 和 Plan 代理跳過這個。
+* **Git 狀態**：在父工作階段開始時拍攝的快照。當工作目錄不是 Git 儲存庫或當 [`includeGitInstructions`](/zh-TW/settings#available-settings) 為 `false` 時不存在。Explore 和 Plan 無論如何都跳過它。
+* **預載入的技能**：代理的 [`skills` 欄位](#preload-skills-into-subagents) 中命名的任何技能的完整內容。內建代理不預載入技能。
+
+Explore 和 Plan 是唯一省略 CLAUDE.md 和 git 狀態的 subagents。沒有 frontmatter 欄位或每個代理設定來改變哪些代理跳過它們。
+
+主要對話使用完整 CLAUDE.md 上下文讀取 Explore 和 Plan 結果，所以大多數規則不需要到達 subagent 本身。如果規則必須，例如「忽略 `vendor/` 目錄」，在您委派時給 Claude 的提示中重新陳述它。
 
 #### 恢復 subagents
 

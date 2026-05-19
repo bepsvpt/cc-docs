@@ -29,7 +29,7 @@ Cette page couvre :
 
 Une fois qu'un administrateur [active Code Review](#set-up-code-review) pour votre organisation, les révisions se déclenchent à l'ouverture d'une PR, à chaque push, ou sur demande manuelle, selon le comportement configuré du référentiel. Commenter `@claude review` [démarre les révisions sur une PR](#manually-trigger-reviews) dans n'importe quel mode.
 
-Lorsqu'une révision s'exécute, plusieurs agents analysent le diff et le code environnant en parallèle sur l'infrastructure Anthropic. Chaque agent recherche une classe de problème différente, puis une étape de vérification vérifie les candidats par rapport au comportement réel du code pour filtrer les faux positifs. Les résultats sont dédupliqués, classés par gravité et publiés sous forme de commentaires en ligne sur les lignes spécifiques où les problèmes ont été trouvés, avec un résumé dans le corps de la révision. Si aucun problème n'est trouvé, Claude publie un court commentaire de confirmation sur la PR.
+Lorsqu'une révision s'exécute, plusieurs agents analysent le diff et le code environnant en parallèle sur l'infrastructure Anthropic. Chaque agent recherche une classe de problème différente, puis une étape de vérification vérifie les candidats par rapport au comportement réel du code pour filtrer les faux positifs. Les résultats sont dédupliqués, classés par gravité et publiés sous forme de commentaires en ligne sur les lignes spécifiques où les problèmes ont été trouvés, avec un résumé dans le corps de la révision. Si aucun problème n'est trouvé, Code Review met à jour la vérification GitHub pour montrer qu'aucun problème n'a été détecté. Claude peut également publier un court commentaire de confirmation sur la PR.
 
 Les révisions s'adaptent en coût à la taille et à la complexité de la PR, se complétant en moyenne en 20 minutes. Les administrateurs peuvent surveiller l'activité de révision et les dépenses via le [tableau de bord analytique](#view-usage).
 
@@ -231,15 +231,15 @@ Le tableau des référentiels dans les paramètres d'administration affiche éga
 
 ## Tarification
 
-Code Review est facturé en fonction de l'utilisation des tokens. Chaque révision coûte en moyenne 15 à 25 dollars, s'adaptant à la taille de la PR, à la complexité de la base de code, et au nombre de problèmes nécessitant une vérification. L'utilisation de Code Review est facturée séparément via [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) et ne compte pas par rapport à l'utilisation incluse de votre plan.
+Code Review est facturé en fonction de l'utilisation des tokens. Chaque révision coûte en moyenne 15 à 25 dollars, s'adaptant à la taille de la PR, à la complexité de la base de code, et au nombre de problèmes nécessitant une vérification. L'utilisation de Code Review est facturée séparément via [crédits d'utilisation](https://support.claude.com/fr/articles/12429409-extra-usage-for-paid-claude-plans) et ne compte pas par rapport à l'utilisation incluse de votre plan.
 
 Le déclencheur de révision que vous choisissez affecte le coût total :
 
-* **Once after PR creation** : s'exécute une fois par PR
-* **After every push** : s'exécute à chaque push, multipliant le coût par le nombre de pushes
-* **Manual** : aucune révision jusqu'à ce que quelqu'un commente `@claude review` sur une PR
+* **Une fois après la création de la PR** : s'exécute une fois par PR
+* **Après chaque push** : s'exécute à chaque push, multipliant le coût par le nombre de pushes
+* **Manuel** : aucune révision jusqu'à ce que quelqu'un commente `@claude review` sur une PR
 
-Dans n'importe quel mode, commenter `@claude review` [opte la PR dans les révisions déclenchées par push](#manually-trigger-reviews), de sorte que des coûts supplémentaires s'accumulent par push après ce commentaire. Pour exécuter une seule révision sans abonner à des pushes futurs, commentez `@claude review once` à la place.
+Dans n'importe quel mode, commenter `@claude review` [opte la PR dans les révisions déclenchées par push](#manually-trigger-reviews), de sorte que des coûts supplémentaires s'accumulent par push après ce commentaire. Pour exécuter une seule révision sans vous abonner à des pushes futurs, commentez `@claude review once` à la place.
 
 Les coûts apparaissent sur votre facture Anthropic quel que soit le fait que votre organisation utilise Amazon Bedrock ou Google Vertex AI pour d'autres fonctionnalités Claude Code. Pour définir un plafond de dépenses mensuelles pour Code Review, allez à [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) et configurez la limite pour le service Claude Code Review.
 

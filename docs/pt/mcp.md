@@ -143,6 +143,8 @@ claude mcp remove github
 
 O painel `/mcp` mostra a contagem de ferramentas ao lado de cada servidor conectado e sinaliza servidores que anunciam a capacidade de ferramentas, mas não expõem nenhuma ferramenta.
 
+Se sua solicitação precisar de ferramentas de um servidor que ainda está se conectando em segundo plano, Claude aguarda esse servidor antes de continuar. Com [pesquisa de ferramentas](#scale-with-mcp-tool-search) habilitada, que é o padrão, a espera acontece dentro da chamada `ToolSearch`. Em configurações sem pesquisa de ferramentas, como Vertex AI, um `ANTHROPIC_BASE_URL` personalizado, ou `ENABLE_TOOL_SEARCH=false`, Claude usa a ferramenta `WaitForMcpServers` em vez disso.
+
 O nome do servidor `workspace` é reservado para uso interno. Se sua configuração define um servidor com esse nome, Claude Code o ignora no tempo de carregamento e mostra um aviso pedindo que você o renomeie.
 
 ### Atualizações dinâmicas de ferramentas
@@ -1007,7 +1009,7 @@ A seguinte entrada `.mcp.json` isenta um servidor HTTP enquanto deixa outros ser
 
 O campo `alwaysLoad` está disponível em todos os tipos de servidor e requer Claude Code v2.1.121 ou posterior. Um servidor MCP também pode marcar ferramentas individuais como sempre carregadas incluindo `"anthropic/alwaysLoad": true` no objeto `_meta` da ferramenta, que tem o mesmo efeito apenas para essa ferramenta.
 
-Definir `alwaysLoad: true` também bloqueia a inicialização até que o servidor se conecte, limitado ao tempo limite de conexão padrão de 5 segundos. Isso se aplica mesmo quando [`MCP_CONNECTION_NONBLOCKING=1`](/pt/env-vars) está definido, já que as ferramentas devem estar presentes quando o primeiro prompt é construído. Outros servidores ainda se conectam em segundo plano quando o modo não bloqueante está habilitado.
+Definir `alwaysLoad: true` também bloqueia a inicialização até que o servidor se conecte, limitado ao tempo limite de conexão padrão de 5 segundos. Isso se aplica mesmo que a inicialização MCP seja [não bloqueante por padrão](/pt/env-vars), já que as ferramentas devem estar presentes quando o primeiro prompt é construído. Outros servidores continuam a se conectar em segundo plano.
 
 ## Usar prompts MCP como comandos
 

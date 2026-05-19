@@ -271,9 +271,9 @@ Chaque fonctionnalité se charge à différents points de votre session. Les ong
 
     **Ce qui se charge :** Contexte frais et isolé contenant :
 
-    * L'invite système (partagée avec le parent pour l'efficacité du cache)
+    * L'invite système, pas l'invite système complète de Claude Code
     * Contenu complet des skills listées dans le champ `skills:` de l'agent
-    * CLAUDE.md et statut git (hérité du parent)
+    * CLAUDE.md et statut git, sauf les agents Explore et Plan intégrés [qui omettent les deux](/fr/sub-agents#what-loads-at-startup)
     * Quel que soit le contexte que l'agent principal transmet dans l'invite
 
     **Coût du contexte :** Isolé de la session principale. Les subagents n'héritent pas de votre historique de conversation ou des skills invoquées.

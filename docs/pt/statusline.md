@@ -916,7 +916,11 @@ Cada script verifica se o arquivo de cache está ausente ou mais antigo que 5 se
 
 ### Configuração do Windows
 
-No Windows, o Claude Code executa comandos de linha de status através do Git Bash quando o Git Bash está instalado, ou através do PowerShell quando o Git Bash está ausente. Para executar um script PowerShell como sua linha de status, invoque-o via `powershell`; isso funciona a partir de qualquer shell:
+No Windows, o Claude Code executa comandos de linha de status através do Git Bash quando o Git Bash está instalado, ou através do PowerShell quando o Git Bash está ausente.
+
+O Git Bash trata barras invertidas sem aspas como caracteres de escape, portanto um caminho no estilo Windows como `C:\Users\username\script.mjs` chega ao executor de script com seus separadores removidos e o comando falha sem um erro visível. Escreva caminhos de arquivo na string `command` com barras normais, conforme mostrado nos exemplos abaixo. O atalho `~` também funciona e se expande para seu diretório inicial do Windows.
+
+Para executar um script PowerShell como sua linha de status, invoque-o via `powershell`. Isso funciona se o Claude Code rotear o comando através do Git Bash ou PowerShell:
 
 <CodeGroup>
   ```json settings.json theme={null}
@@ -999,6 +1003,7 @@ Projetos comunitários como [ccstatusline](https://github.com/sirmalloc/ccstatus
 * Verifique se seu script é executável: `chmod +x ~/.claude/statusline.sh`
 * Verifique se seu script produz saída para stdout, não stderr
 * Execute seu script manualmente para verificar se produz saída
+* No Windows com Git Bash instalado, barras invertidas no caminho `command` provavelmente estão sendo consumidas como caracteres de escape antes do script ser executado. Use barras normais no caminho. Veja [Configuração do Windows](#windows-configuration).
 * Se `disableAllHooks` estiver definido como `true` em suas configurações, a linha de status também será desabilitada. Remova esta configuração ou defina-a como `false` para reabilitar.
 * Execute `claude --debug` para registrar o código de saída e stderr da primeira invocação de linha de status em uma sessão
 * Peça ao Claude para ler seu arquivo de configurações e executar o comando `statusLine` diretamente para descobrir erros

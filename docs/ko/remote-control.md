@@ -188,7 +188,7 @@ Claude는 언제 푸시할지 결정합니다. 일반적으로 오래 실행되�
 * **로컬 프로세스는 계속 실행되어야 함**: Remote Control은 로컬 프로세스로 실행됩니다. 터미널을 닫거나, VS Code를 종료하거나, 다른 방식으로 `claude` 프로세스를 중지하면 세션이 종료됩니다.
 * **장시간 네트워크 중단**: 컴퓨터가 켜져 있지만 약 10분 이상 네트워크에 도달할 수 없으면 세션이 시간 초과되고 프로세스가 종료됩니다. `claude remote-control`을 다시 실행하여 새 세션을 시작하세요.
 * **Ultraplan이 Remote Control 연결 해제**: [ultraplan](/ko/ultraplan) 세션을 시작하면 활성 Remote Control 세션이 연결 해제됩니다. 두 기능 모두 claude.ai/code 인터페이스를 차지하고 한 번에 하나만 연결될 수 있기 때문입니다.
-* **일부 명령은 로컬 전용**: `/mcp`, `/plugin` 또는 `/resume`과 같이 터미널에서 대화형 선택기를 여는 명령은 로컬 CLI에서만 작동합니다. `/compact`, `/clear`, `/context`, `/usage`, `/exit`, `/extra-usage`, `/recap` 및 `/reload-plugins`를 포함하여 텍스트 출력을 생성하는 명령은 모바일 및 웹에서 작동합니다.
+* **일부 명령은 로컬 전용**: `/mcp`, `/plugin` 또는 `/resume`과 같이 터미널에서 대화형 선택기를 여는 명령은 로컬 CLI에서만 작동합니다. `/compact`, `/clear`, `/context`, `/usage`, `/exit`, `/usage-credits`, `/recap` 및 `/reload-plugins`를 포함하여 텍스트 출력을 생성하는 명령은 모바일 및 웹에서 작동합니다.
 
 ## 문제 해결
 

@@ -916,7 +916,7 @@ Bash 範例使用 [`jq`](https://jqlang.github.io/jq/) 來解析 JSON。Python �
 
 ### Windows 設定
 
-在 Windows 上，Claude Code 透過 Git Bash 執行狀態列命令（如果已安裝 Git Bash），或在 Git Bash 不存在時透過 PowerShell 執行。若要執行 PowerShell 指令碼作為您的狀態列，請透過 `powershell` 呼叫它；這在任一 shell 中都有效：
+在 Windows 上，Claude Code 透過 Git Bash 執行狀態列命令（如果已安裝 Git Bash），或在 Git Bash 不存在時透過 PowerShell 執行。若要執行 PowerShell 指令碼作為您的狀態列，請透過 `powershell` 呼叫它。這在任一 shell 中都有效：
 
 <CodeGroup>
   ```json settings.json theme={null}
@@ -999,6 +999,7 @@ Bash 範例使用 [`jq`](https://jqlang.github.io/jq/) 來解析 JSON。Python �
 * 驗證您的指令碼是否可執行：`chmod +x ~/.claude/statusline.sh`
 * 檢查您的指令碼是否輸出到 stdout 而不是 stderr
 * 手動執行您的指令碼以驗證它產生輸出
+* 在安裝了 Git Bash 的 Windows 上，`command` 路徑中的反斜線可能在指令碼執行前被當作逃逸字元消耗。在路徑中使用正斜線。請參閱 [Windows 設定](#windows-configuration)。
 * 如果 `disableAllHooks` 在您的設定中設定為 `true`，狀態列也會被停用。移除此設定或將其設定為 `false` 以重新啟用。
 * 執行 `claude --debug` 以記錄工作階段中第一次狀態列呼叫的結束代碼和 stderr
 * 要求 Claude 讀取您的設定檔案並直接執行 `statusLine` 命令以顯示錯誤

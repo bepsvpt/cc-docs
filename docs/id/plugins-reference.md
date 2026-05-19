@@ -20,7 +20,7 @@ Sebuah **plugin** adalah direktori yang mandiri berisi komponen yang memperluas 
 
 Plugins menambahkan skills ke Claude Code, membuat pintasan `/name` yang dapat Anda atau Claude panggil.
 
-**Lokasi**: Direktori `skills/` atau `commands/` di root plugin
+**Lokasi**: Direktori `skills/` atau `commands/` di root plugin, atau file `SKILL.md` tunggal di root plugin
 
 **Format file**: Skills adalah direktori dengan `SKILL.md`; commands adalah file markdown sederhana
 
@@ -367,6 +367,7 @@ Manifest bersifat opsional. Jika dihilangkan, Claude Code secara otomatis menemu
 ```json theme={null}
 {
   "name": "plugin-name",
+  "displayName": "Plugin Name",
   "version": "1.2.0",
   "description": "Brief plugin description",
   "author": {
@@ -411,6 +412,7 @@ Nama ini digunakan untuk namespacing komponen. Misalnya, di UI, agent `agent-cre
 | Field         | Tipe   | Deskripsi                                                                                                                                                                                                                                                                                                                                                                       | Contoh                                                            |
 | :------------ | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :---------------------------------------------------------------- |
 | `$schema`     | string | URL JSON Schema untuk autocomplete dan validasi editor. Claude Code mengabaikan field ini saat waktu load.                                                                                                                                                                                                                                                                      | `"https://json.schemastore.org/claude-code-plugin-manifest.json"` |
+| `displayName` | string | {/* min-version: 2.1.143 */}Nama yang dapat dibaca manusia ditampilkan di picker `/plugin` dan permukaan UI lainnya. Kembali ke `name` saat dihilangkan. Tidak seperti `name`, dapat berisi spasi dan casing apa pun. Tidak digunakan untuk namespacing atau lookup. Memerlukan Claude Code v2.1.143 atau lebih baru.                                                           | `"Deployment Tools"`                                              |
 | `version`     | string | Opsional. Versi semantik. Mengatur ini mengikat plugin ke string versi tersebut, sehingga pengguna hanya menerima update saat Anda menaikkannya. Jika dihilangkan, Claude Code kembali ke SHA commit git, sehingga setiap commit diperlakukan sebagai versi baru. Jika juga diatur di entri marketplace, `plugin.json` menang. Lihat [Version management](#version-management). | `"2.1.0"`                                                         |
 | `description` | string | Penjelasan singkat tentang tujuan plugin                                                                                                                                                                                                                                                                                                                                        | `"Deployment automation tools"`                                   |
 | `author`      | object | Informasi penulis                                                                                                                                                                                                                                                                                                                                                               | `{"name": "Dev Team", "email": "dev@company.com"}`                |
@@ -524,6 +526,8 @@ Untuk semua field jalur:
 * Komponen dari jalur khusus menggunakan aturan penamaan dan namespacing yang sama
 * Beberapa jalur dapat ditentukan sebagai array
 * Saat jalur skill menunjuk ke direktori yang berisi `SKILL.md` secara langsung, misalnya `"skills": ["./"]` menunjuk ke root plugin, field frontmatter `name` di `SKILL.md` menentukan nama invokasi skill. Ini memberikan nama stabil terlepas dari direktori instalasi. Jika `name` tidak diatur di frontmatter, basename direktori digunakan sebagai fallback.
+
+Plugin yang memiliki `SKILL.md` di root-nya, tidak ada subdirektori `skills/`, dan tidak ada field manifest `skills` secara otomatis dimuat sebagai plugin single-skill di Claude Code v2.1.142 dan yang lebih baru. Anda tidak perlu mengatur `"skills": ["./"]` di `plugin.json` untuk layout ini. Nama invokasi skill mengikuti aturan yang sama seperti di atas: field frontmatter `name`, atau basename direktori sebagai fallback.
 
 **Contoh jalur**:
 
@@ -814,7 +818,7 @@ Perintah ini mencantumkan dependensi yatim piatu dan meminta konfirmasi sebelum 
 
 ### plugin enable
 
-Aktifkan plugin yang dinonaktifkan.
+Aktifkan plugin yang dinonaktifkan. Jika plugin mendeklarasikan [dependencies](/id/plugin-dependencies), Claude Code mengaktifkannya secara transitif pada cakupan yang sama, dan perintah gagal ketika dependensi tidak dipasang.
 
 ```bash theme={null}
 claude plugin enable <plugin> [options]
@@ -833,7 +837,7 @@ claude plugin enable <plugin> [options]
 
 ### plugin disable
 
-Nonaktifkan plugin tanpa menghapusnya.
+Nonaktifkan plugin tanpa menghapusnya. Gagal ketika plugin yang diaktifkan lain [bergantung pada](/id/plugin-dependencies#enable-or-disable-a-plugin-with-dependencies) target. Pesan kesalahan mencakup perintah berantai yang menonaktifkan setiap dependensi terlebih dahulu.
 
 ```bash theme={null}
 claude plugin disable <plugin> [options]
@@ -889,7 +893,7 @@ claude plugin list [options]
 
 ### plugin details
 
-Tampilkan inventaris komponen plugin dan perkiraan biaya token. Output mencantumkan semua komponen yang disumbangkan plugin, dikelompokkan sebagai Skills (skills dan commands), Agents, Hooks, dan MCP servers, bersama dengan perkiraan berapa banyak token yang ditambahkannya ke setiap sesi.
+Tampilkan inventaris komponen plugin dan perkiraan biaya token yang diproyeksikan. Output mencantumkan semua komponen yang disumbangkan plugin, dikelompokkan sebagai Skills, Agents, Hooks, server MCP, dan server LSP, bersama dengan perkiraan berapa banyak token yang ditambahkannya ke setiap sesi. Grup Skills mencakup entri `skills/` dan `commands/`.
 
 ```bash theme={null}
 claude plugin details <name>
@@ -922,6 +926,7 @@ Component inventory
   Agents (0)
   Hooks (1)  (harness-only — no model context cost)
   MCP servers (0)
+  LSP servers (0)
 
 Projected token cost
   Always-on:   ~180 tok   added to every session

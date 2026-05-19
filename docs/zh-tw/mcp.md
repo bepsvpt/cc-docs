@@ -143,6 +143,8 @@ claude mcp remove github
 
 `/mcp` 面板會在每個已連接的 server 旁邊顯示工具計數，並標記宣告工具功能但未公開任何工具的 servers。
 
+如果您的請求需要來自仍在背景連接的 server 的工具，Claude 會在繼續之前等待該 server。啟用 [tool search](#scale-with-mcp-tool-search)（預設啟用）後，等待會在 `ToolSearch` 呼叫內進行。在沒有工具搜尋的配置中，例如 Vertex AI、自訂 `ANTHROPIC_BASE_URL` 或 `ENABLE_TOOL_SEARCH=false`，Claude 會改用 `WaitForMcpServers` 工具。
+
 server 名稱 `workspace` 保留供內部使用。如果您的配置定義了具有該名稱的 server，Claude Code 會在載入時跳過它，並顯示警告要求您重新命名它。
 
 ### 動態工具更新
@@ -1007,7 +1009,7 @@ ENABLE_TOOL_SEARCH=false claude
 
 `alwaysLoad` 欄位在所有伺服器類型上可用，需要 Claude Code v2.1.121 或更新版本。MCP 伺服器也可以透過在工具的 `_meta` 物件中包含 `"anthropic/alwaysLoad": true` 來標記個別工具為始終載入，這對該工具只有相同的效果。
 
-設定 `alwaysLoad: true` 也會阻止啟動直到伺服器連線，上限為標準 5 秒連線逾時。即使設定了 [`MCP_CONNECTION_NONBLOCKING=1`](/zh-TW/env-vars)，這也適用，因為工具必須在建立第一個提示時存在。當啟用非阻塞時，其他伺服器仍在背景中連線。
+設定 `alwaysLoad: true` 也會阻止啟動直到伺服器連線，上限為標準 5 秒連線逾時。即使 MCP 啟動在其他方面[預設為非阻塞](/zh-TW/env-vars)，這也適用，因為工具必須在建立第一個提示時存在。其他伺服器繼續在背景中連線。
 
 ## 使用 MCP 提示作為命令
 

@@ -29,7 +29,7 @@ Code Review 分析您的 GitHub pull request，并在发现问题的代码行上
 
 一旦管理员为您的组织[启用 Code Review](#set-up-code-review)，审查将在 PR 打开时、每次推送时或手动请求时触发，具体取决于存储库的配置行为。在任何模式下，注释 `@claude review` 可以[在 PR 上启动审查](#manually-trigger-reviews)。
 
-当审查运行时，多个代理在 Anthropic 基础设施上并行分析差异和周围代码。每个代理寻找不同类别的问题，然后验证步骤检查候选项是否与实际代码行为相符，以过滤掉误报。结果被去重、按严重程度排序，并作为内联评论发布在发现问题的特定行上，并在审查正文中包含摘要。如果未发现问题，Claude 会在 PR 上发布简短的确认评论。
+当审查运行时，多个代理在 Anthropic 基础设施上并行分析差异和周围代码。每个代理寻找不同类别的问题，然后验证步骤检查候选项是否与实际代码行为相符，以过滤掉误报。结果被去重、按严重程度排序，并作为内联评论发布在发现问题的特定行上，并在审查正文中包含摘要。如果未发现问题，Code Review 会更新 GitHub 检查运行以显示未检测到问题。Claude 也可能在 PR 上发布简短的确认评论。
 
 审查成本随 PR 大小和复杂性而扩展，平均在 20 分钟内完成。管理员可以通过[分析仪表板](#view-usage)监控审查活动和支出。
 
@@ -225,7 +225,7 @@ Claude 在目录层次结构的每个级别读取 `CLAUDE.md` 文件，因此子
 
 ## 定价
 
-Code Review 根据令牌使用情况计费。审查平均花费 \$15-25，随 PR 大小、代码库复杂性和需要验证的问题数量而扩展。Code Review 使用通过[额外使用](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans)单独计费，不计入您的计划包含的使用。
+Code Review 根据令牌使用情况计费。每次审查平均花费 \$15-25，随 PR 大小、代码库复杂性和需要验证的问题数量而扩展。Code Review 使用通过[使用额度](https://support.claude.com/zh-CN/articles/12429409-extra-usage-for-paid-claude-plans)单独计费，不计入您的计划包含的使用。
 
 您选择的审查触发器影响总成本：
 

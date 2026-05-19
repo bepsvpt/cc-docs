@@ -907,11 +907,11 @@ Hook이 구성되었지만 실행되지 않습니다.
 * JSON이 유효한지 확인합니다(후행 쉼표 및 주석은 허용되지 않음)
 * 설정 파일이 올바른 위치에 있는지 확인합니다: 프로젝트 hooks의 경우 `.claude/settings.json`, 전역 hooks의 경우 `~/.claude/settings.json`
 
-### Stop hook이 무한 실행됨
+### Stop hook이 블록 상한에 도달함
 
-Claude가 무한 루프에서 계속 작업하는 대신 중지합니다.
+Claude가 계속 작업하는 대신 중지하고 Stop hook이 너무 많은 횟수를 연속으로 차단했다는 경고로 턴을 종료합니다.
 
-Stop hook 스크립트는 이미 트리거되었는지 확인해야 합니다. JSON 입력에서 `stop_hook_active` 필드를 구문 분석하고 `true`인 경우 조기에 종료합니다:
+Claude Code는 Stop hook이 진행 없이 8번 연속으로 차단한 후 재정의합니다. Hook 스크립트는 이미 트리거되었는지 확인해야 합니다. JSON 입력에서 `stop_hook_active` 필드를 구문 분석하고 `true`인 경우 조기에 종료합니다:
 
 ```bash theme={null}
 #!/bin/bash
@@ -922,11 +922,13 @@ fi
 # ... hook 로직의 나머지
 ```
 
+Hook이 수렴하기 위해 8번 이상의 반복이 필요한 경우 [`CLAUDE_CODE_STOP_HOOK_BLOCK_CAP`](/ko/env-vars)으로 상한을 올립니다.
+
 ### JSON 검증 실패
 
 Hook 스크립트가 유효한 JSON을 출력하더라도 Claude Code에 JSON 구문 분석 오류가 표시됩니다.
 
-Claude Code가 셸 형식 명령 hook(args 없는 hook)을 실행할 때 macOS 및 Linux에서는 기본적으로 `sh -c`를 생성하거나 Windows에서는 Git Bash를 생성합니다. 이 셸은 비대화형이지만 Git Bash 및 일부 구성(예: `BASH_ENV`가 `~/.bashrc`를 가리킴)은 여전히 프로필을 소싱합니다. 해당 프로필에 무조건적인 `echo` 문이 포함되어 있으면 출력이 hook의 JSON에 앞에 붙습니다:
+Claude Code가 셸 형식 명령 hook(`args` 없는 hook)을 실행할 때 macOS 및 Linux에서는 기본적으로 `sh -c`를 생성하거나 Windows에서는 Git Bash를 생성합니다. 이 셸은 비대화형이지만 Git Bash 및 일부 구성(예: `BASH_ENV`가 `~/.bashrc`를 가리킴)은 여전히 프로필을 소싱합니다. 해당 프로필에 무조건적인 `echo` 문이 포함되어 있으면 출력이 hook의 JSON에 앞에 붙습니다:
 
 ```text theme={null}
 Shell ready on arm64

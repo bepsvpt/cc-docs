@@ -916,7 +916,11 @@ Claude.ai 구독 속도 제한 사용량을 상태 표시줄에 표시합니다.
 
 ### Windows 구성
 
-Windows에서 Claude Code는 Git Bash가 설치되어 있을 때 Git Bash를 통해 상태 표시줄 명령을 실행하거나, Git Bash가 없을 때 PowerShell을 통해 실행합니다. PowerShell 스크립트를 상태 표시줄로 실행하려면 `powershell`을 통해 호출하세요. 이는 두 셸 모두에서 작동합니다:
+Windows에서 Claude Code는 Git Bash가 설치되어 있을 때 Git Bash를 통해 상태 표시줄 명령을 실행하거나, Git Bash가 없을 때 PowerShell을 통해 실행합니다.
+
+Git Bash는 따옴표 없는 백슬래시를 이스케이프 문자로 취급하므로, `C:\Users\username\script.mjs`와 같은 Windows 스타일 경로는 구분 기호가 제거된 상태로 스크립트 실행기에 도달하고 명령이 보이는 오류 없이 실패합니다. `command` 문자열에 파일 경로를 정방향 슬래시로 작성하세요(아래 예제에 표시됨). `~` 약자도 작동하며 Windows 홈 디렉토리로 확장됩니다.
+
+PowerShell 스크립트를 상태 표시줄로 실행하려면 `powershell`을 통해 호출하세요. 이는 Claude Code가 명령을 Git Bash 또는 PowerShell을 통해 라우팅하는지 여부에 관계없이 작동합니다:
 
 <CodeGroup>
   ```json settings.json theme={null}
@@ -999,6 +1003,7 @@ Windows에서 Claude Code는 Git Bash가 설치되어 있을 때 Git Bash를 통
 * 스크립트가 실행 가능한지 확인합니다: `chmod +x ~/.claude/statusline.sh`
 * 스크립트가 stderr가 아닌 stdout으로 출력하는지 확인합니다
 * 스크립트를 수동으로 실행하여 출력을 생성하는지 확인합니다
+* Git Bash가 설치된 Windows에서는 `command` 경로의 백슬래시가 스크립트 실행 전에 이스케이프 문자로 처리될 가능성이 높습니다. 경로에서 슬래시를 사용합니다. [Windows 구성](#windows-configuration)을 참조합니다.
 * 설정에서 `disableAllHooks`가 `true`로 설정되어 있으면 상태 표시줄도 비활성화됩니다. 이 설정을 제거하거나 `false`로 설정하여 다시 활성화합니다.
 * `claude --debug`를 실행하여 세션의 첫 번째 상태 표시줄 호출에서 종료 코드 및 stderr를 기록합니다
 * Claude에 설정 파일을 읽고 `statusLine` 명령을 직접 실행하도록 요청하여 오류를 표시합니다
@@ -1050,7 +1055,7 @@ Windows에서 Claude Code는 Git Bash가 설치되어 있을 때 Git Bash를 통
 **스크립트 오류 또는 중단**
 
 * 0이 아닌 코드로 종료되거나 출력을 생성하지 않는 스크립트는 상태 표시줄을 공백으로 만듭니다
-* 느린 스크립트는 완료될 때까지 상태 표시줄이 업데이트되지 않도록 차단합니다. 오래된 출력을 피하려면 스크립트를 빠르게 유지합니다.
+* 느린 스크립트는 완료될 때까지 상태 표시줄이 업데이트되지 않도록 차단합니다. 오래된 출력을 피하려면 스크립트를 빠르게 유지합니다
 * 느린 스크립트가 실행 중인 동안 새 업데이트가 트리거되면 진행 중인 스크립트가 취소됩니다
 * 구성하기 전에 모의 입력으로 스크립트를 독립적으로 테스트합니다
 

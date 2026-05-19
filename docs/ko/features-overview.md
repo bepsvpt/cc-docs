@@ -271,9 +271,9 @@ Claude Code는 코드를 추론하는 모델과 파일 작업, 검색, 실행 �
 
     **로드되는 내용:** 신선한, 격리된 컨텍스트 포함:
 
-    * 시스템 프롬프트(캐시 효율성을 위해 부모와 공유)
+    * 에이전트 자신의 시스템 프롬프트, 전체 Claude Code 시스템 프롬프트가 아님
     * 에이전트의 `skills:` 필드에 나열된 skill의 전체 콘텐츠
-    * CLAUDE.md 및 git 상태(부모에서 상속)
+    * CLAUDE.md 및 git 상태, 내장 Explore 및 Plan 에이전트 [둘 다 생략](/ko/sub-agents#what-loads-at-startup) 제외
     * 리드 에이전트가 프롬프트에서 전달하는 모든 컨텍스트
 
     **컨텍스트 비용:** 주 세션에서 격리됨. Subagent는 대화 기록이나 호출된 skill을 상속하지 않습니다.

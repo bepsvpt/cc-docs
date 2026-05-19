@@ -283,12 +283,12 @@ Claude Code salta la convalida per l'ID del modello impostato in `ANTHROPIC_CUST
 
 È possibile utilizzare le seguenti variabili di ambiente, che devono essere **nomi di modelli** completi (o equivalenti per il provider API), per controllare i nomi dei modelli a cui gli alias si mappano.
 
-| Variabile di ambiente            | Descrizione                                                                                            |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL`   | Il modello da utilizzare per `opus`, o per `opusplan` quando Plan Mode è attivo.                       |
-| `ANTHROPIC_DEFAULT_SONNET_MODEL` | Il modello da utilizzare per `sonnet`, o per `opusplan` quando Plan Mode non è attivo.                 |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL`  | Il modello da utilizzare per `haiku`, o [funzionalità in background](/it/costs#background-token-usage) |
-| `CLAUDE_CODE_SUBAGENT_MODEL`     | Il modello da utilizzare per [subagents](/it/sub-agents)                                               |
+| Variabile di ambiente            | Descrizione                                                                                                                                                                                     |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL`   | Il modello da utilizzare per `opus`, o per `opusplan` quando Plan Mode è attivo.                                                                                                                |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` | Il modello da utilizzare per `sonnet`, o per `opusplan` quando Plan Mode non è attivo.                                                                                                          |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL`  | Il modello da utilizzare per `haiku`, o [funzionalità in background](/it/costs#background-token-usage)                                                                                          |
+| `CLAUDE_CODE_SUBAGENT_MODEL`     | Il modello da utilizzare per tutti i [subagents](/it/sub-agents#choose-a-model). Sostituisce sia il parametro `model` per invocazione che il frontmatter `model` della definizione del subagent |
 
 Nota: `ANTHROPIC_SMALL_FAST_MODEL` è deprecato a favore di `ANTHROPIC_DEFAULT_HAIKU_MODEL`.
 

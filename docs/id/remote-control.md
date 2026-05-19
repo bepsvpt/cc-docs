@@ -188,7 +188,7 @@ Jika notifikasi tidak tiba:
 * **Proses lokal harus tetap berjalan**: Remote Control berjalan sebagai proses lokal. Jika Anda menutup terminal, keluar dari VS Code, atau menghentikan proses `claude`, sesi berakhir.
 * **Pemadaman jaringan yang diperpanjang**: jika mesin Anda aktif tetapi tidak dapat menjangkau jaringan selama lebih dari kira-kira 10 menit, sesi habis waktu dan proses keluar. Jalankan `claude remote-control` lagi untuk memulai sesi baru.
 * **Ultraplan memutuskan Remote Control**: memulai sesi [ultraplan](/id/ultraplan) memutuskan sesi Remote Control aktif apa pun karena kedua fitur menempati antarmuka claude.ai/code dan hanya satu yang dapat terhubung pada satu waktu.
-* **Beberapa perintah hanya lokal**: perintah yang membuka pemilih interaktif di terminal, seperti `/mcp`, `/plugin`, atau `/resume`, hanya bekerja dari CLI lokal. Perintah yang menghasilkan output teks, termasuk `/compact`, `/clear`, `/context`, `/usage`, `/exit`, `/extra-usage`, `/recap`, dan `/reload-plugins`, bekerja dari mobile dan web.
+* **Beberapa perintah hanya lokal**: perintah yang membuka pemilih interaktif di terminal, seperti `/mcp`, `/plugin`, atau `/resume`, hanya bekerja dari CLI lokal. Perintah yang menghasilkan output teks, termasuk `/compact`, `/clear`, `/context`, `/usage`, `/exit`, `/usage-credits`, `/recap`, dan `/reload-plugins`, bekerja dari mobile dan web.
 
 ## Pemecahan Masalah
 

@@ -143,6 +143,8 @@ claude mcp remove github
 
 Panel `/mcp` menampilkan jumlah alat di sebelah setiap server yang terhubung dan menandai server yang mengiklankan kemampuan alat tetapi tidak mengekspos alat apa pun.
 
+Jika permintaan Anda memerlukan alat dari server yang masih terhubung di latar belakang, Claude menunggu server tersebut sebelum melanjutkan. Dengan [pencarian alat](#scale-with-mcp-tool-search) diaktifkan, yang merupakan default, penantian terjadi di dalam panggilan `ToolSearch`. Dalam konfigurasi tanpa pencarian alat, seperti Vertex AI, `ANTHROPIC_BASE_URL` khusus, atau `ENABLE_TOOL_SEARCH=false`, Claude menggunakan alat `WaitForMcpServers` sebagai gantinya.
+
 Nama server `workspace` dicadangkan untuk penggunaan internal. Jika konfigurasi Anda menentukan server dengan nama tersebut, Claude Code melewatinya saat waktu muat dan menampilkan peringatan yang meminta Anda untuk mengganti namanya.
 
 ### Pembaruan alat dinamis
@@ -1007,7 +1009,7 @@ Entri `.mcp.json` berikut mengecualikan satu server HTTP sambil membiarkan serve
 
 Field `alwaysLoad` tersedia di semua jenis server dan memerlukan Claude Code v2.1.121 atau lebih baru. Server MCP juga dapat menandai alat individual sebagai selalu-dimuat dengan menyertakan `"anthropic/alwaysLoad": true` dalam objek `_meta` alat, yang memiliki efek yang sama hanya untuk alat tersebut.
 
-Pengaturan `alwaysLoad: true` juga memblokir startup sampai server terhubung, dibatasi pada timeout koneksi standar 5 detik. Ini berlaku bahkan ketika [`MCP_CONNECTION_NONBLOCKING=1`](/id/env-vars) diatur, karena alat harus ada saat prompt pertama dibangun. Server lain masih terhubung di latar belakang ketika nonblocking diaktifkan.
+Pengaturan `alwaysLoad: true` juga memblokir startup sampai server terhubung, dibatasi pada timeout koneksi standar 5 detik. Ini berlaku bahkan ketika MCP startup adalah [non-blocking secara default](/id/env-vars), karena alat harus ada saat prompt pertama dibangun. Server lain terus terhubung di latar belakang.
 
 ## Gunakan prompt MCP sebagai perintah
 

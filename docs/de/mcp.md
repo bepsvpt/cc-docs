@@ -143,6 +143,8 @@ claude mcp remove github
 
 Das `/mcp`-Panel zeigt die Tool-Anzahl neben jedem verbundenen Server an und kennzeichnet Server, die die Tools-Funktion ankündigen, aber keine Tools bereitstellen.
 
+Wenn Ihre Anfrage Tools von einem Server benötigt, der sich noch im Hintergrund verbindet, wartet Claude auf diesen Server, bevor er fortfährt. Mit [Tool-Suche](#scale-with-mcp-tool-search) aktiviert, was die Standardeinstellung ist, erfolgt das Warten innerhalb des `ToolSearch`-Aufrufs. In Konfigurationen ohne Tool-Suche, wie Vertex AI, eine benutzerdefinierte `ANTHROPIC_BASE_URL` oder `ENABLE_TOOL_SEARCH=false`, verwendet Claude stattdessen das `WaitForMcpServers`-Tool.
+
 Der Servername `workspace` ist für interne Verwendung reserviert. Wenn Ihre Konfiguration einen Server mit diesem Namen definiert, überspringt Claude Code ihn beim Laden und zeigt eine Warnung an, die Sie auffordert, ihn umzubenennen.
 
 ### Dynamische Tool-Updates
@@ -1007,7 +1009,7 @@ Der folgende `.mcp.json`-Eintrag nimmt einen HTTP-Server von der Verschiebung au
 
 Das Feld `alwaysLoad` ist auf allen Server-Typen verfügbar und erfordert Claude Code v2.1.121 oder später. Ein MCP-Server kann auch einzelne Tools als immer geladen markieren, indem `"anthropic/alwaysLoad": true` im `_meta`-Objekt des Tools enthalten ist, was denselben Effekt nur für dieses Tool hat.
 
-Das Setzen von `alwaysLoad: true` blockiert auch den Start, bis sich der Server verbindet, begrenzt auf das Standard-Verbindungs-Timeout von 5 Sekunden. Dies gilt auch, wenn [`MCP_CONNECTION_NONBLOCKING=1`](/de/env-vars) gesetzt ist, da die Tools vorhanden sein müssen, wenn der erste Prompt erstellt wird. Andere Server verbinden sich weiterhin im Hintergrund, wenn Nonblocking aktiviert ist.
+Das Setzen von `alwaysLoad: true` blockiert auch den Start, bis sich der Server verbindet, begrenzt auf das Standard-Verbindungs-Timeout von 5 Sekunden. Dies gilt auch, obwohl MCP-Startup ansonsten [standardmäßig nicht blockierend ist](/de/env-vars), da die Tools vorhanden sein müssen, wenn der erste Prompt erstellt wird. Andere Server verbinden sich weiterhin im Hintergrund.
 
 ## MCP-Prompts als Befehle verwenden
 

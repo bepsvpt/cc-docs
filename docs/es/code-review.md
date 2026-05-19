@@ -29,7 +29,7 @@ Esta página cubre:
 
 Una vez que un administrador [habilita Code Review](#set-up-code-review) para su organización, las revisiones se activan cuando se abre un PR, en cada push, o cuando se solicita manualmente, según el comportamiento configurado del repositorio. Comentar `@claude review` [inicia revisiones en un PR](#manually-trigger-reviews) en cualquier modo.
 
-Cuando se ejecuta una revisión, múltiples agentes analizan el diff y el código circundante en paralelo en la infraestructura de Anthropic. Cada agente busca una clase diferente de problema, luego un paso de verificación verifica los candidatos contra el comportamiento real del código para filtrar falsos positivos. Los resultados se desduplican, se clasifican por severidad y se publican como comentarios en línea en las líneas específicas donde se encontraron problemas, con un resumen en el cuerpo de la revisión. Si no se encuentran problemas, Claude publica un breve comentario de confirmación en el PR.
+Cuando se ejecuta una revisión, múltiples agentes analizan el diff y el código circundante en paralelo en la infraestructura de Anthropic. Cada agente busca una clase diferente de problema, luego un paso de verificación verifica los candidatos contra el comportamiento real del código para filtrar falsos positivos. Los resultados se desduplican, se clasifican por severidad y se publican como comentarios en línea en las líneas específicas donde se encontraron problemas, con un resumen en el cuerpo de la revisión. Si no se encuentran problemas, Code Review actualiza la ejecución de verificación de GitHub para mostrar que no se detectaron problemas. Claude también puede publicar un breve comentario de confirmación en el PR.
 
 Las revisiones se escalan en costo con el tamaño y la complejidad del PR, completándose en un promedio de 20 minutos. Los administradores pueden monitorear la actividad de revisión y el gasto a través del [panel de análisis](#view-usage).
 
@@ -230,7 +230,7 @@ La tabla de repositorios en la configuración de administrador también muestra 
 
 ## Precios
 
-Code Review se factura según el uso de tokens. Cada revisión promedia \$15-25 en costo, escalando con el tamaño del PR, la complejidad de la base de código y cuántos problemas requieren verificación. El uso de Code Review se factura por separado a través de [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) y no cuenta contra el uso incluido de su plan.
+Code Review se factura según el uso de tokens. Cada revisión promedia \$15-25 en costo, escalando con el tamaño del PR, la complejidad de la base de código y cuántos problemas requieren verificación. El uso de Code Review se factura por separado a través de [créditos de uso](https://support.claude.com/es/articles/12429409-extra-usage-for-paid-claude-plans) y no cuenta contra el uso incluido de su plan.
 
 El disparador de revisión que elija afecta el costo total:
 

@@ -188,7 +188,7 @@ Claude 决定何时推送。它通常在长时间运行的任务完成或需要�
 * **本地进程必须保持运行**：Remote Control 作为本地进程运行。如果您关闭终端、退出 VS Code 或以其他方式停止 `claude` 进程，会话结束。
 * **扩展网络中断**：如果您的机器处于唤醒状态但无法在大约 10 分钟以上的时间内到达网络，会话超时并且进程退出。再次运行 `claude remote-control` 以启动新会话。
 * **Ultraplan 断开 Remote Control**：启动 [ultraplan](/zh-CN/ultraplan) 会话会断开任何活动的 Remote Control 会话，因为两个功能都占据 claude.ai/code 界面，一次只能连接一个。
-* **某些命令仅限本地**：在终端中打开交互式选择器的命令，例如 `/mcp`、`/plugin` 或 `/resume`，仅从本地 CLI 工作。生成文本输出的命令，包括 `/compact`、`/clear`、`/context`、`/usage`、`/exit`、`/extra-usage`、`/recap` 和 `/reload-plugins`，可从移动和网络工作。
+* **某些命令仅限本地**：在终端中打开交互式选择器的命令，例如 `/mcp`、`/plugin` 或 `/resume`，仅从本地 CLI 工作。生成文本输出的命令，包括 `/compact`、`/clear`、`/context`、`/usage`、`/exit`、`/usage-credits`、`/recap` 和 `/reload-plugins`，可从移动和网络工作。
 
 ## 故障排除
 

@@ -916,7 +916,11 @@ Chaque script vérifie si le fichier de cache est manquant ou plus ancien que 5 
 
 ### Configuration Windows
 
-Sur Windows, Claude Code exécute les commandes de barre de statut via Git Bash quand Git Bash est installé, ou via PowerShell quand Git Bash est absent. Pour exécuter un script PowerShell comme votre barre de statut, invoquez-le via `powershell` ; cela fonctionne à partir de l'un ou l'autre shell :
+Sur Windows, Claude Code exécute les commandes de barre de statut via Git Bash quand Git Bash est installé, ou via PowerShell quand Git Bash est absent.
+
+Git Bash traite les barres obliques inverses non échappées comme des caractères d'échappement, donc un chemin de style Windows comme `C:\Users\username\script.mjs` atteint le script runner avec ses séparateurs supprimés et la commande échoue sans erreur visible. Écrivez les chemins de fichiers dans la chaîne `command` avec des barres obliques avant, comme indiqué dans les exemples ci-dessous. Le raccourci `~` fonctionne également et se développe dans votre répertoire personnel Windows.
+
+Pour exécuter un script PowerShell comme votre barre de statut, invoquez-le via `powershell`. Cela fonctionne que Claude Code achemine la commande via Git Bash ou PowerShell :
 
 <CodeGroup>
   ```json settings.json theme={null}
@@ -999,6 +1003,7 @@ Les projets communautaires comme [ccstatusline](https://github.com/sirmalloc/ccs
 * Vérifiez que votre script est exécutable : `chmod +x ~/.claude/statusline.sh`
 * Vérifiez que votre script affiche sur stdout, pas stderr
 * Exécutez votre script manuellement pour vérifier qu'il produit une sortie
+* Sur Windows avec Git Bash installé, les barres obliques inverses dans le chemin `command` sont probablement consommées comme caractères d'échappement avant l'exécution du script. Utilisez des barres obliques avant dans le chemin. Voir [Configuration Windows](#windows-configuration).
 * Si `disableAllHooks` est défini sur `true` dans vos paramètres, la barre de statut est également désactivée. Supprimez ce paramètre ou définissez-le sur `false` pour le réactiver.
 * Exécutez `claude --debug` pour enregistrer le code de sortie et stderr de la première invocation de barre de statut dans une session
 * Demandez à Claude de lire votre fichier de paramètres et d'exécuter la commande `statusLine` directement pour afficher les erreurs

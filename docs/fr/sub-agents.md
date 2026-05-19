@@ -37,6 +37,8 @@ Claude Code inclut plusieurs sous-agents intégrés comme **Explore**, **Plan** 
 
 Claude Code inclut des sous-agents intégrés que Claude utilise automatiquement le cas échéant. Chacun hérite des permissions de la conversation parent avec des restrictions d'outils supplémentaires.
 
+Explore et Plan ignorent vos fichiers CLAUDE.md et l'état git de la session parent pour maintenir la recherche rapide et économique. Tous les autres sous-agents intégrés et [sous-agents personnalisés](#configure-subagents) chargent les deux. Pour la ventilation complète de ce qui atteint un sous-agent, consultez [ce qui se charge au démarrage](#what-loads-at-startup).
+
 <Tabs>
   <Tab title="Explore">
     Un agent rapide et en lecture seule optimisé pour la recherche et l'analyse de bases de code.
@@ -652,7 +654,19 @@ L'invite système du sous-agent remplace complètement l'invite système par dé
 
 Cela fonctionne avec les sous-agents intégrés et personnalisés, et le choix persiste lorsque vous reprenez la session.
 
-Pour un sous-agent fourni par un plugin, passez le nom délimité : `claude --agent <plugin-name>:<agent-name>`. Si le plugin place l'agent dans un sous-dossier de son répertoire `agents/`, incluez le sous-dossier dans le nom délimité, par exemple `claude --agent my-plugin:review:security`.
+Pour un sous-agent fourni par un plugin, vous pouvez passer simplement le nom de l'agent et Claude Code le trouvera :
+
+```bash theme={null}
+claude --agent security-reviewer
+```
+
+Si plusieurs plugins fournissent des agents avec le même nom, passez le nom délimité pour lever l'ambiguïté :
+
+```bash theme={null}
+claude --agent my-plugin:security-reviewer
+```
+
+Si le plugin place l'agent dans un sous-dossier de son répertoire `agents/`, incluez le sous-dossier dans le nom délimité, par exemple `claude --agent my-plugin:review:security`.
 
 Pour en faire la valeur par défaut pour chaque session dans un projet, définissez `agent` dans `.claude/settings.json` :
 
@@ -740,6 +754,22 @@ Pour une question rapide sur quelque chose déjà dans votre conversation, utili
 </Note>
 
 ### Gérer le contexte du sous-agent
+
+#### Ce qui se charge au démarrage
+
+Chaque sous-agent démarre avec une fenêtre de contexte fraîche et isolée. Il ne voit pas votre historique de conversation, les skills que vous avez déjà invoqués, ou les fichiers que Claude a déjà lus. Claude compose un message de délégation qui résume la tâche, et le sous-agent travaille à partir de là. L'exception est un [fork](#fork-the-current-conversation), qui hérite de la conversation parent au lieu de commencer à zéro.
+
+Le contexte initial d'un sous-agent non-fork contient :
+
+* **Invite système** : l'invite propre de l'agent plus les détails d'environnement que Claude Code ajoute, pas l'invite système complète de Claude Code. Les sous-agents personnalisés définissent la leur dans le [corps markdown](#write-subagent-files) ou le champ `prompt`. Les agents intégrés ont des invites prédéfinies.
+* **Message de tâche** : l'invite de délégation que Claude écrit lorsqu'il confie le travail.
+* **CLAUDE.md et mémoire** : chaque niveau de la [hiérarchie de mémoire](/fr/memory#how-claude-md-files-load) que la conversation principale charge, y compris `~/.claude/CLAUDE.md`, les règles du projet, `CLAUDE.local.md`, et les fichiers de politique gérés. Les agents Explore et Plan intégrés ignorent cela.
+* **Statut Git** : un instantané pris au début de la session parent. Absent lorsque le répertoire de travail n'est pas un référentiel Git ou lorsque [`includeGitInstructions`](/fr/settings#available-settings) est `false`. Explore et Plan l'ignorent de toute façon.
+* **Skills préchargés** : contenu complet de tout skill nommé dans le champ [`skills`](#preload-skills-into-subagents) de l'agent. Les agents intégrés ne préchargent pas les skills.
+
+Explore et Plan sont les seuls sous-agents qui omettent CLAUDE.md et le statut git. Il n'y a pas de champ frontmatter ou de paramètre par agent pour modifier les agents qui les ignorent.
+
+La conversation principale lit les résultats d'Explore et Plan avec le contexte CLAUDE.md complet, donc la plupart des règles n'ont pas besoin d'atteindre le sous-agent lui-même. Si une règle doit le faire, comme « ignorer le répertoire `vendor/` », reformulez-la dans l'invite que vous donnez à Claude lors de la délégation.
 
 #### Reprendre les sous-agents
 

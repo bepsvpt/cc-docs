@@ -732,7 +732,7 @@ Hook은 제어 터미널 없이 실행되므로 이스케이프 시퀀스를 `/d
 # Notification hook: Claude Code가 주의가 필요할 때 데스크톱을 ping합니다.
 input=$(cat)
 title="Claude Code'
-body=$(jq -r '.message // 'Needs your attention"' <<<"$input")
+body=$(jq -r '.message // 'Needs your attention'' <<<"$input")
 seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
 jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 ```

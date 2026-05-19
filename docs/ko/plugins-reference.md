@@ -20,7 +20,7 @@
 
 플러그인은 Claude Code에 skills를 추가하여 사용자나 Claude가 호출할 수 있는 `/name` 바로가기를 생성합니다.
 
-**위치**: 플러그인 루트의 `skills/` 또는 `commands/` 디렉토리
+**위치**: 플러그인 루트의 `skills/` 또는 `commands/` 디렉토리, 또는 플러그인 루트의 단일 `SKILL.md` 파일
 
 **파일 형식**: Skills는 `SKILL.md`가 있는 디렉토리이고, commands는 간단한 마크다운 파일입니다.
 
@@ -367,6 +367,7 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `experimental.monit
 ```json theme={null}
 {
   "name": "plugin-name",
+  "displayName": "Plugin Name",
   "version": "1.2.0",
   "description": "간단한 플러그인 설명",
   "author": {
@@ -408,16 +409,17 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `experimental.monit
 
 ### 메타데이터 필드
 
-| 필드            | 타입     | 설명                                                                                                                                                                                                               | 예시                                                                |
-| :------------ | :----- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
-| `$schema`     | string | 편집기 자동 완성 및 검증을 위한 JSON Schema URL. Claude Code는 로드 시 이 필드를 무시합니다.                                                                                                                                               | `"https://json.schemastore.org/claude-code-plugin-manifest.json"` |
-| `version`     | string | 선택사항. 의미 있는 버전. 이를 설정하면 플러그인이 해당 버전 문자열로 고정되므로 사용자는 버전을 올릴 때만 업데이트를 받습니다. 생략하면 Claude Code는 git 커밋 SHA로 폴백되므로 모든 커밋이 새 버전으로 취급됩니다. 마켓플레이스 항목에도 설정된 경우 `plugin.json`이 우선합니다. [버전 관리](#version-management)를 참조하세요. | `"2.1.0"`                                                         |
-| `description` | string | 플러그인 목적에 대한 간단한 설명                                                                                                                                                                                               | `"배포 자동화 도구"`                                                     |
-| `author`      | object | 작성자 정보                                                                                                                                                                                                           | `{"name": "Dev Team", "email": "dev@company.com"}`                |
-| `homepage`    | string | 문서 URL                                                                                                                                                                                                           | `"https://docs.example.com"`                                      |
-| `repository`  | string | 소스 코드 URL                                                                                                                                                                                                        | `"https://github.com/user/plugin"`                                |
-| `license`     | string | 라이선스 식별자                                                                                                                                                                                                         | `"MIT"`, `"Apache-2.0"`                                           |
-| `keywords`    | array  | 발견 태그                                                                                                                                                                                                            | `["deployment", "ci-cd"]`                                         |
+| 필드            | 타입     | 설명                                                                                                                                                                                                                  | 예시                                                                |
+| :------------ | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :---------------------------------------------------------------- |
+| `$schema`     | string | 편집기 자동 완성 및 검증을 위한 JSON Schema URL. Claude Code는 로드 시 이 필드를 무시합니다.                                                                                                                                                  | `"https://json.schemastore.org/claude-code-plugin-manifest.json"` |
+| `displayName` | string | {/* min-version: 2.1.143 */}`/plugin` 선택기 및 기타 UI 표면에 표시되는 사람이 읽을 수 있는 이름입니다. 생략하면 `name`으로 폴백됩니다. `name`과 달리 공백과 모든 대소문자를 포함할 수 있습니다. 네임스페이싱 또는 조회에 사용되지 않습니다. Claude Code v2.1.143 이상이 필요합니다.                     | `"Deployment Tools"`                                              |
+| `version`     | string | 선택사항. 의미 있는 버전입니다. 이를 설정하면 플러그인이 해당 버전 문자열로 고정되므로 사용자는 버전을 올릴 때만 업데이트를 받습니다. 생략하면 Claude Code는 git 커밋 SHA로 폴백되므로 모든 커밋이 새 버전으로 취급됩니다. 마켓플레이스 항목에도 설정된 경우 `plugin.json`이 우선합니다. [버전 관리](#version-management)를 참조하세요. | `"2.1.0"`                                                         |
+| `description` | string | 플러그인 목적에 대한 간단한 설명                                                                                                                                                                                                  | `"배포 자동화 도구"`                                                     |
+| `author`      | object | 작성자 정보                                                                                                                                                                                                              | `{"name": "Dev Team", "email": "dev@company.com"}`                |
+| `homepage`    | string | 문서 URL                                                                                                                                                                                                              | `"https://docs.example.com"`                                      |
+| `repository`  | string | 소스 코드 URL                                                                                                                                                                                                           | `"https://github.com/user/plugin"`                                |
+| `license`     | string | 라이선스 식별자                                                                                                                                                                                                            | `"MIT"`, `"Apache-2.0"`                                           |
+| `keywords`    | array  | 발견 태그                                                                                                                                                                                                               | `["deployment", "ci-cd"]`                                         |
 
 ### 컴포넌트 경로 필드
 
@@ -524,6 +526,8 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `experimental.monit
 * 사용자 정의 경로의 컴포넌트는 동일한 명명 및 네임스페이싱 규칙을 사용합니다.
 * 여러 경로를 배열로 지정할 수 있습니다.
 * skill 경로가 `SKILL.md`를 직접 포함하는 디렉토리를 가리킬 때 (예: 플러그인 루트를 가리키는 `"skills": ["./"]`), frontmatter의 `name` 필드가 skill의 호출 이름을 결정합니다. 이는 설치 디렉토리와 관계없이 안정적인 이름을 제공합니다. `name`이 frontmatter에 설정되지 않으면 디렉토리 basename이 폴백으로 사용됩니다.
+
+플러그인이 루트에 `SKILL.md`를 가지고 있고, `skills/` 서브디렉토리가 없으며, `skills` 매니페스트 필드가 없으면 Claude Code v2.1.142 이상에서 자동으로 단일 skill 플러그인으로 로드됩니다. 이 레이아웃에 대해 `plugin.json`에서 `"skills": ["./"]`를 설정할 필요가 없습니다. skill의 호출 이름은 위와 동일한 규칙을 따릅니다: frontmatter `name` 필드 또는 디렉토리 basename을 폴백으로 사용합니다.
 
 **경로 예시**:
 
@@ -814,7 +818,7 @@ claude plugin prune [options]
 
 ### plugin enable
 
-비활성화된 플러그인을 활성화합니다.
+비활성화된 플러그인을 활성화합니다. 플러그인이 [종속성](/ko/plugin-dependencies)을 선언하면 Claude Code는 동일한 범위에서 이들을 전이적으로 활성화하며, 종속성이 설치되지 않으면 명령어가 실패합니다.
 
 ```bash theme={null}
 claude plugin enable <plugin> [options]
@@ -833,7 +837,7 @@ claude plugin enable <plugin> [options]
 
 ### plugin disable
 
-플러그인을 제거하지 않고 비활성화합니다.
+플러그인을 제거하지 않고 비활성화합니다. 다른 활성화된 플러그인이 대상에 [종속되어](/ko/plugin-dependencies#enable-or-disable-a-plugin-with-dependencies) 있으면 실패합니다. 오류 메시지에는 먼저 모든 종속 플러그인을 비활성화하는 연쇄 명령어가 포함됩니다.
 
 ```bash theme={null}
 claude plugin disable <plugin> [options]
@@ -889,7 +893,7 @@ claude plugin list [options]
 
 ### plugin details
 
-플러그인의 컴포넌트 인벤토리 및 예상 토큰 비용을 표시합니다. 출력은 플러그인이 기여하는 모든 컴포넌트를 Skills(스킬 및 명령어), Agents, Hooks 및 MCP 서버로 그룹화하여 나열하며, 각 세션에 추가되는 토큰 수의 추정치를 함께 표시합니다.
+플러그인의 컴포넌트 인벤토리 및 예상 토큰 비용을 표시합니다. 출력은 플러그인이 기여하는 모든 컴포넌트를 Skills, Agents, Hooks, MCP 서버 및 LSP 서버로 그룹화하여 나열하며, 각 세션에 추가되는 토큰 수의 추정치를 함께 표시합니다. Skills 그룹에는 `skills/` 및 `commands/` 항목이 모두 포함됩니다.
 
 ```bash theme={null}
 claude plugin details <name>
@@ -922,6 +926,7 @@ Component inventory
   Agents (0)
   Hooks (1)  (harness-only — no model context cost)
   MCP servers (0)
+  LSP servers (0)
 
 Projected token cost
   Always-on:   ~180 tok   added to every session

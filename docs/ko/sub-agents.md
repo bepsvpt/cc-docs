@@ -37,6 +37,8 @@ Claude Code에는 **Explore**, **Plan**, **general-purpose**와 같은 여러 �
 
 Claude Code에는 Claude가 적절할 때 자동으로 사용하는 내장 subagent가 포함되어 있습니다. 각각은 추가 도구 제한이 있는 부모 대화의 권한을 상속합니다.
 
+Explore와 Plan은 연구를 빠르고 저렴하게 유지하기 위해 CLAUDE.md 파일과 부모 세션의 git 상태를 건너뜁니다. 다른 모든 내장 및 [사용자 정의 subagent](#configure-subagents)는 둘 다 로드합니다. subagent에 도달하는 항목의 전체 분석은 [startup에서 로드되는 항목](#what-loads-at-startup)을 참조하십시오.
+
 <Tabs>
   <Tab title="Explore">
     코드베이스 검색 및 분석에 최적화된 빠른 읽기 전용 에이전트입니다.
@@ -652,7 +654,19 @@ Subagent의 시스템 프롬프트는 [`--system-prompt`](/ko/cli-reference)와 
 
 이것은 내장 및 사용자 정의 subagent에서 작동하며, 세션을 재개할 때 선택이 유지됩니다.
 
-플러그인 제공 subagent의 경우 범위가 지정된 이름을 전달합니다: `claude --agent <plugin-name>:<agent-name>`. 플러그인이 에이전트를 `agents/` 디렉토리의 하위 폴더에 배치하면 범위가 지정된 이름에 하위 폴더를 포함합니다. 예를 들어 `claude --agent my-plugin:review:security`입니다.
+플러그인 제공 subagent의 경우 에이전트 이름만 전달하면 Claude Code가 찾을 수 있습니다:
+
+```bash theme={null}
+claude --agent security-reviewer
+```
+
+여러 플러그인이 동일한 이름의 에이전트를 제공하는 경우 범위가 지정된 이름을 전달하여 구분합니다:
+
+```bash theme={null}
+claude --agent my-plugin:security-reviewer
+```
+
+플러그인이 에이전트를 `agents/` 디렉토리의 하위 폴더에 배치하면 범위가 지정된 이름에 하위 폴더를 포함합니다. 예를 들어 `claude --agent my-plugin:review:security`입니다.
 
 프로젝트의 모든 세션에 대한 기본값으로 만들려면 `.claude/settings.json`에서 `agent`를 설정합니다:
 
@@ -740,6 +754,22 @@ Use the code-reviewer subagent to find performance issues, then use the optimize
 </Note>
 
 ### Subagent 컨텍스트 관리
+
+#### 시작 시 로드되는 항목
+
+각 subagent는 새로운 격리된 컨텍스트 윈도우로 시작합니다. 대화 기록, 이미 호출한 skills, 또는 Claude가 이미 읽은 파일을 보지 못합니다. Claude는 작업을 요약하는 위임 메시지를 작성하고 subagent는 여기서부터 작동합니다. 예외는 [fork](#fork-the-current-conversation)이며, 이는 새로 시작하는 대신 부모 대화를 상속합니다.
+
+비fork subagent의 초기 컨텍스트에는 다음이 포함됩니다:
+
+* **시스템 프롬프트**: 에이전트 자신의 프롬프트 및 Claude Code가 추가하는 환경 세부 정보이며, 전체 Claude Code 시스템 프롬프트는 아닙니다. 사용자 정의 subagent는 [markdown body](#write-subagent-files) 또는 `prompt` 필드에서 정의합니다. 내장 에이전트는 미리 정의된 프롬프트를 가집니다.
+* **작업 메시지**: Claude가 작업을 넘길 때 작성하는 위임 프롬프트입니다.
+* **CLAUDE.md 및 메모리**: 주 대화가 로드하는 [메모리 계층 구조](/ko/memory#how-claude-md-files-load)의 모든 수준이며, `~/.claude/CLAUDE.md`, 프로젝트 규칙, `CLAUDE.local.md`, 및 관리되는 정책 파일을 포함합니다. 내장 Explore 및 Plan 에이전트는 이를 건너뜁니다.
+* **Git 상태**: 부모 세션 시작 시 촬영한 스냅샷입니다. 작업 디렉토리가 Git 저장소가 아니거나 [`includeGitInstructions`](/ko/settings#available-settings)가 `false`일 때 없습니다. Explore 및 Plan은 관계없이 이를 건너뜁니다.
+* **미리 로드된 skills**: 에이전트의 [`skills` 필드](#preload-skills-into-subagents)에 명명된 모든 skill의 전체 내용입니다. 내장 에이전트는 skills를 미리 로드하지 않습니다.
+
+Explore 및 Plan은 CLAUDE.md 및 git 상태를 생략하는 유일한 subagent입니다. 어떤 에이전트가 이를 건너뛸지 변경하는 frontmatter 필드 또는 에이전트별 설정이 없습니다.
+
+주 대화는 전체 CLAUDE.md 컨텍스트로 Explore 및 Plan 결과를 읽으므로 대부분의 규칙이 subagent 자체에 도달할 필요가 없습니다. 규칙이 필요한 경우 (예: "`vendor/` 디렉토리 무시"), subagent에 위임할 때 Claude에 제공하는 프롬프트에서 이를 다시 명시합니다.
 
 #### Subagent 재개
 

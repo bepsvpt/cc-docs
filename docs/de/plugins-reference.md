@@ -20,7 +20,7 @@ Ein **Plugin** ist ein eigenständiges Verzeichnis von Komponenten, das Claude C
 
 Plugins fügen Skills zu Claude Code hinzu und erstellen `/name` Verknüpfungen, die Sie oder Claude aufrufen können.
 
-**Speicherort**: `skills/` oder `commands/` Verzeichnis im Plugin-Root
+**Speicherort**: `skills/` oder `commands/` Verzeichnis im Plugin-Root, oder eine einzelne `SKILL.md` Datei im Plugin-Root
 
 **Dateiformat**: Skills sind Verzeichnisse mit `SKILL.md`; Befehle sind einfache Markdown-Dateien
 
@@ -367,6 +367,7 @@ Das Manifest ist optional. Wenn es weggelassen wird, erkennt Claude Code Kompone
 ```json theme={null}
 {
   "name": "plugin-name",
+  "displayName": "Plugin Name",
   "version": "1.2.0",
   "description": "Brief plugin description",
   "author": {
@@ -411,6 +412,7 @@ Dieser Name wird für die Namensgebung von Komponenten verwendet. Beispielsweise
 | Feld          | Typ    | Beschreibung                                                                                                                                                                                                                                                                                                                                                                                                      | Beispiel                                                          |
 | :------------ | :----- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
 | `$schema`     | string | JSON-Schema-URL für Editor-Autovervollständigung und Validierung. Claude Code ignoriert dieses Feld beim Laden.                                                                                                                                                                                                                                                                                                   | `"https://json.schemastore.org/claude-code-plugin-manifest.json"` |
+| `displayName` | string | {/* min-version: 2.1.143 */}Benutzerfreundlicher Name, der in der `/plugin` Auswahl und anderen UI-Oberflächen angezeigt wird. Fällt auf `name` zurück, wenn weggelassen. Im Gegensatz zu `name` kann es Leerzeichen und beliebige Groß-/Kleinschreibung enthalten. Wird nicht für Namensgebung oder Suche verwendet. Erfordert Claude Code v2.1.143 oder später.                                                 | `"Deployment Tools"`                                              |
 | `version`     | string | Optional. Semantische Version. Das Setzen dieser Version fixiert das Plugin auf diese Versionsnummer, sodass Benutzer nur Updates erhalten, wenn Sie diese erhöhen. Wenn weggelassen, greift Claude Code auf den Git-Commit-SHA zurück, sodass jeder Commit als neue Version behandelt wird. Wenn auch im Marktplatz-Eintrag gesetzt, hat `plugin.json` Vorrang. Siehe [Versionsverwaltung](#version-management). | `"2.1.0"`                                                         |
 | `description` | string | Kurze Erklärung des Plugin-Zwecks                                                                                                                                                                                                                                                                                                                                                                                 | `"Deployment automation tools"`                                   |
 | `author`      | object | Autoreninformationen                                                                                                                                                                                                                                                                                                                                                                                              | `{"name": "Dev Team", "email": "dev@company.com"}`                |
@@ -524,6 +526,8 @@ Für alle Pfadfelder:
 * Komponenten aus benutzerdefinierten Pfaden verwenden die gleichen Benennungs- und Namensgebungsregeln
 * Mehrere Pfade können als Arrays angegeben werden
 * Wenn ein Skill-Pfad auf ein Verzeichnis verweist, das direkt ein `SKILL.md` enthält, beispielsweise `"skills": ["./"]` verweist auf den Plugin-Root, bestimmt das Frontmatter-Feld `name` in `SKILL.md` den Aufrufen-Namen des Skills. Dies gibt einen stabilen Namen unabhängig vom Installationsverzeichnis. Wenn `name` nicht im Frontmatter gesetzt ist, wird der Verzeichnis-Basename als Fallback verwendet.
+
+Ein Plugin, das ein `SKILL.md` in seinem Root hat, kein `skills/` Unterverzeichnis und kein `skills` Manifest-Feld hat, wird automatisch als Single-Skill-Plugin in Claude Code v2.1.142 und später geladen. Sie müssen `"skills": ["./"]` in `plugin.json` für dieses Layout nicht setzen. Der Aufrufen-Name des Skills folgt der gleichen Regel wie oben: das Frontmatter-Feld `name` oder der Verzeichnis-Basename als Fallback.
 
 **Pfad-Beispiele**:
 
@@ -780,7 +784,7 @@ claude plugin uninstall <plugin> [options]
 | `-s, --scope <scope>` | Deinstallieren aus Bereich: `user`, `project` oder `local`                                                                        | `user`   |
 | `--keep-data`         | Bewahren Sie das [persistente Datenverzeichnis](#persistent-data-directory) des Plugins                                           |          |
 | `--prune`             | Entfernen Sie auch automatisch installierte Abhängigkeiten, die kein anderes Plugin benötigt. Siehe [plugin prune](#plugin-prune) |          |
-| `-y, --yes`           | Überspringen Sie die `--prune` Bestätigungsaufforderung. Erforderlich, wenn stdin kein TTY ist                                    |          |
+| `-y, --yes`           | Überspringen Sie die `--prune` Bestätigungsaufforderung. Erforderlich, wenn stdin oder stdout kein TTY ist                        |          |
 | `-h, --help`          | Hilfe für Befehl anzeigen                                                                                                         |          |
 
 **Aliase:** `remove`, `rm`
@@ -797,12 +801,12 @@ claude plugin prune [options]
 
 **Optionen:**
 
-| Option                | Beschreibung                                                                         | Standard |
-| :-------------------- | :----------------------------------------------------------------------------------- | :------- |
-| `-s, --scope <scope>` | Bereinigen im Bereich: `user`, `project` oder `local`                                | `user`   |
-| `--dry-run`           | Listet auf, was entfernt würde, ohne etwas zu entfernen                              |          |
-| `-y, --yes`           | Überspringen Sie die Bestätigungsaufforderung. Erforderlich, wenn stdin kein TTY ist |          |
-| `-h, --help`          | Hilfe für Befehl anzeigen                                                            |          |
+| Option                | Beschreibung                                                                                     | Standard |
+| :-------------------- | :----------------------------------------------------------------------------------------------- | :------- |
+| `-s, --scope <scope>` | Bereinigen im Bereich: `user`, `project` oder `local`                                            | `user`   |
+| `--dry-run`           | Listet auf, was entfernt würde, ohne etwas zu entfernen                                          |          |
+| `-y, --yes`           | Überspringen Sie die Bestätigungsaufforderung. Erforderlich, wenn stdin oder stdout kein TTY ist |          |
+| `-h, --help`          | Hilfe für Befehl anzeigen                                                                        |          |
 
 **Aliase:** `autoremove`
 
@@ -814,7 +818,7 @@ Der Befehl listet verwaiste Abhängigkeiten auf und fragt vor dem Entfernen um B
 
 ### plugin enable
 
-Aktivieren Sie ein deaktiviertes Plugin.
+Aktivieren Sie ein deaktiviertes Plugin. Wenn das Plugin [Abhängigkeiten](/de/plugin-dependencies) deklariert, aktiviert Claude Code diese transitiv im gleichen Bereich, und der Befehl schlägt fehl, wenn eine Abhängigkeit nicht installiert ist.
 
 ```bash theme={null}
 claude plugin enable <plugin> [options]
@@ -833,7 +837,7 @@ claude plugin enable <plugin> [options]
 
 ### plugin disable
 
-Deaktivieren Sie ein Plugin, ohne es zu deinstallieren.
+Deaktivieren Sie ein Plugin, ohne es zu deinstallieren. Schlägt fehl, wenn ein anderes aktiviertes Plugin [von](/de/plugin-dependencies#enable-or-disable-a-plugin-with-dependencies) dem Ziel abhängt. Die Fehlermeldung enthält einen verketteten Befehl, der zuerst alle abhängigen Plugins deaktiviert.
 
 ```bash theme={null}
 claude plugin disable <plugin> [options]
@@ -889,7 +893,7 @@ claude plugin list [options]
 
 ### plugin details
 
-Zeigen Sie das Komponenten-Inventar eines Plugins und die geschätzten Token-Kosten an. Die Ausgabe listet alle Komponenten auf, die das Plugin bereitstellt, gruppiert als Skills (Fähigkeiten und Befehle), Agents, Hooks und MCP-Server, zusammen mit einer Schätzung, wie viele Token es jeder Sitzung hinzufügt.
+Zeigen Sie das Komponenten-Inventar eines Plugins und die geschätzten Token-Kosten an. Die Ausgabe listet alle Komponenten auf, die das Plugin bereitstellt, gruppiert als Skills, Agents, Hooks, MCP-Server und LSP-Server, zusammen mit einer Schätzung, wie viele Token es jeder Sitzung hinzufügt. Die Skills-Gruppe umfasst sowohl `skills/` als auch `commands/` Einträge.
 
 ```bash theme={null}
 claude plugin details <name>
@@ -922,6 +926,7 @@ Component inventory
   Agents (0)
   Hooks (1)  (harness-only — no model context cost)
   MCP servers (0)
+  LSP servers (0)
 
 Projected token cost
   Always-on:   ~180 tok   added to every session

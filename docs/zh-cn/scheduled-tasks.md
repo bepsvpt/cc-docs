@@ -12,7 +12,7 @@
 
 计划任务让 Claude 按间隔自动重新运行提示词。使用它们来轮询部署、监督 PR、检查长时间运行的构建，或在会话中稍后提醒自己做某事。要对事件进行实时反应而不是轮询，请参阅 [Channels](/zh-CN/channels)：您的 CI 可以直接将失败推送到会话中。要保持会话工作转向转向直到满足条件而不是按间隔，请参阅 [`/goal`](/zh-CN/goal)。
 
-任务是会话范围的：它们存在于当前对话中，当您启动新对话时就会停止。使用 `--resume` 或 `--continue` 恢复会带回任何尚未[过期](#seven-day-expiry)的任务：在过去 7 天内创建的重复任务，或计划时间尚未到达的一次性任务。对于独立于任何会话而存在的调度，请使用 [Routines](/zh-CN/routines)、[Desktop 计划任务](/zh-CN/desktop-scheduled-tasks) 或 [GitHub Actions](/zh-CN/github-actions)。
+任务是会话范围的：它们存在于当前对话中，当您启动新对话时就会停止。使用 `--resume` 或 `--continue` 恢复会带回任何尚未[过期](#seven-day-expiry)的任务：在过去 7 天内创建的重复任务，或计划时间尚未到达的一次性任务。对于独立于任何会话而存在的调度，请使用 [Routines](/zh-CN/routines) 在 Anthropic 管理的基础设施上创建例程、设置 [Desktop 计划任务](/zh-CN/desktop-scheduled-tasks)，或使用 [GitHub Actions](/zh-CN/github-actions)。
 
 ## 比较调度选项
 

@@ -29,9 +29,9 @@ Code Review 分析您的 GitHub pull request，並在發現問題的程式碼行
 
 一旦管理員為您的組織[啟用 Code Review](#set-up-code-review)，審查將在 PR 開啟時、每次推送時或手動請求時觸發，具體取決於存儲庫的配置行為。在任何模式下，評論 `@claude review` [在 PR 上啟動審查](#manually-trigger-reviews)。
 
-當審查運行時，多個代理在 Anthropic 基礎設施上並行分析差異和周圍程式碼。每個代理尋找不同類別的問題，然後驗證步驟檢查候選項目是否符合實際程式碼行為，以過濾掉誤報。結果被去重、按嚴重程度排名，並作為內聯評論發佈在發現問題的特定行上，並在審查正文中提供摘要。如果未發現問題，Claude 會在 PR 上發佈簡短的確認評論。
+當審查運行時，多個代理在 Anthropic 基礎設施上並行分析差異和周圍程式碼。每個代理尋找不同類別的問題，然後驗證步驟檢查候選項目是否符合實際程式碼行為，以過濾掉誤報。結果被去重、按嚴重程度排名，並作為內聯評論發佈在發現問題的特定行上，並在審查正文中提供摘要。如果未發現問題，Code Review 會更新 GitHub 檢查運行以顯示未檢測到任何問題。Claude 也可能在 PR 上發佈簡短的確認評論。
 
-審查成本隨著 PR 大小和複雜性而擴展，平均在 20 分鐘內完成。管理員可以通過 [分析儀表板](#view-usage) 監控審查活動和支出。
+審查成本隨著 PR 大小和複雜性而擴展，平均在 20 分鐘內完成。管理員可以通過[分析儀表板](#view-usage)監控審查活動和支出。
 
 ### 嚴重程度級別
 
@@ -49,7 +49,7 @@ Code Review 分析您的 GitHub pull request，並在發現問題的程式碼行
 
 每個來自 Claude 的審查評論都已附加 👍 和 👎，因此兩個按鈕都會在 GitHub UI 中出現，以便一鍵評分。如果發現有用，請點擊 👍；如果發現錯誤或嘈雜，請點擊 👎。Anthropic 在 PR 合併後收集反應計數，並使用它們來調整審查者。反應不會觸發重新審查或更改 PR 上的任何內容。
 
-回覆內聯評論不會提示 Claude 回應或更新 PR。要對發現採取行動，請修復程式碼並推送。如果 PR 訂閱了推送觸發的審查，下一次運行將在問題修復時解決線程。要在不推送的情況下請求新審查，請作為 [頂級 PR 評論](#manually-trigger-reviews) 評論 `@claude review once`。
+回覆內聯評論不會提示 Claude 回應或更新 PR。要對發現採取行動，請修復程式碼並推送。如果 PR 訂閱了推送觸發的審查，下一次運行將在問題修復時解決線程。要在不推送的情況下請求新審查，請作為[頂級 PR 評論](#manually-trigger-reviews)評論 `@claude review once`。
 
 ### 檢查運行輸出
 
@@ -73,7 +73,7 @@ gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \
 
 ### Code Review 檢查的內容
 
-默認情況下，Code Review 專注於正確性：會破壞生產的錯誤，而不是格式設置偏好或缺失的測試覆蓋。您可以通過 [添加指導文件](#customize-reviews) 到您的存儲庫來擴展它檢查的內容。
+默認情況下，Code Review 專注於正確性：會破壞生產的錯誤，而不是格式設置偏好或缺失的測試覆蓋。您可以通過[添加指導文件](#customize-reviews)到您的存儲庫來擴展它檢查的內容。
 
 ## 設定 Code Review
 
@@ -225,7 +225,7 @@ Claude 在目錄層次結構的每個級別讀取 `CLAUDE.md` 文件，因此子
 
 ## 定價
 
-Code Review 根據令牌使用情況計費。每次審查平均花費 \$15-25，隨著 PR 大小、程式碼庫複雜性和需要驗證的問題數量而擴展。Code Review 使用通過 [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) 單獨計費，不計入您計劃的包含使用情況。
+Code Review 根據令牌使用情況計費。每次審查平均花費 \$15-25，隨著 PR 大小、程式碼庫複雜性和需要驗證的問題數量而擴展。Code Review 使用通過 [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) 單獨計費，不計入您計劃的包含使用情況。
 
 您選擇的審查觸發器影響總成本：
 

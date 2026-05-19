@@ -37,6 +37,8 @@ Claude Code include diversi subagent integrati come **Explore**, **Plan** e **ge
 
 Claude Code include subagent integrati che Claude utilizza automaticamente quando appropriato. Ognuno eredita le autorizzazioni della conversazione principale con restrizioni di strumenti aggiuntive.
 
+Explore e Plan saltano i vostri file CLAUDE.md e lo stato git della sessione principale per mantenere la ricerca veloce ed economica. Ogni altro subagent integrato e [subagent personalizzato](#configure-subagents) carica entrambi. Per la suddivisione completa di ciò che raggiunge un subagent, consultate [cosa si carica all'avvio](#what-loads-at-startup).
+
 <Tabs>
   <Tab title="Explore">
     Un agente veloce e di sola lettura ottimizzato per la ricerca e l'analisi delle basi di codice.
@@ -80,7 +82,7 @@ Claude Code include subagent integrati che Claude utilizza automaticamente quand
   </Tab>
 </Tabs>
 
-Oltre a questi subagent integrati, può creare i suoi con prompt personalizzati, restrizioni di strumenti, modalità di autorizzazione, hooks e skills. Le sezioni seguenti mostrano come iniziare e personalizzare i subagent.
+Oltre a questi subagent integrati, potete creare i vostri con prompt personalizzati, restrizioni di strumenti, modalità di autorizzazione, hooks e skills. Le sezioni seguenti mostrano come iniziare e personalizzare i subagent.
 
 ## Quickstart: crea il suo primo subagent
 
@@ -652,7 +654,19 @@ Il prompt di sistema del subagent sostituisce completamente il prompt di sistema
 
 Questo funziona con i subagent integrati e personalizzati, e la scelta persiste quando riprende la sessione.
 
-Per un subagent fornito da un plugin, passi il nome con ambito: `claude --agent <plugin-name>:<agent-name>`. Se il plugin posiziona l'agente in una sottocartella della sua directory `agents/`, includa la sottocartella nel nome con ambito, ad esempio `claude --agent my-plugin:review:security`.
+Per un subagent fornito da un plugin, può passare solo il nome dell'agente e Claude Code lo troverà:
+
+```bash theme={null}
+claude --agent security-reviewer
+```
+
+Se più plugin forniscono agenti con lo stesso nome, passi il nome con ambito per disambiguare:
+
+```bash theme={null}
+claude --agent my-plugin:security-reviewer
+```
+
+Se il plugin posiziona l'agente in una sottocartella della sua directory `agents/`, includa la sottocartella nel nome con ambito, ad esempio `claude --agent my-plugin:review:security`.
 
 Per renderlo il predefinito per ogni sessione in un progetto, imposti `agent` in `.claude/settings.json`:
 
@@ -740,6 +754,22 @@ Per una domanda rapida su qualcosa già nella sua conversazione, usi [`/btw`](/i
 </Note>
 
 ### Gestisca il contesto del subagent
+
+#### Cosa si carica all'avvio
+
+Ogni subagent inizia con una finestra di contesto fresca e isolata. Non vede la cronologia della sua conversazione, le skills che ha già invocato, o i file che Claude ha già letto. Claude compone un messaggio di delegazione che riassume l'attività, e il subagent lavora da lì. L'eccezione è una [fork](#fork-the-current-conversation), che eredita la conversazione genitore invece di iniziare da zero.
+
+Il contesto iniziale di un subagent non-fork contiene:
+
+* **System prompt**: il prompt dell'agente stesso più i dettagli dell'ambiente che Claude Code aggiunge, non il prompt di sistema completo di Claude Code. I subagent personalizzati definiscono il loro nel [corpo markdown](#write-subagent-files) o nel campo `prompt`. Gli agenti integrati hanno prompt predefiniti.
+* **Task message**: il prompt di delegazione che Claude scrive quando consegna il lavoro.
+* **CLAUDE.md e memory**: ogni livello della [gerarchia di memoria](/it/memory#how-claude-md-files-load) che la conversazione principale carica, inclusi `~/.claude/CLAUDE.md`, regole del progetto, `CLAUDE.local.md` e file di policy gestiti. Gli agenti Explore e Plan integrati saltano questo.
+* **Git status**: uno snapshot preso all'inizio della sessione genitore. Assente quando la directory di lavoro non è un repository Git o quando [`includeGitInstructions`](/it/settings#available-settings) è `false`. Explore e Plan lo saltano comunque.
+* **Preloaded skills**: contenuto completo di qualsiasi skill denominata nel campo [`skills`](#preload-skills-into-subagents) dell'agente. Gli agenti integrati non precaricano skills.
+
+Explore e Plan sono gli unici subagent che omettono CLAUDE.md e git status. Non c'è un campo frontmatter o un'impostazione per-agente per cambiare quali agenti li saltano.
+
+La conversazione principale legge i risultati di Explore e Plan con il contesto completo di CLAUDE.md, quindi la maggior parte delle regole non ha bisogno di raggiungere il subagent stesso. Se una regola deve, come "ignora la directory `vendor/`", la rienunci nel prompt che dà a Claude quando delega.
 
 #### Riprenda i subagent
 

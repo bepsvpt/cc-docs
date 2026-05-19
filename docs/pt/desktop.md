@@ -2,7 +2,7 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Use Claude Code Desktop
+# Aplicativo Desktop
 
 > Aproveite ao máximo o Claude Code Desktop: sessões paralelas com isolamento Git, layout de painel com arrastar e soltar, terminal integrado e editor de arquivo, chats laterais, computer use, Dispatch sessions do seu telefone, revisão visual de diff, visualizações de aplicativos, monitoramento de PR, conectores e configuração corporativa.
 
@@ -707,6 +707,7 @@ Os seguintes recursos estão disponíveis apenas no CLI ou extensão VS Code:
 * **Linux**: o aplicativo desktop está disponível apenas em macOS e Windows. No Linux, use o [CLI](/pt/quickstart).
 * **Sugestões de código inline**: Desktop não fornece sugestões no estilo autocompletar. Funciona através de prompts conversacionais e alterações de código explícitas.
 * **Equipes de agentes**: orquestração multi-agente está disponível via [CLI](/pt/agent-teams) e [Agent SDK](/pt/headless), não em Desktop.
+* **Comandos terminal-dialog**: comandos integrados que abrem um painel interativo no terminal, como `/permissions`, `/config`, `/agents` e `/doctor`, não estão disponíveis na aba Code e respondem com `isn't available in this environment`. Edite [arquivos de configuração](/pt/settings) diretamente para gerenciar regras de permissão e configuração, ou execute o comando a partir do CLI autônomo.
 
 ## Solução de problemas
 

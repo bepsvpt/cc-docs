@@ -2,7 +2,7 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# 使用 Claude Code Desktop
+# Desktop application
 
 > 充分利用 Claude Code Desktop：使用 Git 隔离的并行会话、拖放窗格布局、集成终端和文件编辑器、侧边聊天、计算机使用、从手机 Dispatch 会话、可视化 diff 审查、应用预览、PR 监控、连接器和企业配置。
 
@@ -707,6 +707,7 @@ Desktop 和 CLI 读取相同的配置文件，因此你的设置会转移：
 * **Linux**：桌面应用仅在 macOS 和 Windows 上可用。在 Linux 上，使用 [CLI](/zh-CN/quickstart)。
 * **内联代码建议**：Desktop 不提供自动完成风格的建议。它通过对话提示和显式代码更改工作。
 * **Agent teams**：多 agent 编排通过 [CLI](/zh-CN/agent-teams) 和 [Agent SDK](/zh-CN/headless) 可用，不在 Desktop 中。
+* **Terminal-dialog 命令**：在终端中打开交互式面板的内置命令，例如 `/permissions`、`/config`、`/agents` 和 `/doctor`，在 Code 选项卡中不可用，并回复 `isn't available in this environment`。直接编辑[设置文件](/zh-CN/settings)来管理权限规则和配置，或从独立 CLI 运行命令。
 
 ## 故障排除
 

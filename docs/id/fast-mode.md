@@ -12,7 +12,7 @@
 
 Mode cepat adalah konfigurasi kecepatan tinggi untuk Claude Opus, membuat model 2,5x lebih cepat dengan biaya per token yang lebih tinggi. Aktifkan dengan `/fast` ketika Anda membutuhkan kecepatan untuk pekerjaan interaktif seperti iterasi cepat atau debugging langsung, dan nonaktifkan ketika biaya lebih penting daripada latensi.
 
-Mode cepat bukan model yang berbeda. Mode ini menggunakan Claude Opus dengan konfigurasi API berbeda yang memprioritaskan kecepatan daripada efisiensi biaya. Anda mendapatkan kualitas dan kemampuan yang identik, hanya respons yang lebih cepat. Mode cepat didukung pada Opus 4.6 dan Opus 4.7. Mode ini tidak tersedia pada Sonnet, Haiku, atau model lainnya.
+Mode cepat bukan model yang berbeda. Mode ini menggunakan Claude Opus dengan konfigurasi API berbeda yang memprioritaskan kecepatan daripada efisiensi biaya. Anda mendapatkan kualitas dan kemampuan yang identik dengan respons yang lebih cepat. Mode cepat didukung pada Opus 4.7 dan Opus 4.6. Mode ini tidak tersedia pada Sonnet, Haiku, atau model lainnya.
 
 <Note>
   Mode cepat memerlukan Claude Code v2.1.36 atau lebih baru. Periksa versi Anda dengan `claude --version`.
@@ -21,12 +21,11 @@ Mode cepat bukan model yang berbeda. Mode ini menggunakan Claude Opus dengan kon
 Yang perlu diketahui:
 
 * Gunakan `/fast` untuk mengaktifkan mode cepat di Claude Code CLI. Juga tersedia melalui `/fast` di Ekstensi Claude Code VS Code.
-* Secara default, `/fast` berjalan pada Opus 4.6. Untuk menjalankan mode cepat pada Opus 4.7 sebagai gantinya, atur variabel lingkungan [`CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`](#use-fast-mode-on-opus-4-7).
-* Harga mode cepat adalah \$30/150 MTok pada Opus 4.6 dan Opus 4.7.
+* Harga mode cepat adalah $30/$150 MTok pada Opus 4.7 dan Opus 4.6.
 * Tersedia untuk semua pengguna Claude Code pada paket berlangganan (Pro/Max/Team/Enterprise) dan Claude Console.
-* Untuk pengguna Claude Code pada paket berlangganan (Pro/Max/Team/Enterprise), mode cepat tersedia hanya melalui penggunaan tambahan dan tidak termasuk dalam batas laju penggunaan berlangganan.
+* Untuk pengguna Claude Code pada paket berlangganan (Pro/Max/Team/Enterprise), mode cepat tersedia hanya melalui penggunaan kredit dan tidak termasuk dalam batas laju penggunaan berlangganan.
 
-Halaman ini mencakup cara [mengaktifkan mode cepat](#toggle-fast-mode), [menggunakan mode cepat pada Opus 4.7](#use-fast-mode-on-opus-4-7), [pertukaran biayanya](#understand-the-cost-tradeoff), [kapan menggunakannya](#decide-when-to-use-fast-mode), [persyaratan](#requirements), [opt-in per sesi](#require-per-session-opt-in), dan [perilaku batas laju](#handle-rate-limits).
+Halaman ini mencakup cara [mengaktifkan mode cepat](#toggle-fast-mode), [pertukaran biayanya](#understand-the-cost-tradeoff), [kapan menggunakannya](#decide-when-to-use-fast-mode), [persyaratan](#requirements), [opt-in per sesi](#require-per-session-opt-in), dan [perilaku batas laju](#handle-rate-limits).
 
 ## Aktifkan mode cepat
 
@@ -41,55 +40,22 @@ Untuk efisiensi biaya terbaik, aktifkan mode cepat di awal sesi daripada beralih
 
 Ketika Anda mengaktifkan mode cepat:
 
-* Jika Anda berada di model yang berbeda, Claude Code secara otomatis beralih ke model mode cepat: Opus 4.6 secara default, atau Opus 4.7 ketika [`CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE`](#use-fast-mode-on-opus-4-7) diatur.
+* Jika Anda berada di model yang berbeda, Claude Code secara otomatis beralih ke Opus
 * Anda akan melihat pesan konfirmasi: "Fast mode ON"
 * Ikon kecil `↯` muncul di sebelah prompt saat mode cepat aktif
 * Jalankan `/fast` lagi kapan saja untuk memeriksa apakah mode cepat aktif atau tidak
 
-Ketika Anda menonaktifkan mode cepat dengan `/fast` lagi, Anda tetap berada di versi Opus yang sama tempat mode cepat berjalan. Model tidak kembali ke model sebelumnya. Untuk beralih ke model yang berbeda, gunakan `/model`.
+Ketika Anda menonaktifkan mode cepat dengan `/fast` lagi, Anda tetap berada di Opus. Model tidak kembali ke model sebelumnya. Untuk beralih ke model yang berbeda, gunakan `/model`.
 
-## Gunakan mode cepat pada Opus 4.7
-
-<Note>
-  Mode cepat pada Opus 4.7 memerlukan Claude Code v2.1.139 atau lebih baru.
-</Note>
-
-Mode cepat untuk Claude Opus 4.7 berada dalam pratinjau penelitian. Mode ini berjalan dengan kecepatan 2,5x yang sama dan harga yang sama dengan mode cepat untuk Opus 4.6, tanpa perubahan perilaku lainnya.
-
-<Note>
-  Pada 14 Mei 2026, Opus 4.7 menjadi model mode cepat default. Sampai saat itu, opt in dengan menetapkan `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1`.
-</Note>
-
-Untuk opt in, atur `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1` sebelum meluncurkan Claude Code. Dengan variabel yang diatur, `/fast` berjalan pada Opus 4.7. Tanpanya, `/fast` terus berjalan pada Opus 4.6.
-
-Anda dapat mengatur variabel sebagai ekspor shell:
-
-```bash theme={null}
-export CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE=1
-```
-
-Atau di file [pengaturan](/id/settings#settings-files) Claude Code apa pun, termasuk pengaturan pengguna, proyek, dan terkelola, untuk membatasi opt-in:
-
-```json theme={null}
-{
-  "env": {
-    "CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE": "1"
-  }
-}
-```
-
-Mode cepat untuk Opus 4.6 tetap tersedia bersama Opus 4.7. Keduanya berbagi pool batas laju mode cepat yang sama: penggunaan pada model apa pun menarik dari batas yang sama.
-
-Untuk menetapkan mode cepat ke Opus 4.6 secara eksplisit, atur `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE=1`. Variabel ini memiliki prioritas, jadi mode cepat berjalan pada Opus 4.6 terlepas dari apakah `CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE` diatur.
+Opus 4.7 adalah default mode cepat di Claude Code v2.1.142 dan lebih baru. Untuk menetapkan mode cepat ke Opus 4.6 sebagai gantinya, atur `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE=1`.
 
 ## Pahami pertukaran biaya
 
 Mode cepat memiliki harga per-token yang lebih tinggi daripada Opus standar:
 
-| Mode                     | Input (MTok) | Output (MTok) |
-| ------------------------ | ------------ | ------------- |
-| Mode cepat pada Opus 4.6 | \$30         | \$150         |
-| Mode cepat pada Opus 4.7 | \$30         | \$150         |
+| Mode       | Input (MTok) | Output (MTok) |
+| ---------- | ------------ | ------------- |
+| Mode cepat | \$30         | \$150         |
 
 Harga mode cepat datar di seluruh jendela konteks 1M token penuh.
 
@@ -124,11 +90,11 @@ Anda dapat menggabungkan keduanya: gunakan mode cepat dengan [tingkat usaha](/id
 
 Mode cepat memerlukan semua hal berikut:
 
-* **Tidak tersedia di penyedia cloud pihak ketiga**: mode cepat tidak tersedia di Amazon Bedrock, Google Vertex AI, atau Microsoft Azure Foundry. Mode cepat tersedia melalui API Konsol Anthropic dan untuk paket berlangganan Claude menggunakan penggunaan tambahan.
-* **Penggunaan tambahan diaktifkan**: akun Anda harus memiliki penggunaan tambahan diaktifkan, yang memungkinkan penagihan di luar penggunaan yang disertakan dalam paket Anda. Untuk akun individual, aktifkan ini di [pengaturan penagihan Konsol Anda](https://platform.claude.com/settings/organization/billing). Untuk Teams dan Enterprise, admin harus mengaktifkan penggunaan tambahan untuk organisasi.
+* **Tidak tersedia di penyedia cloud pihak ketiga**: mode cepat tidak tersedia di Amazon Bedrock, Google Vertex AI, atau Microsoft Azure Foundry. Mode cepat tersedia melalui API Konsol Anthropic dan untuk paket berlangganan Claude menggunakan penggunaan kredit.
+* **Penggunaan kredit diaktifkan**: akun Anda harus memiliki penggunaan kredit diaktifkan, yang memungkinkan penagihan di luar penggunaan yang disertakan dalam paket Anda. Untuk akun individual, aktifkan ini di [pengaturan penagihan Konsol Anda](https://platform.claude.com/settings/organization/billing). Untuk Teams dan Enterprise, admin harus mengaktifkan penggunaan kredit untuk organisasi.
 
 <Note>
-  Penggunaan mode cepat ditagih langsung ke penggunaan tambahan, bahkan jika Anda memiliki penggunaan yang tersisa di paket Anda. Ini berarti token mode cepat tidak dihitung terhadap penggunaan yang disertakan dalam paket Anda dan dikenakan biaya dengan tarif mode cepat dari token pertama.
+  Penggunaan mode cepat ditagih langsung ke penggunaan kredit, bahkan jika Anda memiliki penggunaan yang tersisa di paket Anda. Ini berarti token mode cepat tidak dihitung terhadap penggunaan yang disertakan dalam paket Anda dan dikenakan biaya dengan tarif mode cepat dari token pertama.
 </Note>
 
 * **Aktivasi admin untuk Teams dan Enterprise**: mode cepat dinonaktifkan secara default untuk organisasi Teams dan Enterprise. Admin harus secara eksplisit [mengaktifkan mode cepat](#enable-fast-mode-for-your-organization) sebelum pengguna dapat mengaksesnya.
@@ -160,9 +126,9 @@ Ini berguna untuk mengontrol biaya di organisasi di mana pengguna menjalankan be
 
 ## Tangani batas laju
 
-Mode cepat memiliki batas laju terpisah dari Opus standar. Mode cepat untuk Opus 4.6 dan Opus 4.7 berbagi pool batas laju yang sama: penggunaan pada model apa pun menarik dari batas yang sama. Ketika Anda mencapai batas laju mode cepat atau kehabisan penggunaan tambahan:
+Mode cepat memiliki batas laju terpisah dari Opus standar. Mode cepat untuk Opus 4.7 dan Opus 4.6 berbagi pool batas laju yang sama: penggunaan pada model apa pun menarik dari batas yang sama. Ketika Anda mencapai batas laju mode cepat atau kehabisan kredit penggunaan:
 
-1. Mode cepat secara otomatis kembali ke kecepatan standar pada versi Opus yang sama
+1. Mode cepat secara otomatis kembali ke kecepatan standar
 2. Ikon `↯` berubah menjadi abu-abu untuk menunjukkan cooldown
 3. Anda terus bekerja dengan kecepatan dan harga standar
 4. Ketika cooldown berakhir, mode cepat secara otomatis diaktifkan kembali

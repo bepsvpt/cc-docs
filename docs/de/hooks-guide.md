@@ -910,11 +910,11 @@ Sie haben eine Einstellungsdatei bearbeitet, aber die Hooks werden nicht im Men�
 * Überprüfen Sie, dass Ihr JSON gültig ist (nachfolgende Kommas und Kommentare sind nicht zulässig)
 * Bestätigen Sie, dass die Einstellungsdatei am richtigen Speicherort ist: `.claude/settings.json` für Projekt-Hooks, `~/.claude/settings.json` für globale Hooks
 
-### Stop-Hook läuft endlos
+### Stop-Hook trifft die Blockierungsgrenze
 
-Claude arbeitet in einer Endlosschleife weiter, anstatt zu stoppen.
+Claude arbeitet weiter, anstatt zu stoppen, und beendet dann den Zug mit einer Warnung, dass der Stop-Hook zu viele Male hintereinander blockiert hat.
 
-Ihr Stop-Hook-Skript muss überprüfen, ob es bereits eine Fortsetzung ausgelöst hat. Parsen Sie das Feld `stop_hook_active` aus der JSON-Eingabe und beenden Sie früh, wenn es `true` ist:
+Claude Code setzt einen Stop-Hook außer Kraft, nachdem er 8 Mal hintereinander blockiert hat, ohne Fortschritt zu erzielen. Ihr Hook-Skript muss überprüfen, ob es bereits eine Fortsetzung ausgelöst hat. Parsen Sie das Feld `stop_hook_active` aus der JSON-Eingabe und beenden Sie früh, wenn es `true` ist:
 
 ```bash theme={null}
 #!/bin/bash
@@ -924,6 +924,8 @@ if [ "$(echo "$INPUT" | jq -r '.stop_hook_active')" = "true" ]; then
 fi
 # ... Rest Ihrer Hook-Logik
 ```
+
+Wenn Ihr Hook legitim mehr als acht Iterationen benötigt, um zu konvergieren, erhöhen Sie die Grenze mit [`CLAUDE_CODE_STOP_HOOK_BLOCK_CAP`](/de/env-vars).
 
 ### JSON-Validierung fehlgeschlagen
 

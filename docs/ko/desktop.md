@@ -2,7 +2,7 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Claude Code Desktop 사용하기
+# Desktop 애플리케이션
 
 > Claude Code Desktop을 더 활용하기: Git 격리를 통한 병렬 세션, 드래그 앤 드롭 패널 레이아웃, 통합 터미널 및 파일 편집기, 사이드 채팅, 컴퓨터 사용, 휴대폰에서 Dispatch 세션 전송, 시각적 diff 검토, 앱 미리보기, PR 모니터링, 커넥터, 엔터프라이즈 구성.
 
@@ -707,6 +707,7 @@ Desktop과 CLI는 동일한 구성 파일을 읽으므로 설정이 이월됩니
 * **Linux**: 데스크톱 앱은 macOS 및 Windows에서만 사용 가능합니다. Linux에서는 [CLI](/ko/quickstart)를 사용합니다.
 * **Inline code suggestions**: Desktop은 자동 완성 스타일 제안을 제공하지 않습니다. 대화형 프롬프트 및 명시적 코드 변경을 통해 작동합니다.
 * **Agent teams**: 다중 에이전트 오케스트레이션은 [CLI](/ko/agent-teams) 및 [Agent SDK](/ko/headless)를 통해 사용 가능하며 Desktop에서는 사용할 수 없습니다.
+* **Terminal-dialog commands**: `/permissions`, `/config`, `/agents`, `/doctor`와 같이 터미널에서 대화형 패널을 여는 기본 제공 명령은 Code 탭에서 사용할 수 없으며 `isn't available in this environment`로 응답합니다. [설정 파일](/ko/settings)을 직접 편집하여 권한 규칙 및 구성을 관리하거나 독립 실행형 CLI에서 명령을 실행합니다.
 
 ## 문제 해결
 

@@ -12,7 +12,7 @@
 
 Tarefas agendadas permitem que Claude execute novamente um prompt automaticamente em um intervalo. Use-as para pesquisar uma implantação, cuidar de um PR, verificar uma compilação de longa duração ou lembrar-se de fazer algo mais tarde na sessão. Para reagir a eventos conforme eles acontecem em vez de pesquisar, consulte [Channels](/pt/channels): seu CI pode enviar a falha para a sessão diretamente. Para manter a sessão funcionando turno após turno até que uma condição seja atendida em vez de em um intervalo, consulte [`/goal`](/pt/goal).
 
-As tarefas têm escopo de sessão: elas vivem na conversa atual e param quando você inicia uma nova. Retomar com `--resume` ou `--continue` traz de volta qualquer tarefa que não tenha [expirado](#seven-day-expiry): uma tarefa recorrente criada nos últimos 7 dias, ou uma única cujo tempo agendado ainda não passou. Para agendamento que sobreviva independentemente de qualquer sessão, use [Routines](/pt/routines), [tarefas agendadas do Desktop](/pt/desktop-scheduled-tasks) ou [GitHub Actions](/pt/github-actions).
+As tarefas têm escopo de sessão: elas vivem na conversa atual e param quando você inicia uma nova. Retomar com `--resume` ou `--continue` traz de volta qualquer tarefa que não tenha [expirado](#seven-day-expiry): uma tarefa recorrente criada nos últimos 7 dias, ou uma única cujo tempo agendado ainda não passou. Para agendamento que sobreviva independentemente de qualquer sessão, use [Routines](/pt/routines) para criar uma rotina na infraestrutura gerenciada pela Anthropic, configure uma [tarefa agendada do Desktop](/pt/desktop-scheduled-tasks) ou use [GitHub Actions](/pt/github-actions).
 
 ## Compare opções de agendamento
 

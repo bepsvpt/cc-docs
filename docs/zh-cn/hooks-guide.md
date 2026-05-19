@@ -910,11 +910,11 @@ Hook 已配置但从不执行。
 * 验证你的 JSON 有效（不允许尾随逗号和注释）
 * 确认设置文件在正确的位置：`.claude/settings.json` 用于项目 hooks，`~/.claude/settings.json` 用于全局 hooks
 
-### Stop hook 永远运行
+### Stop hook 达到阻止上限
 
-Claude 继续工作在无限循环中而不是停止。
+Claude 继续工作而不是停止，然后以警告结束该轮，表示 Stop hook 连续阻止了太多次。
 
-你的 Stop hook 脚本需要检查它是否已经触发了继续。从 JSON 输入中解析 `stop_hook_active` 字段，如果为 `true` 则提前退出：
+Claude Code 在 Stop hook 连续阻止 8 次而没有进展后会覆盖它。你的 hook 脚本需要检查它是否已经触发了继续。从 JSON 输入中解析 `stop_hook_active` 字段，如果为 `true` 则提前退出：
 
 ```bash theme={null}
 #!/bin/bash
@@ -924,6 +924,8 @@ if [ "$(echo "$INPUT" | jq -r '.stop_hook_active')" = "true" ]; then
 fi
 # ... 你的 hook 逻辑的其余部分
 ```
+
+如果你的 hook 合理地需要超过八次迭代才能收敛，使用 [`CLAUDE_CODE_STOP_HOOK_BLOCK_CAP`](/zh-CN/env-vars) 提高上限。
 
 ### JSON 验证失败
 

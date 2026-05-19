@@ -12,7 +12,7 @@
 
 Tugas terjadwal memungkinkan Claude menjalankan kembali prompt secara otomatis pada interval tertentu. Gunakan untuk polling deployment, mengawasi PR, memeriksa build yang berjalan lama, atau mengingatkan diri sendiri untuk melakukan sesuatu nanti dalam sesi. Untuk bereaksi terhadap peristiwa saat terjadi daripada polling, lihat [Channels](/id/channels): CI Anda dapat mendorong kegagalan ke dalam sesi secara langsung. Untuk menjaga sesi tetap bekerja giliran demi giliran sampai kondisi terpenuhi daripada pada interval, lihat [`/goal`](/id/goal).
 
-Tugas bersifat session-scoped: mereka hidup dalam percakapan saat ini dan berhenti saat Anda memulai yang baru. Melanjutkan dengan `--resume` atau `--continue` membawa kembali tugas apa pun yang belum [kedaluwarsa](#seven-day-expiry): tugas berulang yang dibuat dalam 7 hari terakhir, atau tugas sekali jalan yang waktu terjadwalnya belum berlalu. Untuk penjadwalan yang bertahan secara independen dari sesi apa pun, gunakan [Routines](/id/routines), [Desktop scheduled tasks](/id/desktop-scheduled-tasks), atau [GitHub Actions](/id/github-actions).
+Tugas bersifat session-scoped: mereka hidup dalam percakapan saat ini dan berhenti saat Anda memulai yang baru. Melanjutkan dengan `--resume` atau `--continue` membawa kembali tugas apa pun yang belum [kedaluwarsa](#seven-day-expiry): tugas berulang yang dibuat dalam 7 hari terakhir, atau tugas sekali jalan yang waktu terjadwalnya belum berlalu. Untuk penjadwalan yang bertahan secara independen dari sesi apa pun, gunakan [Routines](/id/routines) untuk membuat routine pada infrastruktur yang dikelola Anthropic, atur [Desktop scheduled task](/id/desktop-scheduled-tasks), atau gunakan [GitHub Actions](/id/github-actions).
 
 ## Bandingkan opsi penjadwalan
 

@@ -143,6 +143,8 @@ claude mcp remove github
 
 Le panneau `/mcp` affiche le nombre d'outils à côté de chaque serveur connecté et signale les serveurs qui annoncent la capacité des outils mais n'exposent aucun outil.
 
+Si votre demande a besoin d'outils d'un serveur qui se connecte toujours en arrière-plan, Claude attend que ce serveur se connecte avant de continuer. Avec la [recherche d'outils](#scale-with-mcp-tool-search) activée, qui est l'option par défaut, l'attente se produit à l'intérieur de l'appel `ToolSearch`. Dans les configurations sans recherche d'outils, telles que Vertex AI, une `ANTHROPIC_BASE_URL` personnalisée, ou `ENABLE_TOOL_SEARCH=false`, Claude utilise plutôt l'outil `WaitForMcpServers`.
+
 Le nom du serveur `workspace` est réservé à un usage interne. Si votre configuration définit un serveur avec ce nom, Claude Code le saute au chargement et affiche un avertissement vous demandant de le renommer.
 
 ### Mises à jour dynamiques des outils
@@ -1007,7 +1009,7 @@ L'entrée `.mcp.json` suivante exempte un serveur HTTP tout en laissant les autr
 
 Le champ `alwaysLoad` est disponible sur tous les types de serveurs et nécessite Claude Code v2.1.121 ou ultérieur. Un serveur MCP peut également marquer les outils individuels comme toujours chargés en incluant `"anthropic/alwaysLoad": true` dans l'objet `_meta` de l'outil, ce qui a le même effet pour cet outil uniquement.
 
-La définition de `alwaysLoad: true` bloque également le démarrage jusqu'à ce que le serveur se connecte, limité au délai d'expiration de connexion standard de 5 secondes. Cela s'applique même lorsque [`MCP_CONNECTION_NONBLOCKING=1`](/fr/env-vars) est défini, car les outils doivent être présents lors de la construction de la première invite. Les autres serveurs se connectent toujours en arrière-plan lorsque le mode non-bloquant est activé.
+La définition de `alwaysLoad: true` bloque également le démarrage jusqu'à ce que le serveur se connecte, limité au délai d'expiration de connexion standard de 5 secondes. Cela s'applique même lorsque MCP startup est autrement [non-bloquant par défaut](/fr/env-vars), car les outils doivent être présents lors de la construction de la première invite. Les autres serveurs continuent à se connecter en arrière-plan.
 
 ## Utiliser les prompts MCP comme commandes
 

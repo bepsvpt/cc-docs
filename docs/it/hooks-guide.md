@@ -910,11 +910,11 @@ Avete modificato un file di impostazioni ma gli hooks non appaiono nel menu.
 * Verificate che il vostro JSON sia valido (le virgole finali e i commenti non sono consentiti)
 * Confermate che il file di impostazioni è nella posizione corretta: `.claude/settings.json` per gli hook del progetto, `~/.claude/settings.json` per gli hook globali
 
-### L'hook Stop si esegue per sempre
+### L'hook Stop colpisce il limite di blocco
 
-Claude continua a lavorare in un ciclo infinito invece di fermarsi.
+Claude continua a lavorare invece di fermarsi, quindi termina il turno con un avviso che l'hook Stop ha bloccato troppe volte consecutive.
 
-Il vostro script di hook Stop deve controllare se ha già attivato una continuazione. Analizzate il campo `stop_hook_active` dall'input JSON e uscite presto se è `true`:
+Claude Code ignora un hook Stop dopo che ha bloccato 8 volte di fila senza progresso. Il vostro script di hook deve controllare se ha già attivato una continuazione. Analizzate il campo `stop_hook_active` dall'input JSON e uscite presto se è `true`:
 
 ```bash theme={null}
 #!/bin/bash
@@ -924,6 +924,8 @@ if [ "$(echo "$INPUT" | jq -r '.stop_hook_active')" = "true" ]; then
 fi
 # ... rest of your hook logic
 ```
+
+Se il vostro hook ha legittimamente bisogno di più di otto iterazioni per convergere, aumentate il limite con [`CLAUDE_CODE_STOP_HOOK_BLOCK_CAP`](/it/env-vars).
 
 ### Convalida JSON non riuscita
 

@@ -60,6 +60,7 @@ Für vollständige Details überprüfen Sie bitte unsere [Commercial Terms of Se
 * **Isolierte Kontextfenster**: Web Fetch verwendet ein separates Kontextfenster, um die Injection potenziell bösartiger Prompts zu vermeiden
 * **Vertrauensüberprüfung**: Erste Codebasis-Ausführungen und neue MCP-Server erfordern Vertrauensüberprüfung
   * Hinweis: Vertrauensüberprüfung ist deaktiviert, wenn nicht-interaktiv mit dem `-p`-Flag ausgeführt wird. Die Ausnahme ist [`--worktree`](/de/worktrees), das weiterhin erfordert, dass das Vertrauen für das Verzeichnis akzeptiert wurde
+  * Hinweis: Wenn Sie Claude Code direkt in Ihrem Home-Verzeichnis starten, wird die Vertrauensannahme nur für die aktuelle Sitzung beibehalten und nicht auf die Festplatte geschrieben, sodass die Eingabeaufforderung bei jedem Start erneut angezeigt wird. Es gibt keine Einstellung, um sie beizubehalten. Starten Sie Claude Code stattdessen aus einem Projektunterverzeichnis, in dem die Vertrauensannahme pro Verzeichnis gespeichert wird
 * **Erkennung von Befehlsinjektionen**: Verdächtige Bash-Befehle erfordern manuelle Genehmigung, auch wenn sie zuvor auf die Zulassungsliste gesetzt wurden
 * **Fail-Closed-Matching**: Nicht übereinstimmende Befehle erfordern standardmäßig manuelle Genehmigung
 * **Beschreibungen in natürlicher Sprache**: Komplexe Bash-Befehle enthalten Erklärungen zum Verständnis des Benutzers

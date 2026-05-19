@@ -434,12 +434,12 @@ git status --short
 
 Skills 和 [subagents](/zh-CN/sub-agents) 以两个方向协同工作：
 
-| 方法                         | 系统提示                       | 任务           | 也加载                     |
-| :------------------------- | :------------------------- | :----------- | :---------------------- |
-| 带有 `context: fork` 的 Skill | 来自代理类型（`Explore`、`Plan` 等） | SKILL.md 内容  | CLAUDE.md               |
-| 带有 `skills` 字段的 Subagent   | Subagent 的 markdown 正文     | Claude 的委派消息 | 预加载的 skills + CLAUDE.md |
+| 方法                         | 系统提示                   | 任务           | 也加载                            |
+| :------------------------- | :--------------------- | :----------- | :----------------------------- |
+| 带有 `context: fork` 的 Skill | 来自代理类型                 | SKILL.md 内容  | CLAUDE.md，除非代理是 Explore 或 Plan |
+| 带有 `skills` 字段的 Subagent   | Subagent 的 markdown 正文 | Claude 的委派消息 | 预加载的 skills + CLAUDE.md        |
 
-使用 `context: fork`，你在你的 skill 中编写任务并选择一个代理类型来执行它。对于反向（定义使用 skills 作为参考资料的自定义 subagent），请参阅 [Subagents](/zh-CN/sub-agents#preload-skills-into-subagents)。
+使用 `context: fork`，你在你的 skill 中编写任务并选择一个代理类型来执行它。内置的 Explore 和 Plan 代理[跳过 CLAUDE.md 和 git 状态](/zh-CN/sub-agents#what-loads-at-startup)以保持其上下文较小，因此使用 `agent: Explore` 的分叉 skill 仅看到 SKILL.md 内容和代理自己的系统提示。对于反向情况，其中你定义使用 skills 作为参考资料的自定义 subagent，请参阅 [Subagents](/zh-CN/sub-agents#preload-skills-into-subagents)。
 
 #### 示例：使用 Explore 代理的研究 skill
 

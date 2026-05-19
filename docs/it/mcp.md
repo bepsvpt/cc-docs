@@ -143,6 +143,8 @@ claude mcp remove github
 
 Il pannello `/mcp` mostra il conteggio degli strumenti accanto a ogni server connesso e contrassegna i server che pubblicizzano la capacità degli strumenti ma non espongono alcuno strumento.
 
+Se la vostra richiesta ha bisogno di strumenti da un server che è ancora in fase di connessione in background, Claude attende quel server prima di continuare. Con la [ricerca degli strumenti](#scale-with-mcp-tool-search) abilitata, che è l'impostazione predefinita, l'attesa avviene all'interno della chiamata `ToolSearch`. Nelle configurazioni senza ricerca degli strumenti, come Vertex AI, un `ANTHROPIC_BASE_URL` personalizzato, o `ENABLE_TOOL_SEARCH=false`, Claude utilizza lo strumento `WaitForMcpServers` invece.
+
 Il nome del server `workspace` è riservato per uso interno. Se la vostra configurazione definisce un server con quel nome, Claude Code lo salta al momento del caricamento e mostra un avviso chiedendovi di rinominarlo.
 
 ### Aggiornamenti dinamici degli strumenti
@@ -1007,7 +1009,7 @@ La seguente voce `.mcp.json` esentare un server HTTP mentre lascia gli altri ser
 
 Il campo `alwaysLoad` è disponibile su tutti i tipi di server e richiede Claude Code v2.1.121 o successivo. Un server MCP può anche contrassegnare singoli strumenti come sempre caricati includendo `"anthropic/alwaysLoad": true` nell'oggetto `_meta` dello strumento, che ha lo stesso effetto solo per quello strumento.
 
-L'impostazione di `alwaysLoad: true` blocca anche l'avvio fino a quando il server non si connette, limitato al timeout di connessione standard di 5 secondi. Questo si applica anche quando [`MCP_CONNECTION_NONBLOCKING=1`](/it/env-vars) è impostato, poiché gli strumenti devono essere presenti quando viene costruito il primo prompt. Gli altri server si connettono ancora in background quando il nonblocking è abilitato.
+L'impostazione di `alwaysLoad: true` blocca anche l'avvio fino a quando il server non si connette, limitato al timeout di connessione standard di 5 secondi. Questo si applica anche se MCP startup è altrimenti [non-blocking per impostazione predefinita](/it/env-vars), poiché gli strumenti devono essere presenti quando viene costruito il primo prompt. Gli altri server continuano a connettersi in background.
 
 ## Utilizza i prompt MCP come comandi
 

@@ -2,11 +2,11 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Claude Code Desktop verwenden
+# Desktop-Anwendung
 
 > Nutzen Sie Claude Code Desktop optimal: parallele Sitzungen mit Git-Isolation, Drag-and-Drop-Pane-Layout, integriertes Terminal und Datei-Editor, Seitenchats, Computernutzung, Dispatch-Sitzungen von Ihrem Telefon, visuelle Diff-Überprüfung, App-Vorschau, PR-Überwachung, Konnektoren und Unternehmenskonfiguration.
 
-Die Claude Desktop-App hat drei Registerkarten: **Chat** für Gespräche, **Cowork** für [Dispatch und längere agentengestützte Arbeiten](https://claude.com/product/cowork) und **Code** für Softwareentwicklung. Diese Seite ist die Referenz für die Registerkarte „Code".
+Die Claude Desktop-App hat drei Registerkarten: **Chat** für Gespräche, **Cowork** für [Dispatch und längere agentengestützte Arbeiten](https://claude.com/product/cowork) und **Code** für Softwareentwicklung. Diese Seite ist die Referenz für die Registerkarte Code.
 
 <CardGroup cols={2}>
   <Card title="Download for macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
@@ -22,7 +22,7 @@ For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/
 
 Nach der Installation starten Sie Claude, melden sich an und klicken auf die Registerkarte **Code**. Beim ersten Öffnen unter Windows benötigen Sie [Git für Windows](https://git-scm.com/downloads/win) installiert; starten Sie die App nach der Installation neu. Eine Anleitung für Ihre erste Sitzung finden Sie im [Leitfaden „Erste Schritte"](/de/desktop-quickstart).
 
-In der Registerkarte „Code" ist jedes Gespräch eine **Sitzung**: Es hat seinen eigenen Chat-Verlauf, Projektordner und Code-Änderungen, unabhängig von jeder anderen Sitzung. Die Seitenleiste listet Ihre Sitzungen auf und ermöglicht es Ihnen, mehrere parallel auszuführen. Innerhalb einer Sitzung können Sie:
+In der Registerkarte Code ist jedes Gespräch eine **Sitzung**: Es hat seinen eigenen Chat-Verlauf, Projektordner und Code-Änderungen, unabhängig von jeder anderen Sitzung. Die Seitenleiste listet Ihre Sitzungen auf und ermöglicht es Ihnen, mehrere parallel auszuführen. Innerhalb einer Sitzung können Sie:
 
 * [Diffs überprüfen und kommentieren](#review-changes-with-diff-view), dann [den resultierenden PR durch CI überwachen](#monitor-pull-request-status)
 * [Ihre laufende App](#preview-your-app) in einem eingebetteten Browser in der Vorschau anzeigen, während Claude seine eigenen Änderungen überprüft
@@ -707,6 +707,7 @@ Die folgenden Funktionen sind nur in der CLI oder VS Code-Erweiterung verfügbar
 * **Linux**: Die Desktop-App ist nur auf macOS und Windows verfügbar. Verwenden Sie unter Linux die [CLI](/de/quickstart).
 * **Inline-Code-Vorschläge**: Desktop bietet keine Autovervollständigungs-ähnlichen Vorschläge. Es funktioniert durch Gesprächseingaben und explizite Code-Änderungen.
 * **Agent-Teams**: Multi-Agent-Orchestrierung ist über die [CLI](/de/agent-teams) und [Agent SDK](/de/headless) verfügbar, nicht in Desktop.
+* **Terminal-Dialog-Befehle**: Integrierte Befehle, die ein interaktives Panel im Terminal öffnen, wie `/permissions`, `/config`, `/agents` und `/doctor`, sind nicht auf der Registerkarte „Code" verfügbar und antworten mit `isn't available in this environment`. Bearbeiten Sie [Einstellungsdateien](/de/settings) direkt, um Berechtigungsregeln und Konfiguration zu verwalten, oder führen Sie den Befehl aus der eigenständigen CLI aus.
 
 ## Fehlerbehebung
 

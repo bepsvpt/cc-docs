@@ -732,7 +732,7 @@ Das folgende Beispiel löst eine Desktop-Benachrichtigung aus einem `Notificatio
 # Notification-Hook: Ping des Desktops, wenn Claude Code Aufmerksamkeit benötigt.
 input=$(cat)
 title="Claude Code'
-body=$(jq -r '.message // 'Needs your attention"' <<<"$input")
+body=$(jq -r '.message // 'Needs your attention'' <<<"$input")
 seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
 jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 ```
@@ -2772,4 +2772,4 @@ Hook-Ausführungsdetails, einschließlich welche Hooks passten, ihre Exit-Codes 
 
 Für granularere Hook-Matching-Details setzen Sie `CLAUDE_CODE_DEBUG_LOG_LEVEL=verbose`, um zusätzliche Log-Zeilen wie Hook-Matcher-Zählungen und Query-Matching zu sehen.
 
-Zur Fehlerbehebung häufiger Probleme wie Hooks, die nicht ausgelöst werden, unendliche Stop-Hook-Schleifen oder Konfigurationsfehler, siehe [Einschränkungen und Fehlerbehebung](/de/hooks-guide#limitations-and-troubleshooting) in der Anleitung. Für eine umfassendere diagnostische Anleitung, die `/context`, `/doctor` und Einstellungspriorität abdeckt, siehe [Debug your config](/de/debug-your-config).
+Zur Fehlerbehebung häufiger Probleme wie Hooks, die nicht ausgelöst werden, Stop-Hooks, die weiterhin blockieren, oder Konfigurationsfehler, siehe [Einschränkungen und Fehlerbehebung](/de/hooks-guide#limitations-and-troubleshooting) in der Anleitung. Für eine umfassendere diagnostische Anleitung, die `/context`, `/doctor` und Einstellungspriorität abdeckt, siehe [Debug your config](/de/debug-your-config).

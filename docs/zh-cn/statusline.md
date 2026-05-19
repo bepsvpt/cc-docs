@@ -916,7 +916,11 @@ Bash 示例使用 [`jq`](https://jqlang.github.io/jq/) 来解析 JSON。Python �
 
 ### Windows 配置
 
-在 Windows 上，Claude Code 通过 Git Bash 运行状态行命令（如果已安装 Git Bash），或在没有 Git Bash 时通过 PowerShell 运行。要将 PowerShell 脚本作为状态行运行，请通过 `powershell` 调用它；这在任一 shell 中都有效：
+在 Windows 上，Claude Code 通过 Git Bash 运行状态行命令（如果已安装 Git Bash），或在没有 Git Bash 时通过 PowerShell 运行。
+
+Git Bash 将未引用的反斜杠视为转义字符，因此 Windows 风格的路径（如 `C:\Users\username\script.mjs`）到达脚本运行器时会删除其分隔符，命令会失败而没有可见的错误。在 `command` 字符串中使用正斜杠编写文件路径，如下面的示例所示。`~` 快捷方式也有效，并扩展到你的 Windows 主目录。
+
+要将 PowerShell 脚本作为状态行运行，请通过 `powershell` 调用它。无论 Claude Code 通过 Git Bash 还是 PowerShell 路由命令，这都有效：
 
 <CodeGroup>
   ```json settings.json theme={null}
@@ -999,6 +1003,7 @@ Bash 示例使用 [`jq`](https://jqlang.github.io/jq/) 来解析 JSON。Python �
 * 验证你的脚本是可执行的：`chmod +x ~/.claude/statusline.sh`
 * 检查你的脚本输出到 stdout，而不是 stderr
 * 手动运行你的脚本以验证它产生输出
+* 在安装了 Git Bash 的 Windows 上，`command` 路径中的反斜杠可能在脚本运行前被当作转义字符消耗。在路径中使用正斜杠。参见 [Windows 配置](#windows-configuration)。
 * 如果 `disableAllHooks` 在你的设置中设置为 `true`，状态行也会被禁用。删除此设置或将其设置为 `false` 以重新启用。
 * 运行 `claude --debug` 以记录会话中第一次状态行调用的退出代码和 stderr
 * 要求 Claude 读取你的设置文件并直接执行 `statusLine` 命令以显示错误

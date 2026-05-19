@@ -732,7 +732,7 @@ El ejemplo a continuación dispara una notificación de escritorio desde un hook
 # Hook de notificación: ping al escritorio cuando Claude Code necesita atención.
 input=$(cat)
 title="Claude Code'
-body=$(jq -r '.message // 'Needs your attention"' <<<"$input")
+body=$(jq -r '.message // 'Needs your attention'' <<<"$input")
 seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
 jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 ```

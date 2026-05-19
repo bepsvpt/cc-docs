@@ -188,7 +188,7 @@ Se as notificações não chegarem:
 * **O processo local deve continuar em execução**: Remote Control é executado como um processo local. Se você fechar o terminal, sair do VS Code ou parar o processo `claude`, a sessão termina.
 * **Interrupção de rede estendida**: se sua máquina estiver ligada mas não conseguir alcançar a rede por mais de aproximadamente 10 minutos, a sessão expira e o processo sai. Execute `claude remote-control` novamente para iniciar uma nova sessão.
 * **Ultraplan desconecta Remote Control**: iniciar uma sessão [ultraplan](/pt/ultraplan) desconecta qualquer sessão de Remote Control ativa porque ambos os recursos ocupam a interface claude.ai/code e apenas um pode estar conectado por vez.
-* **Alguns comandos são apenas locais**: comandos que abrem um seletor interativo no terminal, como `/mcp`, `/plugin` ou `/resume`, funcionam apenas a partir da CLI local. Comandos que produzem saída de texto, incluindo `/compact`, `/clear`, `/context`, `/usage`, `/exit`, `/extra-usage`, `/recap` e `/reload-plugins`, funcionam a partir de dispositivos móveis e web.
+* **Alguns comandos são apenas locais**: comandos que abrem um seletor interativo no terminal, como `/mcp`, `/plugin` ou `/resume`, funcionam apenas a partir da CLI local. Comandos que produzem saída de texto, incluindo `/compact`, `/clear`, `/context`, `/usage`, `/exit`, `/usage-credits`, `/recap` e `/reload-plugins`, funcionam a partir de dispositivos móveis e web.
 
 ## Solução de problemas
 

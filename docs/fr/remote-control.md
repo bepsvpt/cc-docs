@@ -188,7 +188,7 @@ Si les notifications n'arrivent pas :
 * **Le processus local doit continuer à s'exécuter** : Remote Control s'exécute en tant que processus local. Si vous fermez le terminal, quittez VS Code, ou arrêtez autrement le processus `claude`, la session se termine.
 * **Panne réseau prolongée** : si votre machine est allumée mais incapable d'atteindre le réseau pendant plus de dix minutes environ, la session expire et le processus se termine. Exécutez `claude remote-control` à nouveau pour démarrer une nouvelle session.
 * **Ultraplan déconnecte Remote Control** : le démarrage d'une session [ultraplan](/fr/ultraplan) déconnecte toute session Remote Control active car les deux fonctionnalités occupent l'interface claude.ai/code et une seule peut être connectée à la fois.
-* **Certaines commandes sont locales uniquement** : les commandes qui ouvrent un sélecteur interactif dans le terminal, telles que `/mcp`, `/plugin`, ou `/resume`, fonctionnent uniquement à partir de la CLI locale. Les commandes qui produisent une sortie textuelle, y compris `/compact`, `/clear`, `/context`, `/usage`, `/exit`, `/extra-usage`, `/recap`, et `/reload-plugins`, fonctionnent à partir du mobile et du web.
+* **Certaines commandes sont locales uniquement** : les commandes qui ouvrent un sélecteur interactif dans le terminal, telles que `/mcp`, `/plugin`, ou `/resume`, fonctionnent uniquement à partir de la CLI locale. Les commandes qui produisent une sortie textuelle, y compris `/compact`, `/clear`, `/context`, `/usage`, `/exit`, `/usage-credits`, `/recap`, et `/reload-plugins`, fonctionnent à partir du mobile et du web.
 
 ## Dépannage
 

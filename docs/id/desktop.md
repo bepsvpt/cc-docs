@@ -2,7 +2,7 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Gunakan Claude Code Desktop
+# Aplikasi desktop
 
 > Dapatkan lebih banyak dari Claude Code Desktop: sesi paralel dengan isolasi Git, tata letak pane drag-and-drop, terminal terintegrasi dan editor file, side chats, computer use, Dispatch sessions dari ponsel Anda, tinjauan diff visual, pratinjau aplikasi, pemantauan PR, konektor, dan konfigurasi enterprise.
 
@@ -707,6 +707,7 @@ Fitur berikut hanya tersedia di CLI atau ekstensi VS Code:
 * **Linux**: aplikasi desktop hanya tersedia di macOS dan Windows. Di Linux, gunakan [CLI](/id/quickstart).
 * **Saran kode inline**: Desktop tidak menyediakan saran gaya autocomplete. Ini bekerja melalui prompt percakapan dan perubahan kode eksplisit.
 * **Tim agent**: orkestrasi multi-agent tersedia melalui [CLI](/id/agent-teams) dan [Agent SDK](/id/headless), bukan di Desktop.
+* **Perintah terminal-dialog**: perintah bawaan yang membuka panel interaktif di terminal, seperti `/permissions`, `/config`, `/agents`, dan `/doctor`, tidak tersedia di tab Code dan membalas dengan `isn't available in this environment`. Edit [file pengaturan](/id/settings) secara langsung untuk mengelola aturan izin dan konfigurasi, atau jalankan perintah dari CLI mandiri.
 
 ## Troubleshooting
 

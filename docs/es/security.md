@@ -60,6 +60,7 @@ Para obtener detalles completos, consulte nuestros [Términos de Servicio Comerc
 * **Ventanas de contexto aisladas**: La obtención web utiliza una ventana de contexto separada para evitar inyectar solicitudes potencialmente maliciosas
 * **Verificación de confianza**: Las primeras ejecuciones de base de código y los nuevos servidores MCP requieren verificación de confianza
   * Nota: La verificación de confianza está deshabilitada cuando se ejecuta de forma no interactiva con la bandera `-p`. La excepción es [`--worktree`](/es/worktrees), que aún requiere que la confianza haya sido aceptada para el directorio
+  * Nota: Cuando inicia Claude Code directamente en su directorio de inicio, la aceptación de confianza se mantiene solo para la sesión actual y no se escribe en el disco, por lo que el mensaje reaparece en cada lanzamiento. No hay ninguna configuración para persistirlo. Inicie Claude Code desde un subdirectorio de proyecto en su lugar, donde la aceptación de confianza se guarda por directorio
 * **Detección de inyección de comandos**: Los comandos bash sospechosos requieren aprobación manual incluso si fueron permitidos previamente
 * **Coincidencia de cierre seguro**: Los comandos no coincidentes se establecen de forma predeterminada para requerir aprobación manual
 * **Descripciones en lenguaje natural**: Los comandos bash complejos incluyen explicaciones para la comprensión del usuario

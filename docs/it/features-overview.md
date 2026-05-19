@@ -271,9 +271,9 @@ Ogni funzionalità si carica in diversi punti della vostra sessione. Le schede s
 
     **Cosa si carica:** Contesto fresco e isolato contenente:
 
-    * Il prompt di sistema (condiviso con il genitore per l'efficienza della cache)
+    * Il prompt di sistema dell'agente, non il prompt di sistema completo di Claude Code
     * Contenuto completo delle skills elencate nel campo `skills:` dell'agente
-    * CLAUDE.md e stato git (ereditati dal genitore)
+    * CLAUDE.md e stato git, eccetto gli agenti Explore e Plan integrati [che omettono entrambi](/it/sub-agents#what-loads-at-startup)
     * Qualsiasi contesto che l'agente principale passa nel prompt
 
     **Costo del contesto:** Isolato dalla sessione principale. I subagents non ereditano la vostra cronologia di conversazione o le skills invocate.

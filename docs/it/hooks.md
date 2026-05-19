@@ -732,7 +732,7 @@ L'esempio seguente attiva una notifica desktop da un hook `Notification`. La seq
 # Hook di notifica: avvisa il desktop quando Claude Code ha bisogno di attenzione.
 input=$(cat)
 title="Claude Code'
-body=$(jq -r '.message // 'Needs your attention"' <<<"$input")
+body=$(jq -r '.message // 'Needs your attention'' <<<"$input")
 seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
 jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 ```

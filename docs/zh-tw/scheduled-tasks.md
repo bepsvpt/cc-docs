@@ -12,7 +12,7 @@
 
 排程任務讓 Claude 按間隔自動重新執行提示。使用它們來輪詢部署、監督 PR、檢查長時間執行的建置，或在工作階段稍後提醒自己執行某些操作。若要改為對事件發生時做出反應而不是輪詢，請參閱 [Channels](/zh-TW/channels)：您的 CI 可以直接將失敗推送到工作階段中。若要保持工作階段逐輪執行直到符合條件而不是按間隔執行，請參閱 [`/goal`](/zh-TW/goal)。
 
-任務的範圍限於工作階段：它們存在於目前的對話中，當您啟動新的對話時就會停止。使用 `--resume` 或 `--continue` 繼續會恢復任何尚未[過期](#seven-day-expiry)的任務：在過去 7 天內建立的重複執行任務，或排程時間尚未到達的一次性任務。對於獨立於任何工作階段而存在的排程，請使用 [Routines](/zh-TW/routines)、[Desktop 排程任務](/zh-TW/desktop-scheduled-tasks) 或 [GitHub Actions](/zh-TW/github-actions)。
+任務的範圍限於工作階段：它們存在於目前的對話中，當您啟動新的對話時就會停止。使用 `--resume` 或 `--continue` 繼續會恢復任何尚未[過期](#seven-day-expiry)的任務：在過去 7 天內建立的重複執行任務，或排程時間尚未到達的一次性任務。對於獨立於任何工作階段而存在的排程，請使用 [Routines](/zh-TW/routines) 在 Anthropic 管理的基礎設施上建立例行程序、設定 [Desktop 排程任務](/zh-TW/desktop-scheduled-tasks)，或使用 [GitHub Actions](/zh-TW/github-actions)。
 
 ## 比較排程選項
 

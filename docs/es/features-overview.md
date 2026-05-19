@@ -271,9 +271,9 @@ Cada característica se carga en diferentes puntos de su sesión. Las pestañas 
 
     **Qué se carga:** Contexto fresco y aislado que contiene:
 
-    * El prompt del sistema (compartido con el padre para eficiencia de caché)
+    * El prompt del sistema, no el prompt del sistema completo de Claude Code
     * Contenido completo de skills listadas en el campo `skills:` del agente
-    * CLAUDE.md y estado de git (heredado del padre)
+    * CLAUDE.md y estado de git, excepto los agentes Explore y Plan integrados [omiten ambos](/es/sub-agents#what-loads-at-startup)
     * Cualquier contexto que el agente principal pase en el prompt
 
     **Costo de contexto:** Aislado de la sesión principal. Los subagents no heredan su historial de conversación o skills invocadas.

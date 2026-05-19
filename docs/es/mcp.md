@@ -143,6 +143,8 @@ claude mcp remove github
 
 El panel `/mcp` muestra el recuento de herramientas junto a cada servidor conectado e indica los servidores que anuncian la capacidad de herramientas pero no exponen ninguna herramienta.
 
+Si su solicitud necesita herramientas de un servidor que aún se está conectando en segundo plano, Claude espera a que ese servidor continúe. Con [búsqueda de herramientas](#scale-with-mcp-tool-search) habilitada, que es la predeterminada, la espera ocurre dentro de la llamada `ToolSearch`. En configuraciones sin búsqueda de herramientas, como Vertex AI, un `ANTHROPIC_BASE_URL` personalizado, o `ENABLE_TOOL_SEARCH=false`, Claude utiliza la herramienta `WaitForMcpServers` en su lugar.
+
 El nombre del servidor `workspace` está reservado para uso interno. Si su configuración define un servidor con ese nombre, Claude Code lo omite al cargar y muestra una advertencia pidiéndole que lo renombre.
 
 ### Actualizaciones dinámicas de herramientas
@@ -1007,7 +1009,7 @@ La siguiente entrada `.mcp.json` exime un servidor HTTP mientras deja otros serv
 
 El campo `alwaysLoad` está disponible en todos los tipos de servidor y requiere Claude Code v2.1.121 o posterior. Un servidor MCP también puede marcar herramientas individuales como siempre cargadas incluyendo `"anthropic/alwaysLoad": true` en el objeto `_meta` de la herramienta, que tiene el mismo efecto solo para esa herramienta.
 
-Establecer `alwaysLoad: true` también bloquea el inicio hasta que el servidor se conecte, limitado al tiempo de espera de conexión estándar de 5 segundos. Esto se aplica incluso cuando [`MCP_CONNECTION_NONBLOCKING=1`](/es/env-vars) está establecido, ya que las herramientas deben estar presentes cuando se construye el primer mensaje. Otros servidores aún se conectan en segundo plano cuando el modo no bloqueante está habilitado.
+Establecer `alwaysLoad: true` también bloquea el inicio hasta que el servidor se conecte, limitado al tiempo de espera de conexión estándar de 5 segundos. Esto se aplica incluso cuando MCP startup es de otro modo [no bloqueante de forma predeterminada](/es/env-vars), ya que las herramientas deben estar presentes cuando se construye el primer mensaje. Otros servidores aún se conectan en segundo plano.
 
 ## Usar indicaciones MCP como comandos
 

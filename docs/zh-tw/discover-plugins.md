@@ -138,7 +138,9 @@ Anthropic 也維護一個[演示外掛程式市場](https://github.com/anthropic
   </Step>
 
   <Step title="安裝外掛程式">
-    選擇外掛程式以檢視其詳細資訊，然後選擇安裝範圍：
+    選擇外掛程式以檢視其詳細資訊。{/* min-version: 2.1.143 */}在 Claude Code v2.1.143 及更新版本上，詳細資訊窗格包含 **Context cost** 估計，讓您可以在安裝外掛程式之前查看它每回合會為您的[內容視窗](/zh-TW/features-overview#understand-context-costs)新增多少個 token。
+
+    選擇安裝範圍：
 
     * **User scope**：在所有專案中為自己安裝
     * **Project scope**：為此儲存庫上的所有協作者安裝
