@@ -766,6 +766,8 @@ Si vous vous êtes connecté à Claude Code avec un compte [Claude.ai](https://c
   </Step>
 </Steps>
 
+Les connecteurs Claude.ai sont récupérés uniquement lorsque votre [méthode d'authentification](/fr/authentication#authentication-precedence) active est votre abonnement Claude.ai. Ils ne sont pas chargés lorsque `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `apiKeyHelper`, ou un fournisseur tiers tel que Bedrock ou Vertex est actif, même si vous avez précédemment exécuté `/login`. Si `/mcp` ne répertorie pas un connecteur que vous avez ajouté, exécutez `/status` pour confirmer quelle méthode d'authentification est active, désactivez cette variable d'environnement ou supprimez le paramètre `apiKeyHelper`, puis exécutez `/login` pour sélectionner votre compte Claude.ai.
+
 Un serveur que vous avez ajouté dans Claude Code prend [précédence](#scope-hierarchy-and-precedence) sur un connecteur claude.ai qui pointe vers la même URL. Quand cela se produit, `/mcp` répertorie le connecteur comme masqué et montre comment supprimer le doublon si vous préférez utiliser le connecteur.
 
 Pour désactiver les serveurs MCP de Claude.ai dans Claude Code, définissez la variable d'environnement `ENABLE_CLAUDEAI_MCP_SERVERS` sur `false` :

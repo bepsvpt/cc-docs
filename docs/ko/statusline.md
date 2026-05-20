@@ -157,6 +157,7 @@ Claude Code는 stdin을 통해 스크립트에 다음 JSON 필드를 보냅니�
 | `workspace.project_dir`                                                          | Claude Code가 시작된 디렉토리로, 세션 중에 작업 디렉토리가 변경되면 `cwd`와 다를 수 있습니다                                                                                                    |
 | `workspace.added_dirs`                                                           | `/add-dir` 또는 `--add-dir`을 통해 추가된 추가 디렉토리. 추가된 것이 없으면 빈 배열                                                                                                      |
 | `workspace.git_worktree`                                                         | `git worktree add`로 생성된 연결된 worktree 내에 현재 디렉토리가 있을 때 Git worktree 이름. 주 작업 트리에는 없습니다. `worktree.*`와 달리 `--worktree` 세션에만 적용되는 것이 아니라 모든 git worktree에 대해 채워집니다 |
+| `workspace.repo.host`, `workspace.repo.owner`, `workspace.repo.name`             | `origin` 원격에서 파싱된 저장소 식별자(예: `"github.com"`, `"anthropics"`, `"claude-code"`). git 저장소 외부에 있거나 `origin` 원격이 구성되지 않은 경우 없음                                       |
 | `cost.total_cost_usd`                                                            | USD 단위의 총 세션 비용(클라이언트 측에서 계산). 실제 청구서와 다를 수 있습니다                                                                                                                |
 | `cost.total_duration_ms`                                                         | 세션 시작 이후의 총 벽시계 시간(밀리초)                                                                                                                                         |
 | `cost.total_api_duration_ms`                                                     | API 응답 대기에 소비된 총 시간(밀리초)                                                                                                                                        |
@@ -178,6 +179,8 @@ Claude Code는 stdin을 통해 스크립트에 다음 JSON 필드를 보냅니�
 | `output_style.name`                                                              | 현재 출력 스타일의 이름                                                                                                                                                   |
 | `vim.mode`                                                                       | [vim 모드](/ko/interactive-mode#vim-editor-mode)가 활성화되어 있을 때 현재 vim 모드(`NORMAL`, `INSERT`, `VISUAL` 또는 `VISUAL LINE`)                                             |
 | `agent.name`                                                                     | `--agent` 플래그 또는 에이전트 설정이 구성되어 있을 때 에이전트 이름                                                                                                                     |
+| `pr.number`, `pr.url`                                                            | 현재 브랜치에 대한 열린 풀 요청. 하단 상태 표시줄의 PR 배지를 반영합니다. PR을 찾을 때까지, git 저장소에 없을 때, 또는 PR이 병합되거나 닫힌 후에는 없음                                                                  |
+| `pr.review_state`                                                                | 열린 PR의 검토 상태: `approved`, `pending`, `changes_requested` 또는 `draft`. `pr`이 있을 때도 독립적으로 없을 수 있음                                                                  |
 | `worktree.name`                                                                  | 활성 worktree의 이름. `--worktree` 세션 중에만 표시됩니다                                                                                                                      |
 | `worktree.path`                                                                  | worktree 디렉토리의 절대 경로                                                                                                                                            |
 | `worktree.branch`                                                                | worktree의 Git 브랜치 이름(예: `"worktree-my-feature"`). 훅 기반 worktree의 경우 없음                                                                                          |
@@ -201,7 +204,12 @@ Claude Code는 stdin을 통해 스크립트에 다음 JSON 필드를 보냅니�
       "current_dir": "/current/working/directory",
       "project_dir": "/original/project/directory",
       "added_dirs": [],
-      "git_worktree": "feature-xyz"
+      "git_worktree": "feature-xyz",
+      "repo": {
+        "host": "github.com",
+        "owner": "anthropics",
+        "name": "claude-code"
+      }
     },
     "version": "2.1.90",
     "output_style": {
@@ -250,6 +258,11 @@ Claude Code는 stdin을 통해 스크립트에 다음 JSON 필드를 보냅니�
     "agent": {
       "name": "security-reviewer"
     },
+    "pr": {
+      "number": 1234,
+      "url": "https://github.com/anthropics/claude-code/pull/1234",
+      "review_state": "pending"
+    },
     "worktree": {
       "name": "my-feature",
       "path": "/path/to/.claude/worktrees/my-feature",
@@ -264,9 +277,11 @@ Claude Code는 stdin을 통해 스크립트에 다음 JSON 필드를 보냅니�
 
   * `session_name`: `--name` 또는 `/rename`으로 사용자 정의 이름이 설정되었을 때만 나타남
   * `workspace.git_worktree`: 현재 디렉토리가 연결된 git worktree 내에 있을 때만 나타남
+  * `workspace.repo`: git 저장소 내에 있고 `origin` 원격이 구성되어 있을 때만 나타남
   * `effort`: 현재 모델이 추론 노력 매개변수를 지원할 때만 나타남
   * `vim`: vim 모드가 활성화되어 있을 때만 나타남
   * `agent`: `--agent` 플래그 또는 에이전트 설정이 구성되어 있을 때만 나타남
+  * `pr`: 현재 브랜치에 대해 열린 PR을 찾았을 때만 나타나며, PR이 병합되거나 닫히면 제거됩니다. `pr.review_state`는 독립적으로 없을 수 있습니다
   * `worktree`: `--worktree` 세션 중에만 나타남. 존재할 때 `branch` 및 `original_branch`도 훅 기반 worktree의 경우 없을 수 있습니다
   * `rate_limits`: Claude.ai 구독자(Pro/Max)의 경우 첫 번째 API 응답 후에만 나타남. 각 윈도우(`five_hour`, `seven_day`)는 독립적으로 없을 수 있습니다. 부재를 우아하게 처리하려면 `jq -r '.rate_limits.five_hour.used_percentage // empty'`를 사용합니다.
 
@@ -291,6 +306,8 @@ Claude Code는 stdin을 통해 스크립트에 다음 JSON 필드를 보냅니�
 * `output_tokens`: 생성된 출력 토큰
 * `cache_creation_input_tokens`: 캐시에 기록된 토큰
 * `cache_read_input_tokens`: 캐시에서 읽은 토큰
+
+캐시 필드의 의미와 청구 방식에 대해서는 [캐시 성능 확인](/ko/prompt-caching#check-cache-performance)을 참조하세요.
 
 `used_percentage` 필드는 입력 토큰만으로 계산됩니다: `input_tokens + cache_creation_input_tokens + cache_read_input_tokens`. `output_tokens`는 포함하지 않습니다.
 

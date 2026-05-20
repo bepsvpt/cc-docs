@@ -39,12 +39,7 @@ Untuk menginstal plugin dari official marketplace, gunakan `/plugin install <nam
 Jika Claude Code melaporkan bahwa plugin tidak ditemukan di marketplace mana pun, marketplace Anda mungkin hilang atau ketinggalan zaman. Jalankan `/plugin marketplace update claude-plugins-official` untuk menyegarkannya, atau `/plugin marketplace add anthropics/claude-plugins-official` jika Anda belum menambahkannya sebelumnya. Kemudian coba instal lagi.
 
 <Note>
-  Official marketplace dikelola oleh Anthropic. Untuk mengirimkan plugin ke official marketplace, gunakan salah satu formulir pengajuan dalam aplikasi:
-
-  * **Claude.ai**: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
-  * **Console**: [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
-
-  Untuk mendistribusikan plugin secara independen, [buat marketplace Anda sendiri](/id/plugin-marketplaces) dan bagikan dengan pengguna.
+  Official marketplace dikurasi oleh Anthropic, dan penyertaan adalah atas kebijakan Anthropic. Formulir pengajuan dalam aplikasi menambahkan plugin ke [community marketplace](#community-marketplace), bukan yang resmi. Untuk mendistribusikan plugin secara independen, [buat marketplace Anda sendiri](/id/plugin-marketplaces) dan bagikan dengan pengguna.
 </Note>
 
 Official marketplace mencakup beberapa kategori plugin:
@@ -111,6 +106,22 @@ Sesuaikan cara Claude merespons:
 * **explanatory-output-style**: Wawasan edukatif tentang pilihan implementasi
 * **learning-output-style**: Mode pembelajaran interaktif untuk membangun skill
 
+## Community marketplace
+
+Community marketplace di [`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community) menampung plugin pihak ketiga yang telah lulus validasi otomatis Anthropic dan penyaringan keamanan. Setiap plugin disematkan ke SHA commit tertentu dalam katalog. Tidak seperti official marketplace, Anda menambahkannya secara manual:
+
+```shell theme={null}
+/plugin marketplace add anthropics/claude-plugins-community
+```
+
+Kemudian instal plugin darinya menggunakan nama marketplace `claude-community`:
+
+```shell theme={null}
+/plugin install <plugin-name>@claude-community
+```
+
+Untuk mengirimkan plugin Anda sendiri ke community marketplace, lihat [Kirimkan plugin Anda ke community marketplace](/id/plugins#submit-your-plugin-to-the-community-marketplace) dalam panduan create-plugins.
+
 ## Coba: tambahkan demo marketplace
 
 Anthropic juga memelihara [demo plugins marketplace](https://github.com/anthropics/claude-code/tree/main/plugins) (`claude-code-plugins`) dengan plugin contoh yang menunjukkan apa yang mungkin dengan sistem plugin. Tidak seperti official marketplace, Anda perlu menambahkan ini secara manual.
@@ -138,7 +149,11 @@ Anthropic juga memelihara [demo plugins marketplace](https://github.com/anthropi
   </Step>
 
   <Step title="Instal plugin">
-    Pilih plugin untuk melihat detailnya. Pada Claude Code v2.1.143 dan yang lebih baru, pane detail mencakup estimasi **Context cost** sehingga Anda dapat melihat berapa banyak token yang akan ditambahkan plugin ke [context window](/id/features-overview#understand-context-costs) Anda setiap putaran sebelum Anda menginstalnya.
+    Pilih plugin untuk melihat detailnya. Pane detail menunjukkan apa yang berisi plugin dan biayanya:
+
+    * {/* min-version: 2.1.143 */}Estimasi **Context cost** sehingga Anda dapat melihat berapa banyak token yang akan ditambahkan plugin ke [context window](/id/features-overview#understand-context-costs) Anda setiap putaran (Claude Code v2.1.143 dan yang lebih baru)
+    * {/* min-version: 2.1.144 */}Tanggal **Last updated** plugin (v2.1.144 dan yang lebih baru)
+    * {/* min-version: 2.1.145 */}Bagian **Will install** yang mencantumkan perintah, agen, skills, hooks, dan server MCP dan LSP plugin, sehingga Anda dapat meninjau dengan tepat apa yang ditambahkan sebelum menginstal (v2.1.145 dan yang lebih baru)
 
     Pilih cakupan instalasi:
 
@@ -168,7 +183,7 @@ Anthropic juga memelihara [demo plugins marketplace](https://github.com/anthropi
 
     Ini menampilkan perubahan Anda, menghasilkan pesan commit, dan membuat commit.
 
-    Setiap plugin bekerja berbeda. Periksa deskripsi plugin di tab **Discover** atau homepage-nya untuk mempelajari skills dan kemampuan apa yang disediakan.
+    Setiap plugin bekerja berbeda. Periksa detail plugin di tab **Discover** untuk melihat perintah dan skills yang disediakan, atau kunjungi homepage-nya untuk panduan penggunaan.
   </Step>
 </Steps>
 

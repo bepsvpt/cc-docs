@@ -167,7 +167,7 @@ Hintergrundaufgaben wie die Generierung von Sitzungstiteln verwenden das kleine/
 
 Aktuelle und ältere Modell-IDs finden Sie unter [Modellübersicht](https://platform.claude.com/docs/en/about-claude/models/overview). Siehe [Modellkonfiguration](/de/model-config#pin-models-for-third-party-deployments) für die vollständige Liste der Umgebungsvariablen.
 
-[Prompt Caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) ist automatisch aktiviert. Um stattdessen eine 1-Stunden-Cache-TTL anstelle des 5-Minuten-Standards anzufordern, legen Sie die folgende Variable fest; Cache-Schreibvorgänge mit einer 1-Stunden-TTL werden mit einem höheren Satz abgerechnet:
+[Prompt Caching](/de/prompt-caching) ist automatisch aktiviert. Um stattdessen eine 1-Stunden-Cache-TTL anstelle des 5-Minuten-Standards anzufordern, legen Sie die folgende Variable fest; Cache-Schreibvorgänge mit einer 1-Stunden-TTL werden mit einem höheren Satz abgerechnet:
 
 ```bash theme={null}
 export ENABLE_PROMPT_CACHING_1H=1

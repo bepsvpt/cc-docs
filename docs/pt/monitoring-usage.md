@@ -132,6 +132,8 @@ Os spans reduzem o texto do prompt do usuário, detalhes de entrada de ferrament
 
 Quando o rastreamento está ativo, subprocessos Bash e PowerShell herdam automaticamente uma variável de ambiente `TRACEPARENT` contendo o contexto de rastreamento W3C do span de execução de ferramenta ativo. Isso permite que qualquer subprocesso que leia `TRACEPARENT` coloque seus próprios spans sob o mesmo rastreamento, permitindo rastreamento distribuído de ponta a ponta através de scripts e comandos que Claude executa.
 
+Quando o rastreamento está ativo e Claude Code está conectado diretamente à API Anthropic, cada solicitação de modelo carrega um cabeçalho W3C `traceparent` definido para o contexto do span `claude_code.llm_request`, e o cabeçalho `traceresponse` da API é registrado como um link de span. Juntos, esses conectam os spans do lado do cliente do Claude Code ao rastreamento do lado do servidor através de qualquer intermediário compatível. O cabeçalho não é enviado para provedores terceirizados.
+
 No Agent SDK e sessões não-interativas iniciadas com `-p`, Claude Code também lê `TRACEPARENT` e `TRACESTATE` de seu próprio ambiente ao iniciar cada span de interação. Isso permite que um processo de incorporação passe seu contexto de rastreamento W3C ativo para o subprocesso para que os spans do Claude Code apareçam como filhos do rastreamento distribuído do chamador. Sessões interativas ignoram `TRACEPARENT` de entrada para evitar herdar acidentalmente valores ambientes de CI ou ambientes de contêiner.
 
 #### Hierarquia de span
@@ -196,15 +198,17 @@ Cada tentativa de repetição também é registrada como um evento de span `gen_
 
 **`claude_code.tool`**
 
-| Atributo        | Descrição                                                   | Controlado Por          |
-| --------------- | ----------------------------------------------------------- | ----------------------- |
-| `tool_name`     | Nome da ferramenta                                          |                         |
-| `duration_ms`   | Duração de parede incluindo espera de permissão e execução  |                         |
-| `result_tokens` | Tamanho aproximado em tokens do resultado da ferramenta     |                         |
-| `file_path`     | Caminho de arquivo alvo para ferramentas Read, Edit e Write | `OTEL_LOG_TOOL_DETAILS` |
-| `full_command`  | String de comando para a ferramenta Bash                    | `OTEL_LOG_TOOL_DETAILS` |
-| `skill_name`    | Nome da skill para a ferramenta Skill                       | `OTEL_LOG_TOOL_DETAILS` |
-| `subagent_type` | Tipo de subagente para a ferramenta Task                    | `OTEL_LOG_TOOL_DETAILS` |
+| Atributo          | Descrição                                                                                                                | Controlado Por          |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
+| `tool_name`       | Nome da ferramenta                                                                                                       |                         |
+| `duration_ms`     | Duração de parede incluindo espera de permissão e execução                                                               |                         |
+| `result_tokens`   | Tamanho aproximado em tokens do resultado da ferramenta                                                                  |                         |
+| `agent_id`        | Identificador do subagente ou colega que executou a ferramenta. Ausente na sessão principal                              |                         |
+| `parent_agent_id` | Identificador do agente que gerou este. Ausente para a sessão principal e para agentes gerados diretamente a partir dela |                         |
+| `file_path`       | Caminho de arquivo alvo para ferramentas Read, Edit e Write                                                              | `OTEL_LOG_TOOL_DETAILS` |
+| `full_command`    | String de comando para a ferramenta Bash                                                                                 | `OTEL_LOG_TOOL_DETAILS` |
+| `skill_name`      | Nome da skill para a ferramenta Skill                                                                                    | `OTEL_LOG_TOOL_DETAILS` |
+| `subagent_type`   | Tipo de subagente para a ferramenta Task                                                                                 | `OTEL_LOG_TOOL_DETAILS` |
 
 Quando `OTEL_LOG_TOOL_CONTENT=1`, este span também registra um evento de span `tool.output` cujos atributos contêm os corpos de entrada e saída da ferramenta, truncados em 60 KB por atributo.
 
@@ -885,6 +889,22 @@ Registrado quando todos os hooks para um evento de hook terminaram.
 * `managed_only`: `"true"` quando apenas hooks de política gerenciada são permitidos
 * `hook_source`: `"policySettings"` ou `"merged"`
 * `hook_definitions`: Configuração de hook serializada em JSON. Incluído apenas quando rastreamento beta detalhado e `OTEL_LOG_TOOL_DETAILS=1` estão ambos ativados
+
+#### Evento de métricas de plugin de hook
+
+Registrado quando um hook de plugin do marketplace oficial emite métricas por invocação. Apenas plugins instalados de um marketplace oficial Anthropic podem emitir esses dados. Plugins de marketplace de terceiros e hooks configurados pelo usuário não emitem para este evento. Use este evento para monitorar o comportamento do plugin, como taxas de descoberta, custos e durações de sua própria pilha de observabilidade.
+
+**Nome do Evento**: `claude_code.hook_plugin_metrics`
+
+**Atributos**:
+
+* Todos os [atributos padrão](#atributos-padrão)
+* `event.name`: `"hook_plugin_metrics"`
+* `event.timestamp`: Timestamp ISO 8601
+* `event.sequence`: Contador monotonicamente crescente para ordenar eventos dentro de uma sessão
+* `plugin_id`: identificador do plugin em forma `<name>@<marketplace>`
+* `hook_event`: tipo de evento de hook que emitiu as métricas
+* Até 20 chaves de métrica emitidas pelo plugin. Os nomes correspondem a `^[a-z][a-z0-9_]{0,39}$`. Os valores são booleanos ou números.
 
 #### Evento de compactação
 

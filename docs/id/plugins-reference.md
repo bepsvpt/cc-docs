@@ -407,6 +407,20 @@ Jika Anda menyertakan manifest, `name` adalah satu-satunya field yang diperlukan
 
 Nama ini digunakan untuk namespacing komponen. Misalnya, di UI, agent `agent-creator` untuk plugin dengan nama `plugin-dev` akan muncul sebagai `plugin-dev:agent-creator`.
 
+### Field yang tidak dikenali
+
+Claude Code mengabaikan field tingkat atas yang tidak dikenalinya. Anda dapat menyimpan metadata dari ekosistem lain di `plugin.json` dan plugin masih dimuat. Ini membuat praktis untuk mempertahankan satu manifest yang berfungsi ganda sebagai manifest ekstensi VS Code atau Cursor, `package.json` npm, atau manifest bundle MCPB/DXT.
+
+`claude plugin validate` melaporkan field yang tidak dikenali sebagai peringatan, bukan kesalahan. Jika field adalah satu atau dua karakter dari yang dikenali, peringatan menyarankan nama yang mungkin dimaksudkan. Plugin dengan hanya peringatan field yang tidak dikenali masih lulus validasi dan dimuat saat runtime.
+
+Field dengan tipe yang salah masih gagal. Misalnya, nilai `keywords` yang merupakan string daripada array adalah kesalahan load, dan `claude plugin validate` melaporkannya sebagai satu.
+
+Teruskan `--strict` untuk memperlakukan peringatan sebagai kesalahan. Gunakan di CI untuk menangkap nama field yang salah eja atau field yang tersisa dari manifest tool lain sebelum menerbitkan, meskipun plugin akan dimuat saat runtime.
+
+```bash theme={null}
+claude plugin validate ./my-plugin --strict
+```
+
 ### Field metadata
 
 | Field         | Tipe   | Deskripsi                                                                                                                                                                                                                                                                                                                                                                       | Contoh                                                            |

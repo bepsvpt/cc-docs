@@ -39,12 +39,7 @@
 Claude Code가 플러그인을 어떤 마켓플레이스에서도 찾을 수 없다고 보고하면 마켓플레이스가 누락되었거나 오래되었을 수 있습니다. `/plugin marketplace update claude-plugins-official`을 실행하여 새로 고치거나, 이전에 추가하지 않았다면 `/plugin marketplace add anthropics/claude-plugins-official`을 실행합니다. 그런 다음 설치를 다시 시도합니다.
 
 <Note>
-  공식 마켓플레이스는 Anthropic에서 유지 관리합니다. 공식 마켓플레이스에 플러그인을 제출하려면 다음 앱 내 제출 양식 중 하나를 사용하세요:
-
-  * **Claude.ai**: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
-  * **Console**: [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
-
-  플러그인을 독립적으로 배포하려면 [자신의 마켓플레이스를 만들고](/ko/plugin-marketplaces) 사용자와 공유하세요.
+  공식 마켓플레이스는 Anthropic에서 큐레이션하며, 포함 여부는 Anthropic의 재량입니다. 앱 내 제출 양식은 플러그인을 [커뮤니티 마켓플레이스](#community-marketplace)에 추가하며, 공식 마켓플레이스에는 추가하지 않습니다. 플러그인을 독립적으로 배포하려면 [자신의 마켓플레이스를 만들고](/ko/plugin-marketplaces) 사용자와 공유하세요.
 </Note>
 
 공식 마켓플레이스에는 여러 카테고리의 플러그인이 포함되어 있습니다:
@@ -138,7 +133,7 @@ Anthropic은 또한 플러그인 시스템으로 가능한 것을 보여주는 �
   </Step>
 
   <Step title="플러그인 설치">
-    플러그인을 선택하여 세부 정보를 봅니다. {/* min-version: 2.1.143 */}Claude Code v2.1.143 이상에서는 세부 정보 창에 **Context cost** 예상치가 포함되어 있으므로 설치하기 전에 플러그인이 매 턴마다 [컨텍스트 윈도우](/ko/features-overview#understand-context-costs)에 추가할 토큰 수를 확인할 수 있습니다.
+    플러그인을 선택하여 세부 정보를 봅니다. {/* min-version: 2.1.143 */}Claude Code v2.1.143 이상에서는 세부 정보 창에 **Context cost** 예상치가 포함되어 있으므로 설치하기 전에 플러그인이 매 턴마다 [컨텍스트 윈도우](/ko/features-overview#understand-context-costs)에 추가할 토큰 수를 확인할 수 있습니다. {/* min-version: 2.1.144 */}v2.1.144 이상에서는 창에 플러그인의 **Last updated** 날짜도 표시됩니다.
 
     설치 범위를 선택합니다:
 
@@ -174,76 +169,72 @@ Anthropic은 또한 플러그인 시스템으로 가능한 것을 보여주는 �
 
 이 가이드의 나머지 부분에서는 마켓플레이스를 추가하고, 플러그인을 설치하며, 구성을 관리하는 모든 방법을 다룹니다.
 
-## 마켓플레이스 추가
+## 시도해보기: 데모 마켓플레이스 추가
 
-`/plugin marketplace add` 명령어를 사용하여 다양한 소스에서 마켓플레이스를 추가합니다.
+Anthropic은 플러그인 시스템으로 가능한 것들을 보여주는 예제 플러그인이 포함된 [데모 플러그인 마켓플레이스](https://github.com/anthropics/claude-code/tree/main/plugins)(`claude-code-plugins`)를 유지 관리합니다. 공식 마켓플레이스와 달리 이 마켓플레이스는 수동으로 추가해야 합니다.
 
-<Tip>
-  **바로가기**: `/plugin marketplace` 대신 `/plugin market`을 사용할 수 있으며, `remove` 대신 `rm`을 사용할 수 있습니다.
-</Tip>
+<Steps>
+  <Step title="마켓플레이스 추가">
+    Claude Code 내에서 `anthropics/claude-code` 마켓플레이스에 대해 `plugin marketplace add` 명령어를 실행합니다:
 
-* **GitHub 저장소**: `owner/repo` 형식(예: `anthropics/claude-code`)
-* **Git URL**: 모든 git 저장소 URL(GitLab, Bitbucket, 자체 호스팅)
-* **로컬 경로**: 디렉토리 또는 `marketplace.json` 파일에 대한 직접 경로
-* **원격 URL**: 호스팅된 `marketplace.json` 파일에 대한 직접 URL
+    ```shell theme={null}
+    /plugin marketplace add anthropics/claude-code
+    ```
 
-### GitHub에서 추가
+    이는 마켓플레이스 카탈로그를 다운로드하고 해당 플러그인을 사용 가능하게 만듭니다.
+  </Step>
 
-`.claude-plugin/marketplace.json` 파일을 포함하는 GitHub 저장소를 `owner/repo` 형식을 사용하여 추가합니다. 여기서 `owner`는 GitHub 사용자 이름 또는 조직이고 `repo`는 저장소 이름입니다.
+  <Step title="사용 가능한 플러그인 찾아보기">
+    `/plugin`을 실행하여 플러그인 관리자를 엽니다. 이는 **Tab** 키(또는 뒤로 가려면 **Shift+Tab**)를 사용하여 순환할 수 있는 4개의 탭이 있는 탭 인터페이스를 엽니다:
 
-예를 들어 `anthropics/claude-code`는 `anthropics`가 소유한 `claude-code` 저장소를 나타냅니다:
+    * **Discover**: 모든 마켓플레이스에서 사용 가능한 플러그인 찾아보기
+    * **Installed**: 설치된 플러그인 보기 및 관리
+    * **Marketplaces**: 추가된 마켓플레이스 추가, 제거 또는 업데이트
+    * **Errors**: 플러그인 로딩 오류 보기
 
-```shell theme={null}
-/plugin marketplace add anthropics/claude-code
-```
+    방금 추가한 마켓플레이스의 플러그인을 보려면 **Discover** 탭으로 이동합니다.
+  </Step>
 
-### 다른 Git 호스트에서 추가
+  <Step title="플러그인 설치">
+    플러그인을 선택하여 세부 정보를 봅니다. 세부 정보 창에는 플러그인에 포함된 내용과 비용이 표시됩니다:
 
-전체 URL을 제공하여 모든 git 저장소를 추가합니다. 이는 GitLab, Bitbucket 및 자체 호스팅 서버를 포함한 모든 Git 호스트에서 작동합니다. `.git` 접미사를 포함하여 Claude Code가 URL을 호스팅된 `marketplace.json` 파일에 대한 직접 링크로 취급하지 않고 저장소를 복제하도록 합니다.
+    * {/* min-version: 2.1.143 */}**Context cost** 예상치로 플러그인이 매 턴마다 [컨텍스트 윈도우](/ko/features-overview#understand-context-costs)에 추가할 토큰 수를 확인할 수 있습니다(Claude Code v2.1.143 이상)
+    * {/* min-version: 2.1.144 */}플러그인의 **Last updated** 날짜(v2.1.144 이상)
+    * {/* min-version: 2.1.145 */}플러그인의 명령어, 에이전트, 스킬, 훅 및 MCP와 LSP 서버를 나열하는 **Will install** 섹션으로, 설치 전에 정확히 무엇이 추가되는지 검토할 수 있습니다(v2.1.145 이상)
 
-HTTPS 사용:
+    설치 범위를 선택합니다:
 
-```shell theme={null}
-/plugin marketplace add https://gitlab.com/company/plugins.git
-```
+    * **User scope**: 모든 프로젝트에서 자신을 위해 설치
+    * **Project scope**: 이 저장소의 모든 협력자를 위해 설치
+    * **Local scope**: 이 저장소에서만 자신을 위해 설치
 
-SSH 사용:
+    예를 들어 **commit-commands**(git 워크플로우 스킬을 추가하는 플러그인)를 선택하고 사용자 범위에 설치합니다.
 
-```shell theme={null}
-/plugin marketplace add git@gitlab.com:company/plugins.git
-```
+    명령줄에서 직접 설치할 수도 있습니다:
 
-특정 브랜치 또는 태그를 추가하려면 `#` 뒤에 ref를 추가합니다:
+    ```shell theme={null}
+    /plugin install commit-commands@anthropics-claude-code
+    ```
 
-```shell theme={null}
-/plugin marketplace add https://gitlab.com/company/plugins.git#v1.0.0
-```
+    범위에 대해 자세히 알아보려면 [Configuration scopes](/ko/settings#configuration-scopes)를 참조하세요.
+  </Step>
 
-### 로컬 경로에서 추가
+  <Step title="새 플러그인 사용">
+    설치 후 `/reload-plugins`를 실행하여 플러그인을 활성화합니다. 플러그인 스킬은 플러그인 이름으로 네임스페이스되므로 **commit-commands**는 `/commit-commands:commit`과 같은 스킬을 제공합니다.
 
-`.claude-plugin/marketplace.json` 파일을 포함하는 로컬 디렉토리를 추가합니다:
+    파일을 변경하고 다음을 실행하여 시도해봅니다:
 
-```shell theme={null}
-/plugin marketplace add ./my-marketplace
-```
+    ```shell theme={null}
+    /commit-commands:commit
+    ```
 
-`marketplace.json` 파일에 대한 직접 경로를 추가할 수도 있습니다:
+    이는 변경 사항을 스테이징하고, 커밋 메시지를 생성하며, 커밋을 만듭니다.
 
-```shell theme={null}
-/plugin marketplace add ./path/to/marketplace.json
-```
+    각 플러그인은 다르게 작동합니다. **Discover** 탭에서 플러그인의 세부 정보를 확인하여 제공하는 명령어와 스킬을 보거나, 사용 지침을 위해 해당 홈페이지를 방문하세요.
+  </Step>
+</Steps>
 
-### 원격 URL에서 추가
-
-URL을 통해 원격 `marketplace.json` 파일을 추가합니다:
-
-```shell theme={null}
-/plugin marketplace add https://example.com/marketplace.json
-```
-
-<Note>
-  URL 기반 마켓플레이스는 Git 기반 마켓플레이스에 비해 몇 가지 제한 사항이 있습니다. 플러그인 설치 시 "경로를 찾을 수 없음" 오류가 발생하면 [문제 해결](/ko/plugin-marketplaces#plugins-with-relative-paths-fail-in-url-based-marketplaces)을 참조하세요.
-</Note>
+이 가이드의 나머지 부분에서는 마켓플레이스를 추가하고, 플러그인을 설치하며, 구성을 관리하는 모든 방법을 다룹니다.
 
 ## 플러그인 설치
 
@@ -264,6 +255,22 @@ URL을 통해 원격 `marketplace.json` 파일을 추가합니다:
 <Warning>
   플러그인을 설치하기 전에 신뢰할 수 있는지 확인하세요. Anthropic은 플러그인에 포함된 MCP servers, 파일 또는 기타 소프트웨어를 제어하지 않으며 의도한 대로 작동하는지 확인할 수 없습니다. 자세한 내용은 각 플러그인의 홈페이지를 확인하세요.
 </Warning>
+
+## 커뮤니티 마켓플레이스
+
+[`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community)의 커뮤니티 마켓플레이스는 Anthropic의 자동화된 검증 및 보안 심사를 통과한 타사 플러그인을 호스팅합니다. 각 플러그인은 카탈로그의 특정 commit SHA에 고정됩니다. 공식 마켓플레이스와 달리 수동으로 추가해야 합니다:
+
+```shell theme={null}
+/plugin marketplace add anthropics/claude-plugins-community
+```
+
+그런 다음 `claude-community` 마켓플레이스 이름을 사용하여 플러그인을 설치합니다:
+
+```shell theme={null}
+/plugin install <plugin-name>@claude-community
+```
+
+자신의 플러그인을 커뮤니티 마켓플레이스에 제출하려면 플러그인 생성 가이드의 [플러그인을 커뮤니티 마켓플레이스에 제출](/ko/plugins#submit-your-plugin-to-the-community-marketplace)을 참조하세요.
 
 ## 설치된 플러그인 관리
 

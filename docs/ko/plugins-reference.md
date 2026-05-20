@@ -369,9 +369,9 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `experimental.monit
   "name": "plugin-name",
   "displayName": "Plugin Name",
   "version": "1.2.0",
-  "description": "간단한 플러그인 설명",
+  "description": "Brief plugin description",
   "author": {
-    "name": "작성자 이름",
+    "name": "Author Name",
     "email": "author@example.com",
     "url": "https://github.com/author"
   },
@@ -406,6 +406,20 @@ monitors를 인라인으로 선언하려면 `plugin.json`의 `experimental.monit
 | `name` | string | 고유 식별자 (kebab-case, 공백 없음) | `"deployment-tools"` |
 
 이 이름은 컴포넌트 네임스페이싱에 사용됩니다. 예를 들어 UI에서 이름이 `plugin-dev`인 플러그인의 agent `agent-creator`는 `plugin-dev:agent-creator`로 나타납니다.
+
+### 인식되지 않은 필드
+
+Claude Code는 인식하지 못하는 최상위 필드를 무시합니다. 다른 생태계의 메타데이터를 `plugin.json`에 유지할 수 있으며 플러그인은 여전히 로드됩니다. 이를 통해 VS Code 또는 Cursor 확장 매니페스트, npm `package.json` 또는 MCPB/DXT 번들 매니페스트로도 작동하는 하나의 매니페스트를 유지하는 것이 실용적입니다.
+
+`claude plugin validate`는 인식되지 않은 필드를 오류가 아닌 경고로 보고합니다. 필드가 인식된 필드와 한두 글자 차이나면 경고는 의도된 이름을 제안합니다. 인식되지 않은 필드 경고만 있는 플러그인은 여전히 검증을 통과하고 런타임에 로드됩니다.
+
+잘못된 타입의 필드는 여전히 실패합니다. 예를 들어 `keywords` 값이 배열 대신 문자열인 경우 로드 오류이며 `claude plugin validate`는 이를 오류로 보고합니다.
+
+`--strict`를 전달하여 경고를 오류로 취급합니다. CI에서 이를 사용하여 플러그인이 런타임에 로드되더라도 게시하기 전에 오타가 난 필드 이름이나 다른 도구의 매니페스트에서 남겨진 필드를 포착합니다.
+
+```bash theme={null}
+claude plugin validate ./my-plugin --strict
+```
 
 ### 메타데이터 필드
 

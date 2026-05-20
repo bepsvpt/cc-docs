@@ -407,6 +407,20 @@ Se includi un manifest, `name` è l'unico campo obbligatorio.
 
 Questo nome viene utilizzato per lo spazio dei nomi dei componenti. Ad esempio, nell'interfaccia utente, l'agent `agent-creator` per il plugin con nome `plugin-dev` apparirà come `plugin-dev:agent-creator`.
 
+### Campi non riconosciuti
+
+Claude Code ignora i campi di livello superiore che non riconosce. Potete mantenere i metadati da un altro ecosistema in `plugin.json` e il plugin continua a caricarsi. Questo rende pratico mantenere un unico manifest che funge anche da manifest dell'estensione VS Code o Cursor, da `package.json` npm, o da manifest del bundle MCPB/DXT.
+
+`claude plugin validate` segnala i campi non riconosciuti come avvisi, non come errori. Se un campo è uno o due caratteri diverso da uno riconosciuto, l'avviso suggerisce il nome probabilmente inteso. Un plugin con solo avvisi di campi non riconosciuti passa comunque la convalida e si carica al runtime.
+
+I campi con il tipo sbagliato comunque falliscono. Ad esempio, un valore `keywords` che è una stringa invece di un array è un errore di caricamento, e `claude plugin validate` lo segnala come tale.
+
+Passa `--strict` per trattare gli avvisi come errori. Usalo in CI per rilevare un nome di campo scritto male o un campo rimasto da un altro manifest dello strumento prima della pubblicazione, anche se il plugin si caricherà al runtime.
+
+```bash theme={null}
+claude plugin validate ./my-plugin --strict
+```
+
 ### Campi di metadati
 
 | Campo         | Tipo   | Descrizione                                                                                                                                                                                                                                                                                                                                                                                                                       | Esempio                                                           |

@@ -28,6 +28,8 @@ Claude Code는 강력함과 안전성의 균형을 맞추기 위해 계층화된
 
 규칙은 순서대로 평가됩니다: **deny -> ask -> allow**. 첫 번째 일치하는 규칙이 우선이므로 deny 규칙이 항상 우선합니다.
 
+Deny 규칙은 도구 이름을 지정하는지 또는 도구 내의 패턴 범위를 지정하는지에 따라 다르게 작동합니다. `Bash`와 같은 단순 도구 이름은 도구를 Claude의 컨텍스트에서 완전히 제거하므로 Claude는 이를 볼 수 없습니다. `Bash(rm *)`와 같은 범위 지정 규칙은 도구를 사용 가능하게 유지하고 Claude가 시도할 때 일치하는 호출을 차단합니다.
+
 <Note>
   권한 규칙은 모델이 아닌 Claude Code에 의해 적용됩니다. 프롬프트 또는 `CLAUDE.md`의 지시사항은 Claude가 시도하는 작업을 형성하지만, Claude Code가 허용하는 것을 변경하지는 않습니다. 액세스 권한을 부여하거나 취소하려면 `/permissions`, 여기에 설명된 규칙, [권한 모드](/ko/permission-modes), 또는 [PreToolUse hook](#extend-permissions-with-hooks)을 사용하십시오.
 </Note>
@@ -65,7 +67,7 @@ Claude Code는 도구 승인 방식을 제어하는 여러 권한 모드를 지�
 | `WebFetch` | 모든 웹 가져오기 요청과 일치합니다 |
 | `Read`     | 모든 파일 읽기와 일치합니다     |
 
-`Bash(*)`는 `Bash`와 동등하며 모든 Bash 명령과 일치합니다.
+`Bash(*)`는 `Bash`와 동등하며 모든 Bash 명령과 일치합니다. 거부 규칙으로서, 두 형식 모두 Claude의 컨텍스트에서 도구를 제거합니다.
 
 ### 세분화된 제어를 위해 지정자 사용
 
@@ -186,7 +188,7 @@ Claude Code는 PowerShell AST를 구문 분석하고 복합 명령의 각 명령
 
 ### Read 및 Edit
 
-`Edit` 규칙은 파일을 편집하는 모든 기본 제공 도구에 적용됩니다. Claude는 Grep 및 Glob과 같이 파일을 읽는 모든 기본 제공 도구에 `Read` 규칙을 적용하기 위해 최선을 다합니다.
+`Edit` 규칙은 파일을 편집하는 모든 기본 제공 도구에 적용됩니다. Claude는 Grep 및 Glob과 같이 파일을 읽는 모든 기본 제공 도구에 `Read` 규칙을 적용하기 위해 최선을 다합니다. 또한 프롬프트의 `@file` 언급 및 연결된 [IDE](/ko/vs-code#the-built-in-ide-mcp-server)가 Claude와 공유하는 선택 및 열린 파일 컨텍스트에도 적용합니다.
 
 <Warning>
   Read 및 Edit deny 규칙은 Claude의 기본 제공 파일 도구 및 Bash에서 Claude Code가 인식하는 `cat`, `head`, `tail` 및 `sed`와 같은 파일 명령에 적용됩니다. 이들은 파일을 간접적으로 읽거나 쓰는 Python 또는 Node 스크립트와 같은 임의의 서브프로세스에는 적용되지 않습니다. 경로에 대한 모든 프로세스의 액세스를 차단하는 OS 수준 적용을 위해 [샌드박싱을 활성화합니다](/ko/sandboxing).

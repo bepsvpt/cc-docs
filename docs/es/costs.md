@@ -76,7 +76,7 @@ Para mantener los costos del equipo de agentes manejables:
 
 ## Reducir el uso de tokens
 
-Los costos de tokens se escalan con el tamaño del contexto: cuanto más contexto procesa Claude, más tokens utiliza. Claude Code optimiza automáticamente los costos a través del almacenamiento en caché de prompts (que reduce costos para contenido repetido como prompts del sistema) y auto-compactación (que resume el historial de conversación cuando se acerca a los límites del contexto).
+Los costos de tokens se escalan con el tamaño del contexto: cuanto más contexto procesa Claude, más tokens utiliza. Claude Code optimiza automáticamente los costos a través del [almacenamiento en caché de prompts](/es/prompt-caching), que reduce costos para contenido repetido como prompts del sistema, y auto-compactación, que resume el historial de conversación cuando se acerca a los límites del contexto.
 
 Las siguientes estrategias lo ayudan a mantener el contexto pequeño y reducir los costos por mensaje.
 
@@ -184,7 +184,7 @@ Solicitudes vagas como "mejorar esta base de código" desencadenan escaneo ampli
 
 Para trabajo más largo o más complejo, estos hábitos ayudan a evitar tokens desperdiciados por tomar el camino equivocado:
 
-* **Use plan mode para tareas complejas**: Presione Shift+Tab para entrar en [plan mode](/es/common-workflows#use-plan-mode-for-safe-code-analysis) antes de la implementación. Claude explora la base de código y propone un enfoque para su aprobación, previniendo re-trabajo costoso cuando la dirección inicial es incorrecta.
+* **Use plan mode para tareas complejas**: Presione Shift+Tab para entrar en [plan mode](/es/permission-modes#analyze-before-you-edit-with-plan-mode) antes de la implementación. Claude explora la base de código y propone un enfoque para su aprobación, previniendo re-trabajo costoso cuando la dirección inicial es incorrecta.
 * **Corrija el curso temprano**: Si Claude comienza a ir en la dirección equivocada, presione Escape para detener inmediatamente. Use `/rewind` o presione Escape dos veces para restaurar la conversación y el código a un checkpoint anterior.
 * **Proporcione objetivos de verificación**: Incluya casos de prueba, pegue capturas de pantalla o defina la salida esperada en su prompt. Cuando Claude puede verificar su propio trabajo, detecta problemas antes de que necesite solicitar correcciones.
 * **Pruebe incrementalmente**: Escriba un archivo, pruébelo, luego continúe. Esto detecta problemas temprano cuando son baratos de arreglar.

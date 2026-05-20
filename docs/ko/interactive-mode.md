@@ -349,9 +349,8 @@ export CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=false
 * 노란색: 검토 대기 중
 * 빨간색: 변경 요청됨
 * 회색: 초안
-* 보라색: 병합됨
 
-`Cmd+click` (Mac) 또는 `Ctrl+click` (Windows/Linux)으로 링크를 클릭하여 브라우저에서 풀 요청을 열 수 있습니다. 상태는 60초마다 자동으로 업데이트됩니다.
+풀 요청이 병합되거나 닫히면 배지가 사라집니다. `Cmd+click` (Mac) 또는 `Ctrl+click` (Windows/Linux)으로 링크를 클릭하여 브라우저에서 풀 요청을 열 수 있습니다. 상태는 60초마다 새로 고쳐지며, `gh pr` 또는 `git push` 명령이 세션에서 실행된 직후에 즉시 새로 고쳐집니다.
 
 <Note>
   PR 상태는 `gh` CLI가 설치되고 인증되어야 합니다 (`gh auth login`).

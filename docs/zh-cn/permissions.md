@@ -28,6 +28,8 @@ Claude Code 使用分层权限系统来平衡功能和安全性：
 
 规则按顺序评估：**deny -> ask -> allow**。第一个匹配的规则获胜，因此 deny 规则始终优先。
 
+Deny 规则的行为取决于它们是命名工具还是在工具内范围化模式。像 `Bash` 这样的裸工具名称会将工具从 Claude 的上下文中完全移除，因此 Claude 永远看不到它。像 `Bash(rm *)` 这样的范围化规则会保留工具的可用性，并在 Claude 尝试时阻止匹配的调用。
+
 <Note>
   权限规则由 Claude Code 强制执行，而不是由模型强制执行。您的提示或 `CLAUDE.md` 中的说明会影响 Claude 尝试执行的操作，但它们不会改变 Claude Code 允许的操作。要授予或撤销访问权限，请使用 `/permissions`、此处描述的规则、[权限模式](/zh-CN/permission-modes) 或 [PreToolUse hook](#extend-permissions-with-hooks)。
 </Note>
@@ -65,7 +67,7 @@ Claude Code 支持多种权限模式来控制工具的批准方式。请参阅[�
 | `WebFetch` | 匹配所有网络获取请求   |
 | `Read`     | 匹配所有文件读取     |
 
-`Bash(*)` 等同于 `Bash` 并匹配所有 Bash 命令。
+`Bash(*)` 等同于 `Bash` 并匹配所有 Bash 命令。作为拒绝规则，两种形式都会从 Claude 的上下文中移除该工具。
 
 ### 使用说明符进行细粒度控制
 
@@ -186,7 +188,7 @@ Claude Code 解析 PowerShell AST 并独立检查复合命令中的每个命令�
 
 ### Read 和 Edit
 
-`Edit` 规则适用于所有编辑文件的内置工具。Claude 尽力将 `Read` 规则应用于所有读取文件的内置工具，如 Grep 和 Glob。
+`Edit` 规则适用于所有编辑文件的内置工具。Claude 尽力将 `Read` 规则应用于所有读取文件的内置工具，如 Grep 和 Glob，以及您提示中的 `@file` 提及，以及连接的 [IDE](/zh-CN/vs-code#the-built-in-ide-mcp-server) 与 Claude 共享的选择和打开文件上下文。
 
 <Warning>
   Read 和 Edit deny 规则适用于 Claude 的内置文件工具和 Claude Code 在 Bash 中识别的文件命令，如 `cat`、`head`、`tail` 和 `sed`。它们不适用于间接读取或写入文件的任意子进程，如打开文件本身的 Python 或 Node 脚本。为了获得阻止所有进程访问路径的 OS 级别强制执行，请[启用沙箱](/zh-CN/sandboxing)。

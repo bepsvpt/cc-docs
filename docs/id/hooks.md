@@ -189,25 +189,25 @@ Event `FileChanged` tidak mengikuti aturan ini saat membangun daftar watch-nya. 
 
 Setiap tipe event cocok pada bidang yang berbeda:
 
-| Event                                                                                                                           | Apa yang difilter matcher                                            | Contoh nilai matcher                                                                                                                               |
-| :------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                      | nama tool                                                            | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                                                   |
-| `SessionStart`                                                                                                                  | bagaimana sesi dimulai                                               | `startup`, `resume`, `clear`, `compact`                                                                                                            |
-| `Setup`                                                                                                                         | flag CLI mana yang memicu setup                                      | `init`, `maintenance`                                                                                                                              |
-| `SessionEnd`                                                                                                                    | mengapa sesi berakhir                                                | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                                           |
-| `Notification`                                                                                                                  | tipe notifikasi                                                      | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`, `elicitation_complete`, `elicitation_response`                           |
-| `SubagentStart`                                                                                                                 | tipe agent                                                           | `general-purpose`, `Explore`, `Plan`, atau nama agent kustom                                                                                       |
-| `PreCompact`, `PostCompact`                                                                                                     | apa yang memicu compaction                                           | `manual`, `auto`                                                                                                                                   |
-| `SubagentStop`                                                                                                                  | tipe agent                                                           | nilai yang sama seperti `SubagentStart`                                                                                                            |
-| `ConfigChange`                                                                                                                  | sumber konfigurasi                                                   | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                                                 |
-| `CwdChanged`                                                                                                                    | tidak ada dukungan matcher                                           | selalu dijalankan pada setiap perubahan direktori                                                                                                  |
-| `FileChanged`                                                                                                                   | nama file literal untuk ditonton (lihat [FileChanged](#filechanged)) | `.envrc\|.env`                                                                                                                                     |
-| `StopFailure`                                                                                                                   | tipe kesalahan                                                       | `rate_limit`, `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                                                            | alasan load                                                          | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                                                       |
-| `UserPromptExpansion`                                                                                                           | nama command                                                         | nama skill atau command Anda                                                                                                                       |
-| `Elicitation`                                                                                                                   | nama server MCP                                                      | nama server MCP yang dikonfigurasi Anda                                                                                                            |
-| `ElicitationResult`                                                                                                             | nama server MCP                                                      | nilai yang sama seperti `Elicitation`                                                                                                              |
-| `UserPromptSubmit`, `PostToolBatch`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | tidak ada dukungan matcher                                           | selalu dijalankan pada setiap kemunculan                                                                                                           |
+| Event                                                                                                                           | Apa yang difilter matcher                                            | Contoh nilai matcher                                                                                                                                                  |
+| :------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                      | nama tool                                                            | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                                                                      |
+| `SessionStart`                                                                                                                  | bagaimana sesi dimulai                                               | `startup`, `resume`, `clear`, `compact`                                                                                                                               |
+| `Setup`                                                                                                                         | flag CLI mana yang memicu setup                                      | `init`, `maintenance`                                                                                                                                                 |
+| `SessionEnd`                                                                                                                    | mengapa sesi berakhir                                                | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                                                              |
+| `Notification`                                                                                                                  | tipe notifikasi                                                      | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`, `elicitation_complete`, `elicitation_response`                                              |
+| `SubagentStart`                                                                                                                 | tipe agent                                                           | `general-purpose`, `Explore`, `Plan`, atau nama agent kustom                                                                                                          |
+| `PreCompact`, `PostCompact`                                                                                                     | apa yang memicu compaction                                           | `manual`, `auto`                                                                                                                                                      |
+| `SubagentStop`                                                                                                                  | tipe agent                                                           | nilai yang sama seperti `SubagentStart`                                                                                                                               |
+| `ConfigChange`                                                                                                                  | sumber konfigurasi                                                   | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                                                                    |
+| `CwdChanged`                                                                                                                    | tidak ada dukungan matcher                                           | selalu dijalankan pada setiap perubahan direktori                                                                                                                     |
+| `FileChanged`                                                                                                                   | nama file literal untuk ditonton (lihat [FileChanged](#filechanged)) | `.envrc\|.env`                                                                                                                                                        |
+| `StopFailure`                                                                                                                   | tipe kesalahan                                                       | `rate_limit`, `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `invalid_request`, `model_not_found`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                                            | alasan load                                                          | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                                                                          |
+| `UserPromptExpansion`                                                                                                           | nama command                                                         | nama skill atau command Anda                                                                                                                                          |
+| `Elicitation`                                                                                                                   | nama server MCP                                                      | nama server MCP yang dikonfigurasi Anda                                                                                                                               |
+| `ElicitationResult`                                                                                                             | nama server MCP                                                      | nilai yang sama seperti `Elicitation`                                                                                                                                 |
+| `UserPromptSubmit`, `PostToolBatch`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | tidak ada dukungan matcher                                           | selalu dijalankan pada setiap kemunculan                                                                                                                              |
 
 Matcher dijalankan terhadap bidang dari [JSON input](#hook-input-and-output) yang Claude Code kirimkan ke hook Anda di stdin. Untuk tool events, bidang itu adalah `tool_name`. Setiap bagian [hook event](#hook-events) mencantumkan set lengkap nilai matcher dan skema input untuk event itu.
 
@@ -732,7 +732,7 @@ Contoh di bawah menjalankan notifikasi desktop dari hook `Notification`. Urutan 
 # Notification hook: ping desktop ketika Claude Code membutuhkan perhatian.
 input=$(cat)
 title="Claude Code'
-body=$(jq -r '.message // 'Needs your attention'' <<<"$input")
+body=$(jq -r '.message // 'Needs your attention'' <<<'$input')
 seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
 jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 ```
@@ -1698,7 +1698,7 @@ Selain [bidang input umum](#common-input-fields), Notification hooks menerima `m
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
   "hook_event_name": "Notification",
-  "message": "Claude needs your permission to use Bash",
+  "message": "Claude needs your permission",
   "title": "Permission needed",
   "notification_type": "permission_prompt"
 }
@@ -1748,6 +1748,8 @@ Dijalankan ketika subagent Claude Code telah selesai merespons. Cocok pada tipe 
 
 Selain [bidang input umum](#common-input-fields), SubagentStop hooks menerima `stop_hook_active`, `agent_id`, `agent_type`, `agent_transcript_path`, dan `last_assistant_message`. Bidang `agent_type` adalah nilai yang digunakan untuk pemfilteran matcher. `transcript_path` adalah transkrip sesi utama, sementara `agent_transcript_path` adalah transkrip subagent sendiri yang disimpan dalam folder `subagents/` bersarang. Bidang `last_assistant_message` berisi konten teks respons akhir subagent, jadi hooks dapat mengaksesnya tanpa mengurai file transkrip.
 
+SubagentStop hooks juga menerima array `background_tasks` dan `session_crons` yang dijelaskan di bawah [Stop input](#stop-input), tersedia dalam Claude Code v2.1.145 atau lebih baru. Kedua array bersifat scoped ke sesi induk, bukan subagent.
+
 ```json theme={null}
 {
   "session_id": "abc123",
@@ -1759,7 +1761,9 @@ Selain [bidang input umum](#common-input-fields), SubagentStop hooks menerima `s
   "agent_id": "def456",
   "agent_type": "Explore",
   "agent_transcript_path": "~/.claude/projects/.../abc123/subagents/agent-def456.jsonl",
-  "last_assistant_message": "Analysis complete. Found 3 potential issues..."
+  "last_assistant_message": "Analysis complete. Found 3 potential issues...",
+  "background_tasks": [],
+  "session_crons": []
 }
 ```
 
@@ -1886,7 +1890,36 @@ Dijalankan ketika agent Claude Code utama telah selesai merespons. Tidak dijalan
 
 #### Input Stop
 
-Selain [bidang input umum](#common-input-fields), Stop hooks menerima `stop_hook_active` dan `last_assistant_message`. Bidang `stop_hook_active` adalah `true` ketika Claude Code sudah melanjutkan sebagai hasil dari stop hook. Periksa nilai ini atau proses transkrip untuk mencegah Claude Code berjalan tanpa batas. Bidang `last_assistant_message` berisi konten teks respons akhir Claude, jadi hooks dapat mengaksesnya tanpa mengurai file transkrip.
+Selain [bidang input umum](#common-input-fields), Stop hooks menerima `stop_hook_active`, `last_assistant_message`, `background_tasks`, dan `session_crons`. Bidang `stop_hook_active` adalah `true` ketika Claude Code sudah melanjutkan sebagai hasil dari stop hook. Periksa nilai ini atau proses transkrip untuk menghindari memblokir pada kondisi yang tidak akan pernah terselesaikan. Claude Code menimpa hook dan mengakhiri giliran setelah 8 blok berturut-turut.
+
+Bidang `last_assistant_message` berisi konten teks respons akhir Claude, jadi hooks dapat mengaksesnya tanpa mengurai file transkrip.
+
+Array `background_tasks` dan `session_crons`, tersedia dalam Claude Code v2.1.145 atau lebih baru, memungkinkan hooks membedakan "sesi selesai" dari "sesi dijeda menunggu pekerjaan latar belakang untuk membangunkannya kembali". Kedua array hadir ketika registri tugas dapat dijangkau dan kosong ketika tidak ada yang sedang berlangsung atau dijadwalkan.
+
+Setiap entry dalam `background_tasks` menjelaskan satu tugas yang sedang berlangsung dan menggunakan bidang-bidang ini:
+
+| Bidang        | Deskripsi                                                                                                                                                                                                                                                           |
+| :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `id`          | Pengenal tugas                                                                                                                                                                                                                                                      |
+| `type`        | Label tipe tugas yang ramah seperti `shell`, `subagent`, `monitor`, `workflow`, `teammate`, `cloud session`, atau `MCP task`. Setiap label mengidentifikasi fitur Claude Code mana yang membuat tugas. Kembali ke diskriminan mentah untuk tipe yang tidak dikenali |
+| `status`      | Status tugas saat ini                                                                                                                                                                                                                                               |
+| `description` | Deskripsi teks bebas, dibatasi 1000 karakter dengan penanda `… [+N chars]` dalam string ketika dipotong                                                                                                                                                             |
+| `command`     | Baris perintah shell, dibatasi 1000 karakter. Hadir hanya untuk tugas `shell`                                                                                                                                                                                       |
+| `agent_type`  | Nama tipe subagent. Hadir hanya untuk tugas `subagent`                                                                                                                                                                                                              |
+| `server`      | Nama server MCP. Hadir hanya untuk tugas `monitor` dan `MCP task`                                                                                                                                                                                                   |
+| `tool`        | Nama tool MCP. Hadir hanya untuk tugas `monitor` dan `MCP task`                                                                                                                                                                                                     |
+| `name`        | Nama workflow. Hadir hanya untuk tugas `workflow`                                                                                                                                                                                                                   |
+
+Setiap entry dalam `session_crons` menjelaskan satu wakeup terjadwal yang bersifat sesi, bersumber dari `CronCreate` dan `/loop`:
+
+| Bidang      | Deskripsi                                                                                                                            |
+| :---------- | :----------------------------------------------------------------------------------------------------------------------------------- |
+| `id`        | Pengenal tugas cron                                                                                                                  |
+| `schedule`  | Ekspresi cron, misalnya `0 9 * * 1-5`                                                                                                |
+| `recurring` | `false` untuk wakeup satu kali yang jadwalnya mengkodekan waktu api tunggal, `true` untuk tugas yang api ulang pada setiap kecocokan |
+| `prompt`    | Prompt yang dikirimkan ketika cron api, dibatasi 1000 karakter dengan penanda `… [+N chars]` yang sama                               |
+
+Contoh ini menunjukkan input Stop dengan satu tugas shell yang sedang berlangsung dan satu cron berulang:
 
 ```json theme={null}
 {
@@ -1896,7 +1929,24 @@ Selain [bidang input umum](#common-input-fields), Stop hooks menerima `stop_hook
   "permission_mode": "default",
   "hook_event_name": "Stop",
   "stop_hook_active": true,
-  "last_assistant_message": "I've completed the refactoring. Here's a summary..."
+  "last_assistant_message": "I've completed the refactoring. Here's a summary...",
+  "background_tasks": [
+    {
+      "id": "task-001",
+      "type": "shell",
+      "status": "running",
+      "description": "tail logs",
+      "command": "tail -f /var/log/syslog"
+    }
+  ],
+  "session_crons": [
+    {
+      "id": "cron-001",
+      "schedule": "0 9 * * 1-5",
+      "recurring": true,
+      "prompt": "check the build"
+    }
+  ]
 }
 ```
 
@@ -1926,7 +1976,7 @@ Selain [bidang input umum](#common-input-fields), StopFailure hooks menerima `er
 
 | Bidang                   | Deskripsi                                                                                                                                                                                                                                                             |
 | :----------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `error`                  | Tipe kesalahan: `rate_limit`, `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, atau `unknown`                                                                                               |
+| `error`                  | Tipe kesalahan: `rate_limit`, `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `invalid_request`, `model_not_found`, `server_error`, `max_output_tokens`, atau `unknown`                                                                            |
 | `error_details`          | Detail tambahan tentang kesalahan, ketika tersedia                                                                                                                                                                                                                    |
 | `last_assistant_message` | Teks kesalahan yang dirender ditampilkan dalam percakapan. Tidak seperti `Stop` dan `SubagentStop`, di mana bidang ini menyimpan output percakapan Claude, untuk `StopFailure` itu berisi string kesalahan API itu sendiri, seperti `"API Error: Rate limit reached"` |
 

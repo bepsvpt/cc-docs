@@ -157,6 +157,7 @@ Claude Code invia i seguenti campi JSON al tuo script tramite stdin:
 | `workspace.project_dir`                                                          | Directory in cui Claude Code è stato avviato, che potrebbe differire da `cwd` se la directory di lavoro cambia durante una sessione                                                                                                                                               |
 | `workspace.added_dirs`                                                           | Directory aggiuntive aggiunte tramite `/add-dir` o `--add-dir`. Array vuoto se nessuna è stata aggiunta                                                                                                                                                                           |
 | `workspace.git_worktree`                                                         | Nome del Git worktree quando la directory corrente si trova all'interno di un worktree collegato creato con `git worktree add`. Assente nel worktree principale. Popolato per qualsiasi git worktree, a differenza di `worktree.*` che si applica solo alle sessioni `--worktree` |
+| `workspace.repo.host`, `workspace.repo.owner`, `workspace.repo.name`             | Identità del repository analizzata dal remote `origin`, ad esempio `"github.com"`, `"anthropics"`, `"claude-code"`. Assente al di fuori di un repository git o quando nessun remote `origin` è configurato                                                                        |
 | `cost.total_cost_usd`                                                            | Costo totale stimato della sessione in USD, calcolato lato client. Potrebbe differire dalla tua fattura effettiva                                                                                                                                                                 |
 | `cost.total_duration_ms`                                                         | Tempo totale trascorso dal momento dell'avvio della sessione, in millisecondi                                                                                                                                                                                                     |
 | `cost.total_api_duration_ms`                                                     | Tempo totale trascorso in attesa delle risposte API in millisecondi                                                                                                                                                                                                               |
@@ -178,6 +179,8 @@ Claude Code invia i seguenti campi JSON al tuo script tramite stdin:
 | `output_style.name`                                                              | Nome dello stile di output corrente                                                                                                                                                                                                                                               |
 | `vim.mode`                                                                       | Modalità vim corrente (`NORMAL`, `INSERT`, `VISUAL`, o `VISUAL LINE`) quando la [modalità vim](/it/interactive-mode#vim-editor-mode) è abilitata                                                                                                                                  |
 | `agent.name`                                                                     | Nome dell'agente quando si esegue con il flag `--agent` o le impostazioni dell'agente configurate                                                                                                                                                                                 |
+| `pr.number`, `pr.url`                                                            | Pull request aperta per il ramo corrente. Rispecchia il badge PR nella barra di stato inferiore. Assente fino a quando non viene trovata una PR, quando non si è in un repository git, o una volta che la PR si unisce o si chiude                                                |
+| `pr.review_state`                                                                | Stato di revisione della PR aperta: `approved`, `pending`, `changes_requested`, o `draft`. Potrebbe essere indipendentemente assente anche quando `pr` è presente                                                                                                                 |
 | `worktree.name`                                                                  | Nome del worktree attivo. Presente solo durante le sessioni `--worktree`                                                                                                                                                                                                          |
 | `worktree.path`                                                                  | Percorso assoluto della directory del worktree                                                                                                                                                                                                                                    |
 | `worktree.branch`                                                                | Nome del ramo git per il worktree (ad esempio, `"worktree-my-feature"`). Assente per i worktree basati su hook                                                                                                                                                                    |
@@ -201,7 +204,12 @@ Claude Code invia i seguenti campi JSON al tuo script tramite stdin:
       "current_dir": "/current/working/directory",
       "project_dir": "/original/project/directory",
       "added_dirs": [],
-      "git_worktree": "feature-xyz"
+      "git_worktree": "feature-xyz",
+      "repo": {
+        "host": "github.com",
+        "owner": "anthropics",
+        "name": "claude-code"
+      }
     },
     "version": "2.1.90",
     "output_style": {
@@ -250,6 +258,11 @@ Claude Code invia i seguenti campi JSON al tuo script tramite stdin:
     "agent": {
       "name": "security-reviewer"
     },
+    "pr": {
+      "number": 1234,
+      "url": "https://github.com/anthropics/claude-code/pull/1234",
+      "review_state": "pending"
+    },
     "worktree": {
       "name": "my-feature",
       "path": "/path/to/.claude/worktrees/my-feature",
@@ -264,9 +277,11 @@ Claude Code invia i seguenti campi JSON al tuo script tramite stdin:
 
   * `session_name`: appare solo quando un nome personalizzato è stato impostato con `--name` o `/rename`
   * `workspace.git_worktree`: appare solo quando la directory corrente si trova all'interno di un git worktree collegato
+  * `workspace.repo`: appare solo all'interno di un repository git con un remote `origin` configurato
   * `effort`: appare solo quando il modello corrente supporta il parametro di sforzo di ragionamento
   * `vim`: appare solo quando la modalità vim è abilitata
   * `agent`: appare solo quando si esegue con il flag `--agent` o le impostazioni dell'agente configurate
+  * `pr`: appare solo mentre viene trovata una PR aperta per il ramo corrente, e viene rimossa una volta che la PR si unisce o si chiude. `pr.review_state` potrebbe essere indipendentemente assente
   * `worktree`: appare solo durante le sessioni `--worktree`. Quando presente, `branch` e `original_branch` potrebbero anche essere assenti per i worktree basati su hook
   * `rate_limits`: appare solo per gli abbonati Claude.ai (Pro/Max) dopo la prima risposta API nella sessione. Ogni finestra (`five_hour`, `seven_day`) potrebbe essere indipendentemente assente. Usa `jq -r '.rate_limits.five_hour.used_percentage // empty'` per gestire l'assenza con eleganza.
 
@@ -291,6 +306,8 @@ L'oggetto `current_usage` contiene:
 * `output_tokens`: token di output generati
 * `cache_creation_input_tokens`: token scritti nella cache
 * `cache_read_input_tokens`: token letti dalla cache
+
+Per sapere cosa significano i campi della cache e come vengono fatturati, vedi [controlla le prestazioni della cache](/it/prompt-caching#check-cache-performance).
 
 Il campo `used_percentage` viene calcolato solo dai token di input: `input_tokens + cache_creation_input_tokens + cache_read_input_tokens`. Non include `output_tokens`.
 

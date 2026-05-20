@@ -270,7 +270,9 @@ export DISABLE_PROMPT_CACHING=1
 export ENABLE_PROMPT_CACHING_1H=1
 ```
 
-<Note>[Prompt Caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) ist möglicherweise nicht in allen Regionen verfügbar. Cache-Schreibvorgänge mit einer 1-Stunden-TTL werden mit einer höheren Rate als 5-Minuten-Schreibvorgänge abgerechnet.</Note>
+Die 1-Stunden-Cache-TTL wird mit einer höheren Rate als die 5-Minuten-Standard abgerechnet. Siehe [Cache-Lebensdauer](/de/prompt-caching#cache-lifetime).
+
+<Note>Prompt Caching ist möglicherweise nicht in allen Bedrock-Regionen verfügbar. Wenn die Cache-Token-Zählungen bei Null bleiben, überprüfen Sie [unterstützte Modelle, Regionen und Limits](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html#prompt-caching-models) in der Bedrock-Dokumentation.</Note>
 
 #### Jede Modellversion einem Inferenzprofil zuordnen
 

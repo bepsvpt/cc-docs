@@ -354,14 +354,25 @@ Ketika plugin Anda siap untuk dibagikan:
 
 Setelah plugin Anda berada di marketplace, orang lain dapat memasangnya menggunakan instruksi di [Temukan dan pasang plugins](/id/discover-plugins). Untuk menjaga plugin tetap internal bagi tim Anda, hosting marketplace di [private repository](/id/plugin-marketplaces#private-repositories).
 
-### Kirimkan plugin Anda ke marketplace resmi
+### Kirimkan plugin Anda ke marketplace komunitas
 
-Untuk mengirimkan plugin ke marketplace Anthropic resmi, gunakan salah satu formulir pengajuan in-app:
+Anthropic memelihara dua marketplace publik untuk plugin Claude Code:
+
+* **`claude-plugins-official`**: serangkaian plugin yang dikurasi yang dikelola oleh Anthropic. Tersedia secara otomatis di setiap instalasi Claude Code.
+* **`claude-community`**: marketplace komunitas publik tempat pengajuan pihak ketiga mendarat setelah review. Pengguna menambahkannya dengan `/plugin marketplace add anthropics/claude-plugins-community` dan memasangnya sebagai `@claude-community`.
+
+Untuk mengirimkan plugin Anda untuk review marketplace komunitas, gunakan salah satu formulir in-app:
 
 * **Claude.ai**: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
 * **Console**: [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
 
-Setelah plugin Anda terdaftar, Anda dapat memiliki CLI Anda sendiri yang meminta pengguna Claude Code untuk memasangnya. Lihat [Rekomendasikan plugin Anda dari CLI Anda](/id/plugin-hints).
+Jalankan `claude plugin validate` secara lokal sebelum Anda mengirimkan. Pipeline review menjalankan pemeriksaan yang sama pada setiap pengajuan, bersama dengan screening keamanan otomatis.
+
+Plugin yang disetujui disematkan ke SHA commit tertentu di katalog [`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community), dan CI membump pin secara otomatis saat Anda push commit baru ke repository Anda. Katalog publik disinkronkan setiap malam dari pipeline review, jadi dapat ada penundaan antara persetujuan dan plugin Anda muncul di `marketplace.json`. Untuk memeriksa apakah plugin Anda dapat dipasang, cari namanya di [katalog komunitas](https://github.com/anthropics/claude-plugins-community/blob/main/.claude-plugin/marketplace.json).
+
+Marketplace resmi, `claude-plugins-official`, dikurasi secara terpisah. Anthropic memutuskan plugin mana yang akan disertakan atas kebijakannya. Tidak ada proses aplikasi, dan formulir pengajuan tidak menambahkan plugins ke marketplace resmi.
+
+Jika Anthropic mencantumkan plugin Anda di marketplace resmi, CLI Anda dapat meminta pengguna Claude Code untuk memasangnya. Lihat [Rekomendasikan plugin Anda dari CLI Anda](/id/plugin-hints).
 
 <Note>
   Untuk spesifikasi teknis lengkap, teknik debugging, dan strategi distribusi, lihat [Referensi plugins](/id/plugins-reference).

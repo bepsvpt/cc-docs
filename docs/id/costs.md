@@ -76,7 +76,7 @@ Untuk menjaga biaya tim agen tetap dapat dikelola:
 
 ## Kurangi penggunaan token
 
-Biaya token diskalakan dengan ukuran konteks: semakin banyak konteks yang diproses Claude, semakin banyak token yang Anda gunakan. Claude Code secara otomatis mengoptimalkan biaya melalui prompt caching (yang mengurangi biaya untuk konten berulang seperti prompt sistem) dan auto-compact (yang merangkum riwayat percakapan saat mendekati batas konteks).
+Biaya token diskalakan dengan ukuran konteks: semakin banyak konteks yang diproses Claude, semakin banyak token yang Anda gunakan. Claude Code secara otomatis mengoptimalkan biaya melalui [prompt caching](/id/prompt-caching), yang mengurangi biaya untuk konten berulang seperti prompt sistem, dan auto-compact, yang merangkum riwayat percakapan saat mendekati batas konteks.
 
 Strategi berikut membantu Anda menjaga konteks tetap kecil dan mengurangi biaya per pesan.
 
@@ -184,7 +184,7 @@ Permintaan yang tidak jelas seperti "tingkatkan basis kode ini" memicu pemindaia
 
 Untuk pekerjaan yang lebih lama atau lebih kompleks, kebiasaan ini membantu menghindari token yang terbuang dari mengambil jalan yang salah:
 
-* **Gunakan plan mode untuk tugas yang kompleks**: Tekan Shift+Tab untuk memasuki [plan mode](/id/common-workflows#use-plan-mode-for-safe-code-analysis) sebelum implementasi. Claude menjelajahi basis kode dan mengusulkan pendekatan untuk persetujuan Anda, mencegah pekerjaan ulang yang mahal ketika arah awal salah.
+* **Gunakan plan mode untuk tugas yang kompleks**: Tekan Shift+Tab untuk memasuki [plan mode](/id/permission-modes#analyze-before-you-edit-with-plan-mode) sebelum implementasi. Claude menjelajahi basis kode dan mengusulkan pendekatan untuk persetujuan Anda, mencegah pekerjaan ulang yang mahal ketika arah awal salah.
 * **Koreksi kursus lebih awal**: Jika Claude mulai menuju arah yang salah, tekan Escape untuk berhenti segera. Gunakan `/rewind` atau tekan dua kali Escape untuk mengembalikan percakapan dan kode ke checkpoint sebelumnya.
 * **Berikan target verifikasi**: Sertakan kasus uji, tempel tangkapan layar, atau tentukan output yang diharapkan dalam prompt Anda. Ketika Claude dapat memverifikasi pekerjaan sendiri, ia menangkap masalah sebelum Anda perlu meminta perbaikan.
 * **Uji secara bertahap**: Tulis satu file, uji, kemudian lanjutkan. Ini menangkap masalah lebih awal ketika murah untuk diperbaiki.

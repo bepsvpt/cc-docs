@@ -76,7 +76,7 @@ Per mantenere i costi del team di agenti gestibili:
 
 ## Riduci l'utilizzo dei token
 
-I costi dei token si ridimensionano con la dimensione del contesto: più contesto Claude elabora, più token utilizzi. Claude Code ottimizza automaticamente i costi attraverso il prompt caching (che riduce i costi per il contenuto ripetuto come i prompt di sistema) e l'auto-compaction (che riassume la cronologia della conversazione quando ci si avvicina ai limiti del contesto).
+I costi dei token si ridimensionano con la dimensione del contesto: più contesto Claude elabora, più token utilizzi. Claude Code ottimizza automaticamente i costi attraverso il [prompt caching](/it/prompt-caching), che riduce i costi per il contenuto ripetuto come i prompt di sistema, e l'auto-compaction, che riassume la cronologia della conversazione quando ci si avvicina ai limiti del contesto.
 
 Le seguenti strategie ti aiutano a mantenere il contesto piccolo e ridurre i costi per messaggio.
 
@@ -184,7 +184,7 @@ Richieste vaghe come "migliora questa codebase" attivano una scansione ampia. Ri
 
 Per lavori più lunghi o complessi, queste abitudini aiutano a evitare token sprecati andando nella direzione sbagliata:
 
-* **Utilizza plan mode per compiti complessi**: Premi Shift+Tab per entrare in [plan mode](/it/common-workflows#use-plan-mode-for-safe-code-analysis) prima dell'implementazione. Claude esplora la codebase e propone un approccio per la tua approvazione, prevenendo la rielaborazione costosa quando la direzione iniziale è sbagliata.
+* **Utilizza plan mode per compiti complessi**: Premi Shift+Tab per entrare in [plan mode](/it/permission-modes#analyze-before-you-edit-with-plan-mode) prima dell'implementazione. Claude esplora la codebase e propone un approccio per la tua approvazione, prevenendo la rielaborazione costosa quando la direzione iniziale è sbagliata.
 * **Correggi la rotta presto**: Se Claude inizia a andare nella direzione sbagliata, premi Escape per fermarti immediatamente. Utilizza `/rewind` o doppio tocco Escape per ripristinare la conversazione e il codice a un checkpoint precedente.
 * **Fornisci target di verifica**: Includi casi di test, incolla screenshot o definisci l'output previsto nel tuo prompt. Quando Claude può verificare il suo lavoro, cattura i problemi prima che tu debba richiedere correzioni.
 * **Testa in modo incrementale**: Scrivi un file, testalo, quindi continua. Questo cattura i problemi presto quando sono economici da risolvere.

@@ -4,9 +4,9 @@
 
 # Entdecken und installieren Sie vorgefertigte Plugins über Marktplätze
 
-> Finden und installieren Sie Plugins aus Marktplätzen, um Claude Code mit neuen Befehlen, Agenten und Funktionen zu erweitern.
+> Finden und installieren Sie Plugins aus Marktplätzen, um Claude Code mit neuen Befähigungen, Agenten und Funktionen zu erweitern.
 
-Plugins erweitern Claude Code mit skills, agents, hooks und MCP servers. Plugin-Marktplätze sind Kataloge, die Ihnen helfen, diese Erweiterungen zu entdecken und zu installieren, ohne sie selbst zu erstellen.
+Plugins erweitern Claude Code mit Befähigungen, Agenten, Hooks und MCP-Servern. Plugin-Marktplätze sind Kataloge, die Ihnen helfen, diese Erweiterungen zu entdecken und zu installieren, ohne sie selbst zu erstellen.
 
 Möchten Sie Ihren eigenen Marktplatz erstellen und verteilen? Siehe [Erstellen und verteilen Sie einen Plugin-Marktplatz](/de/plugin-marketplaces).
 
@@ -39,12 +39,7 @@ Um ein Plugin aus dem offiziellen Marktplatz zu installieren, verwenden Sie `/pl
 Wenn Claude Code meldet, dass das Plugin in keinem Marktplatz gefunden wird, fehlt Ihnen entweder der Marktplatz oder er ist veraltet. Führen Sie `/plugin marketplace update claude-plugins-official` aus, um ihn zu aktualisieren, oder `/plugin marketplace add anthropics/claude-plugins-official`, wenn Sie ihn noch nicht hinzugefügt haben. Versuchen Sie dann die Installation erneut.
 
 <Note>
-  Der offizielle Marktplatz wird von Anthropic gepflegt. Um ein Plugin beim offiziellen Marktplatz einzureichen, verwenden Sie eines der In-App-Einreichungsformulare:
-
-  * **Claude.ai**: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
-  * **Console**: [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
-
-  Um Plugins unabhängig zu verteilen, [erstellen Sie Ihren eigenen Marktplatz](/de/plugin-marketplaces) und teilen Sie ihn mit Benutzern.
+  Der offizielle Marktplatz wird von Anthropic kuratiert, und die Aufnahme liegt im Ermessen von Anthropic. Die In-App-Einreichungsformulare fügen Plugins zum [Community-Marktplatz](#community-marketplace) hinzu, nicht zum offiziellen. Um Plugins unabhängig zu verteilen, [erstellen Sie Ihren eigenen Marktplatz](/de/plugin-marketplaces) und teilen Sie ihn mit Benutzern.
 </Note>
 
 Der offizielle Marktplatz umfasst mehrere Kategorien von Plugins:
@@ -86,7 +81,7 @@ Wenn Sie auf Probleme stoßen, siehe [Code-Intelligenz-Fehlerbehebung](#code-int
 
 ### Externe Integrationen
 
-Diese Plugins bündeln vorkonfigurierte [MCP servers](/de/mcp), damit Sie Claude mit externen Diensten verbinden können, ohne manuelle Einrichtung:
+Diese Plugins bündeln vorkonfigurierte [MCP-Server](/de/mcp), damit Sie Claude mit externen Diensten verbinden können, ohne manuelle Einrichtung:
 
 * **Quellcodeverwaltung**: `github`, `gitlab`
 * **Projektmanagement**: `atlassian` (Jira/Confluence), `asana`, `linear`, `notion`
@@ -97,7 +92,7 @@ Diese Plugins bündeln vorkonfigurierte [MCP servers](/de/mcp), damit Sie Claude
 
 ### Entwicklungs-Workflows
 
-Plugins, die Befehle und Agenten für häufige Entwicklungsaufgaben hinzufügen:
+Plugins, die Befähigungen und Agenten für häufige Entwicklungsaufgaben hinzufügen:
 
 * **commit-commands**: Git-Commit-Workflows einschließlich Commit, Push und PR-Erstellung
 * **pr-review-toolkit**: Spezialisierte Agenten für die Überprüfung von Pull Requests
@@ -109,7 +104,23 @@ Plugins, die Befehle und Agenten für häufige Entwicklungsaufgaben hinzufügen:
 Passen Sie an, wie Claude antwortet:
 
 * **explanatory-output-style**: Pädagogische Einblicke in Implementierungsentscheidungen
-* **learning-output-style**: Interaktiver Lernmodus zum Aufbau von Fähigkeiten
+* **learning-output-style**: Interaktiver Lernmodus zum Aufbau von Befähigungen
+
+## Community-Marktplatz
+
+Der Community-Marktplatz unter [`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community) hostet Plugins von Drittanbietern, die Anthropics automatisierte Validierung und Sicherheitsprüfung bestanden haben. Jedes Plugin ist an einen bestimmten Commit-SHA im Katalog gebunden. Im Gegensatz zum offiziellen Marktplatz fügen Sie ihn manuell hinzu:
+
+```shell theme={null}
+/plugin marketplace add anthropics/claude-plugins-community
+```
+
+Installieren Sie dann Plugins von ihm mit dem Marktplatznamen `claude-community`:
+
+```shell theme={null}
+/plugin install <plugin-name>@claude-community
+```
+
+Um Ihr eigenes Plugin zum Community-Marktplatz einzureichen, siehe [Reichen Sie Ihr Plugin beim Community-Marktplatz ein](/de/plugins#submit-your-plugin-to-the-community-marketplace) im Leitfaden zum Erstellen von Plugins.
 
 ## Probieren Sie es aus: Fügen Sie den Demo-Marktplatz hinzu
 
@@ -138,7 +149,11 @@ Anthropic verwaltet auch einen [Demo-Plugins-Marktplatz](https://github.com/anth
   </Step>
 
   <Step title="Installieren Sie ein Plugin">
-    Wählen Sie ein Plugin aus, um seine Details anzuzeigen. {/* min-version: 2.1.143 */}In Claude Code v2.1.143 und später enthält der Detailbereich eine **Kontextkosten**-Schätzung, damit Sie sehen können, wie viele Token das Plugin zu Ihrem [Kontextfenster](/de/features-overview#understand-context-costs) bei jedem Durchgang hinzufügt, bevor Sie es installieren.
+    Wählen Sie ein Plugin aus, um seine Details anzuzeigen. Der Detailbereich zeigt, was das Plugin enthält und was es kostet:
+
+    * {/* min-version: 2.1.143 */}Eine **Context cost**-Schätzung, damit Sie sehen können, wie viele Token das Plugin zu Ihrem [Kontextfenster](/de/features-overview#understand-context-costs) bei jedem Durchgang hinzufügt (Claude Code v2.1.143 und später)
+    * {/* min-version: 2.1.144 */}Das **Last updated**-Datum des Plugins (v2.1.144 und später)
+    * {/* min-version: 2.1.145 */}Ein **Will install**-Bereich, der die Befehle, Agenten, Skills, Hooks und MCP- und LSP-Server des Plugins auflistet, damit Sie genau überprüfen können, was es hinzufügt, bevor Sie es installieren (v2.1.145 und später)
 
     Wählen Sie einen Installationsbereich:
 
@@ -146,7 +161,7 @@ Anthropic verwaltet auch einen [Demo-Plugins-Marktplatz](https://github.com/anth
     * **Project scope**: Installieren Sie für alle Mitarbeiter in diesem Repository
     * **Local scope**: Installieren Sie für sich selbst nur in diesem Repository
 
-    Wählen Sie beispielsweise **commit-commands** (ein Plugin, das Git-Workflow-Befehle hinzufügt) und installieren Sie es in Ihrem Benutzerbereich.
+    Wählen Sie beispielsweise **commit-commands** (ein Plugin, das Git-Workflow-Skills hinzufügt) und installieren Sie es in Ihrem Benutzerbereich.
 
     Sie können auch direkt über die Befehlszeile installieren:
 
@@ -158,7 +173,7 @@ Anthropic verwaltet auch einen [Demo-Plugins-Marktplatz](https://github.com/anth
   </Step>
 
   <Step title="Verwenden Sie Ihr neues Plugin">
-    Nach der Installation führen Sie `/reload-plugins` aus, um das Plugin zu aktivieren. Plugin-Befehle werden nach dem Plugin-Namen benannt, daher bietet **commit-commands** Befehle wie `/commit-commands:commit`.
+    Nach der Installation führen Sie `/reload-plugins` aus, um das Plugin zu aktivieren. Plugin-Skills werden nach dem Plugin-Namen benannt, daher bietet **commit-commands** Skills wie `/commit-commands:commit`.
 
     Probieren Sie es aus, indem Sie eine Änderung an einer Datei vornehmen und ausführen:
 
@@ -168,7 +183,7 @@ Anthropic verwaltet auch einen [Demo-Plugins-Marktplatz](https://github.com/anth
 
     Dies stellt Ihre Änderungen bereit, generiert eine Commit-Nachricht und erstellt den Commit.
 
-    Jedes Plugin funktioniert anders. Überprüfen Sie die Beschreibung des Plugins in der Registerkarte **Discover** oder auf seiner Homepage, um zu erfahren, welche Befehle und Funktionen es bietet.
+    Jedes Plugin funktioniert anders. Überprüfen Sie die Details des Plugins in der Registerkarte **Discover**, um zu sehen, welche Befehle und Skills es bietet, oder besuchen Sie seine Homepage für Anleitung zur Verwendung.
   </Step>
 </Steps>
 
@@ -262,7 +277,7 @@ Um einen anderen [Installationsbereich](/de/settings#configuration-scopes) zu w�
 Sie können auch Plugins mit **managed**-Bereich sehen – diese werden von Administratoren über [verwaltete Einstellungen](/de/settings#settings-files) installiert und können nicht geändert werden.
 
 <Warning>
-  Stellen Sie sicher, dass Sie einem Plugin vertrauen, bevor Sie es installieren. Anthropic kontrolliert nicht, welche MCP servers, Dateien oder andere Software in Plugins enthalten sind, und kann nicht überprüfen, dass sie wie beabsichtigt funktionieren. Überprüfen Sie die Homepage jedes Plugins für weitere Informationen.
+  Stellen Sie sicher, dass Sie einem Plugin vertrauen, bevor Sie es installieren. Anthropic kontrolliert nicht, welche MCP-Server, Dateien oder andere Software in Plugins enthalten sind, und kann nicht überprüfen, dass sie wie beabsichtigt funktionieren. Überprüfen Sie die Homepage jedes Plugins für weitere Informationen.
 </Warning>
 
 ## Verwalten Sie installierte Plugins
@@ -312,7 +327,7 @@ Wenn Sie während einer Sitzung Plugins installieren, aktivieren oder deaktivier
 /reload-plugins
 ```
 
-Claude Code lädt alle aktiven Plugins neu und zeigt Zählungen für Plugins, skills, Agenten, hooks, Plugin-MCP-Server und Plugin-LSP-Server an.
+Claude Code lädt alle aktiven Plugins neu und zeigt Zählungen für Plugins, Befähigungen, Agenten, Hooks, Plugin-MCP-Server und Plugin-LSP-Server an.
 
 ## Marktplätze verwalten
 
@@ -368,7 +383,7 @@ Offizielle Anthropic-Marktplätze haben die automatische Aktualisierung standard
 
 Administratoren können auch `"autoUpdate": true` für jeden [`extraKnownMarketplaces`](/de/settings#extraknownmarketplaces)-Eintrag in verwalteten Einstellungen festlegen, um die automatische Aktualisierung für einen Organisationsmarktplatz zu aktivieren, ohne dass jeder Benutzer diese umschalten muss.
 
-Um alle automatischen Updates vollständig für Claude Code und alle Plugins zu deaktivieren, setzen Sie die Umgebungsvariable `DISABLE_AUTOUPDATER`. Siehe [Automatische Updates](/de/setup#auto-updates) für Details.
+Um alle automatischen Updates vollständig für Claude Code und alle Plugins zu deaktivieren, setzen Sie die Umgebungsvariable `DISABLE_AUTOUPDATER`. Siehe [Auto-Updates](/de/setup#auto-updates) für Details.
 
 Um Plugin-Auto-Updates aktiviert zu halten und gleichzeitig Claude Code-Auto-Updates zu deaktivieren, setzen Sie `FORCE_AUTOUPDATE_PLUGINS=1` zusammen mit `DISABLE_AUTOUPDATER`:
 
@@ -422,7 +437,7 @@ Wenn Sie „unknown command" sehen oder der `/plugin`-Befehl nicht angezeigt wir
 * **Marktplatz wird nicht geladen**: Überprüfen Sie, dass die URL zugänglich ist und dass `.claude-plugin/marketplace.json` unter dem Pfad vorhanden ist
 * **Plugin-Installationsfehler**: Überprüfen Sie, dass Plugin-Quell-URLs zugänglich sind und Repositories öffentlich sind (oder Sie haben Zugriff)
 * **Dateien nach der Installation nicht gefunden**: Plugins werden in einen Cache kopiert, daher funktionieren Pfade, die auf Dateien außerhalb des Plugin-Verzeichnisses verweisen, nicht
-* **Plugin-Befehle werden nicht angezeigt**: Löschen Sie den Cache mit `rm -rf ~/.claude/plugins/cache`, starten Sie Claude Code neu und installieren Sie das Plugin erneut.
+* **Plugin-Befähigungen werden nicht angezeigt**: Löschen Sie den Cache mit `rm -rf ~/.claude/plugins/cache`, starten Sie Claude Code neu und installieren Sie das Plugin erneut.
 
 Für detaillierte Fehlerbehebung mit Lösungen siehe [Fehlerbehebung](/de/plugin-marketplaces#troubleshooting) im Marktplatz-Leitfaden. Für Debugging-Tools siehe [Debugging- und Entwicklungstools](/de/plugins-reference#debugging-and-development-tools).
 
@@ -434,6 +449,6 @@ Für detaillierte Fehlerbehebung mit Lösungen siehe [Fehlerbehebung](/de/plugin
 
 ## Nächste Schritte
 
-* **Erstellen Sie Ihre eigenen Plugins**: Siehe [Plugins](/de/plugins), um skills, agents und hooks zu erstellen
+* **Erstellen Sie Ihre eigenen Plugins**: Siehe [Plugins](/de/plugins), um Befähigungen, Agenten und Hooks zu erstellen
 * **Erstellen Sie einen Marktplatz**: Siehe [Erstellen Sie einen Plugin-Marktplatz](/de/plugin-marketplaces), um Plugins an Ihr Team oder Ihre Community zu verteilen
 * **Technische Referenz**: Siehe [Plugins-Referenz](/de/plugins-reference) für vollständige Spezifikationen

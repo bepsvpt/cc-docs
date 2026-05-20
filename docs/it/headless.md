@@ -152,17 +152,17 @@ claude -p "Write a poem" --output-format stream-json --verbose --include-partial
 
 Quando una richiesta API non riesce con un errore ritentabile, Claude Code emette un evento `system/api_retry` prima di ritentare. Puoi utilizzarlo per visualizzare il progresso del tentativo o implementare una logica di backoff personalizzata.
 
-| Campo            | Tipo           | Descrizione                                                                                                                                                               |
-| ---------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`           | `"system"`     | tipo di messaggio                                                                                                                                                         |
-| `subtype`        | `"api_retry"`  | identifica questo come un evento di tentativo                                                                                                                             |
-| `attempt`        | integer        | numero del tentativo corrente, a partire da 1                                                                                                                             |
-| `max_retries`    | integer        | tentativi totali consentiti                                                                                                                                               |
-| `retry_delay_ms` | integer        | millisecondi fino al prossimo tentativo                                                                                                                                   |
-| `error_status`   | integer o null | codice di stato HTTP, o `null` per errori di connessione senza risposta HTTP                                                                                              |
-| `error`          | string         | categoria di errore: `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `rate_limit`, `invalid_request`, `server_error`, `max_output_tokens`, o `unknown` |
-| `uuid`           | string         | identificatore evento univoco                                                                                                                                             |
-| `session_id`     | string         | sessione a cui appartiene l'evento                                                                                                                                        |
+| Campo            | Tipo           | Descrizione                                                                                                                                                                                  |
+| ---------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`           | `"system"`     | tipo di messaggio                                                                                                                                                                            |
+| `subtype`        | `"api_retry"`  | identifica questo come un evento di tentativo                                                                                                                                                |
+| `attempt`        | integer        | numero del tentativo corrente, a partire da 1                                                                                                                                                |
+| `max_retries`    | integer        | tentativi totali consentiti                                                                                                                                                                  |
+| `retry_delay_ms` | integer        | millisecondi fino al prossimo tentativo                                                                                                                                                      |
+| `error_status`   | integer o null | codice di stato HTTP, o `null` per errori di connessione senza risposta HTTP                                                                                                                 |
+| `error`          | string         | categoria di errore: `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `rate_limit`, `invalid_request`, `model_not_found`, `server_error`, `max_output_tokens`, o `unknown` |
+| `uuid`           | string         | identificatore evento univoco                                                                                                                                                                |
+| `session_id`     | string         | sessione a cui appartiene l'evento                                                                                                                                                           |
 
 L'evento `system/init` segnala i metadati della sessione inclusi il modello, gli strumenti, i server MCP e i plugin caricati. È il primo evento nel flusso a meno che [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/it/env-vars) non sia impostato, nel qual caso gli eventi `plugin_install` lo precedono. Utilizza i campi plugin per far fallire CI quando un plugin non è stato caricato:
 

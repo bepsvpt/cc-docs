@@ -261,10 +261,11 @@ keybindings 구성 파일은 `bindings` 배열이 있는 객체입니다. 각 �
 
 `ModelPicker` 컨텍스트에서 사용 가능한 작업:
 
-| 작업                           | 기본값   | 설명       |
-| :--------------------------- | :---- | :------- |
-| `modelPicker:decreaseEffort` | Left  | 노력 수준 감소 |
-| `modelPicker:increaseEffort` | Right | 노력 수준 증가 |
+| 작업                           | 기본값   | 설명                        |
+| :--------------------------- | :---- | :------------------------ |
+| `modelPicker:decreaseEffort` | Left  | 노력 수준 감소                  |
+| `modelPicker:increaseEffort` | Right | 노력 수준 증가                  |
+| `modelPicker:setAsDefault`   | d     | 강조 표시된 모델을 새 세션의 기본값으로 설정 |
 
 ### 선택 작업
 

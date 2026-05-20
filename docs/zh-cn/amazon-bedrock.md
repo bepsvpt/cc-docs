@@ -270,7 +270,9 @@ export DISABLE_PROMPT_CACHING=1
 export ENABLE_PROMPT_CACHING_1H=1
 ```
 
-<Note>[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) 可能在所有区域都不可用。具有 1 小时 TTL 的缓存写入的计费费率高于 5 分钟写入。</Note>
+1 小时缓存 TTL 的计费费率高于 5 分钟默认值。请参阅[缓存生命周期](/zh-CN/prompt-caching#cache-lifetime)。
+
+<Note>Prompt caching 可能在所有 Bedrock 区域都不可用。如果缓存令牌计数保持为零，请检查 Bedrock 文档中的[支持的模型、区域和限制](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html#prompt-caching-models)。</Note>
 
 #### 将每个模型版本映射到推理配置文件
 

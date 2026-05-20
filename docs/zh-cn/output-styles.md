@@ -18,7 +18,7 @@ Claude Code 的**默认**输出样式是现有的系统提示，旨在帮助你�
 
 还有三种额外的内置输出样式：
 
-* **Proactive**：Claude 立即执行，做出合理的假设而不是暂停进行常规决策，并倾向于行动而非规划。这应用了与[自动模式](/zh-CN/permission-modes#eliminate-prompts-with-auto-mode)相同的指导，而不改变你的权限模式，因此你仍然会在工具运行前看到权限提示。
+* **Proactive**：Claude 立即执行，做出合理的假设而不是暂停进行常规决策，并倾向于行动而非规划。这提供了比[自动模式](/zh-CN/permission-modes#eliminate-prompts-with-auto-mode)更强的自主执行指导，并且无需更改你的权限模式即可工作，因此你仍然会在工具运行前看到权限提示。
 
 * **Explanatory**：在帮助你完成软件工程任务的同时提供教育性的"Insights"。帮助你理解实现选择和代码库模式。
 
@@ -36,7 +36,7 @@ Claude Code 的**默认**输出样式是现有的系统提示，旨在帮助你�
 }
 ```
 
-由于输出样式是在会话开始时在系统提示中设置的，更改将在你下次启动新会话时生效。这使系统提示在整个对话中保持稳定，以便 prompt caching 可以降低延迟和成本。
+输出样式是系统提示的一部分，Claude Code 在会话开始时读取一次。更改将在 `/clear` 或新会话后生效。请参阅[Claude Code 如何使用 prompt caching](/zh-CN/prompt-caching#changing-output-style)了解输出样式更改对缓存的影响。
 
 ## 创建自定义输出样式
 
@@ -72,7 +72,7 @@ Claude Code 的**默认**输出样式是现有的系统提示，旨在帮助你�
   </Step>
 
   <Step title="切换到你的样式">
-    运行 `/config` 并在**输出样式**下选择你的样式。它将在你下次启动会话时生效。
+    运行 `/config` 并在**输出样式**下选择你的样式。它将在 `/clear` 后或下次启动会话时生效。
   </Step>
 </Steps>
 
@@ -114,6 +114,6 @@ Claude Code 的**默认**输出样式是现有的系统提示，旨在帮助你�
 ## 相关资源
 
 * [Settings](/zh-CN/settings)：`outputStyle` 字段所在的位置以及设置优先级的工作原理
-* [Permission modes](/zh-CN/permission-modes)：Proactive 样式镜像自动模式而不改变你的权限模式
+* [Permission modes](/zh-CN/permission-modes)：Proactive 样式与自动模式的比较方式
 * [Plugins](/zh-CN/plugins)：打包和分发输出样式以及 skills、hooks 和 agents
 * [Debug your configuration](/zh-CN/debug-your-config)：诊断为什么输出样式没有生效

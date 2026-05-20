@@ -200,7 +200,7 @@ export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 
 大多数模型版本都有对应的 `VERTEX_REGION_CLAUDE_*` 变量。有关完整列表，请参阅[环境变量参考](/zh-CN/env-vars)。检查 [Vertex Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) 以确定哪些模型支持全局端点与仅区域端点。
 
-[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) 会自动启用。要禁用它，请设置 `DISABLE_PROMPT_CACHING=1`。要请求 1 小时的缓存 TTL 而不是 5 分钟的默认值，请设置 `ENABLE_PROMPT_CACHING_1H=1`；具有 1 小时 TTL 的缓存写入按更高费率计费。如需提高速率限制，请联系 Google Cloud 支持。使用 Vertex AI 时，`/login` 和 `/logout` 命令被禁用，因为身份验证通过 Google Cloud 凭证处理。
+[Prompt caching](/zh-CN/prompt-caching) 会自动启用。要禁用它，请设置 `DISABLE_PROMPT_CACHING=1`。要请求 1 小时的缓存 TTL 而不是 5 分钟的默认值，请设置 `ENABLE_PROMPT_CACHING_1H=1`；具有 1 小时 TTL 的缓存写入按更高费率计费。如需提高速率限制，请联系 Google Cloud 支持。使用 Vertex AI 时，`/login` 和 `/logout` 命令被禁用，因为身份验证通过 Google Cloud 凭证处理。
 
 Claude Code 在 Vertex AI 上默认禁用 [MCP tool search](/zh-CN/mcp#scale-with-mcp-tool-search)，因此 MCP 工具定义会预先加载。Vertex AI 支持 Claude Sonnet 4.5 及更高版本以及 Claude Opus 4.5 及更高版本的工具搜索。设置 `ENABLE_TOOL_SEARCH=true` 以在这些模型上启用它。Vertex AI 上的早期模型不接受所需的 beta 标头，如果您对它们启用工具搜索，请求将失败。
 

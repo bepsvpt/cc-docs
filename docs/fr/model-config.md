@@ -53,9 +53,11 @@ Vous pouvez configurer votre modèle de plusieurs façons, énumérées par ordr
 3. **Variable d'environnement** - Définissez `ANTHROPIC_MODEL=<alias|name>`
 4. **Paramètres** - Configurez de manière permanente dans votre fichier de paramètres en utilisant le champ `model`.
 
-Votre sélection `/model` est enregistrée dans les paramètres utilisateur et persiste entre les redémarrages. À partir de la v2.1.117, si le fichier `.claude/settings.json` du projet épingle un modèle différent, Claude Code écrit également votre choix dans `.claude/settings.local.json` afin qu'il continue à s'appliquer dans ce projet après un redémarrage. Les paramètres gérés ont la priorité et se réappliquent au prochain lancement.
+À partir de la v2.1.144, `/model` s'applique uniquement à la session actuelle et n'est pas écrit dans les paramètres. Pour enregistrer votre choix comme valeur par défaut pour les nouvelles sessions, appuyez sur `d` sur la ligne en surbrillance dans le sélecteur, ce qui écrit le champ `model` dans vos paramètres utilisateur. Les paramètres gérés ont la priorité et se réappliquent au prochain lancement.
 
-L'indicateur `--model` et la variable d'environnement `ANTHROPIC_MODEL` s'appliquent uniquement à la session que vous lancez avec eux et ne sont pas enregistrés. Pour exécuter différents modèles dans différents terminaux en même temps, lancez chacun avec son propre indicateur `--model` plutôt que de basculer avec `/model`.
+L'indicateur `--model` et la variable d'environnement `ANTHROPIC_MODEL` s'appliquent uniquement à la session que vous lancez avec eux. Pour exécuter différents modèles dans différents terminaux en même temps, lancez chacun avec son propre indicateur `--model` plutôt que de basculer avec `/model`.
+
+Les sessions reprises démarrées avec `claude --resume`, `--continue`, ou le sélecteur `/resume` conservent le modèle qu'elles utilisaient lorsque la transcription a été enregistrée, indépendamment du paramètre `model` actuel. Si ce modèle a été retiré, la session revient à l'ordre de priorité normal. Cela empêche le choix `/model` d'une autre session de modifier le modèle à la reprise.
 
 Lorsque le modèle actif au démarrage provient des paramètres du projet ou gérés plutôt que de votre propre sélection, l'en-tête de démarrage indique quel fichier de paramètres l'a défini. Exécutez `/model` pour remplacer la sélection pour la session actuelle.
 
@@ -320,7 +322,11 @@ Pour activer le [contexte étendu](#extended-context) pour un modèle épinglé,
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7[1m]'
 ```
 
-Le suffixe `[1m]` applique la fenêtre de contexte 1M à toute utilisation de cet alias, y compris `opusplan`. Claude Code supprime le suffixe avant d'envoyer l'ID du modèle à votre fournisseur. N'ajoutez `[1m]` que lorsque le modèle sous-jacent prend en charge le contexte 1M, comme Opus 4.7 ou Sonnet 4.6.
+Le suffixe `[1m]` applique la fenêtre de contexte 1M à toute utilisation de cet alias, y compris `opusplan`.
+
+* Claude Code supprime le suffixe avant d'envoyer l'ID du modèle à votre fournisseur.
+* N'ajoutez `[1m]` que lorsque le modèle sous-jacent [prend en charge le contexte 1M](https://platform.claude.com/docs/fr/build-with-claude/context-windows#1m-token-context-window).
+* Le suffixe est lu par variable, et non par modèle. Sur Bedrock, Vertex et Foundry, un ID de modèle sans `[1m]` dans une variable utilise le contexte 200K même si une autre variable définit le même modèle avec le suffixe.
 
 <Note>
   La liste d'autorisation `settings.availableModels` s'applique toujours lors de l'utilisation de fournisseurs tiers. Le filtrage correspond à l'alias de modèle (`opus`, `sonnet`, `haiku`), et non à l'ID de modèle spécifique au fournisseur.
@@ -390,13 +396,13 @@ Les remplacements remplacent les ID de modèle intégrés qui soutiennent chaque
 
 ### Configuration de la mise en cache des invites
 
-Claude Code utilise automatiquement la [mise en cache des invites](https://platform.claude.com/docs/fr/build-with-claude/prompt-caching) pour optimiser les performances et réduire les coûts. Vous pouvez désactiver la mise en cache des invites globalement ou pour des niveaux de modèle spécifiques :
+Claude Code utilise automatiquement la [mise en cache des invites](/fr/prompt-caching) pour optimiser les performances et réduire les coûts. Vous pouvez désactiver la mise en cache des invites globalement ou pour des niveaux de modèle spécifiques :
 
-| Variable d'environnement        | Description                                                                                                                             |
-| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `DISABLE_PROMPT_CACHING`        | Définissez sur `1` pour désactiver la mise en cache des invites pour tous les modèles (prend la priorité sur les paramètres par modèle) |
-| `DISABLE_PROMPT_CACHING_HAIKU`  | Définissez sur `1` pour désactiver la mise en cache des invites pour les modèles Haiku uniquement                                       |
-| `DISABLE_PROMPT_CACHING_SONNET` | Définissez sur `1` pour désactiver la mise en cache des invites pour les modèles Sonnet uniquement                                      |
-| `DISABLE_PROMPT_CACHING_OPUS`   | Définissez sur `1` pour désactiver la mise en cache des invites pour les modèles Opus uniquement                                        |
+| Variable d'environnement        | Description                                                                                                                            |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `DISABLE_PROMPT_CACHING`        | Définissez sur `1` pour désactiver la mise en cache des invites pour tous les modèles. Prend la priorité sur les paramètres par modèle |
+| `DISABLE_PROMPT_CACHING_HAIKU`  | Définissez sur `1` pour désactiver la mise en cache des invites pour les modèles Haiku uniquement                                      |
+| `DISABLE_PROMPT_CACHING_SONNET` | Définissez sur `1` pour désactiver la mise en cache des invites pour les modèles Sonnet uniquement                                     |
+| `DISABLE_PROMPT_CACHING_OPUS`   | Définissez sur `1` pour désactiver la mise en cache des invites pour les modèles Opus uniquement                                       |
 
-Ces variables d'environnement vous donnent un contrôle granulaire sur le comportement de la mise en cache des invites. Le paramètre global `DISABLE_PROMPT_CACHING` prend la priorité sur les paramètres spécifiques au modèle, vous permettant de désactiver rapidement toute la mise en cache si nécessaire. Les paramètres par modèle sont utiles pour un contrôle sélectif, par exemple lors du débogage de modèles spécifiques ou du travail avec des fournisseurs cloud qui peuvent avoir des implémentations de mise en cache différentes.
+Pour modifier le TTL du cache ou découvrir ce qui déclenche un échec du cache, voir [Comment Claude Code utilise la mise en cache des invites](/fr/prompt-caching).

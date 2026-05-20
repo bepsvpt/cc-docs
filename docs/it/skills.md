@@ -24,6 +24,22 @@ Claude Code include un set di skills raggruppate che sono disponibili in ogni se
 
 Le skills raggruppate sono elencate insieme ai comandi integrati nel [riferimento dei comandi](/it/commands), contrassegnate come **Skill** nella colonna Scopo.
 
+### Esegui e verifica la tua app
+
+Tre skills raggruppate lavorano insieme per avviare la tua app e confermare le modifiche rispetto all'app in esecuzione invece di limitarsi ai test:
+
+| Skill                  | Scopo                                                                                                                                       |
+| :--------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
+| `/run`                 | Avvia e guida la tua app per vedere una modifica in funzione                                                                                |
+| `/verify`              | Compila ed esegui la tua app per confermare che una modifica del codice fa quello che dovrebbe, senza ricorrere a test o controlli dei tipi |
+| `/run-skill-generator` | Insegna a `/run` e `/verify` come compilare e avviare il tuo progetto                                                                       |
+
+{/* min-version: 2.1.145 */}Tutte e tre le skills richiedono Claude Code v2.1.145 o successivo.
+
+`/run` e `/verify` funzionano senza configurazione. Deducono l'avvio dal tipo di progetto (CLI, server, TUI, guidato dal browser) e da ciò che si trova nel tuo README, `package.json`, o `Makefile`. Questa deduzione diventa inaffidabile per i progetti che richiedono qualcosa di più di un avvio standard: un database, un file env, una sessione grafica, una compilazione multi-step.
+
+`/run-skill-generator` registra invece la ricetta. Fa funzionare la tua app da un ambiente pulito, cattura ciò che ha funzionato (i comandi di installazione, le variabili env, lo script di avvio), e lo commit come skill per progetto in `.claude/skills/run-<name>/`. Dopo di che, `/run`, `/verify`, e qualsiasi altro agente nel repository seguono la ricetta registrata invece di riscoprirla. Esegui `/run-skill-generator` una volta per progetto, e di nuovo se il processo di compilazione o avvio cambia.
+
 ## Iniziare
 
 ### Crea la tua prima skill
@@ -408,6 +424,8 @@ Quando questa skill viene eseguita:
 Questo è preprocessing, non qualcosa che Claude esegue. Claude vede solo il risultato finale.
 
 La sostituzione viene eseguita una sola volta sul file originale. L'output del comando viene inserito come testo semplice e non viene nuovamente scansionato per ulteriori placeholder `` !`<command>` ``, quindi un comando non può emettere un placeholder per un passaggio successivo da espandere.
+
+La forma inline viene riconosciuta solo quando `!` appare all'inizio di una riga o immediatamente dopo uno spazio. Se `!` segue un altro carattere, come in `` KEY=!`cmd` ``, il placeholder viene lasciato come testo letterale e il comando non viene eseguito.
 
 Per comandi multi-riga, usa un blocco di codice aperto con ` ```! ` invece della forma inline:
 

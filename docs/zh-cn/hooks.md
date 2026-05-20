@@ -189,25 +189,25 @@ Hooks 在 JSON 设置文件中定义。配置有三个嵌套级别：
 
 每个事件类型在不同的字段上匹配：
 
-| 事件                                                                                                                       | 匹配器过滤的内容                                  | 示例匹配器值                                                                                                                                      |
-| :----------------------------------------------------------------------------------------------------------------------- | :---------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
-| `PreToolUse`、`PostToolUse`、`PostToolUseFailure`、`PermissionRequest`、`PermissionDenied`                                   | 工具名称                                      | `Bash`、`Edit\|Write`、`mcp__.*`                                                                                                              |
-| `SessionStart`                                                                                                           | 会话如何启动                                    | `startup`、`resume`、`clear`、`compact`                                                                                                        |
-| `Setup`                                                                                                                  | 哪个 CLI 标志触发了设置                            | `init`、`maintenance`                                                                                                                        |
-| `SessionEnd`                                                                                                             | 会话为何结束                                    | `clear`、`resume`、`logout`、`prompt_input_exit`、`bypass_permissions_disabled`、`other`                                                         |
-| `Notification`                                                                                                           | 通知类型                                      | `permission_prompt`、`idle_prompt`、`auth_success`、`elicitation_dialog`、`elicitation_complete`、`elicitation_response`                         |
-| `SubagentStart`                                                                                                          | 代理类型                                      | `general-purpose`、`Explore`、`Plan` 或自定义代理名称                                                                                                 |
-| `PreCompact`、`PostCompact`                                                                                               | 触发压缩的原因                                   | `manual`、`auto`                                                                                                                             |
-| `SubagentStop`                                                                                                           | 代理类型                                      | 与 `SubagentStart` 相同的值                                                                                                                      |
-| `ConfigChange`                                                                                                           | 配置源                                       | `user_settings`、`project_settings`、`local_settings`、`policy_settings`、`skills`                                                              |
-| `CwdChanged`                                                                                                             | 不支持匹配器                                    | 总是在每次目录更改时触发                                                                                                                                |
-| `FileChanged`                                                                                                            | 文字文件名以监视（请参阅 [FileChanged](#filechanged)） | `.envrc\|.env`                                                                                                                              |
-| `StopFailure`                                                                                                            | 错误类型                                      | `rate_limit`、`authentication_failed`、`oauth_org_not_allowed`、`billing_error`、`invalid_request`、`server_error`、`max_output_tokens`、`unknown` |
-| `InstructionsLoaded`                                                                                                     | 加载原因                                      | `session_start`、`nested_traversal`、`path_glob_match`、`include`、`compact`                                                                    |
-| `UserPromptExpansion`                                                                                                    | 命令名称                                      | 您的 skill 或命令名称                                                                                                                              |
-| `Elicitation`                                                                                                            | MCP 服务器名称                                 | 您配置的 MCP 服务器名称                                                                                                                              |
-| `ElicitationResult`                                                                                                      | MCP 服务器名称                                 | 与 `Elicitation` 相同的值                                                                                                                        |
-| `UserPromptSubmit`、`PostToolBatch`、`Stop`、`TeammateIdle`、`TaskCreated`、`TaskCompleted`、`WorktreeCreate`、`WorktreeRemove` | 不支持匹配器                                    | 总是在每次出现时触发                                                                                                                                  |
+| 事件                                                                                                                       | 匹配器过滤的内容                                  | 示例匹配器值                                                                                                                                                        |
+| :----------------------------------------------------------------------------------------------------------------------- | :---------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `PreToolUse`、`PostToolUse`、`PostToolUseFailure`、`PermissionRequest`、`PermissionDenied`                                   | 工具名称                                      | `Bash`、`Edit\|Write`、`mcp__.*`                                                                                                                                |
+| `SessionStart`                                                                                                           | 会话如何启动                                    | `startup`、`resume`、`clear`、`compact`                                                                                                                          |
+| `Setup`                                                                                                                  | 哪个 CLI 标志触发了设置                            | `init`、`maintenance`                                                                                                                                          |
+| `SessionEnd`                                                                                                             | 会话为何结束                                    | `clear`、`resume`、`logout`、`prompt_input_exit`、`bypass_permissions_disabled`、`other`                                                                           |
+| `Notification`                                                                                                           | 通知类型                                      | `permission_prompt`、`idle_prompt`、`auth_success`、`elicitation_dialog`、`elicitation_complete`、`elicitation_response`                                           |
+| `SubagentStart`                                                                                                          | 代理类型                                      | `general-purpose`、`Explore`、`Plan` 或自定义代理名称                                                                                                                   |
+| `PreCompact`、`PostCompact`                                                                                               | 触发压缩的原因                                   | `manual`、`auto`                                                                                                                                               |
+| `SubagentStop`                                                                                                           | 代理类型                                      | 与 `SubagentStart` 相同的值                                                                                                                                        |
+| `ConfigChange`                                                                                                           | 配置源                                       | `user_settings`、`project_settings`、`local_settings`、`policy_settings`、`skills`                                                                                |
+| `CwdChanged`                                                                                                             | 不支持匹配器                                    | 总是在每次目录更改时触发                                                                                                                                                  |
+| `FileChanged`                                                                                                            | 文字文件名以监视（请参阅 [FileChanged](#filechanged)） | `.envrc\|.env`                                                                                                                                                |
+| `StopFailure`                                                                                                            | 错误类型                                      | `rate_limit`、`authentication_failed`、`oauth_org_not_allowed`、`billing_error`、`invalid_request`、`model_not_found`、`server_error`、`max_output_tokens`、`unknown` |
+| `InstructionsLoaded`                                                                                                     | 加载原因                                      | `session_start`、`nested_traversal`、`path_glob_match`、`include`、`compact`                                                                                      |
+| `UserPromptExpansion`                                                                                                    | 命令名称                                      | 您的 skill 或命令名称                                                                                                                                                |
+| `Elicitation`                                                                                                            | MCP 服务器名称                                 | 您配置的 MCP 服务器名称                                                                                                                                                |
+| `ElicitationResult`                                                                                                      | MCP 服务器名称                                 | 与 `Elicitation` 相同的值                                                                                                                                          |
+| `UserPromptSubmit`、`PostToolBatch`、`Stop`、`TeammateIdle`、`TaskCreated`、`TaskCompleted`、`WorktreeCreate`、`WorktreeRemove` | 不支持匹配器                                    | 总是在每次出现时触发                                                                                                                                                    |
 
 匹配器针对 Claude Code 在 stdin 上发送给您的 hook 的[JSON 输入](#hook-input-and-output)中的字段运行。对于工具事件，该字段是 `tool_name`。每个[hook 事件](#hook-events)部分列出了完整的匹配器值集和该事件的输入架构。
 
@@ -732,7 +732,7 @@ Hooks 运行时没有控制终端，因此直接向 `/dev/tty` 写入转义序�
 # Notification hook：当 Claude Code 需要注意时 ping 桌面。
 input=$(cat)
 title="Claude Code'
-body=$(jq -r '.message // 'Needs your attention'' <<<"$input")
+body=$(jq -r '.message // 'Needs your attention'' <<<'$input')
 seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
 jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 ```
@@ -1747,6 +1747,8 @@ SubagentStart hooks 无法阻止 subagent 创建，但它们可以向 subagent �
 
 除了[通用输入字段](#common-input-fields)外，SubagentStop hooks 还接收 `stop_hook_active`、`agent_id`、`agent_type`、`agent_transcript_path` 和 `last_assistant_message`。`agent_type` 字段是用于匹配器过滤的值。`transcript_path` 是主会话的成绩单，而 `agent_transcript_path` 是 subagent 自己的成绩单，存储在嵌套的 `subagents/` 文件夹中。`last_assistant_message` 字段包含 subagent 最终响应的文本内容，因此 hooks 可以访问它而无需解析成绩单文件。
 
+SubagentStop hooks 还接收 [Stop input](#stop-input) 中描述的 `background_tasks` 和 `session_crons` 数组，在 Claude Code v2.1.145 或更高版本中可用。两个数组都限定于父会话，而不是 subagent。
+
 ```json theme={null}
 {
   "session_id": "abc123",
@@ -1758,7 +1760,9 @@ SubagentStart hooks 无法阻止 subagent 创建，但它们可以向 subagent �
   "agent_id": "def456",
   "agent_type": "Explore",
   "agent_transcript_path": "~/.claude/projects/.../abc123/subagents/agent-def456.jsonl",
-  "last_assistant_message": "Analysis complete. Found 3 potential issues..."
+  "last_assistant_message": "Analysis complete. Found 3 potential issues...",
+  "background_tasks": [],
+  "session_crons": []
 }
 ```
 
@@ -1885,7 +1889,34 @@ exit 0
 
 #### Stop 输入
 
-除了[通用输入字段](#common-input-fields)外，Stop hooks 还接收 `stop_hook_active` 和 `last_assistant_message`。`stop_hook_active` 字段在 Claude Code 已经作为 stop hook 的结果继续时为 `true`。检查此值或处理成绩单以防止 Claude Code 无限运行。`last_assistant_message` 字段包含 Claude 最终响应的文本内容，因此 hooks 可以访问它而无需解析成绩单文件。
+除了[通用输入字段](#common-input-fields)外，Stop hooks 还接收 `stop_hook_active`、`last_assistant_message`、`background_tasks` 和 `session_crons`。`stop_hook_active` 字段在 Claude Code 已经作为 stop hook 的结果继续时为 `true`。检查此值或处理成绩单以防止 Claude Code 无限运行。`last_assistant_message` 字段包含 Claude 最终响应的文本内容，因此 hooks 可以访问它而无需解析成绩单文件。
+
+`background_tasks` 和 `session_crons` 数组在 Claude Code v2.1.145 或更高版本中可用，让 hooks 区分"会话完成"和"会话暂停等待后台工作唤醒它"。当任务注册表可达时两个数组都存在，当没有任何内容在进行中或计划时为空。
+
+`background_tasks` 中的每个条目描述一个进行中的任务，并使用这些字段：
+
+| 字段            | 描述                                                                                                                                         |
+| :------------ | :----------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`          | 任务标识符                                                                                                                                      |
+| `type`        | 友好的任务类型标签，如 `shell`、`subagent`、`monitor`、`workflow`、`teammate`、`cloud session` 或 `MCP task`。每个标签标识哪个 Claude Code 功能创建了任务。对于无法识别的类型回退到原始判别式 |
+| `status`      | 当前任务状态                                                                                                                                     |
+| `description` | 自由文本描述，上限为 1000 个字符，当被剪切时在字符串中有 `… [+N chars]` 标记                                                                                          |
+| `command`     | Shell 命令行，上限为 1000 个字符。仅对 `shell` 任务存在                                                                                                     |
+| `agent_type`  | Subagent 类型名称。仅对 `subagent` 任务存在                                                                                                           |
+| `server`      | MCP 服务器名称。仅对 `monitor` 和 `MCP task` 任务存在                                                                                                   |
+| `tool`        | MCP 工具名称。仅对 `monitor` 和 `MCP task` 任务存在                                                                                                    |
+| `name`        | 工作流名称。仅对 `workflow` 任务存在                                                                                                                   |
+
+`session_crons` 中的每个条目描述一个会话范围的计划唤醒，来自 `CronCreate` 和 `/loop`：
+
+| 字段          | 描述                                                   |
+| :---------- | :--------------------------------------------------- |
+| `id`        | Cron 任务标识符                                           |
+| `schedule`  | Cron 表达式，例如 `0 9 * * 1-5`                            |
+| `recurring` | `false` 用于一次性唤醒，其计划编码单个触发时间，`true` 用于在每次匹配时重新触发的任务   |
+| `prompt`    | 当 cron 触发时提交的提示，上限为 1000 个字符，具有相同的 `… [+N chars]` 标记 |
+
+此示例显示一个 Stop 输入，其中有一个进行中的 shell 任务和一个循环 cron：
 
 ```json theme={null}
 {
@@ -1895,7 +1926,24 @@ exit 0
   "permission_mode": "default",
   "hook_event_name": "Stop",
   "stop_hook_active": true,
-  "last_assistant_message": "I've completed the refactoring. Here's a summary..."
+  "last_assistant_message": "I've completed the refactoring. Here's a summary...",
+  "background_tasks": [
+    {
+      "id": "task-001",
+      "type": "shell",
+      "status": "running",
+      "description": "tail logs",
+      "command": "tail -f /var/log/syslog"
+    }
+  ],
+  "session_crons": [
+    {
+      "id": "cron-001",
+      "schedule": "0 9 * * 1-5",
+      "recurring": true,
+      "prompt": "check the build"
+    }
+  ]
 }
 ```
 
@@ -1923,11 +1971,11 @@ exit 0
 
 除了[通用输入字段](#common-input-fields)外，StopFailure hooks 还接收 `error`、可选的 `error_details` 和可选的 `last_assistant_message`。`error` 字段标识错误类型，用于匹配器过滤。
 
-| 字段                       | 描述                                                                                                                                                 |
-| :----------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `error`                  | 错误类型：`rate_limit`、`authentication_failed`、`oauth_org_not_allowed`、`billing_error`、`invalid_request`、`server_error`、`max_output_tokens` 或 `unknown` |
-| `error_details`          | 关于错误的额外详细信息（如果可用）                                                                                                                                  |
-| `last_assistant_message` | 在对话中显示的呈现错误文本。与 `Stop` 和 `SubagentStop` 不同，其中此字段包含 Claude 的对话输出，对于 `StopFailure` 它包含 API 错误字符串本身，例如 `"API Error: Rate limit reached"`              |
+| 字段                       | 描述                                                                                                                                                                   |
+| :----------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `error`                  | 错误类型：`rate_limit`、`authentication_failed`、`oauth_org_not_allowed`、`billing_error`、`invalid_request`、`model_not_found`、`server_error`、`max_output_tokens` 或 `unknown` |
+| `error_details`          | 关于错误的额外详细信息（如果可用）                                                                                                                                                    |
+| `last_assistant_message` | 在对话中显示的呈现错误文本。与 `Stop` 和 `SubagentStop` 不同，其中此字段包含 Claude 的对话输出，对于 `StopFailure` 它包含 API 错误字符串本身，例如 `"API Error: Rate limit reached"`                                |
 
 ```json theme={null}
 {

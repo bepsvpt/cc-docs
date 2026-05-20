@@ -270,7 +270,9 @@ export DISABLE_PROMPT_CACHING=1
 export ENABLE_PROMPT_CACHING_1H=1
 ```
 
-<Note>[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) mungkin tidak tersedia di semua wilayah. Cache writes dengan TTL 1 jam ditagih dengan tarif lebih tinggi daripada writes 5 menit.</Note>
+TTL cache 1 jam ditagih dengan tarif lebih tinggi daripada default 5 menit. Lihat [cache lifetime](/id/prompt-caching#cache-lifetime).
+
+<Note>Prompt caching mungkin tidak tersedia di semua wilayah Bedrock. Jika hitungan token cache tetap di nol, periksa [model, wilayah, dan batas yang didukung](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html#prompt-caching-models) dalam dokumentasi Bedrock.</Note>
 
 #### Petakan setiap versi model ke profil inferensi
 

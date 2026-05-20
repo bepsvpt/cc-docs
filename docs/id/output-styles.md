@@ -18,17 +18,17 @@ Gaya output **Default** Claude Code adalah system prompt yang ada, dirancang unt
 
 Ada tiga gaya output bawaan tambahan:
 
-* **Proactive**: Claude dieksekusi segera, membuat asumsi yang masuk akal alih-alih berhenti untuk keputusan rutin, dan lebih memilih tindakan daripada perencanaan. Ini menerapkan panduan yang sama seperti [mode otomatis](/id/permission-modes#eliminate-prompts-with-auto-mode) tanpa mengubah mode izin Anda, jadi Anda masih melihat prompt izin sebelum alat dijalankan.
+* **Proactive**: Claude dieksekusi segera, membuat asumsi yang masuk akal alih-alih berhenti untuk keputusan rutin, dan lebih memilih tindakan daripada perencanaan. Ini adalah panduan eksekusi otonom yang lebih kuat daripada yang diterapkan [mode otomatis](/id/permission-modes#eliminate-prompts-with-auto-mode), dan ini berfungsi tanpa mengubah mode izin Anda, jadi Anda masih melihat prompt izin sebelum alat dijalankan.
 
 * **Explanatory**: Menyediakan "Insights" edukatif di antara membantu Anda menyelesaikan tugas-tugas rekayasa perangkat lunak. Membantu Anda memahami pilihan implementasi dan pola codebase.
 
 * **Learning**: Mode kolaboratif belajar-dengan-melakukan di mana Claude tidak hanya akan berbagi "Insights" saat coding, tetapi juga meminta Anda untuk berkontribusi dengan potongan kode kecil dan strategis sendiri. Claude Code akan menambahkan penanda `TODO(human)` dalam kode Anda untuk Anda implementasikan.
 
-## Ubah output style Anda
+## Ubah gaya output Anda
 
-Jalankan `/config` dan pilih **Output style** untuk memilih style dari menu. Pilihan Anda disimpan ke `.claude/settings.local.json` di [tingkat proyek lokal](/id/settings).
+Jalankan `/config` dan pilih **Output style** untuk memilih gaya dari menu. Pilihan Anda disimpan ke `.claude/settings.local.json` di [tingkat proyek lokal](/id/settings).
 
-Untuk menetapkan style tanpa menu, edit field `outputStyle` secara langsung dalam file settings:
+Untuk menetapkan gaya tanpa menu, edit field `outputStyle` secara langsung dalam file settings:
 
 ```json theme={null}
 {
@@ -36,7 +36,7 @@ Untuk menetapkan style tanpa menu, edit field `outputStyle` secara langsung dala
 }
 ```
 
-Karena output style ditetapkan dalam system prompt saat awal sesi, perubahan berlaku saat Anda memulai sesi baru. Ini menjaga system prompt tetap stabil sepanjang percakapan sehingga prompt caching dapat mengurangi latensi dan biaya.
+Output style adalah bagian dari system prompt, yang dibaca Claude Code sekali saat awal sesi. Perubahan berlaku setelah `/clear` atau sesi baru. Lihat [Bagaimana Claude Code menggunakan prompt caching](/id/prompt-caching#changing-output-style) untuk mengetahui apa yang dilakukan perubahan output style terhadap cache.
 
 ## Buat custom output style
 
@@ -72,7 +72,7 @@ Custom output style adalah file Markdown: frontmatter untuk metadata, kemudian i
   </Step>
 
   <Step title="Beralih ke style Anda">
-    Jalankan `/config` dan pilih style Anda di bawah **Output style**. Ini berlaku saat Anda memulai sesi berikutnya.
+    Jalankan `/config` dan pilih style Anda di bawah **Output style**. Ini berlaku setelah `/clear` atau saat Anda memulai sesi berikutnya.
   </Step>
 </Steps>
 
@@ -114,6 +114,6 @@ Beberapa fitur menyesuaikan perilaku Claude Code. Output styles memodifikasi sys
 ## Sumber daya terkait
 
 * [Settings](/id/settings): di mana field `outputStyle` berada dan cara kerja precedence settings
-* [Permission modes](/id/permission-modes): style Proactive mencerminkan mode otomatis tanpa mengubah mode izin Anda
+* [Permission modes](/id/permission-modes): bagaimana style Proactive dibandingkan dengan mode otomatis
 * [Plugins](/id/plugins): paket dan distribusikan output styles bersama skills, hooks, dan agents
 * [Debug your configuration](/id/debug-your-config): diagnosa mengapa output style tidak berlaku

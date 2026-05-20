@@ -76,7 +76,7 @@ Pour maintenir les coûts des équipes d'agents gérables :
 
 ## Réduire l'utilisation des tokens
 
-Les coûts des tokens augmentent avec la taille du contexte : plus Claude traite de contexte, plus vous utilisez de tokens. Claude Code optimise automatiquement les coûts grâce à la mise en cache des invites (qui réduit les coûts pour le contenu répété comme les invites système) et à la compaction automatique (qui résume l'historique des conversations en approchant les limites du contexte).
+Les coûts des tokens augmentent avec la taille du contexte : plus Claude traite de contexte, plus vous utilisez de tokens. Claude Code optimise automatiquement les coûts grâce à la [mise en cache des invites](/fr/prompt-caching), qui réduit les coûts pour le contenu répété comme les invites système, et à la compaction automatique, qui résume l'historique des conversations en approchant les limites du contexte.
 
 Les stratégies suivantes vous aident à maintenir le contexte petit et à réduire les coûts par message.
 
@@ -184,7 +184,7 @@ Les demandes vagues comme « améliorer cette base de code » déclenchent une a
 
 Pour un travail plus long ou plus complexe, ces habitudes aident à éviter les tokens gaspillés en prenant la mauvaise direction :
 
-* **Utilisez le mode plan pour les tâches complexes** : Appuyez sur Maj+Tab pour entrer en [mode plan](/fr/common-workflows#use-plan-mode-for-safe-code-analysis) avant l'implémentation. Claude explore la base de code et propose une approche pour votre approbation, évitant les retouches coûteuses lorsque la direction initiale est mauvaise.
+* **Utilisez le mode plan pour les tâches complexes** : Appuyez sur Maj+Tab pour entrer en [mode plan](/fr/permission-modes#analyze-before-you-edit-with-plan-mode) avant l'implémentation. Claude explore la base de code et propose une approche pour votre approbation, évitant les retouches coûteuses lorsque la direction initiale est mauvaise.
 * **Corriger la trajectoire tôt** : Si Claude commence à aller dans la mauvaise direction, appuyez sur Échap pour arrêter immédiatement. Utilisez `/rewind` ou appuyez deux fois sur Échap pour restaurer la conversation et le code à un point de contrôle précédent.
 * **Donner des cibles de vérification** : Incluez des cas de test, collez des captures d'écran ou définissez la sortie attendue dans votre invite. Lorsque Claude peut vérifier son propre travail, il détecte les problèmes avant que vous ayez besoin de demander des corrections.
 * **Tester de manière progressive** : Écrivez un fichier, testez-le, puis continuez. Cela détecte les problèmes tôt lorsqu'ils sont bon marché à corriger.

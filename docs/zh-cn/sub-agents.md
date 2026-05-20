@@ -863,7 +863,7 @@ Subagents 支持使用与主对话相同的逻辑进行自动压缩。默认情�
 | 权限           | 提示在您的终端中出现 | [Auto-denied](#run-subagents-in-foreground-or-background) 在后台运行时 |
 | Prompt cache | 与主会话共享     | 单独的缓存                                                            |
 
-因为分叉的系统提示和工具定义与父级相同，其第一个请求重用父级的 prompt cache。这使得分叉比为需要相同上下文的任务生成新 subagent 更便宜。
+因为分叉的系统提示和工具定义与父级相同，其第一个请求重用父级的 [prompt cache](/zh-CN/prompt-caching#subagents-and-the-cache)。这使得分叉比为需要相同上下文的任务生成新 subagent 更便宜。
 
 当 Claude 通过 Agent 工具生成分叉时，它可以传递 `isolation: "worktree"` 以便分叉的文件编辑被写入单独的 git worktree 而不是您的检出。
 

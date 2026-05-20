@@ -28,6 +28,8 @@ Vous pouvez afficher et gérer les autorisations d'outils de Claude Code avec `/
 
 Les règles sont évaluées dans l'ordre : **deny -> ask -> allow**. La première règle correspondante gagne, donc les règles de refus ont toujours la priorité.
 
+Les règles de refus se comportent différemment selon qu'elles nomment un outil ou qu'elles délimitent un motif au sein de celui-ci. Un nom d'outil simple comme `Bash` supprime l'outil du contexte de Claude entièrement, donc Claude ne le voit jamais. Une règle délimitée comme `Bash(rm *)` laisse l'outil disponible et bloque les appels correspondants lorsque Claude essaie de les utiliser.
+
 <Note>
   Les règles d'autorisation sont appliquées par Claude Code, et non par le modèle. Les instructions dans votre prompt ou `CLAUDE.md` façonnent ce que Claude essaie de faire, mais elles ne changent pas ce que Claude Code autorise. Pour accorder ou révoquer l'accès, utilisez `/permissions`, les règles décrites ici, un [mode d'autorisation](/fr/permission-modes), ou un [hook PreToolUse](#extend-permissions-with-hooks).
 </Note>
@@ -65,7 +67,7 @@ Pour correspondre à tous les usages d'un outil, utilisez simplement le nom de l
 | `WebFetch` | Correspond à toutes les demandes de récupération web |
 | `Read`     | Correspond à toutes les lectures de fichiers         |
 
-`Bash(*)` est équivalent à `Bash` et correspond à toutes les commandes Bash.
+`Bash(*)` est équivalent à `Bash` et correspond à toutes les commandes Bash. En tant que règle de refus, les deux formes suppriment l'outil du contexte de Claude.
 
 ### Utiliser des spécificateurs pour un contrôle granulaire
 
@@ -186,7 +188,7 @@ Claude Code analyse l'AST PowerShell et vérifie chaque commande dans une comman
 
 ### Read et Edit
 
-Les règles `Edit` s'appliquent à tous les outils intégrés qui éditent les fichiers. Claude fait un effort raisonnable pour appliquer les règles `Read` à tous les outils intégrés qui lisent les fichiers comme Grep et Glob.
+Les règles `Edit` s'appliquent à tous les outils intégrés qui éditent les fichiers. Claude fait un effort raisonnable pour appliquer les règles `Read` à tous les outils intégrés qui lisent les fichiers comme Grep et Glob, aux mentions `@file` dans vos invites et à la sélection et au contexte de fichier ouvert qu'un [IDE](/fr/vs-code#the-built-in-ide-mcp-server) connecté partage avec Claude.
 
 <Warning>
   Les règles de refus Read et Edit s'appliquent aux outils de fichiers intégrés de Claude et aux commandes de fichiers que Claude Code reconnaît dans Bash, tels que `cat`, `head`, `tail` et `sed`. Elles ne s'appliquent pas aux sous-processus arbitraires qui lisent ou écrivent des fichiers indirectement, comme un script Python ou Node qui ouvre des fichiers lui-même. Pour une application au niveau du système d'exploitation qui bloque tous les processus d'accéder à un chemin, [activez le sandbox](/fr/sandboxing).

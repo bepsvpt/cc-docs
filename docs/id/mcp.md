@@ -766,6 +766,8 @@ Jika Anda telah masuk ke Claude Code dengan akun [Claude.ai](https://claude.ai),
   </Step>
 </Steps>
 
+Konektor Claude.ai diambil hanya ketika [metode autentikasi](/id/authentication#authentication-precedence) aktif Anda adalah langganan Claude.ai Anda. Mereka tidak dimuat ketika `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `apiKeyHelper`, atau penyedia pihak ketiga seperti Bedrock atau Vertex aktif, bahkan jika Anda sebelumnya menjalankan `/login`. Jika `/mcp` tidak mencantumkan konektor yang Anda tambahkan, jalankan `/status` untuk mengonfirmasi metode autentikasi mana yang aktif, hapus variabel lingkungan tersebut atau hapus pengaturan `apiKeyHelper`, kemudian jalankan `/login` untuk memilih akun Claude.ai Anda.
+
 Server yang telah Anda tambahkan di Claude Code mengambil [prioritas](#scope-hierarchy-and-precedence) atas konektor claude.ai yang menunjuk ke URL yang sama. Ketika ini terjadi, `/mcp` mencantumkan konektor sebagai tersembunyi dan menunjukkan cara menghapus duplikat jika Anda lebih suka menggunakan konektor.
 
 Untuk menonaktifkan server MCP claude.ai di Claude Code, atur variabel lingkungan `ENABLE_CLAUDEAI_MCP_SERVERS` ke `false`:

@@ -53,7 +53,11 @@ Gli alias puntano alla versione consigliata per il provider e si aggiornano nel 
 3. **Variabile di ambiente** - Impostare `ANTHROPIC_MODEL=<alias|name>`
 4. **Impostazioni** - Configurare in modo permanente nel file delle impostazioni utilizzando il campo `model`.
 
-La selezione `/model` viene salvata nelle impostazioni utente e persiste tra i riavvii. A partire dalla v2.1.117, se il file `.claude/settings.json` del progetto fissa un modello diverso, Claude Code scrive anche la scelta in `.claude/settings.local.json` in modo che continui ad applicarsi in quel progetto dopo un riavvio. Le impostazioni gestite hanno la precedenza e si riapplicano al prossimo avvio.
+A partire dalla v2.1.144, `/model` si applica solo alla sessione corrente e non viene scritto nelle impostazioni. Per salvare la scelta come predefinita per le nuove sessioni, premere `d` sulla riga evidenziata nel selettore, che scrive il campo `model` nelle impostazioni utente. Le impostazioni gestite hanno la precedenza e si riapplicano al prossimo avvio.
+
+Il flag `--model` e la variabile di ambiente `ANTHROPIC_MODEL` si applicano solo alla sessione che avviate con essi. Per eseguire modelli diversi in terminali diversi contemporaneamente, avviate ciascuno con il proprio flag `--model` piuttosto che passare con `/model`.
+
+Le sessioni riprese avviate con `claude --resume`, `--continue`, o il selettore `/resume` mantengono il modello che stavano utilizzando quando la trascrizione è stata salvata, indipendentemente dall'impostazione `model` corrente. Se quel modello è stato ritirato, la sessione ricade nell'ordine di precedenza normale. Questo impedisce che la scelta `/model` di un'altra sessione cambi il modello al ripristino.
 
 Quando il modello attivo all'avvio proviene dalle impostazioni del progetto o gestite piuttosto che dalla propria selezione, l'intestazione di avvio mostra quale file di impostazioni lo ha impostato. Eseguire `/model` per eseguire l'override per la sessione corrente.
 
@@ -299,7 +303,7 @@ Quando si distribuisce Claude Code tramite [Bedrock](/it/amazon-bedrock), [Verte
 Senza fissaggio, Claude Code utilizza alias di modelli (`sonnet`, `opus`, `haiku`) che si risolvono nella versione più recente. Quando Anthropic rilascia un nuovo modello che non è ancora abilitato nell'account di un utente, gli utenti Bedrock e Vertex AI vedono un avviso e ricadono nella versione precedente per quella sessione, mentre gli utenti Foundry vedono errori perché Foundry non ha alcun controllo di avvio equivalente.
 
 <Warning>
-  Impostare tutte e tre le variabili di ambiente del modello su ID di versione specifici come parte della configurazione iniziale. Il fissaggio consente di controllare quando i tuoi utenti passano a un nuovo modello.
+  Impostare tutte e tre le variabili di ambiente del modello su ID di versione specifici come parte della configurazione iniziale. Il fissaggio consente di controllare quando i vostri utenti passano a un nuovo modello.
 </Warning>
 
 Utilizzare le seguenti variabili di ambiente con ID di modello specifici della versione per il provider:
@@ -318,7 +322,11 @@ Per abilitare il [contesto esteso](#extended-context) per un modello fissato, ag
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7[1m]'
 ```
 
-Il suffisso `[1m]` applica la finestra di contesto 1M a tutto l'utilizzo di quell'alias, incluso `opusplan`. Claude Code rimuove il suffisso prima di inviare l'ID del modello al provider. Aggiungere `[1m]` solo quando il modello sottostante supporta il contesto 1M, come Opus 4.7 o Sonnet 4.6.
+Il suffisso `[1m]` applica la finestra di contesto 1M a tutto l'utilizzo di quell'alias, incluso `opusplan`.
+
+* Claude Code rimuove il suffisso prima di inviare l'ID del modello al provider.
+* Aggiungere `[1m]` solo quando il modello sottostante [supporta il contesto 1M](https://platform.claude.com/docs/it/build-with-claude/context-windows#1m-token-context-window).
+* Il suffisso viene letto per variabile, non per modello. Su Bedrock, Vertex e Foundry, un ID di modello senza `[1m]` in una variabile utilizza il contesto 200K anche se un'altra variabile imposta lo stesso modello con il suffisso.
 
 <Note>
   L'elenco di autorizzazione `settings.availableModels` si applica comunque quando si utilizzano provider di terze parti. Il filtraggio corrisponde all'alias del modello (`opus`, `sonnet`, `haiku`), non all'ID del modello specifico del provider.
@@ -388,13 +396,13 @@ Gli override sostituiscono gli ID di modello incorporati che supportano ogni voc
 
 ### Configurazione della prompt caching
 
-Claude Code utilizza automaticamente la [prompt caching](https://platform.claude.com/docs/it/build-with-claude/prompt-caching) per ottimizzare le prestazioni e ridurre i costi. È possibile disabilitare la prompt caching globalmente o per livelli di modello specifici:
+Claude Code utilizza automaticamente la [prompt caching](/it/prompt-caching) per ottimizzare le prestazioni e ridurre i costi. È possibile disabilitare la prompt caching globalmente o per livelli di modello specifici:
 
-| Variabile di ambiente           | Descrizione                                                                                                               |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `DISABLE_PROMPT_CACHING`        | Impostare su `1` per disabilitare la prompt caching per tutti i modelli (ha la precedenza sulle impostazioni per modello) |
-| `DISABLE_PROMPT_CACHING_HAIKU`  | Impostare su `1` per disabilitare la prompt caching solo per i modelli Haiku                                              |
-| `DISABLE_PROMPT_CACHING_SONNET` | Impostare su `1` per disabilitare la prompt caching solo per i modelli Sonnet                                             |
-| `DISABLE_PROMPT_CACHING_OPUS`   | Impostare su `1` per disabilitare la prompt caching solo per i modelli Opus                                               |
+| Variabile di ambiente           | Descrizione                                                                                                              |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `DISABLE_PROMPT_CACHING`        | Impostare su `1` per disabilitare la prompt caching per tutti i modelli. Ha la precedenza sulle impostazioni per modello |
+| `DISABLE_PROMPT_CACHING_HAIKU`  | Impostare su `1` per disabilitare la prompt caching solo per i modelli Haiku                                             |
+| `DISABLE_PROMPT_CACHING_SONNET` | Impostare su `1` per disabilitare la prompt caching solo per i modelli Sonnet                                            |
+| `DISABLE_PROMPT_CACHING_OPUS`   | Impostare su `1` per disabilitare la prompt caching solo per i modelli Opus                                              |
 
-Queste variabili di ambiente forniscono un controllo granulare sul comportamento della prompt caching. L'impostazione globale `DISABLE_PROMPT_CACHING` ha la precedenza sulle impostazioni specifiche del modello, consentendo di disabilitare rapidamente tutta la caching quando necessario. Le impostazioni per modello sono utili per il controllo selettivo, ad esempio quando si esegue il debug di modelli specifici o si lavora con provider cloud che potrebbero avere implementazioni di caching diverse.
+Per modificare il TTL della cache o scoprire cosa attiva un cache miss, vedere [Come Claude Code utilizza la prompt caching](/it/prompt-caching).

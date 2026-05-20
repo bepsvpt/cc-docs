@@ -152,17 +152,17 @@ claude -p "Write a poem" --output-format stream-json --verbose --include-partial
 
 API 요청이 재시도 가능한 오류로 실패하면 Claude Code는 재시도하기 전에 `system/api_retry` 이벤트를 내보냅니다. 이를 사용하여 재시도 진행 상황을 표시하거나 사용자 정의 백오프 로직을 구현할 수 있습니다.
 
-| 필드               | 유형            | 설명                                                                                                                                                          |
-| ---------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`           | `"system"`    | 메시지 유형                                                                                                                                                      |
-| `subtype`        | `"api_retry"` | 이를 재시도 이벤트로 식별                                                                                                                                              |
-| `attempt`        | 정수            | 현재 시도 번호, 1부터 시작                                                                                                                                            |
-| `max_retries`    | 정수            | 허용된 총 재시도 횟수                                                                                                                                                |
-| `retry_delay_ms` | 정수            | 다음 시도까지의 밀리초                                                                                                                                                |
-| `error_status`   | 정수 또는 null    | HTTP 상태 코드, 또는 HTTP 응답이 없는 연결 오류의 경우 `null`                                                                                                                 |
-| `error`          | 문자열           | 오류 범주: `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `rate_limit`, `invalid_request`, `server_error`, `max_output_tokens` 또는 `unknown` |
-| `uuid`           | 문자열           | 고유 이벤트 식별자                                                                                                                                                  |
-| `session_id`     | 문자열           | 이벤트가 속한 세션                                                                                                                                                  |
+| 필드               | 유형            | 설명                                                                                                                                                                             |
+| ---------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `type`           | `"system"`    | 메시지 유형                                                                                                                                                                         |
+| `subtype`        | `"api_retry"` | 이를 재시도 이벤트로 식별                                                                                                                                                                 |
+| `attempt`        | 정수            | 현재 시도 번호, 1부터 시작                                                                                                                                                               |
+| `max_retries`    | 정수            | 허용된 총 재시도 횟수                                                                                                                                                                   |
+| `retry_delay_ms` | 정수            | 다음 시도까지의 밀리초                                                                                                                                                                   |
+| `error_status`   | 정수 또는 null    | HTTP 상태 코드, 또는 HTTP 응답이 없는 연결 오류의 경우 `null`                                                                                                                                    |
+| `error`          | 문자열           | 오류 범주: `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `rate_limit`, `invalid_request`, `model_not_found`, `server_error`, `max_output_tokens` 또는 `unknown` |
+| `uuid`           | 문자열           | 고유 이벤트 식별자                                                                                                                                                                     |
+| `session_id`     | 문자열           | 이벤트가 속한 세션                                                                                                                                                                     |
 
 `system/init` 이벤트는 모델, 도구, MCP 서버 및 로드된 플러그인을 포함한 세션 메타데이터를 보고합니다. [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/ko/env-vars)이 설정되지 않은 경우 스트림의 첫 번째 이벤트이며, 이 경우 `plugin_install` 이벤트가 앞에 옵니다. 플러그인 필드를 사용하여 플러그인이 로드되지 않았을 때 CI를 실패하게 합니다:
 

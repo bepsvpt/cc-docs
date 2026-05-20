@@ -349,9 +349,8 @@ Lorsque vous travaillez sur une branche avec une demande de tirage ouverte, Clau
 * Jaune : en attente de révision
 * Rouge : modifications demandées
 * Gris : brouillon
-* Violet : fusionné
 
-`Cmd+clic` (Mac) ou `Ctrl+clic` (Windows/Linux) sur le lien pour ouvrir la demande de tirage dans votre navigateur. Le statut se met à jour automatiquement toutes les 60 secondes.
+Le badge disparaît une fois que la demande de tirage est fusionnée ou fermée. `Cmd+clic` (Mac) ou `Ctrl+clic` (Windows/Linux) sur le lien pour ouvrir la demande de tirage dans votre navigateur. Le statut se met à jour toutes les 60 secondes, et immédiatement après l'exécution d'une commande `gh pr` ou `git push` dans la session.
 
 <Note>
   Le statut PR nécessite que le CLI `gh` soit installé et authentifié (`gh auth login`).

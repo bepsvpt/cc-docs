@@ -407,6 +407,20 @@ manifest 是選用的。如果省略，Claude Code 會自動探索[預設位置]
 
 此名稱用於命名空間元件。例如，在 UI 中，名稱為 `plugin-dev` 的 plugin 的 agent `agent-creator` 將顯示為 `plugin-dev:agent-creator`。
 
+### 無法識別的欄位
+
+Claude Code 會忽略它無法識別的頂層欄位。您可以在 `plugin.json` 中保留來自另一個生態系統的中繼資料，plugin 仍會載入。這使得維護一個 manifest 作為 VS Code 或 Cursor 擴充功能 manifest、npm `package.json` 或 MCPB/DXT bundle manifest 變得實用。
+
+`claude plugin validate` 將無法識別的欄位報告為警告，而不是錯誤。如果欄位與已識別的欄位相差一或兩個字元，警告會建議可能的預期名稱。只有無法識別欄位警告的 plugin 仍會通過驗證並在執行時載入。
+
+類型錯誤的欄位仍會失敗。例如，`keywords` 值是字串而不是陣列是載入錯誤，`claude plugin validate` 會將其報告為錯誤。
+
+傳遞 `--strict` 以將警告視為錯誤。在 CI 中使用它來捕捉拼寫錯誤的欄位名稱或來自另一個工具的 manifest 中遺留的欄位，然後再發佈，即使 plugin 會在執行時載入。
+
+```bash theme={null}
+claude plugin validate ./my-plugin --strict
+```
+
 ### 中繼資料欄位
 
 | 欄位            | 類型     | 描述                                                                                                                                                                                               | 範例                                                                |

@@ -132,6 +132,8 @@ Spans 默认编辑用户提示文本、工具输入详情和工具内容。设�
 
 当跟踪处于活动状态时，Bash 和 PowerShell 子进程会自动继承包含活动工具执行 span 的 W3C trace 上下文的 `TRACEPARENT` 环境变量。这让任何读取 `TRACEPARENT` 的子进程可以在同一 trace 下将其自己的 span 作为父级，通过 Claude 运行的脚本和命令启用端到端分布式跟踪。
 
+当跟踪处于活动状态时，如果 Claude Code 直接连接到 Anthropic API，每个模型请求都会携带一个 W3C `traceparent` 标头，设置为 `claude_code.llm_request` span 的上下文，API 的 `traceresponse` 标头被记录为 span 链接。这些一起通过任何兼容的中介将 Claude Code 的客户端 span 连接到服务器端跟踪。标头不会发送给第三方提供商。
+
 在 Agent SDK 和使用 `-p` 启动的非交互式会话中，Claude Code 还在启动每个交互 span 时从其自己的环境中读取 `TRACEPARENT` 和 `TRACESTATE`。这让嵌入过程可以将其活动的 W3C trace 上下文传递到子进程中，以便 Claude Code 的 span 显示为调用者分布式跟踪的子级。交互式会话忽略入站 `TRACEPARENT` 以避免意外继承来自 CI 或容器环境的环境值。
 
 #### Span 层次结构
@@ -196,15 +198,17 @@ claude_code.interaction
 
 **`claude_code.tool`**
 
-| 属性              | 描述                          | 门控条件                    |
-| --------------- | --------------------------- | ----------------------- |
-| `tool_name`     | 工具名称                        |                         |
-| `duration_ms`   | 包括权限等待和执行的实际时钟持续时间          |                         |
-| `result_tokens` | 工具结果的近似令牌大小                 |                         |
-| `file_path`     | Read、Edit 和 Write 工具的目标文件路径 | `OTEL_LOG_TOOL_DETAILS` |
-| `full_command`  | Bash 工具的命令字符串               | `OTEL_LOG_TOOL_DETAILS` |
-| `skill_name`    | Skill 工具的技能名称               | `OTEL_LOG_TOOL_DETAILS` |
-| `subagent_type` | Task 工具的子代理类型               | `OTEL_LOG_TOOL_DETAILS` |
+| 属性                | 描述                              | 门控条件                    |
+| ----------------- | ------------------------------- | ----------------------- |
+| `tool_name`       | 工具名称                            |                         |
+| `duration_ms`     | 包括权限等待和执行的实际时钟持续时间              |                         |
+| `result_tokens`   | 工具结果的近似令牌大小                     |                         |
+| `agent_id`        | 运行工具的子代理或队友的标识符。在主会话中不存在        |                         |
+| `parent_agent_id` | 生成此代理的代理的标识符。对于主会话和直接从其生成的代理不存在 |                         |
+| `file_path`       | Read、Edit 和 Write 工具的目标文件路径     | `OTEL_LOG_TOOL_DETAILS` |
+| `full_command`    | Bash 工具的命令字符串                   | `OTEL_LOG_TOOL_DETAILS` |
+| `skill_name`      | Skill 工具的技能名称                   | `OTEL_LOG_TOOL_DETAILS` |
+| `subagent_type`   | Task 工具的子代理类型                   | `OTEL_LOG_TOOL_DETAILS` |
 
 当 `OTEL_LOG_TOOL_CONTENT=1` 时，此 span 还记录一个 `tool.output` span 事件，其属性包含工具的输入和输出主体，在每个属性处截断为 60 KB。
 
@@ -885,6 +889,22 @@ Claude Code 通过 OpenTelemetry 日志/事件导出以下事件（当配置了 
 * `managed_only`：当仅允许托管策略 hooks 时为 `"true"`
 * `hook_source`：`"policySettings"` 或 `"merged"`
 * `hook_definitions`：JSON 序列化的 hook 配置。仅当启用了详细的测试版跟踪和 `OTEL_LOG_TOOL_DETAILS=1` 时才包含
+
+#### Hook 插件指标事件
+
+当官方市场插件 hook 发出每次调用指标时记录。仅从官方 Anthropic 市场安装的插件可以发出这些。第三方市场插件和用户配置的 hooks 不会发出到此事件。使用此事件从您自己的可观测性堆栈监控插件行为，例如查找率、成本和持续时间。
+
+**事件名称**：`claude_code.hook_plugin_metrics`
+
+**属性**：
+
+* 所有 [标准属性](#standard-attributes)
+* `event.name`：`"hook_plugin_metrics"`
+* `event.timestamp`：ISO 8601 时间戳
+* `event.sequence`：单调递增的计数器，用于在会话内排序事件
+* `plugin_id`：`<name>@<marketplace>` 形式的插件标识符
+* `hook_event`：发出指标的 hook 事件类型
+* 最多 20 个插件发出的指标键。名称匹配 `^[a-z][a-z0-9_]{0,39}$`。值为布尔值或数字。
 
 #### 压缩事件
 

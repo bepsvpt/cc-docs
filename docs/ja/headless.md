@@ -152,17 +152,17 @@ claude -p "Write a poem" --output-format stream-json --verbose --include-partial
 
 API リクエストが再試行可能なエラーで失敗すると、Claude Code は再試行前に `system/api_retry` イベントを発行します。これを使用して、再試行の進行状況を表示したり、カスタムバックオフロジックを実装したりできます。
 
-| フィールド            | 型             | 説明                                                                                                                                                      |
-| ---------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`           | `"system"`    | メッセージタイプ                                                                                                                                                |
-| `subtype`        | `"api_retry"` | これが再試行イベントであることを識別します                                                                                                                                   |
-| `attempt`        | 整数            | 現在の試行番号（1 から開始）                                                                                                                                         |
-| `max_retries`    | 整数            | 許可される再試行の合計                                                                                                                                             |
-| `retry_delay_ms` | 整数            | 次の試行までのミリ秒                                                                                                                                              |
-| `error_status`   | 整数または null    | HTTP ステータスコード、または HTTP レスポンスのない接続エラーの場合は `null`                                                                                                         |
-| `error`          | 文字列           | エラーカテゴリ：`authentication_failed`、`oauth_org_not_allowed`、`billing_error`、`rate_limit`、`invalid_request`、`server_error`、`max_output_tokens`、または `unknown` |
-| `uuid`           | 文字列           | 一意のイベント識別子                                                                                                                                              |
-| `session_id`     | 文字列           | イベントが属するセッション                                                                                                                                           |
+| フィールド            | 型             | 説明                                                                                                                                                                        |
+| ---------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`           | `"system"`    | メッセージタイプ                                                                                                                                                                  |
+| `subtype`        | `"api_retry"` | これが再試行イベントであることを識別します                                                                                                                                                     |
+| `attempt`        | 整数            | 現在の試行番号（1 から開始）                                                                                                                                                           |
+| `max_retries`    | 整数            | 許可される再試行の合計                                                                                                                                                               |
+| `retry_delay_ms` | 整数            | 次の試行までのミリ秒                                                                                                                                                                |
+| `error_status`   | 整数または null    | HTTP ステータスコード、または HTTP レスポンスのない接続エラーの場合は `null`                                                                                                                           |
+| `error`          | 文字列           | エラーカテゴリ：`authentication_failed`、`oauth_org_not_allowed`、`billing_error`、`rate_limit`、`invalid_request`、`model_not_found`、`server_error`、`max_output_tokens`、または `unknown` |
+| `uuid`           | 文字列           | 一意のイベント識別子                                                                                                                                                                |
+| `session_id`     | 文字列           | イベントが属するセッション                                                                                                                                                             |
 
 `system/init` イベントは、モデル、ツール、MCP サーバー、および読み込まれたプラグインを含むセッションメタデータを報告します。[`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/ja/env-vars) が設定されていない限り、ストリームの最初のイベントです。その場合、`plugin_install` イベントがそれより前にあります。プラグインフィールドを使用して、プラグインが読み込まれなかった場合に CI を失敗させます。
 

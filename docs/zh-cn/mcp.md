@@ -766,6 +766,8 @@ Claude Code 在执行助手时设置这些环境变量：
   </Step>
 </Steps>
 
+Claude.ai 连接器仅在您的活跃[身份验证方法](/zh-CN/authentication#authentication-precedence)是您的 Claude.ai 订阅时才会被获取。当 `ANTHROPIC_API_KEY`、`ANTHROPIC_AUTH_TOKEN`、`apiKeyHelper` 或第三方提供商（如 Bedrock 或 Vertex）处于活跃状态时，它们不会被加载，即使您之前运行过 `/login`。如果 `/mcp` 未列出您添加的连接器，请运行 `/status` 以确认哪种身份验证方法处于活跃状态，取消设置该环境变量或删除 `apiKeyHelper` 设置，然后运行 `/login` 以选择您的 Claude.ai 帐户。
+
 您在 Claude Code 中添加的服务器优先于指向相同 URL 的 claude.ai 连接器。发生这种情况时，`/mcp` 会将连接器列为隐藏，并显示如何删除重复项（如果您更希望使用连接器）。
 
 要在 Claude Code 中禁用 claude.ai MCP 服务器，请将 `ENABLE_CLAUDEAI_MCP_SERVERS` 环境变量设置为 `false`：

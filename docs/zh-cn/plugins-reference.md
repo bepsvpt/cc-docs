@@ -407,6 +407,20 @@ Plugins 使用与其他 Claude Code 配置相同的范围系统。有关安装�
 
 此名称用于命名空间组件。例如，在 UI 中，名为 `plugin-dev` 的 plugin 的 agent `agent-creator` 将显示为 `plugin-dev:agent-creator`。
 
+### 未识别的字段
+
+Claude Code 忽略它不识别的顶级字段。您可以在 `plugin.json` 中保留来自另一个生态系统的元数据，plugin 仍然会加载。这使得维护一个清单变得实用，该清单可以同时用作 VS Code 或 Cursor 扩展清单、npm `package.json` 或 MCPB/DXT 包清单。
+
+`claude plugin validate` 将未识别的字段报告为警告，而不是错误。如果字段与识别的字段相差一两个字符，警告会建议可能的预期名称。仅具有未识别字段警告的 plugin 仍然通过验证并在运行时加载。
+
+具有错误类型的字段仍然会失败。例如，`keywords` 值是字符串而不是数组是加载错误，`claude plugin validate` 会将其报告为错误。
+
+传递 `--strict` 以将警告视为错误。在 CI 中使用它来捕获拼写错误的字段名称或来自另一个工具清单的遗留字段，然后再发布，即使 plugin 在运行时会加载。
+
+```bash theme={null}
+claude plugin validate ./my-plugin --strict
+```
+
 ### 元数据字段
 
 | 字段            | 类型     | 描述                                                                                                                                                                       | 示例                                                                |

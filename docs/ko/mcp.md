@@ -766,6 +766,8 @@ Claude Desktop에서 MCP 서버를 이미 구성한 경우 가져올 수 있습�
   </Step>
 </Steps>
 
+Claude.ai 커넥터는 활성 [인증 방법](/ko/authentication#authentication-precedence)이 Claude.ai 구독인 경우에만 가져옵니다. `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `apiKeyHelper` 또는 Bedrock이나 Vertex와 같은 타사 공급자가 활성화되어 있으면 로드되지 않습니다. 이전에 `/login`을 실행했더라도 마찬가지입니다. `/mcp`에 추가한 커넥터가 나열되지 않으면 `/status`를 실행하여 활성화된 인증 방법을 확인하고, 해당 환경 변수를 설정 해제하거나 `apiKeyHelper` 설정을 제거한 후 `/login`을 실행하여 Claude.ai 계정을 선택합니다.
+
 Claude Code에서 추가한 서버는 동일한 URL을 가리키는 claude.ai 커넥터보다 [우선순위](#scope-hierarchy-and-precedence)를 갖습니다. 이 경우 `/mcp`는 커넥터를 숨김으로 표시하고 커넥터를 사용하려는 경우 중복을 제거하는 방법을 표시합니다.
 
 Claude Code에서 claude.ai MCP 서버를 비활성화하려면 `ENABLE_CLAUDEAI_MCP_SERVERS` 환경 변수를 `false`로 설정합니다:

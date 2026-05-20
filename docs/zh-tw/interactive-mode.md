@@ -349,9 +349,8 @@ export CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=false
 * 黃色：待審查
 * 紅色：要求變更
 * 灰色：草稿
-* 紫色：已合併
 
-`Cmd+click`（Mac）或 `Ctrl+click`（Windows/Linux）連結以在瀏覽器中開啟拉取請求。狀態每 60 秒自動更新。
+拉取請求合併或關閉後，徽章會消失。`Cmd+click`（Mac）或 `Ctrl+click`（Windows/Linux）連結以在瀏覽器中開啟拉取請求。狀態每 60 秒自動更新，並在工作階段中執行 `gh pr` 或 `git push` 命令後立即更新。
 
 <Note>
   PR 狀態需要安裝並驗證 `gh` CLI（`gh auth login`）。

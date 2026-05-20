@@ -132,6 +132,8 @@ Claude Code 不會將 `OTEL_*` 環境變數傳遞給它產生的子程序，包�
 
 當追蹤處於活動狀態時，Bash 和 PowerShell 子程序會自動繼承包含活動工具執行跨度的 W3C 追蹤上下文的 `TRACEPARENT` 環境變數。這讓任何讀取 `TRACEPARENT` 的子程序都可以在同一追蹤下將其自己的跨度作為父項，透過 Claude 執行的指令碼和命令啟用端到端分散式追蹤。
 
+當追蹤處於活動狀態且 Claude Code 直接連接到 Anthropic API 時，每個模型請求都會攜帶設定為 `claude_code.llm_request` 跨度上下文的 W3C `traceparent` 標頭，並且 API 的 `traceresponse` 標頭被記錄為跨度連結。這些一起透過任何相容的中介將 Claude Code 的用戶端跨度連接到伺服器端追蹤。標頭不會傳送給第三方提供者。
+
 在 Agent SDK 和以 `-p` 啟動的非互動式工作階段中，Claude Code 也會在啟動每個互動跨度時從其自己的環境中讀取 `TRACEPARENT` 和 `TRACESTATE`。這讓嵌入程序將其活動 W3C 追蹤上下文傳遞到子程序中，以便 Claude Code 的跨度顯示為呼叫者分散式追蹤的子項。互動式工作階段會忽略入站 `TRACEPARENT` 以避免意外繼承來自 CI 或容器環境的環境值。
 
 #### 跨度階層
@@ -196,15 +198,17 @@ claude_code.interaction
 
 **`claude_code.tool`**
 
-| 屬性              | 描述                          | 由以下控制                   |
-| --------------- | --------------------------- | ----------------------- |
-| `tool_name`     | 工具名稱                        |                         |
-| `duration_ms`   | 包括權限等待和執行的牆上時間持續時間          |                         |
-| `result_tokens` | 工具結果的近似權杖大小                 |                         |
-| `file_path`     | Read、Edit 和 Write 工具的目標檔案路徑 | `OTEL_LOG_TOOL_DETAILS` |
-| `full_command`  | Bash 工具的命令字串                | `OTEL_LOG_TOOL_DETAILS` |
-| `skill_name`    | Skill 工具的技能名稱               | `OTEL_LOG_TOOL_DETAILS` |
-| `subagent_type` | Task 工具的子代理類型               | `OTEL_LOG_TOOL_DETAILS` |
+| 屬性                | 描述                                | 由以下控制                   |
+| ----------------- | --------------------------------- | ----------------------- |
+| `tool_name`       | 工具名稱                              |                         |
+| `duration_ms`     | 包括權限等待和執行的牆上時間持續時間                |                         |
+| `result_tokens`   | 工具結果的近似權杖大小                       |                         |
+| `agent_id`        | 發出請求的子代理或隊友的識別碼。在主工作階段上不存在        |                         |
+| `parent_agent_id` | 產生此代理的代理的識別碼。對於主工作階段和直接從其產生的代理不存在 |                         |
+| `file_path`       | Read、Edit 和 Write 工具的目標檔案路徑       | `OTEL_LOG_TOOL_DETAILS` |
+| `full_command`    | Bash 工具的命令字串                      | `OTEL_LOG_TOOL_DETAILS` |
+| `skill_name`      | Skill 工具的技能名稱                     | `OTEL_LOG_TOOL_DETAILS` |
+| `subagent_type`   | Task 工具的子代理類型                     | `OTEL_LOG_TOOL_DETAILS` |
 
 當 `OTEL_LOG_TOOL_CONTENT=1` 時，此跨度也會記錄一個 `tool.output` 跨度事件，其屬性包含工具的輸入和輸出主體，在每個屬性處截斷 60 KB。
 
@@ -885,6 +889,22 @@ Claude Code 透過 OpenTelemetry 日誌/事件匯出以下事件（當配置 `OT
 * `managed_only`：當僅允許受管原則 hook 時為 `"true"`
 * `hook_source`：`"policySettings"` 或 `"merged"`
 * `hook_definitions`：JSON 序列化的 hook 配置。僅當詳細 beta 追蹤和 `OTEL_LOG_TOOL_DETAILS=1` 都啟用時才包含
+
+#### Hook plugin 指標事件
+
+當官方市場 plugin hook 發出每次叫用指標時記錄。僅從官方 Anthropic 市場安裝的 plugin 可以發出這些。第三方市場 plugin 和使用者配置的 hook 不會發出到此事件。使用此事件從您自己的可觀測性堆疊監控 plugin 行為，例如尋找速率、成本和持續時間。
+
+**事件名稱**：`claude_code.hook_plugin_metrics`
+
+**屬性**：
+
+* 所有[標準屬性](#standard-attributes)
+* `event.name`：`"hook_plugin_metrics"`
+* `event.timestamp`：ISO 8601 時間戳
+* `event.sequence`：單調遞增計數器，用於排序工作階段內的事件
+* `plugin_id`：plugin 識別碼，格式為 `<name>@<marketplace>`
+* `hook_event`：發出指標的 hook 事件類型
+* 最多 20 個 plugin 發出的指標鍵。名稱符合 `^[a-z][a-z0-9_]{0,39}$`。值為布林值或數字。
 
 #### 壓縮事件
 

@@ -855,13 +855,13 @@ Fork yang sedang berjalan muncul di panel di bawah input prompt, dengan satu bar
 
 Fork mewarisi segalanya yang dimiliki sesi utama pada saat spawn. Subagent bernama dimulai dari definisinya sendiri.
 
-|                        | Fork                           | Subagent bernama                                                                                      |
-| :--------------------- | :----------------------------- | :---------------------------------------------------------------------------------------------------- |
-| Konteks                | Riwayat percakapan lengkap     | Konteks segar dengan prompt yang Anda lewatkan                                                        |
-| Prompt sistem dan alat | Sama dengan sesi utama         | Dari [file definisi](#write-subagent-files) subagent                                                  |
-| Model                  | Sama dengan sesi utama         | Dari bidang `model` subagent                                                                          |
-| Izin                   | Prompt muncul di terminal Anda | [Pra-disetujui](#run-subagents-in-foreground-or-background) sebelum peluncuran, kemudian auto-ditolak |
-| Prompt cache           | Dibagikan dengan sesi utama    | Cache terpisah                                                                                        |
+|                        | Fork                           | Subagent bernama                                                                        |
+| :--------------------- | :----------------------------- | :-------------------------------------------------------------------------------------- |
+| Konteks                | Riwayat percakapan lengkap     | Konteks segar dengan prompt yang Anda lewatkan                                          |
+| Prompt sistem dan alat | Sama dengan sesi utama         | Dari [file definisi](#write-subagent-files) subagent                                    |
+| Model                  | Sama dengan sesi utama         | Dari bidang `model` subagent                                                            |
+| Izin                   | Prompt muncul di terminal Anda | [Pra-disetujui](#run-subagents-in-foreground-or-background) saat berjalan di background |
+| Prompt cache           | Dibagikan dengan sesi utama    | Cache terpisah                                                                          |
 
 Karena prompt sistem fork dan definisi alat identik dengan induk, permintaan pertamanya menggunakan kembali cache prompt induk. Ini membuat forking lebih murah daripada menelurkan subagent segar untuk tugas yang memerlukan konteks yang sama.
 

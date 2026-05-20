@@ -53,9 +53,11 @@ Sie können Ihr Modell auf mehrere Arten konfigurieren, aufgelistet nach Priorit
 3. **Umgebungsvariable** - Setzen Sie `ANTHROPIC_MODEL=<alias|name>`
 4. **Einstellungen** - Konfigurieren Sie dauerhaft in Ihrer Einstellungsdatei mit dem `model`-Feld.
 
-Ihre `/model`-Auswahl wird in den Benutzereinstellungen gespeichert und bleibt über Neustarts hinweg erhalten. Ab v2.1.117 schreibt Claude Code Ihre Auswahl auch in `.claude/settings.local.json`, wenn die `.claude/settings.json` des Projekts ein anderes Modell festlegt, damit sie nach einem Neustart in diesem Projekt weiterhin gilt. Verwaltete Einstellungen haben Vorrang und werden beim nächsten Start erneut angewendet.
+Ab v2.1.144 gilt `/model` nur für die aktuelle Sitzung und wird nicht in den Einstellungen gespeichert. Um Ihre Auswahl als Standard für neue Sitzungen zu speichern, drücken Sie `d` auf der hervorgehobenen Zeile in der Auswahl, die das `model`-Feld in Ihren Benutzereinstellungen schreibt. Verwaltete Einstellungen haben Vorrang und werden beim nächsten Start erneut angewendet.
 
-Das `--model`-Flag und die `ANTHROPIC_MODEL`-Umgebungsvariable gelten nur für die Sitzung, mit der Sie sie starten, und werden nicht gespeichert. Um verschiedene Modelle in verschiedenen Terminals gleichzeitig auszuführen, starten Sie jedes mit seinem eigenen `--model`-Flag, anstatt mit `/model` zu wechseln.
+Das `--model`-Flag und die `ANTHROPIC_MODEL`-Umgebungsvariable gelten auch nur für die Sitzung, mit der Sie sie starten. Um verschiedene Modelle in verschiedenen Terminals gleichzeitig auszuführen, starten Sie jedes mit seinem eigenen `--model`-Flag, anstatt mit `/model` zu wechseln.
+
+Fortgesetzte Sitzungen, die mit `claude --resume`, `--continue` oder der `/resume`-Auswahl gestartet werden, behalten das Modell bei, das sie verwendeten, als das Transkript gespeichert wurde, unabhängig von der aktuellen `model`-Einstellung. Wenn dieses Modell eingestellt wurde, fällt die Sitzung auf die normale Prioritätsreihenfolge zurück. Dies verhindert, dass die `/model`-Auswahl einer anderen Sitzung das Modell beim Fortsetzen ändert.
 
 Wenn das aktive Modell beim Start aus Projekt- oder verwalteten Einstellungen stammt und nicht aus Ihrer eigenen Auswahl, zeigt der Startheader an, welche Einstellungsdatei es festgelegt hat. Führen Sie `/model` aus, um es für die aktuelle Sitzung zu überschreiben.
 
@@ -320,7 +322,11 @@ Um [erweiterten Kontext](#extended-context) für ein fixiertes Modell zu aktivie
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7[1m]'
 ```
 
-Das `[1m]`-Suffix wendet das 1M-Kontextfenster auf alle Verwendungen dieses Alias an, einschließlich `opusplan`. Claude Code entfernt das Suffix, bevor die Modell-ID an Ihren Anbieter gesendet wird. Fügen Sie `[1m]` nur an, wenn das zugrunde liegende Modell 1M-Kontext unterstützt, z. B. Opus 4.7 oder Sonnet 4.6.
+Das `[1m]`-Suffix wendet das 1M-Kontextfenster auf alle Verwendungen dieses Alias an, einschließlich `opusplan`.
+
+* Claude Code entfernt das Suffix, bevor die Modell-ID an Ihren Anbieter gesendet wird.
+* Fügen Sie `[1m]` nur an, wenn das zugrunde liegende Modell [1M-Kontext unterstützt](https://platform.claude.com/docs/de/build-with-claude/context-windows#1m-token-context-window).
+* Das Suffix wird pro Variable gelesen, nicht pro Modell. Bei Bedrock, Vertex und Foundry verwendet eine Modell-ID ohne `[1m]` in einer Variable 200K-Kontext, auch wenn eine andere Variable das gleiche Modell mit dem Suffix setzt.
 
 <Note>
   Die `settings.availableModels`-Zulassungsliste gilt weiterhin bei Verwendung von Drittanbieter-Anbietern. Die Filterung stimmt mit dem Modellalias (`opus`, `sonnet`, `haiku`) überein, nicht mit der anbieterspezifischen Modell-ID.
@@ -390,13 +396,13 @@ Schlüssel müssen Anthropic-Modell-IDs sein, wie in der [Modellübersicht](http
 
 ### Prompt-Caching-Konfiguration
 
-Claude Code verwendet automatisch [Prompt-Caching](https://platform.claude.com/docs/de/build-with-claude/prompt-caching), um die Leistung zu optimieren und Kosten zu senken. Sie können Prompt-Caching global oder für bestimmte Modell-Tiers deaktivieren:
+Claude Code verwendet automatisch [Prompt-Caching](/de/prompt-caching), um die Leistung zu optimieren und Kosten zu senken. Sie können Prompt-Caching global oder für bestimmte Modell-Tiers deaktivieren:
 
-| Umgebungsvariable               | Beschreibung                                                                                                              |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `DISABLE_PROMPT_CACHING`        | Setzen Sie auf `1`, um Prompt-Caching für alle Modelle zu deaktivieren (hat Vorrang vor modellspezifischen Einstellungen) |
-| `DISABLE_PROMPT_CACHING_HAIKU`  | Setzen Sie auf `1`, um Prompt-Caching nur für Haiku-Modelle zu deaktivieren                                               |
-| `DISABLE_PROMPT_CACHING_SONNET` | Setzen Sie auf `1`, um Prompt-Caching nur für Sonnet-Modelle zu deaktivieren                                              |
-| `DISABLE_PROMPT_CACHING_OPUS`   | Setzen Sie auf `1`, um Prompt-Caching nur für Opus-Modelle zu deaktivieren                                                |
+| Umgebungsvariable               | Beschreibung                                                                                                                 |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `DISABLE_PROMPT_CACHING`        | Setzen Sie auf `1`, um Prompt-Caching für alle Modelle zu deaktivieren. Hat Vorrang vor den modellspezifischen Einstellungen |
+| `DISABLE_PROMPT_CACHING_HAIKU`  | Setzen Sie auf `1`, um Prompt-Caching nur für Haiku-Modelle zu deaktivieren                                                  |
+| `DISABLE_PROMPT_CACHING_SONNET` | Setzen Sie auf `1`, um Prompt-Caching nur für Sonnet-Modelle zu deaktivieren                                                 |
+| `DISABLE_PROMPT_CACHING_OPUS`   | Setzen Sie auf `1`, um Prompt-Caching nur für Opus-Modelle zu deaktivieren                                                   |
 
-Diese Umgebungsvariablen geben Ihnen eine feinkörnige Kontrolle über das Prompt-Caching-Verhalten. Die globale `DISABLE_PROMPT_CACHING`-Einstellung hat Vorrang vor den modellspezifischen Einstellungen, sodass Sie alle Caching schnell deaktivieren können, wenn nötig. Die modellspezifischen Einstellungen sind nützlich für selektive Kontrolle, z. B. beim Debuggen bestimmter Modelle oder bei der Arbeit mit Cloud-Anbietern, die möglicherweise unterschiedliche Caching-Implementierungen haben.
+Um die Cache-TTL zu ändern oder zu erfahren, was einen Cache-Miss auslöst, siehe [Wie Claude Code Prompt-Caching verwendet](/de/prompt-caching).

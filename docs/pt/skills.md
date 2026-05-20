@@ -24,6 +24,22 @@ Claude Code inclui um conjunto de skills agrupadas que estão disponíveis em ca
 
 Skills agrupadas estão listadas junto com comandos integrados na [referência de comandos](/pt/commands), marcadas como **Skill** na coluna Propósito.
 
+### Execute e verifique seu aplicativo
+
+Três skills agrupadas trabalham juntas para iniciar seu aplicativo e confirmar alterações em relação ao aplicativo em execução em vez de apenas testes:
+
+| Skill                  | Propósito                                                                                                                                    |
+| :--------------------- | :------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/run`                 | Inicie e conduza seu aplicativo para ver uma alteração funcionando                                                                           |
+| `/verify`              | Compile e execute seu aplicativo para confirmar que uma alteração de código faz o que deveria, sem recorrer a testes ou verificações de tipo |
+| `/run-skill-generator` | Ensine ao `/run` e `/verify` como compilar e iniciar seu projeto                                                                             |
+
+{/* min-version: 2.1.145 */}Todas as três skills requerem Claude Code v2.1.145 ou posterior.
+
+`/run` e `/verify` funcionam sem configuração. Eles inferem o lançamento do tipo de seu projeto (CLI, servidor, TUI, orientado por navegador) e do que está em seu README, `package.json`, ou `Makefile`. Essa inferência se torna pouco confiável para projetos que precisam de algo além de um lançamento padrão: um banco de dados, um arquivo env, uma sessão gráfica, uma compilação em várias etapas.
+
+`/run-skill-generator` registra a receita em vez disso. Ele coloca seu aplicativo em execução a partir de um ambiente limpo, captura o que funcionou (os comandos de instalação, as variáveis de ambiente, o script de lançamento) e o confirma como uma skill por projeto em `.claude/skills/run-<name>/`. Depois disso, `/run`, `/verify` e qualquer outro agente no repositório seguem a receita registrada em vez de redescobri-la. Execute `/run-skill-generator` uma vez por projeto e novamente se o processo de compilação ou lançamento mudar.
+
 ## Começando
 
 ### Crie sua primeira skill
@@ -408,6 +424,8 @@ Quando esta skill é executada:
 Isto é pré-processamento, não algo que Claude executa. Claude apenas vê o resultado final.
 
 A substituição é executada uma vez sobre o arquivo original. A saída do comando é inserida como texto simples e não é verificada novamente para placeholders `` !`<command>` `` adicionais, portanto um comando não pode emitir um placeholder para uma passagem posterior expandir.
+
+A forma inline é reconhecida apenas quando `!` aparece no início de uma linha ou imediatamente após espaço em branco. Se `!` segue outro caractere, como em `` KEY=!`cmd` ``, o placeholder é deixado como texto literal e o comando não é executado.
 
 Para comandos de múltiplas linhas, use um bloco de código cercado aberto com ` ```! ` em vez da forma inline:
 

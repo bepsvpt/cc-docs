@@ -18,7 +18,7 @@ Der **Standard**-Ausgabestil von Claude Code ist die vorhandene Systemaufforderu
 
 Es gibt drei zusätzliche integrierte Ausgabestile:
 
-* **Proaktiv**: Claude führt sofort aus, trifft vernünftige Annahmen statt bei Routineentscheidungen zu pausieren, und bevorzugt Handeln gegenüber Planung. Dies wendet die gleiche Anleitung wie [Auto-Modus](/de/permission-modes#eliminate-prompts-with-auto-mode) an, ohne Ihren Berechtigungsmodus zu ändern, sodass Sie vor der Ausführung von Tools weiterhin Berechtigungsaufforderungen sehen.
+* **Proaktiv**: Claude führt sofort aus, trifft vernünftige Annahmen statt bei Routineentscheidungen zu pausieren, und bevorzugt Handeln gegenüber Planung. Dies ist eine stärkere Anleitung zur autonomen Ausführung als [Auto-Modus](/de/permission-modes#eliminate-prompts-with-auto-mode) bietet, und es funktioniert ohne Änderung Ihres Berechtigungsmodus, sodass Sie vor der Ausführung von Tools weiterhin Berechtigungsaufforderungen sehen.
 
 * **Explanatory**: Bietet pädagogische „Insights" zwischen der Unterstützung bei Softwareentwicklungsaufgaben. Hilft Ihnen, Implementierungsentscheidungen und Codebase-Muster zu verstehen.
 
@@ -36,7 +36,7 @@ Um einen Stil ohne Menü festzulegen, bearbeiten Sie das Feld `outputStyle` dire
 }
 ```
 
-Da der Ausgabestil in der Systemaufforderung beim Sitzungsstart festgelegt wird, werden Änderungen beim nächsten Start einer neuen Sitzung wirksam. Dies hält die Systemaufforderung während eines Gesprächs stabil, sodass Prompt Caching die Latenz und Kosten reduzieren kann.
+Der Ausgabestil ist Teil der Systemaufforderung, die Claude Code einmal beim Sitzungsstart liest. Änderungen werden nach `/clear` oder einer neuen Sitzung wirksam. Siehe [Wie Claude Code Prompt Caching nutzt](/de/prompt-caching#changing-output-style), um zu erfahren, was eine Änderung des Ausgabestils für den Cache bewirkt.
 
 ## Erstellen Sie einen benutzerdefinierten Ausgabestil
 
@@ -72,7 +72,7 @@ Ein benutzerdefinierter Ausgabestil ist eine Markdown-Datei: Frontmatter für Me
   </Step>
 
   <Step title="Wechseln Sie zu Ihrem Stil">
-    Führen Sie `/config` aus und wählen Sie Ihren Stil unter **Output style**. Es wird beim nächsten Start einer Sitzung wirksam.
+    Führen Sie `/config` aus und wählen Sie Ihren Stil unter **Output style**. Es wird nach `/clear` oder beim nächsten Start einer Sitzung wirksam.
   </Step>
 </Steps>
 
@@ -114,6 +114,6 @@ Mehrere Funktionen passen an, wie sich Claude Code verhält. Ausgabestile änder
 ## Verwandte Ressourcen
 
 * [Settings](/de/settings): wo das Feld `outputStyle` lebt und wie die Einstellungspriorität funktioniert
-* [Permission modes](/de/permission-modes): der Proactive-Stil spiegelt den Auto-Modus wider, ohne Ihren Berechtigungsmodus zu ändern
+* [Permission modes](/de/permission-modes): wie der Proactive-Stil den Auto-Modus vergleicht
 * [Plugins](/de/plugins): Verpacken und verteilen Sie Ausgabestile zusammen mit Skills, Hooks und Agents
 * [Debug your configuration](/de/debug-your-config): Diagnostizieren Sie, warum ein Ausgabestil nicht wirksam wird

@@ -261,10 +261,11 @@ Azioni disponibili nel contesto `DiffDialog`:
 
 Azioni disponibili nel contesto `ModelPicker`:
 
-| Azione                       | Predefinito | Descrizione                     |
-| :--------------------------- | :---------- | :------------------------------ |
-| `modelPicker:decreaseEffort` | Sinistra    | Diminuisci il livello di sforzo |
-| `modelPicker:increaseEffort` | Destra      | Aumenta il livello di sforzo    |
+| Azione                       | Predefinito | Descrizione                                                           |
+| :--------------------------- | :---------- | :-------------------------------------------------------------------- |
+| `modelPicker:decreaseEffort` | Sinistra    | Diminuisci il livello di sforzo                                       |
+| `modelPicker:increaseEffort` | Destra      | Aumenta il livello di sforzo                                          |
+| `modelPicker:setAsDefault`   | d           | Imposta il modello evidenziato come predefinito per le nuove sessioni |
 
 ### Azioni di selezione
 

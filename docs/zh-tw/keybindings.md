@@ -261,10 +261,11 @@ Claude Code 支援可自訂的鍵盤快捷鍵。執行 `/keybindings` 以在 `~/
 
 在 `ModelPicker` 上下文中可用的動作：
 
-| 動作                           | 預設值   | 說明     |
-| :--------------------------- | :---- | :----- |
-| `modelPicker:decreaseEffort` | Left  | 降低努力程度 |
-| `modelPicker:increaseEffort` | Right | 提高努力程度 |
+| 動作                           | 預設值   | 說明                   |
+| :--------------------------- | :---- | :------------------- |
+| `modelPicker:decreaseEffort` | Left  | 降低努力程度               |
+| `modelPicker:increaseEffort` | Right | 提高努力程度               |
+| `modelPicker:setAsDefault`   | d     | 將醒目提示的模型設定為新工作階段的預設值 |
 
 ### 選擇動作
 

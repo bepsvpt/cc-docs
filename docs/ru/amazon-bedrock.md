@@ -270,7 +270,9 @@ export DISABLE_PROMPT_CACHING=1
 export ENABLE_PROMPT_CACHING_1H=1
 ```
 
-<Note>[Prompt caching](https://platform.claude.com/docs/ru/build-with-claude/prompt-caching) может быть недоступен во всех регионах. Записи кэша с TTL в 1 час выставляются по более высокому тарифу, чем записи в 5 минут.</Note>
+TTL кэша в 1 час выставляется по более высокому тарифу, чем стандартный 5-минутный. См. [cache lifetime](/ru/prompt-caching#cache-lifetime).
+
+<Note>Prompt caching может быть недоступен во всех регионах Bedrock. Если количество токенов кэша остается на нуле, проверьте [поддерживаемые модели, регионы и ограничения](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html#prompt-caching-models) в документации Bedrock.</Note>
 
 #### Сопоставьте каждую версию модели с профилем вывода
 

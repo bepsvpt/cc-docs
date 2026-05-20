@@ -157,6 +157,7 @@ Claude Code sendet die folgenden JSON-Felder über stdin an Ihr Skript:
 | `workspace.project_dir`                                                          | Verzeichnis, in dem Claude Code gestartet wurde, das sich von `cwd` unterscheiden kann, wenn sich das Arbeitsverzeichnis während einer Sitzung ändert                                                                                                                            |
 | `workspace.added_dirs`                                                           | Zusätzliche Verzeichnisse, die über `/add-dir` oder `--add-dir` hinzugefügt wurden. Leeres Array, wenn keine hinzugefügt wurden                                                                                                                                                  |
 | `workspace.git_worktree`                                                         | Git-Worktree-Name, wenn sich das aktuelle Verzeichnis in einem verknüpften Worktree befindet, der mit `git worktree add` erstellt wurde. Fehlt im Haupt-Worktree. Wird für jeden Git-Worktree gefüllt, im Gegensatz zu `worktree.*`, das nur auf `--worktree` Sitzungen zutrifft |
+| `workspace.repo.host`, `workspace.repo.owner`, `workspace.repo.name`             | Repository-Identität, die aus dem `origin` Remote geparst wird, zum Beispiel `"github.com"`, `"anthropics"`, `"claude-code"`. Fehlt außerhalb eines Git-Repositorys oder wenn kein `origin` Remote konfiguriert ist                                                              |
 | `cost.total_cost_usd`                                                            | Geschätzte Sitzungskosten in USD, berechnet auf der Client-Seite. Kann sich von Ihrer tatsächlichen Rechnung unterscheiden                                                                                                                                                       |
 | `cost.total_duration_ms`                                                         | Gesamtverstrichene Zeit seit Sitzungsbeginn in Millisekunden                                                                                                                                                                                                                     |
 | `cost.total_api_duration_ms`                                                     | Gesamtzeit, die auf API-Antworten wartet, in Millisekunden                                                                                                                                                                                                                       |
@@ -178,9 +179,11 @@ Claude Code sendet die folgenden JSON-Felder über stdin an Ihr Skript:
 | `output_style.name`                                                              | Name des aktuellen Ausgabestils                                                                                                                                                                                                                                                  |
 | `vim.mode`                                                                       | Aktueller Vim-Modus (`NORMAL`, `INSERT`, `VISUAL` oder `VISUAL LINE`), wenn [Vim-Modus](/de/interactive-mode#vim-editor-mode) aktiviert ist                                                                                                                                      |
 | `agent.name`                                                                     | Agent-Name bei Ausführung mit dem `--agent` Flag oder konfigurierter Agent-Einstellung                                                                                                                                                                                           |
+| `pr.number`, `pr.url`                                                            | Offener Pull Request für den aktuellen Branch. Spiegelt das PR-Badge in der unteren Statusleiste wider. Fehlt, bis ein PR gefunden wird, wenn nicht in einem Git-Repository, oder sobald der PR zusammengeführt oder geschlossen wird                                            |
+| `pr.review_state`                                                                | Review-Status des offenen PR: `approved`, `pending`, `changes_requested` oder `draft`. Kann unabhängig fehlen, auch wenn `pr` vorhanden ist                                                                                                                                      |
 | `worktree.name`                                                                  | Name des aktiven Worktree. Nur während `--worktree` Sitzungen vorhanden                                                                                                                                                                                                          |
 | `worktree.path`                                                                  | Absoluter Pfad zum Worktree-Verzeichnis                                                                                                                                                                                                                                          |
-| `worktree.branch`                                                                | Git-Branch-Name für den Worktree (z. B. `"worktree-my-feature"`). Fehlt bei Hook-basierten Worktrees                                                                                                                                                                             |
+| `worktree.branch`                                                                | Git-Branch-Name für den Worktree (zum Beispiel `"worktree-my-feature"`). Fehlt bei Hook-basierten Worktrees                                                                                                                                                                      |
 | `worktree.original_cwd`                                                          | Das Verzeichnis, in dem Claude sich befand, bevor es den Worktree betrat                                                                                                                                                                                                         |
 | `worktree.original_branch`                                                       | Git-Branch, der vor dem Betreten des Worktree ausgecheckt wurde. Fehlt bei Hook-basierten Worktrees                                                                                                                                                                              |
 
@@ -201,7 +204,12 @@ Claude Code sendet die folgenden JSON-Felder über stdin an Ihr Skript:
       "current_dir": "/current/working/directory",
       "project_dir": "/original/project/directory",
       "added_dirs": [],
-      "git_worktree": "feature-xyz"
+      "git_worktree": "feature-xyz",
+      "repo": {
+        "host": "github.com",
+        "owner": "anthropics",
+        "name": "claude-code"
+      }
     },
     "version": "2.1.90",
     "output_style": {
@@ -250,6 +258,11 @@ Claude Code sendet die folgenden JSON-Felder über stdin an Ihr Skript:
     "agent": {
       "name": "security-reviewer"
     },
+    "pr": {
+      "number": 1234,
+      "url": "https://github.com/anthropics/claude-code/pull/1234",
+      "review_state": "pending"
+    },
     "worktree": {
       "name": "my-feature",
       "path": "/path/to/.claude/worktrees/my-feature",
@@ -264,9 +277,11 @@ Claude Code sendet die folgenden JSON-Felder über stdin an Ihr Skript:
 
   * `session_name`: erscheint nur, wenn ein benutzerdefinierter Name mit `--name` oder `/rename` gesetzt wurde
   * `workspace.git_worktree`: erscheint nur, wenn sich das aktuelle Verzeichnis in einem verknüpften Git-Worktree befindet
+  * `workspace.repo`: erscheint nur in einem Git-Repository mit einem konfigurierten `origin` Remote
   * `effort`: erscheint nur, wenn das aktuelle Modell den Reasoning-Effort-Parameter unterstützt
   * `vim`: erscheint nur, wenn Vim-Modus aktiviert ist
   * `agent`: erscheint nur bei Ausführung mit dem `--agent` Flag oder konfigurierter Agent-Einstellung
+  * `pr`: erscheint nur, während ein offener PR für den aktuellen Branch gefunden wird, und wird entfernt, sobald der PR zusammengeführt oder geschlossen wird. `pr.review_state` kann unabhängig fehlen
   * `worktree`: erscheint nur während `--worktree` Sitzungen. Wenn vorhanden, können `branch` und `original_branch` auch bei Hook-basierten Worktrees fehlen
   * `rate_limits`: erscheint nur für Claude.ai-Abonnenten (Pro/Max) nach der ersten API-Antwort in der Sitzung. Jedes Fenster (`five_hour`, `seven_day`) kann unabhängig fehlen. Verwenden Sie `jq -r '.rate_limits.five_hour.used_percentage // empty'`, um Abwesenheit elegant zu handhaben.
 
@@ -291,6 +306,8 @@ Das `current_usage` Objekt enthält:
 * `output_tokens`: generierte Ausgabe-Token
 * `cache_creation_input_tokens`: Token, die in den Cache geschrieben wurden
 * `cache_read_input_tokens`: Token, die aus dem Cache gelesen wurden
+
+Für die Bedeutung der Cache-Felder und deren Abrechnung siehe [Cache-Leistung überprüfen](/de/prompt-caching#check-cache-performance).
 
 Das `used_percentage` Feld wird nur aus Eingabe-Token berechnet: `input_tokens + cache_creation_input_tokens + cache_read_input_tokens`. Es enthält keine `output_tokens`.
 

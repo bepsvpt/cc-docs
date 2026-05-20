@@ -167,7 +167,7 @@ As tarefas em segundo plano, como geração de título de sessão, usam o modelo
 
 Para IDs de modelo atuais e legados, consulte [Visão geral de modelos](https://platform.claude.com/docs/en/about-claude/models/overview). Consulte [Configuração de modelo](/pt/model-config#pin-models-for-third-party-deployments) para a lista completa de variáveis de ambiente.
 
-[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) está ativado automaticamente. Para solicitar um TTL de cache de 1 hora em vez do padrão de 5 minutos, defina a seguinte variável; gravações de cache com TTL de 1 hora são cobradas a uma taxa mais alta:
+[Prompt caching](/pt/prompt-caching) está ativado automaticamente. Para solicitar um TTL de cache de 1 hora em vez do padrão de 5 minutos, defina a seguinte variável; gravações de cache com TTL de 1 hora são cobradas a uma taxa mais alta:
 
 ```bash theme={null}
 export ENABLE_PROMPT_CACHING_1H=1

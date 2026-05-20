@@ -261,10 +261,11 @@ Tindakan yang tersedia dalam konteks `DiffDialog`:
 
 Tindakan yang tersedia dalam konteks `ModelPicker`:
 
-| Tindakan                     | Default | Deskripsi                |
-| :--------------------------- | :------ | :----------------------- |
-| `modelPicker:decreaseEffort` | Left    | Kurangi tingkat upaya    |
-| `modelPicker:increaseEffort` | Right   | Tingkatkan tingkat upaya |
+| Tindakan                     | Default | Deskripsi                                                   |
+| :--------------------------- | :------ | :---------------------------------------------------------- |
+| `modelPicker:decreaseEffort` | Left    | Kurangi tingkat upaya                                       |
+| `modelPicker:increaseEffort` | Right   | Tingkatkan tingkat upaya                                    |
+| `modelPicker:setAsDefault`   | d       | Tetapkan model yang disorot sebagai default untuk sesi baru |
 
 ### Tindakan pilih
 

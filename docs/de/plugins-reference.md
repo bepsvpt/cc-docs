@@ -407,6 +407,20 @@ Wenn Sie ein Manifest einschließen, ist `name` das einzige erforderliche Feld.
 
 Dieser Name wird für die Namensgebung von Komponenten verwendet. Beispielsweise wird der Agent `agent-creator` für das Plugin mit dem Namen `plugin-dev` in der Benutzeroberfläche als `plugin-dev:agent-creator` angezeigt.
 
+### Nicht erkannte Felder
+
+Claude Code ignoriert Top-Level-Felder, die es nicht erkennt. Sie können Metadaten aus einem anderen Ökosystem in `plugin.json` behalten und das Plugin wird trotzdem geladen. Dies macht es praktisch, ein Manifest zu verwalten, das gleichzeitig als VS Code- oder Cursor-Erweiterungsmanifest, eine npm `package.json` oder ein MCPB/DXT-Bundle-Manifest dient.
+
+`claude plugin validate` meldet nicht erkannte Felder als Warnungen, nicht als Fehler. Wenn ein Feld ein oder zwei Zeichen von einem erkannten entfernt ist, schlägt die Warnung den wahrscheinlich beabsichtigten Namen vor. Ein Plugin mit nur Warnungen zu nicht erkannten Feldern besteht die Validierung und wird zur Laufzeit geladen.
+
+Felder mit dem falschen Typ schlagen immer noch fehl. Beispielsweise ist ein `keywords` Wert, der ein String statt eines Arrays ist, ein Ladefehler, und `claude plugin validate` meldet ihn als solchen.
+
+Übergeben Sie `--strict`, um Warnungen als Fehler zu behandeln. Verwenden Sie es in CI, um einen falsch geschriebenen Feldnamen oder ein Feld, das von einem anderen Tool-Manifest übrig geblieben ist, vor der Veröffentlichung zu erfassen, obwohl das Plugin zur Laufzeit geladen würde.
+
+```bash theme={null}
+claude plugin validate ./my-plugin --strict
+```
+
 ### Metadaten-Felder
 
 | Feld          | Typ    | Beschreibung                                                                                                                                                                                                                                                                                                                                                                                                      | Beispiel                                                          |

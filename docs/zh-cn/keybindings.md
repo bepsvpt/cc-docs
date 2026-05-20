@@ -261,10 +261,11 @@ Claude Code 支持可自定义的快捷键。运行 `/keybindings` 来创建或�
 
 在 `ModelPicker` 上下文中可用的操作：
 
-| 操作                           | 默认    | 描述      |
-| :--------------------------- | :---- | :------ |
-| `modelPicker:decreaseEffort` | Left  | 降低工作量级别 |
-| `modelPicker:increaseEffort` | Right | 提高工作量级别 |
+| 操作                           | 默认    | 描述                 |
+| :--------------------------- | :---- | :----------------- |
+| `modelPicker:decreaseEffort` | Left  | 降低工作量级别            |
+| `modelPicker:increaseEffort` | Right | 提高工作量级别            |
+| `modelPicker:setAsDefault`   | d     | 将突出显示的模型设置为新会话的默认值 |
 
 ### 选择操作
 

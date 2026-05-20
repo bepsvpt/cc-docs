@@ -407,6 +407,22 @@ Se você incluir um manifesto, `name` é o único campo obrigatório.
 
 Este nome é usado para namespacing de componentes. Por exemplo, na UI, o agent `agent-creator` para o plugin com nome `plugin-dev` aparecerá como `plugin-dev:agent-creator`.
 
+### Campos não reconhecidos
+
+Claude Code ignora campos de nível superior que não reconhece. Você pode manter metadados de outro ecossistema em `plugin.json` e o plugin ainda carrega.
+Isso torna prático manter um manifesto que funciona como um manifesto de extensão VS Code ou Cursor, um `package.json` npm, ou um manifesto de pacote MCPB/DXT.
+
+`claude plugin validate` relata campos não reconhecidos como avisos, não erros.
+Se um campo está um ou dois caracteres diferente de um reconhecido, o aviso sugere o nome provavelmente pretendido. Um plugin com apenas avisos de campo não reconhecido ainda passa na validação e carrega em tempo de execução.
+
+Campos com o tipo errado ainda falham. Por exemplo, um valor `keywords` que é uma string em vez de um array é um erro de carregamento, e `claude plugin validate` o relata como tal.
+
+Passe `--strict` para tratar avisos como erros. Use-o em CI para detectar um nome de campo digitado incorretamente ou um campo deixado de outro manifesto de ferramenta antes de publicar, mesmo que o plugin carregasse em tempo de execução.
+
+```bash theme={null}
+claude plugin validate ./my-plugin --strict
+```
+
 ### Campos de metadados
 
 | Campo         | Tipo   | Descrição                                                                                                                                                                                                                                                                                                                                                                                | Exemplo                                                           |

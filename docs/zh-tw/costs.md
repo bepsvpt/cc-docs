@@ -76,7 +76,7 @@ Total code changes:    0 lines added, 0 lines removed
 
 ## 減少 token 使用
 
-Token 成本隨上下文大小而擴展：Claude 處理的上下文越多，您使用的 token 就越多。Claude Code 透過 prompt caching（減少重複內容（如系統提示）的成本）和 auto-compact（在接近上下文限制時總結對話歷史記錄）自動優化成本。
+Token 成本隨上下文大小而擴展：Claude 處理的上下文越多，您使用的 token 就越多。Claude Code 透過 [prompt caching](/zh-TW/prompt-caching)（減少重複內容（如系統提示）的成本）和 auto-compact（在接近上下文限制時總結對話歷史記錄）自動優化成本。
 
 以下策略可幫助您保持上下文較小並降低每條訊息的成本。
 
@@ -97,7 +97,7 @@ When you are using compact, please focus on test output and code changes
 
 ### 選擇正確的模型
 
-Sonnet 能很好地處理大多數編碼任務，成本低於 Opus。為複雜的架構決策或多步驟推理保留 Opus。使用 `/model` 在工作階段中途切換模型，或在 `/config` 中設定預設值。對於簡單的 subagent 任務，在您的[subagent 設定](/zh-TW/sub-agents#choose-a-model)中指定 `model: haiku`。
+Sonnet 能很好地處理大多數編碼任務，成本低於 Opus。為複雜的架構決策或多步驟推理保留 Opus。使用 `/model` 在工作階段中途切換模型，或在 `/config` 中設定預設值。對於簡單的 subagent 任務，在您的 [subagent 設定](/zh-TW/sub-agents#choose-a-model)中指定 `model: haiku`。
 
 ### 減少 MCP 伺服器開銷
 
@@ -112,7 +112,7 @@ MCP 工具定義[預設為延遲](/zh-TW/mcp#scale-with-mcp-tool-search)，因�
 
 ### 將處理卸載到 hooks 和 skills
 
-自訂[hooks](/zh-TW/hooks)可以在 Claude 看到資料之前對其進行預處理。Claude 不是讀取 10,000 行日誌檔案來尋找錯誤，hook 可以 grep `ERROR` 並僅返回匹配的行，將上下文從數萬個 token 減少到數百個。
+自訂 [hooks](/zh-TW/hooks)可以在 Claude 看到資料之前對其進行預處理。Claude 不是讀取 10,000 行日誌檔案來尋找錯誤，hook 可以 grep `ERROR` 並僅返回匹配的行，將上下文從數萬個 token 減少到數百個。
 
 [skill](/zh-TW/skills)可以為 Claude 提供領域知識，因此它不必進行探索。例如，「codebase-overview」skill 可以描述您的專案架構、關鍵目錄和命名慣例。當 Claude 呼叫該 skill 時，它會立即獲得此上下文，而不是花費 token 讀取多個檔案來理解結構。
 
@@ -120,7 +120,7 @@ MCP 工具定義[預設為延遲](/zh-TW/mcp#scale-with-mcp-tool-search)，因�
 
 <Tabs>
   <Tab title="settings.json">
-    將此新增到您的[settings.json](/zh-TW/settings#settings-files)以在每個 Bash 命令之前執行 hook：
+    將此新增到您的 [settings.json](/zh-TW/settings#settings-files)以在每個 Bash 命令之前執行 hook：
 
     ```json theme={null}
     {
@@ -162,7 +162,7 @@ MCP 工具定義[預設為延遲](/zh-TW/mcp#scale-with-mcp-tool-search)，因�
 
 ### 將指示從 CLAUDE.md 移至 skills
 
-您的[CLAUDE.md](/zh-TW/memory)檔案在工作階段開始時載入到上下文中。如果它包含特定工作流程的詳細指示（例如 PR 審查或資料庫遷移），即使您在進行不相關的工作時，這些 token 也會存在。[Skills](/zh-TW/skills)僅在呼叫時按需載入，因此將專門指示移至 skills 可以保持您的基本上下文較小。目標是透過僅包含必要內容來將 CLAUDE.md 保持在 200 行以下。
+您的 [CLAUDE.md](/zh-TW/memory)檔案在工作階段開始時載入到上下文中。如果它包含特定工作流程的詳細指示（例如 PR 審查或資料庫遷移），即使您在進行不相關的工作時，這些 token 也會存在。[Skills](/zh-TW/skills)僅在呼叫時按需載入，因此將專門指示移至 skills 可以保持您的基本上下文較小。目標是透過僅包含必要內容來將 CLAUDE.md 保持在 200 行以下。
 
 ### 調整延伸思考
 
@@ -170,11 +170,11 @@ MCP 工具定義[預設為延遲](/zh-TW/mcp#scale-with-mcp-tool-search)，因�
 
 ### 將詳細操作委派給 subagents
 
-執行測試、擷取文件或處理日誌檔案可能會消耗大量上下文。將這些委派給[subagents](/zh-TW/sub-agents#isolate-high-volume-operations)，以便詳細輸出保留在 subagent 的上下文中，而只有摘要返回到您的主要對話。
+執行測試、擷取文件或處理日誌檔案可能會消耗大量上下文。將這些委派給 [subagents](/zh-TW/sub-agents#isolate-high-volume-operations)，以便詳細輸出保留在 subagent 的上下文中，而只有摘要返回到您的主要對話。
 
 ### 管理 agent 團隊成本
 
-當隊友在 plan mode 中執行時，Agent 團隊使用的 token 大約是標準工作階段的 7 倍，因為每位隊友維護自己的上下文視窗並作為單獨的 Claude 執行個體執行。保持團隊任務小且自成一體，以限制每位隊友的 token 使用。有關詳細資訊，請參閱[agent 團隊](/zh-TW/agent-teams)。
+當隊友在 plan mode 中執行時，Agent 團隊使用的 token 大約是標準工作階段的 7 倍，因為每位隊友維護自己的上下文視窗並作為單獨的 Claude 執行個體執行。保持團隊任務小且自成一體，以限制每位隊友的 token 使用。有關詳細資訊，請參閱 [agent 團隊](/zh-TW/agent-teams)。
 
 ### 撰寫具體提示
 
@@ -184,7 +184,7 @@ MCP 工具定義[預設為延遲](/zh-TW/mcp#scale-with-mcp-tool-search)，因�
 
 對於較長或更複雜的工作，這些習慣有助於避免因走錯方向而浪費的 token：
 
-* **對複雜任務使用 plan mode**：按 Shift+Tab 進入[plan mode](/zh-TW/common-workflows#use-plan-mode-for-safe-code-analysis)，然後再進行實施。Claude 探索程式碼庫並提出一個方法供您批准，防止當初始方向錯誤時進行昂貴的返工。
+* **對複雜任務使用 plan mode**：按 Shift+Tab 進入 [plan mode](/zh-TW/permission-modes#analyze-before-you-edit-with-plan-mode)，然後再進行實施。Claude 探索程式碼庫並提出一個方法供您批准，防止當初始方向錯誤時進行昂貴的返工。
 * **及早糾正方向**：如果 Claude 開始朝著錯誤的方向前進，按 Escape 立即停止。使用 `/rewind` 或雙擊 Escape 將對話和程式碼恢復到先前的 checkpoint。
 * **提供驗證目標**：在您的提示中包含測試案例、貼上螢幕截圖或定義預期輸出。當 Claude 可以驗證自己的工作時，它會在您需要請求修復之前捕捉問題。
 * **增量測試**：寫一個檔案、測試它，然後繼續。這會在問題便宜時及早捕捉問題。

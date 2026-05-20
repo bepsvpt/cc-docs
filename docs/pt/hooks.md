@@ -189,25 +189,25 @@ O evento `FileChanged` não segue essas regras ao construir sua lista de monitor
 
 Cada tipo de evento corresponde em um campo diferente:
 
-| Evento                                                                                                                          | O que o matcher filtra                                                          | Valores de matcher de exemplo                                                                                                                      |
-| :------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                      | nome da ferramenta                                                              | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                                                   |
-| `SessionStart`                                                                                                                  | como a sessão começou                                                           | `startup`, `resume`, `clear`, `compact`                                                                                                            |
-| `Setup`                                                                                                                         | qual sinalizador CLI acionou a configuração                                     | `init`, `maintenance`                                                                                                                              |
-| `SessionEnd`                                                                                                                    | por que a sessão terminou                                                       | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                                           |
-| `Notification`                                                                                                                  | tipo de notificação                                                             | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`, `elicitation_complete`, `elicitation_response`                           |
-| `SubagentStart`                                                                                                                 | tipo de agente                                                                  | `general-purpose`, `Explore`, `Plan` ou nomes de agentes personalizados                                                                            |
-| `PreCompact`, `PostCompact`                                                                                                     | o que acionou a compactação                                                     | `manual`, `auto`                                                                                                                                   |
-| `SubagentStop`                                                                                                                  | tipo de agente                                                                  | mesmos valores que `SubagentStart`                                                                                                                 |
-| `ConfigChange`                                                                                                                  | fonte de configuração                                                           | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                                                 |
-| `CwdChanged`                                                                                                                    | sem suporte a matcher                                                           | sempre dispara em cada mudança de diretório                                                                                                        |
-| `FileChanged`                                                                                                                   | nomes de arquivo literais para monitorar (consulte [FileChanged](#filechanged)) | `.envrc\|.env`                                                                                                                                     |
-| `StopFailure`                                                                                                                   | tipo de erro                                                                    | `rate_limit`, `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                                                            | razão de carregamento                                                           | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                                                       |
-| `UserPromptExpansion`                                                                                                           | nome do comando                                                                 | seus nomes de skill ou comando                                                                                                                     |
-| `Elicitation`                                                                                                                   | nome do servidor MCP                                                            | seus nomes de servidor MCP configurados                                                                                                            |
-| `ElicitationResult`                                                                                                             | nome do servidor MCP                                                            | mesmos valores que `Elicitation`                                                                                                                   |
-| `UserPromptSubmit`, `PostToolBatch`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | sem suporte a matcher                                                           | sempre dispara em cada ocorrência                                                                                                                  |
+| Evento                                                                                                                          | O que o matcher filtra                                                          | Valores de matcher de exemplo                                                                                                                                         |
+| :------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                      | nome da ferramenta                                                              | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                                                                      |
+| `SessionStart`                                                                                                                  | como a sessão começou                                                           | `startup`, `resume`, `clear`, `compact`                                                                                                                               |
+| `Setup`                                                                                                                         | qual sinalizador CLI acionou a configuração                                     | `init`, `maintenance`                                                                                                                                                 |
+| `SessionEnd`                                                                                                                    | por que a sessão terminou                                                       | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                                                              |
+| `Notification`                                                                                                                  | tipo de notificação                                                             | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`, `elicitation_complete`, `elicitation_response`                                              |
+| `SubagentStart`                                                                                                                 | tipo de agente                                                                  | `general-purpose`, `Explore`, `Plan` ou nomes de agentes personalizados                                                                                               |
+| `PreCompact`, `PostCompact`                                                                                                     | o que acionou a compactação                                                     | `manual`, `auto`                                                                                                                                                      |
+| `SubagentStop`                                                                                                                  | tipo de agente                                                                  | mesmos valores que `SubagentStart`                                                                                                                                    |
+| `ConfigChange`                                                                                                                  | fonte de configuração                                                           | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                                                                    |
+| `CwdChanged`                                                                                                                    | sem suporte a matcher                                                           | sempre dispara em cada mudança de diretório                                                                                                                           |
+| `FileChanged`                                                                                                                   | nomes de arquivo literais para monitorar (consulte [FileChanged](#filechanged)) | `.envrc\|.env`                                                                                                                                                        |
+| `StopFailure`                                                                                                                   | tipo de erro                                                                    | `rate_limit`, `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `invalid_request`, `model_not_found`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                                            | razão de carregamento                                                           | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                                                                          |
+| `UserPromptExpansion`                                                                                                           | nome do comando                                                                 | seus nomes de skill ou comando                                                                                                                                        |
+| `Elicitation`                                                                                                                   | nome do servidor MCP                                                            | seus nomes de servidor MCP configurados                                                                                                                               |
+| `ElicitationResult`                                                                                                             | nome do servidor MCP                                                            | mesmos valores que `Elicitation`                                                                                                                                      |
+| `UserPromptSubmit`, `PostToolBatch`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | sem suporte a matcher                                                           | sempre dispara em cada ocorrência                                                                                                                                     |
 
 O matcher executa contra um campo da [entrada JSON](#hook-input-and-output) que o Claude Code envia para seu hook em stdin. Para eventos de ferramenta, esse campo é `tool_name`. Cada seção [evento de hook](#hook-events) lista o conjunto completo de valores de matcher e o esquema de entrada para esse evento.
 
@@ -732,7 +732,7 @@ O exemplo abaixo dispara uma notificação de desktop de um hook `Notification`.
 # Hook de notificação: ping no desktop quando Claude Code precisa de atenção.
 input=$(cat)
 title="Claude Code'
-body=$(jq -r '.message // 'Needs your attention'' <<<"$input")
+body=$(jq -r '.message // 'Needs your attention'' <<<'$input')
 seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
 jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 ```
@@ -1698,7 +1698,7 @@ Além dos [campos de entrada comuns](#common-input-fields), hooks Notification r
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
   "hook_event_name": "Notification",
-  "message": "Claude needs your permission to use Bash",
+  "message": "Claude needs your permission",
   "title": "Permission needed",
   "notification_type": "permission_prompt"
 }
@@ -1748,6 +1748,8 @@ Executa quando um subagente do Claude Code terminou de responder. Corresponde no
 
 Além dos [campos de entrada comuns](#common-input-fields), hooks SubagentStop recebem `stop_hook_active`, `agent_id`, `agent_type`, `agent_transcript_path` e `last_assistant_message`. O campo `agent_type` é o valor usado para filtragem de matcher. O `transcript_path` é a transcrição da sessão principal, enquanto `agent_transcript_path` é a própria transcrição do subagente armazenada em uma pasta `subagents/` aninhada. O campo `last_assistant_message` contém o conteúdo de texto da resposta final do subagente, então hooks podem acessá-lo sem analisar o arquivo de transcrição.
 
+Hooks SubagentStop também recebem os arrays `background_tasks` e `session_crons` descritos em [Entrada de Stop](#stop-input), disponíveis no Claude Code v2.1.145 ou posterior. Ambos os arrays têm escopo para a sessão pai, não para o subagente.
+
 ```json theme={null}
 {
   "session_id": "abc123",
@@ -1759,7 +1761,9 @@ Além dos [campos de entrada comuns](#common-input-fields), hooks SubagentStop r
   "agent_id": "def456",
   "agent_type": "Explore",
   "agent_transcript_path": "~/.claude/projects/.../abc123/subagents/agent-def456.jsonl",
-  "last_assistant_message": "Analysis complete. Found 3 potential issues..."
+  "last_assistant_message": "Analysis complete. Found 3 potential issues...",
+  "background_tasks": [],
+  "session_crons": []
 }
 ```
 
@@ -1886,7 +1890,36 @@ Executa quando o agente Claude Code principal terminou de responder. Não execut
 
 #### Entrada de Stop
 
-Além dos [campos de entrada comuns](#common-input-fields), hooks Stop recebem `stop_hook_active` e `last_assistant_message`. O campo `stop_hook_active` é `true` quando Claude Code já está continuando como resultado de um hook stop. Verifique este valor ou processe a transcrição para prevenir que Claude Code execute indefinidamente. O campo `last_assistant_message` contém o conteúdo de texto da resposta final de Claude, então hooks podem acessá-lo sem analisar o arquivo de transcrição.
+Além dos [campos de entrada comuns](#common-input-fields), hooks Stop recebem `stop_hook_active`, `last_assistant_message`, `background_tasks` e `session_crons`. O campo `stop_hook_active` é `true` quando Claude Code já está continuando como resultado de um hook stop. Verifique este valor ou processe a transcrição para prevenir que Claude Code execute indefinidamente. Claude Code sobrescreve o hook e termina o turno após 8 bloqueios consecutivos.
+
+O campo `last_assistant_message` contém o conteúdo de texto da resposta final de Claude, então hooks podem acessá-lo sem analisar o arquivo de transcrição.
+
+Os arrays `background_tasks` e `session_crons`, disponíveis no Claude Code v2.1.145 ou posterior, permitem que hooks distingam "sessão está feita" de "sessão está pausada esperando que trabalho em background a acorde novamente". Ambos os arrays estão presentes quando o registro de tarefas é alcançável e estão vazios quando nada está em voo ou agendado.
+
+Cada entrada em `background_tasks` descreve uma tarefa em voo e usa esses campos:
+
+| Campo         | Descrição                                                                                                                                                                                                                                                     |
+| :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `id`          | Identificador de tarefa                                                                                                                                                                                                                                       |
+| `type`        | Rótulo de tipo de tarefa amigável como `shell`, `subagent`, `monitor`, `workflow`, `teammate`, `cloud session` ou `MCP task`. Cada rótulo identifica qual recurso do Claude Code criou a tarefa. Volta para o discriminante bruto para tipos não reconhecidos |
+| `status`      | Status atual da tarefa                                                                                                                                                                                                                                        |
+| `description` | Descrição de texto livre, limitada a 1000 caracteres com um marcador `… [+N chars]` em string quando cortado                                                                                                                                                  |
+| `command`     | Linha de comando shell, limitada a 1000 caracteres. Presente apenas para tarefas `shell`                                                                                                                                                                      |
+| `agent_type`  | Nome de tipo de subagente. Presente apenas para tarefas `subagent`                                                                                                                                                                                            |
+| `server`      | Nome do servidor MCP. Presente apenas para tarefas `monitor` e `MCP task`                                                                                                                                                                                     |
+| `tool`        | Nome da ferramenta MCP. Presente apenas para tarefas `monitor` e `MCP task`                                                                                                                                                                                   |
+| `name`        | Nome do workflow. Presente apenas para tarefas `workflow`                                                                                                                                                                                                     |
+
+Cada entrada em `session_crons` descreve um despertar agendado com escopo de sessão, originário de `CronCreate` e `/loop`:
+
+| Campo       | Descrição                                                                                                                                          |
+| :---------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`        | Identificador de tarefa cron                                                                                                                       |
+| `schedule`  | Expressão cron, por exemplo `0 9 * * 1-5`                                                                                                          |
+| `recurring` | `false` para despertares únicos cuja agenda codifica um único tempo de disparo, `true` para tarefas que disparam novamente em cada correspondência |
+| `prompt`    | Prompt submetido quando o cron dispara, limitado a 1000 caracteres com o mesmo marcador `… [+N chars]`                                             |
+
+Este exemplo mostra uma entrada de Stop com uma tarefa shell em voo e um cron recorrente:
 
 ```json theme={null}
 {
@@ -1896,7 +1929,24 @@ Além dos [campos de entrada comuns](#common-input-fields), hooks Stop recebem `
   "permission_mode": "default",
   "hook_event_name": "Stop",
   "stop_hook_active": true,
-  "last_assistant_message": "I've completed the refactoring. Here's a summary..."
+  "last_assistant_message": "I've completed the refactoring. Here's a summary...",
+  "background_tasks": [
+    {
+      "id": "task-001",
+      "type": "shell",
+      "status": "running",
+      "description": "tail logs",
+      "command": "tail -f /var/log/syslog"
+    }
+  ],
+  "session_crons": [
+    {
+      "id": "cron-001",
+      "schedule": "0 9 * * 1-5",
+      "recurring": true,
+      "prompt": "check the build"
+    }
+  ]
 }
 ```
 
@@ -1926,7 +1976,7 @@ Além dos [campos de entrada comuns](#common-input-fields), hooks StopFailure re
 
 | Campo                    | Descrição                                                                                                                                                                                                                                             |
 | :----------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `error`                  | Tipo de erro: `rate_limit`, `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens` ou `unknown`                                                                                    |
+| `error`                  | Tipo de erro: `rate_limit`, `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `invalid_request`, `model_not_found`, `server_error`, `max_output_tokens` ou `unknown`                                                                 |
 | `error_details`          | Detalhes adicionais sobre o erro, quando disponível                                                                                                                                                                                                   |
 | `last_assistant_message` | O texto de erro renderizado mostrado na conversa. Diferentemente de `Stop` e `SubagentStop`, onde este campo contém a saída conversacional de Claude, para `StopFailure` contém a string de erro da API em si, como `"API Error: Rate limit reached"` |
 

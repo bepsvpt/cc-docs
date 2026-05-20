@@ -152,17 +152,17 @@ claude -p "Write a poem" --output-format stream-json --verbose --include-partial
 
 Wenn eine API-Anfrage mit einem wiederholbaren Fehler fehlschlägt, gibt Claude Code ein `system/api_retry`-Ereignis vor dem erneuten Versuch aus. Sie können dies verwenden, um Wiederholungsfortschritt anzuzeigen oder benutzerdefinierte Backoff-Logik zu implementieren.
 
-| Feld             | Typ                | Beschreibung                                                                                                                                                            |
-| ---------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`           | `"system"`         | Nachrichtentyp                                                                                                                                                          |
-| `subtype`        | `"api_retry"`      | identifiziert dies als Wiederholungsereignis                                                                                                                            |
-| `attempt`        | Ganzzahl           | aktuelle Versuchsnummer, beginnend bei 1                                                                                                                                |
-| `max_retries`    | Ganzzahl           | insgesamt zulässige Wiederholungen                                                                                                                                      |
-| `retry_delay_ms` | Ganzzahl           | Millisekunden bis zum nächsten Versuch                                                                                                                                  |
-| `error_status`   | Ganzzahl oder null | HTTP-Statuscode oder `null` für Verbindungsfehler ohne HTTP-Antwort                                                                                                     |
-| `error`          | Zeichenkette       | Fehlerkategorie: `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `rate_limit`, `invalid_request`, `server_error`, `max_output_tokens` oder `unknown` |
-| `uuid`           | Zeichenkette       | eindeutige Ereigniskennung                                                                                                                                              |
-| `session_id`     | Zeichenkette       | Sitzung, zu der das Ereignis gehört                                                                                                                                     |
+| Feld             | Typ                | Beschreibung                                                                                                                                                                               |
+| ---------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `type`           | `"system"`         | Nachrichtentyp                                                                                                                                                                             |
+| `subtype`        | `"api_retry"`      | identifiziert dies als Wiederholungsereignis                                                                                                                                               |
+| `attempt`        | Ganzzahl           | aktuelle Versuchsnummer, beginnend bei 1                                                                                                                                                   |
+| `max_retries`    | Ganzzahl           | insgesamt zulässige Wiederholungen                                                                                                                                                         |
+| `retry_delay_ms` | Ganzzahl           | Millisekunden bis zum nächsten Versuch                                                                                                                                                     |
+| `error_status`   | Ganzzahl oder null | HTTP-Statuscode oder `null` für Verbindungsfehler ohne HTTP-Antwort                                                                                                                        |
+| `error`          | Zeichenkette       | Fehlerkategorie: `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `rate_limit`, `invalid_request`, `model_not_found`, `server_error`, `max_output_tokens` oder `unknown` |
+| `uuid`           | Zeichenkette       | eindeutige Ereigniskennung                                                                                                                                                                 |
+| `session_id`     | Zeichenkette       | Sitzung, zu der das Ereignis gehört                                                                                                                                                        |
 
 Das `system/init`-Ereignis meldet Sitzungsmetadaten einschließlich des Modells, Tools, MCP-Server und geladener Plugins. Es ist das erste Ereignis im Stream, es sei denn, [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/de/env-vars) ist gesetzt. In diesem Fall gehen `plugin_install`-Ereignisse voraus. Verwenden Sie die Plugin-Felder, um CI fehlschlagen zu lassen, wenn ein Plugin nicht geladen wurde:
 

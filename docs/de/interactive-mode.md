@@ -349,9 +349,8 @@ Bei der Arbeit an einem Branch mit einem offenen Pull Request zeigt Claude Code 
 * Gelb: Review ausstehend
 * Rot: Änderungen angefordert
 * Grau: Entwurf
-* Lila: zusammengeführt
 
-`Cmd+click` (Mac) oder `Ctrl+click` (Windows/Linux) auf den Link, um den Pull Request in Ihrem Browser zu öffnen. Der Status wird automatisch alle 60 Sekunden aktualisiert.
+Das Badge verschwindet, sobald der Pull Request zusammengeführt oder geschlossen wird. `Cmd+click` (Mac) oder `Ctrl+click` (Windows/Linux) auf den Link, um den Pull Request in Ihrem Browser zu öffnen. Der Status wird alle 60 Sekunden aktualisiert und sofort nach der Ausführung eines `gh pr`- oder `git push`-Befehls in der Sitzung.
 
 <Note>
   Der PR-Status erfordert, dass die `gh` CLI installiert und authentifiziert ist (`gh auth login`).

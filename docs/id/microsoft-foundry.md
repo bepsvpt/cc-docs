@@ -167,7 +167,7 @@ Tugas latar belakang seperti pembuatan judul sesi menggunakan model kecil/cepat,
 
 Untuk ID model saat ini dan legacy, lihat [Models overview](https://platform.claude.com/docs/en/about-claude/models/overview). Lihat [Model configuration](/id/model-config#pin-models-for-third-party-deployments) untuk daftar lengkap variabel lingkungan.
 
-[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) diaktifkan secara otomatis. Untuk meminta TTL cache 1 jam alih-alih default 5 menit, atur variabel berikut; cache writes dengan TTL 1 jam ditagih dengan tarif yang lebih tinggi:
+[Prompt caching](/id/prompt-caching) diaktifkan secara otomatis. Untuk meminta TTL cache 1 jam alih-alih default 5 menit, atur variabel berikut; cache writes dengan TTL 1 jam ditagih dengan tarif yang lebih tinggi:
 
 ```bash theme={null}
 export ENABLE_PROMPT_CACHING_1H=1

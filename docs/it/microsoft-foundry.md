@@ -167,7 +167,7 @@ I compiti in background come la generazione del titolo della sessione utilizzano
 
 Per gli ID dei modelli attuali e legacy, vedi [Panoramica dei modelli](https://platform.claude.com/docs/en/about-claude/models/overview). Vedi [Configurazione del modello](/it/model-config#pin-models-for-third-party-deployments) per l'elenco completo delle variabili di ambiente.
 
-[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) è abilitato automaticamente. Per richiedere un TTL della cache di 1 ora invece del valore predefinito di 5 minuti, imposta la seguente variabile; le scritture della cache con un TTL di 1 ora vengono fatturate a una tariffa più elevata:
+[Prompt caching](/it/prompt-caching) è abilitato automaticamente. Per richiedere un TTL della cache di 1 ora invece del valore predefinito di 5 minuti, imposta la seguente variabile; le scritture della cache con un TTL di 1 ora vengono fatturate a una tariffa più elevata:
 
 ```bash theme={null}
 export ENABLE_PROMPT_CACHING_1H=1

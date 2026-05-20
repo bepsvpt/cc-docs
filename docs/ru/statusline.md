@@ -157,6 +157,7 @@ Claude Code отправляет следующие поля JSON в ваш ск
 | `workspace.project_dir`                                                          | Каталог, в котором был запущен Claude Code, который может отличаться от `cwd`, если рабочий каталог изменяется во время сеанса                                                                                                                                                  |
 | `workspace.added_dirs`                                                           | Дополнительные каталоги, добавленные через `/add-dir` или `--add-dir`. Пустой массив, если ничего не было добавлено                                                                                                                                                             |
 | `workspace.git_worktree`                                                         | Имя Git worktree, когда текущий каталог находится внутри связанного worktree, созданного с помощью `git worktree add`. Отсутствует в основном рабочем дереве. Заполняется для любого git worktree, в отличие от `worktree.*`, который применяется только к сеансам `--worktree` |
+| `workspace.repo.host`, `workspace.repo.owner`, `workspace.repo.name`             | Идентификация репозитория, проанализированная из удалённого хранилища `origin`, например `"github.com"`, `"anthropics"`, `"claude-code"`. Отсутствует вне git репозитория или когда удалённое хранилище `origin` не настроено                                                   |
 | `cost.total_cost_usd`                                                            | Предполагаемая стоимость сеанса в USD, вычисляется на клиенте. Может отличаться от вашего фактического счёта                                                                                                                                                                    |
 | `cost.total_duration_ms`                                                         | Общее реальное время с момента начала сеанса в миллисекундах                                                                                                                                                                                                                    |
 | `cost.total_api_duration_ms`                                                     | Общее время, потраченное на ожидание ответов API в миллисекундах                                                                                                                                                                                                                |
@@ -178,6 +179,8 @@ Claude Code отправляет следующие поля JSON в ваш ск
 | `output_style.name`                                                              | Имя текущего стиля вывода                                                                                                                                                                                                                                                       |
 | `vim.mode`                                                                       | Текущий режим vim (`NORMAL`, `INSERT`, `VISUAL` или `VISUAL LINE`), когда [режим vim](/ru/interactive-mode#vim-editor-mode) включен                                                                                                                                             |
 | `agent.name`                                                                     | Имя агента при запуске с флагом `--agent` или настроенными параметрами агента                                                                                                                                                                                                   |
+| `pr.number`, `pr.url`                                                            | Открытый pull request для текущей ветки. Отражает значок PR в нижней строке состояния. Отсутствует до тех пор, пока PR не будет найден, когда не в git репозитории, или после того как PR будет объединён или закрыт                                                            |
+| `pr.review_state`                                                                | Статус проверки открытого PR: `approved`, `pending`, `changes_requested` или `draft`. Может быть независимо отсутствующим даже когда `pr` присутствует                                                                                                                          |
 | `worktree.name`                                                                  | Имя активного worktree. Присутствует только во время сеансов `--worktree`                                                                                                                                                                                                       |
 | `worktree.path`                                                                  | Абсолютный путь к каталогу worktree                                                                                                                                                                                                                                             |
 | `worktree.branch`                                                                | Имя ветки Git для worktree (например, `"worktree-my-feature"`). Отсутствует для worktrees на основе hooks                                                                                                                                                                       |
@@ -201,7 +204,12 @@ Claude Code отправляет следующие поля JSON в ваш ск
       "current_dir": "/current/working/directory",
       "project_dir": "/original/project/directory",
       "added_dirs": [],
-      "git_worktree": "feature-xyz"
+      "git_worktree": "feature-xyz",
+      "repo": {
+        "host": "github.com",
+        "owner": "anthropics",
+        "name": "claude-code"
+      }
     },
     "version": "2.1.90",
     "output_style": {
@@ -250,6 +258,11 @@ Claude Code отправляет следующие поля JSON в ваш ск
     "agent": {
       "name": "security-reviewer"
     },
+    "pr": {
+      "number": 1234,
+      "url": "https://github.com/anthropics/claude-code/pull/1234",
+      "review_state": "pending"
+    },
     "worktree": {
       "name": "my-feature",
       "path": "/path/to/.claude/worktrees/my-feature",
@@ -264,9 +277,11 @@ Claude Code отправляет следующие поля JSON в ваш ск
 
   * `session_name`: появляется только когда пользовательское имя было установлено с `--name` или `/rename`
   * `workspace.git_worktree`: появляется только когда текущий каталог находится внутри связанного git worktree
+  * `workspace.repo`: появляется только внутри git репозитория с настроенным удалённым хранилищем `origin`
   * `effort`: появляется только когда текущая модель поддерживает параметр reasoning effort
   * `vim`: появляется только когда режим vim включен
   * `agent`: появляется только при запуске с флагом `--agent` или настроенными параметрами агента
+  * `pr`: появляется только пока открытый PR найден для текущей ветки, и удаляется после того как PR будет объединён или закрыт. `pr.review_state` может быть независимо отсутствующим
   * `worktree`: появляется только во время сеансов `--worktree`. Когда присутствует, `branch` и `original_branch` также могут отсутствовать для worktrees на основе hooks
   * `rate_limits`: появляется только для подписчиков Claude.ai (Pro/Max) после первого ответа API в сеансе. Каждое окно (`five_hour`, `seven_day`) может быть независимо отсутствующим. Используйте `jq -r '.rate_limits.five_hour.used_percentage // empty'` для корректной обработки отсутствия.
 
@@ -291,6 +306,8 @@ Claude Code отправляет следующие поля JSON в ваш ск
 * `output_tokens`: выходные токены, которые были сгенерированы
 * `cache_creation_input_tokens`: токены, записанные в кэш
 * `cache_read_input_tokens`: токены, прочитанные из кэша
+
+Для получения информации о том, что означают поля кэша и как они выставляются счётом, см. [проверка производительности кэша](/ru/prompt-caching#check-cache-performance).
 
 Поле `used_percentage` рассчитывается только из входных токенов: `input_tokens + cache_creation_input_tokens + cache_read_input_tokens`. Оно не включает `output_tokens`.
 

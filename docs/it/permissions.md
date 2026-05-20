@@ -28,6 +28,8 @@ Potete visualizzare e gestire le autorizzazioni degli strumenti di Claude Code c
 
 Le regole vengono valutate in ordine: **deny -> ask -> allow**. La prima regola corrispondente vince, quindi le regole deny hanno sempre la precedenza.
 
+Le regole deny si comportano diversamente a seconda che denominino uno strumento o che limitino un modello all'interno di uno. Un nome di strumento semplice come `Bash` rimuove lo strumento dal contesto di Claude interamente, quindi Claude non lo vede mai. Una regola limitata come `Bash(rm *)` lascia lo strumento disponibile e blocca le chiamate corrispondenti quando Claude tenta di utilizzarle.
+
 <Note>
   Le regole di autorizzazione sono applicate da Claude Code, non dal modello. Le istruzioni nel vostro prompt o in `CLAUDE.md` determinano ciò che Claude tenta di fare, ma non cambiano ciò che Claude Code consente. Per concedere o revocare l'accesso, utilizzate `/permissions`, le regole descritte qui, una [modalità di autorizzazione](/it/permission-modes), o un [hook PreToolUse](#extend-permissions-with-hooks).
 </Note>
@@ -65,7 +67,7 @@ Per corrispondere a tutti gli utilizzi di uno strumento, utilizzate solo il nome
 | `WebFetch` | Corrisponde a tutte le richieste di web fetch |
 | `Read`     | Corrisponde a tutte le letture di file        |
 
-`Bash(*)` è equivalente a `Bash` e corrisponde a tutti i comandi Bash.
+`Bash(*)` è equivalente a `Bash` e corrisponde a tutti i comandi Bash. Come regola di negazione, entrambe le forme rimuovono lo strumento dal contesto di Claude.
 
 ### Utilizzare gli specificatori per il controllo granulare
 
@@ -186,7 +188,7 @@ Claude Code analizza l'AST di PowerShell e controlla ogni comando in un comando 
 
 ### Read e Edit
 
-Le regole `Edit` si applicano a tutti gli strumenti integrati che modificano i file. Claude fa un tentativo migliore per applicare le regole `Read` a tutti gli strumenti integrati che leggono file come Grep e Glob.
+Le regole `Edit` si applicano a tutti gli strumenti integrati che modificano i file. Claude fa un tentativo migliore per applicare le regole `Read` a tutti gli strumenti integrati che leggono file come Grep e Glob, a menzioni `@file` nei vostri prompt e alla selezione e al contesto di file aperti che un [IDE](/it/vs-code#the-built-in-ide-mcp-server) connesso condivide con Claude.
 
 <Warning>
   Le regole deny di Read e Edit si applicano agli strumenti di file integrati di Claude e ai comandi di file che Claude Code riconosce in Bash, come `cat`, `head`, `tail` e `sed`. Non si applicano a sottoprocessi arbitrari che leggono o scrivono file indirettamente, come uno script Python o Node che apre i file da solo. Per l'applicazione a livello del sistema operativo che blocca tutti i processi dall'accesso a un percorso, [abilitate la sandbox](/it/sandboxing).

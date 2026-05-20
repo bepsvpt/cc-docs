@@ -244,7 +244,7 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='us.anthropic.claude-haiku-4-5-20251001-v1:
 
 這些變數使用跨區域推論設定檔 ID（帶有 `us.` 前綴）。如果您使用不同的區域前綴或應用程式推論設定檔，請相應調整。如需目前和舊版模型 ID，請參閱[模型概觀](https://platform.claude.com/docs/en/about-claude/models/overview)。請參閱[模型設定](/zh-TW/model-config#pin-models-for-third-party-deployments)以取得完整的環境變數清單。
 
-未設定固定變數時，Claude Code 使用這些預設模型：
+Claude Code 使用這些預設模型，當未設定固定變數時：
 
 | 模型類型    | 預設值                                            |
 | :------ | :--------------------------------------------- |
@@ -270,7 +270,9 @@ export DISABLE_PROMPT_CACHING=1
 export ENABLE_PROMPT_CACHING_1H=1
 ```
 
-<Note>[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) 可能不適用於所有區域。使用 1 小時 TTL 的快取寫入按比 5 分鐘寫入更高的費率計費。</Note>
+1 小時快取 TTL 的計費費率高於 5 分鐘預設值。請參閱[快取生命週期](/zh-TW/prompt-caching#cache-lifetime)。
+
+<Note>Prompt caching 可能不適用於所有 Bedrock 區域。如果快取權杖計數保持為零，請檢查 Bedrock 文件中的[支援的模型、區域和限制](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html#prompt-caching-models)。</Note>
 
 #### 將每個模型版本對應至推論設定檔
 

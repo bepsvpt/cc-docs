@@ -1,5 +1,436 @@
 # Documentation Changes
 
+## 2026-05-20
+
+268 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Claude Code auf Amazon Bedrock** (`amazon-bedrock.md`): 3 lines added, 1 removed
+- **CLI-Referenz** (`cli-reference.md`): 30 lines added, 30 removed
+- **Kosten effektiv verwalten** (`costs.md`): 2 lines added, 2 removed
+- **Entdecken und installieren Sie vorgefertigte Plugins über Marktplätze** (`discover-plugins.md`): 35 lines added, 20 removed
+  - New section: "## Community-Marktplatz"
+- **Claude Code auf Google Vertex AI** (`google-vertex-ai.md`): 1 lines added, 1 removed
+- **Claude Code programmgesteuert ausführen** (`headless.md`): 11 lines added, 11 removed
+- **Automatisieren Sie Workflows mit Hooks** (`hooks-guide.md`): 18 lines added, 18 removed
+- **Hooks-Referenz** (`hooks.md`): 75 lines added, 25 removed
+- **Interaktiver Modus** (`interactive-mode.md`): 1 lines added, 2 removed
+- **Claude Code mit Tools über MCP verbinden** (`mcp.md`): 2 lines added, 0 removed
+- **Claude Code auf Microsoft Foundry** (`microsoft-foundry.md`): 1 lines added, 1 removed
+- **Modellkonfiguration** (`model-config.md`): 17 lines added, 11 removed
+- **Überwachung** (`monitoring-usage.md`): 29 lines added, 9 removed
+  - New section: "#### Hook-Plugin-Metriken-Ereignis"
+- **Ausgabestile** (`output-styles.md`): 4 lines added, 4 removed
+- **Berechtigungen konfigurieren** (`permissions.md`): 4 lines added, 2 removed
+- **Plugins-Referenz** (`plugins-reference.md`): 14 lines added, 0 removed
+  - New section: "### Nicht erkannte Felder"
+- **Plugins erstellen** (`plugins.md`): 14 lines added, 3 removed
+  - New section: "### Reichen Sie Ihr Plugin beim Community-Marketplace ein"
+- **Claude Code-Einstellungen** (`settings.md`): 12 lines added, 3 removed
+  - New section: "### Wenn Änderungen wirksam werden"
+- **Claude mit Skills erweitern** (`skills.md`): 18 lines added, 0 removed
+  - New section: "### Ihre App ausführen und überprüfen"
+- **Passen Sie Ihre Statuszeile an** (`statusline.md`): 19 lines added, 2 removed
+
+### English
+
+
+**Modified**
+
+- **Claude Code on Amazon Bedrock** (`amazon-bedrock.md`): 3 lines added, 1 removed
+- **Changelog** (`changelog.md`): 23 lines added, 2 removed
+- **CLI reference** (`cli-reference.md`): 30 lines added, 30 removed
+- **Commands** (`commands.md`): 6 lines added, 3 removed
+- **Manage costs effectively** (`costs.md`): 1 lines added, 1 removed
+- **Discover and install prebuilt plugins through marketplaces** (`discover-plugins.md`): 23 lines added, 8 removed
+  - New section: "## Community marketplace"
+- **Environment variables** (`env-vars.md`): 88 lines added, 10 removed
+  - New section: "## Set environment variables"
+  - New section: "### In your shell"
+  - New section: "### In settings files"
+  - New section: "## Precedence"
+  - New section: "## Variables"
+- **Extend Claude Code** (`features-overview.md`): 38 lines added, 24 removed
+- **Claude Code on Google Vertex AI** (`google-vertex-ai.md`): 1 lines added, 1 removed
+- **Run Claude Code programmatically** (`headless.md`): 11 lines added, 11 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 18 lines added, 18 removed
+- **Hooks reference** (`hooks.md`): 72 lines added, 24 removed
+- **Interactive mode** (`interactive-mode.md`): 1 lines added, 2 removed
+- **Customize keyboard shortcuts** (`keybindings.md`): 5 lines added, 4 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 2 lines added, 0 removed
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 1 lines added, 1 removed
+- **Model configuration** (`model-config.md`): 12 lines added, 10 removed
+- **Monitoring** (`monitoring-usage.md`): 29 lines added, 9 removed
+  - New section: "#### Hook plugin metrics event"
+- **Output styles** (`output-styles.md`): 4 lines added, 4 removed
+- **Configure permissions** (`permissions.md`): 3 lines added, 1 removed
+- **Plugins reference** (`plugins-reference.md`): 25 lines added, 0 removed
+  - New section: "### Unrecognized fields"
+- **Create plugins** (`plugins.md`): 14 lines added, 3 removed
+  - New section: "### Submit your plugin to the community marketplace"
+- **Claude Code settings** (`settings.md`): 11 lines added, 2 removed
+  - New section: "### When edits take effect"
+- **Extend Claude with skills** (`skills.md`): 18 lines added, 0 removed
+  - New section: "### Run and verify your app"
+- **Customize your status line** (`statusline.md`): 18 lines added, 1 removed
+- **Create custom subagents** (`sub-agents.md`): 1 lines added, 1 removed
+- **Tools reference** (`tools-reference.md`): 3 lines added, 3 removed
+
+### Español
+
+
+**Modified**
+
+- **Claude Code en Amazon Bedrock** (`amazon-bedrock.md`): 3 lines added, 1 removed
+- **Referencia de CLI** (`cli-reference.md`): 30 lines added, 30 removed
+- **Gestionar costos de manera efectiva** (`costs.md`): 2 lines added, 2 removed
+- **Descubra e instale plugins pregenerados a través de mercados** (`discover-plugins.md`): 23 lines added, 8 removed
+  - New section: "## Community marketplace"
+- **Extender Claude Code** (`features-overview.md`): 39 lines added, 25 removed
+- **Claude Code en Google Vertex AI** (`google-vertex-ai.md`): 1 lines added, 1 removed
+- **Ejecutar Claude Code mediante programación** (`headless.md`): 11 lines added, 11 removed
+- **Automatizar flujos de trabajo con hooks** (`hooks-guide.md`): 18 lines added, 18 removed
+- **Referencia de hooks** (`hooks.md`): 75 lines added, 25 removed
+- **Personalizar atajos de teclado** (`keybindings.md`): 5 lines added, 4 removed
+- **Conectar Claude Code a herramientas mediante MCP** (`mcp.md`): 3 lines added, 1 removed
+- **Claude Code en Microsoft Foundry** (`microsoft-foundry.md`): 1 lines added, 1 removed
+- **Configuración del modelo** (`model-config.md`): 13 lines added, 5 removed
+- **Monitoreo** (`monitoring-usage.md`): 29 lines added, 9 removed
+  - New section: "#### Evento de métricas de plugin de hook"
+- **Referencia de plugins** (`plugins-reference.md`): 14 lines added, 0 removed
+  - New section: "### Campos no reconocidos"
+- **Crear plugins** (`plugins.md`): 14 lines added, 3 removed
+  - New section: "### Envíe su plugin al marketplace de la comunidad"
+- **Configuración de Claude Code** (`settings.md`): 11 lines added, 2 removed
+  - New section: "### Cuándo entran en vigor las ediciones"
+- **Ampliar Claude con skills** (`skills.md`): 18 lines added, 0 removed
+  - New section: "### Ejecutar y verificar su aplicación"
+- **Personaliza tu línea de estado** (`statusline.md`): 18 lines added, 1 removed
+
+### Français
+
+
+**Modified**
+
+- **Claude Code sur Amazon Bedrock** (`amazon-bedrock.md`): 3 lines added, 1 removed
+- **Référence CLI** (`cli-reference.md`): 30 lines added, 30 removed
+- **Gérer les coûts efficacement** (`costs.md`): 2 lines added, 2 removed
+- **Découvrir et installer des plugins prédéfinis via les marketplaces** (`discover-plugins.md`): 23 lines added, 8 removed
+  - New section: "## Marketplace communautaire"
+- **Étendre Claude Code** (`features-overview.md`): 39 lines added, 25 removed
+- **Claude Code sur Google Vertex AI** (`google-vertex-ai.md`): 1 lines added, 1 removed
+- **Exécuter Claude Code par programmation** (`headless.md`): 11 lines added, 11 removed
+- **Automatiser les workflows avec les hooks** (`hooks-guide.md`): 18 lines added, 18 removed
+- **Référence des hooks** (`hooks.md`): 72 lines added, 24 removed
+- **Mode interactif** (`interactive-mode.md`): 1 lines added, 2 removed
+- **Personnaliser les raccourcis clavier** (`keybindings.md`): 5 lines added, 4 removed
+- **Connecter Claude Code aux outils via MCP** (`mcp.md`): 2 lines added, 0 removed
+- **Claude Code sur Microsoft Foundry** (`microsoft-foundry.md`): 1 lines added, 1 removed
+- **Configuration du modèle** (`model-config.md`): 17 lines added, 11 removed
+- **Surveillance** (`monitoring-usage.md`): 29 lines added, 9 removed
+  - New section: "#### Événement de métriques de plugin hook"
+- **Styles de sortie** (`output-styles.md`): 4 lines added, 4 removed
+- **Configurer les autorisations** (`permissions.md`): 4 lines added, 2 removed
+- **Référence des plugins** (`plugins-reference.md`): 14 lines added, 0 removed
+  - New section: "### Champs non reconnus"
+- **Créer des plugins** (`plugins.md`): 14 lines added, 3 removed
+  - New section: "### Soumettez votre plugin à la marketplace communautaire"
+- **Paramètres Claude Code** (`settings.md`): 11 lines added, 2 removed
+  - New section: "### Quand les modifications prennent effet"
+- **Étendre Claude avec des skills** (`skills.md`): 18 lines added, 0 removed
+  - New section: "### Exécuter et vérifier votre application"
+- **Personnalisez votre barre de statut** (`statusline.md`): 18 lines added, 1 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Claude Code di Amazon Bedrock** (`amazon-bedrock.md`): 3 lines added, 1 removed
+- **Referensi CLI** (`cli-reference.md`): 31 lines added, 31 removed
+- **Kelola biaya secara efektif** (`costs.md`): 2 lines added, 2 removed
+- **Temukan dan instal plugin yang sudah dibuat melalui marketplace** (`discover-plugins.md`): 23 lines added, 8 removed
+  - New section: "## Community marketplace"
+- **Perluas Claude Code** (`features-overview.md`): 38 lines added, 24 removed
+- **Claude Code di Google Vertex AI** (`google-vertex-ai.md`): 1 lines added, 1 removed
+- **Jalankan Claude Code secara programatis** (`headless.md`): 11 lines added, 11 removed
+- **Otomatisasi alur kerja dengan hooks** (`hooks-guide.md`): 18 lines added, 18 removed
+- **Referensi hooks** (`hooks.md`): 75 lines added, 25 removed
+- **Mode interaktif** (`interactive-mode.md`): 1 lines added, 2 removed
+- **Sesuaikan pintasan keyboard** (`keybindings.md`): 5 lines added, 4 removed
+- **Hubungkan Claude Code ke alat melalui MCP** (`mcp.md`): 2 lines added, 0 removed
+- **Claude Code di Microsoft Foundry** (`microsoft-foundry.md`): 1 lines added, 1 removed
+- **Konfigurasi model** (`model-config.md`): 17 lines added, 13 removed
+- **Pemantauan** (`monitoring-usage.md`): 30 lines added, 10 removed
+  - New section: "#### Acara metrik plugin hook"
+- **Output styles** (`output-styles.md`): 7 lines added, 7 removed
+  - New section: "## Ubah gaya output Anda"
+- **Konfigurasi izin** (`permissions.md`): 4 lines added, 2 removed
+- **Referensi Plugins** (`plugins-reference.md`): 14 lines added, 0 removed
+  - New section: "### Field yang tidak dikenali"
+- **Buat plugins** (`plugins.md`): 14 lines added, 3 removed
+  - New section: "### Kirimkan plugin Anda ke marketplace komunitas"
+- **Pengaturan Claude Code** (`settings.md`): 11 lines added, 2 removed
+  - New section: "### Saat pengeditan berlaku"
+- **Perluas Claude dengan skills** (`skills.md`): 18 lines added, 0 removed
+  - New section: "### Jalankan dan verifikasi aplikasi Anda"
+- **Sesuaikan baris status Anda** (`statusline.md`): 18 lines added, 1 removed
+- **Buat subagent khusus** (`sub-agents.md`): 7 lines added, 7 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Claude Code su Amazon Bedrock** (`amazon-bedrock.md`): 3 lines added, 1 removed
+- **Riferimento CLI** (`cli-reference.md`): 30 lines added, 30 removed
+- **Gestisci i costi in modo efficace** (`costs.md`): 2 lines added, 2 removed
+- **Scopri e installa plugin precostruiti tramite marketplace** (`discover-plugins.md`): 23 lines added, 8 removed
+  - New section: "## Marketplace della comunità"
+- **Estendi Claude Code** (`features-overview.md`): 38 lines added, 24 removed
+- **Claude Code su Google Vertex AI** (`google-vertex-ai.md`): 1 lines added, 1 removed
+- **Eseguire Claude Code a livello programmatico** (`headless.md`): 11 lines added, 11 removed
+- **Automatizzare i flussi di lavoro con hooks** (`hooks-guide.md`): 18 lines added, 18 removed
+- **Riferimento dei hooks** (`hooks.md`): 72 lines added, 24 removed
+- **Modalità interattiva** (`interactive-mode.md`): 1 lines added, 2 removed
+- **Personalizzare le scorciatoie da tastiera** (`keybindings.md`): 5 lines added, 4 removed
+- **Connetti Claude Code ai tuoi strumenti tramite MCP** (`mcp.md`): 2 lines added, 0 removed
+- **Claude Code su Microsoft Foundry** (`microsoft-foundry.md`): 1 lines added, 1 removed
+- **Configurazione del modello** (`model-config.md`): 19 lines added, 11 removed
+- **Monitoraggio** (`monitoring-usage.md`): 29 lines added, 9 removed
+  - New section: "#### Evento di metriche plugin hook"
+- **Output styles** (`output-styles.md`): 5 lines added, 5 removed
+  - New section: "## Creare uno stile di output personalizzato"
+- **Configurare le autorizzazioni** (`permissions.md`): 4 lines added, 2 removed
+- **Riferimento dei plugin** (`plugins-reference.md`): 14 lines added, 0 removed
+  - New section: "### Campi non riconosciuti"
+- **Creare plugin** (`plugins.md`): 14 lines added, 3 removed
+  - New section: "### Invia il tuo plugin al marketplace della comunità"
+- **Impostazioni di Claude Code** (`settings.md`): 11 lines added, 2 removed
+  - New section: "### Quando gli edits hanno effetto"
+- **Estendi Claude con skills** (`skills.md`): 18 lines added, 0 removed
+  - New section: "### Esegui e verifica la tua app"
+- **Personalizza la tua barra di stato** (`statusline.md`): 18 lines added, 1 removed
+
+### 日本語
+
+
+**Modified**
+
+- **Amazon Bedrock 上の Claude Code** (`amazon-bedrock.md`): 3 lines added, 1 removed
+- **CLI リファレンス** (`cli-reference.md`): 30 lines added, 30 removed
+- **コストを効果的に管理する** (`costs.md`): 2 lines added, 2 removed
+- **マーケットプレイスから事前構築されたプラグインを発見してインストールする** (`discover-plugins.md`): 33 lines added, 18 removed
+  - New section: "## コミュニティ マーケットプレイス"
+- **Claude Code を拡張する** (`features-overview.md`): 39 lines added, 25 removed
+- **Google Vertex AI 上の Claude Code** (`google-vertex-ai.md`): 1 lines added, 1 removed
+- **Claude Code をプログラムで実行する** (`headless.md`): 11 lines added, 11 removed
+- **hooks でワークフローを自動化する** (`hooks-guide.md`): 18 lines added, 18 removed
+- **Hooks リファレンス** (`hooks.md`): 76 lines added, 28 removed
+- **インタラクティブモード** (`interactive-mode.md`): 1 lines added, 2 removed
+- **キーボードショートカットのカスタマイズ** (`keybindings.md`): 5 lines added, 4 removed
+- **MCP を使用して Claude Code をツールに接続する** (`mcp.md`): 2 lines added, 0 removed
+- **Claude Code on Microsoft Foundry** (`microsoft-foundry.md`): 1 lines added, 1 removed
+- **モデル設定** (`model-config.md`): 18 lines added, 10 removed
+- **監視** (`monitoring-usage.md`): 29 lines added, 9 removed
+  - New section: "#### フックプラグインメトリクスイベント"
+- **出力スタイル** (`output-styles.md`): 6 lines added, 6 removed
+- **権限を設定する** (`permissions.md`): 4 lines added, 2 removed
+- **プラグインリファレンス** (`plugins-reference.md`): 14 lines added, 0 removed
+  - New section: "### 認識されないフィールド"
+- **プラグインを作成する** (`plugins.md`): 14 lines added, 3 removed
+  - New section: "### プラグインをコミュニティマーケットプレイスに送信する"
+- **Claude Code の設定** (`settings.md`): 13 lines added, 4 removed
+  - New section: "### 編集がいつ有効になるか"
+- **スキルで Claude を拡張する** (`skills.md`): 19 lines added, 1 removed
+  - New section: "### アプリを実行して検証する"
+- **ステータスラインをカスタマイズする** (`statusline.md`): 19 lines added, 2 removed
+- **カスタムサブエージェントの作成** (`sub-agents.md`): 1 lines added, 1 removed
+
+### 한국어
+
+
+**Modified**
+
+- **Amazon Bedrock의 Claude Code** (`amazon-bedrock.md`): 3 lines added, 1 removed
+- **CLI 참조** (`cli-reference.md`): 30 lines added, 30 removed
+- **비용을 효과적으로 관리하기** (`costs.md`): 2 lines added, 2 removed
+- **마켓플레이스를 통해 미리 빌드된 플러그인 발견 및 설치** (`discover-plugins.md`): 63 lines added, 56 removed
+  - New section: "## 시도해보기: 데모 마켓플레이스 추가"
+  - New section: "## 커뮤니티 마켓플레이스"
+- **Claude Code 확장하기** (`features-overview.md`): 39 lines added, 25 removed
+- **Google Vertex AI에서 Claude Code 사용하기** (`google-vertex-ai.md`): 1 lines added, 1 removed
+- **Claude Code를 프로그래밍 방식으로 실행하기** (`headless.md`): 11 lines added, 11 removed
+- **hooks를 사용하여 워크플로우 자동화** (`hooks-guide.md`): 18 lines added, 18 removed
+- **Hooks 참조** (`hooks.md`): 80 lines added, 30 removed
+- **대화형 모드** (`interactive-mode.md`): 1 lines added, 2 removed
+- **키보드 단축키 사용자 정의** (`keybindings.md`): 5 lines added, 4 removed
+- **MCP를 통해 Claude Code를 도구에 연결하기** (`mcp.md`): 2 lines added, 0 removed
+- **Microsoft Foundry의 Claude Code** (`microsoft-foundry.md`): 1 lines added, 1 removed
+- **모델 구성** (`model-config.md`): 18 lines added, 10 removed
+- **모니터링** (`monitoring-usage.md`): 29 lines added, 9 removed
+  - New section: "#### 훅 플러그인 메트릭 이벤트"
+- **출력 스타일** (`output-styles.md`): 4 lines added, 4 removed
+- **권한 구성** (`permissions.md`): 4 lines added, 2 removed
+- **플러그인 참조** (`plugins-reference.md`): 16 lines added, 2 removed
+  - New section: "### 인식되지 않은 필드"
+- **플러그인 만들기** (`plugins.md`): 14 lines added, 3 removed
+  - New section: "### 플러그인을 커뮤니티 마켓플레이스에 제출"
+- **Claude Code 설정** (`settings.md`): 11 lines added, 2 removed
+  - New section: "### 편집이 적용되는 시기"
+- **Claude를 skills로 확장하기** (`skills.md`): 18 lines added, 0 removed
+  - New section: "### 앱 실행 및 확인"
+- **상태 표시줄 사용자 정의** (`statusline.md`): 18 lines added, 1 removed
+- **사용자 정의 subagent 만들기** (`sub-agents.md`): 1 lines added, 1 removed
+
+### Português
+
+
+**Modified**
+
+- **Claude Code no Amazon Bedrock** (`amazon-bedrock.md`): 3 lines added, 1 removed
+- **Referência de CLI** (`cli-reference.md`): 30 lines added, 30 removed
+- **Gerencie custos de forma eficaz** (`costs.md`): 2 lines added, 2 removed
+- **Descubra e instale plugins pré-construídos através de marketplaces** (`discover-plugins.md`): 23 lines added, 8 removed
+  - New section: "## Marketplace da comunidade"
+- **Estender Claude Code** (`features-overview.md`): 38 lines added, 24 removed
+- **Claude Code no Google Vertex AI** (`google-vertex-ai.md`): 1 lines added, 1 removed
+- **Executar Claude Code programaticamente** (`headless.md`): 11 lines added, 11 removed
+- **Automatizar fluxos de trabalho com hooks** (`hooks-guide.md`): 21 lines added, 21 removed
+- **Referência de hooks** (`hooks.md`): 75 lines added, 25 removed
+- **Modo interativo** (`interactive-mode.md`): 1 lines added, 2 removed
+- **Personalizar atalhos de teclado** (`keybindings.md`): 5 lines added, 4 removed
+- **Conectar Claude Code a ferramentas via MCP** (`mcp.md`): 2 lines added, 0 removed
+- **Claude Code no Microsoft Foundry** (`microsoft-foundry.md`): 1 lines added, 1 removed
+- **Configuração de modelo** (`model-config.md`): 18 lines added, 10 removed
+- **Monitoramento** (`monitoring-usage.md`): 29 lines added, 9 removed
+  - New section: "#### Evento de métricas de plugin de hook"
+- **Estilos de saída** (`output-styles.md`): 4 lines added, 4 removed
+- **Configurar permissões** (`permissions.md`): 4 lines added, 2 removed
+- **Referência de plugins** (`plugins-reference.md`): 16 lines added, 0 removed
+  - New section: "### Campos não reconhecidos"
+- **Criar plugins** (`plugins.md`): 14 lines added, 3 removed
+  - New section: "### Envie seu plugin para o marketplace da comunidade"
+- **Configurações do Claude Code** (`settings.md`): 11 lines added, 2 removed
+  - New section: "### Quando as edições entram em vigor"
+- **Estenda Claude com skills** (`skills.md`): 18 lines added, 0 removed
+  - New section: "### Execute e verifique seu aplicativo"
+- **Personalize sua linha de status** (`statusline.md`): 18 lines added, 1 removed
+
+### Русский
+
+
+**Modified**
+
+- **Claude Code на Amazon Bedrock** (`amazon-bedrock.md`): 3 lines added, 1 removed
+- **Справочник CLI** (`cli-reference.md`): 31 lines added, 31 removed
+- **Эффективное управление затратами** (`costs.md`): 2 lines added, 2 removed
+- **Откройте и установите готовые плагины через маркетплейсы** (`discover-plugins.md`): 34 lines added, 19 removed
+  - New section: "## Community marketplace"
+  - New section: "## Добавление маркетплейсов"
+  - New section: "### Добавление из GitHub"
+  - New section: "### Добавление из других хостов Git"
+  - New section: "### Добавление из локальных путей"
+- **Расширение Claude Code** (`features-overview.md`): 38 lines added, 24 removed
+- **Claude Code на Google Vertex AI** (`google-vertex-ai.md`): 1 lines added, 1 removed
+- **Запуск Claude Code программно** (`headless.md`): 11 lines added, 11 removed
+- **Автоматизация рабочих процессов с помощью hooks** (`hooks-guide.md`): 18 lines added, 18 removed
+- **Справочник по hooks** (`hooks.md`): 74 lines added, 25 removed
+- **Интерактивный режим** (`interactive-mode.md`): 1 lines added, 2 removed
+- **Настройка сочетаний клавиш** (`keybindings.md`): 5 lines added, 4 removed
+- **Подключите Claude Code к инструментам через MCP** (`mcp.md`): 2 lines added, 0 removed
+- **Claude Code на Microsoft Foundry** (`microsoft-foundry.md`): 1 lines added, 1 removed
+- **Конфигурация модели** (`model-config.md`): 18 lines added, 10 removed
+- **Мониторинг** (`monitoring-usage.md`): 29 lines added, 9 removed
+  - New section: "#### Событие метрик плагина hook"
+- **Output styles** (`output-styles.md`): 4 lines added, 4 removed
+- **Настройка разрешений** (`permissions.md`): 4 lines added, 2 removed
+- **Справочник по плагинам** (`plugins-reference.md`): 14 lines added, 0 removed
+  - New section: "### Нераспознанные поля"
+- **Создание plugins** (`plugins.md`): 14 lines added, 3 removed
+  - New section: "### Отправьте ваш plugin на официальный marketplace сообщества"
+- **Параметры Claude Code** (`settings.md`): 10 lines added, 1 removed
+  - New section: "### Когда изменения вступают в силу"
+- **Расширьте Claude с помощью skills** (`skills.md`): 18 lines added, 0 removed
+  - New section: "### Запуск и проверка вашего приложения"
+- **Настройка строки состояния** (`statusline.md`): 18 lines added, 1 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **Amazon Bedrock 上的 Claude Code** (`amazon-bedrock.md`): 3 lines added, 1 removed
+- **CLI 参考** (`cli-reference.md`): 30 lines added, 30 removed
+- **有效管理成本** (`costs.md`): 9 lines added, 9 removed
+- **通过市场发现和安装预构建插件** (`discover-plugins.md`): 23 lines added, 8 removed
+  - New section: "## 社区市场"
+- **扩展 Claude Code** (`features-overview.md`): 39 lines added, 25 removed
+- **Google Vertex AI 上的 Claude Code** (`google-vertex-ai.md`): 1 lines added, 1 removed
+- **以编程方式运行 Claude Code** (`headless.md`): 11 lines added, 11 removed
+- **使用 hooks 自动化工作流** (`hooks-guide.md`): 18 lines added, 18 removed
+- **Hooks 参考** (`hooks.md`): 76 lines added, 28 removed
+- **交互模式** (`interactive-mode.md`): 1 lines added, 2 removed
+- **自定义快捷键** (`keybindings.md`): 5 lines added, 4 removed
+- **通过 MCP 将 Claude Code 连接到工具** (`mcp.md`): 2 lines added, 0 removed
+- **Microsoft Foundry 上的 Claude Code** (`microsoft-foundry.md`): 1 lines added, 1 removed
+- **模型配置** (`model-config.md`): 18 lines added, 10 removed
+- **监控** (`monitoring-usage.md`): 29 lines added, 9 removed
+  - New section: "#### Hook 插件指标事件"
+- **输出样式** (`output-styles.md`): 4 lines added, 4 removed
+- **配置权限** (`permissions.md`): 4 lines added, 2 removed
+- **Plugins 参考** (`plugins-reference.md`): 14 lines added, 0 removed
+  - New section: "### 未识别的字段"
+- **创建插件** (`plugins.md`): 14 lines added, 3 removed
+  - New section: "### 向社区市场提交你的插件"
+- **Claude Code 设置** (`settings.md`): 12 lines added, 3 removed
+  - New section: "### 编辑何时生效"
+- **使用 skills 扩展 Claude** (`skills.md`): 18 lines added, 0 removed
+  - New section: "### 运行并验证你的应用"
+- **自定义你的状态行** (`statusline.md`): 18 lines added, 1 removed
+- **创建自定义 subagents** (`sub-agents.md`): 1 lines added, 1 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **Amazon Bedrock 上的 Claude Code** (`amazon-bedrock.md`): 4 lines added, 2 removed
+- **CLI 參考** (`cli-reference.md`): 30 lines added, 30 removed
+- **有效管理成本** (`costs.md`): 8 lines added, 8 removed
+- **透過市場探索和安裝預建外掛程式** (`discover-plugins.md`): 23 lines added, 8 removed
+  - New section: "## 社群市場"
+- **擴展 Claude Code** (`features-overview.md`): 39 lines added, 25 removed
+- **Google Vertex AI 上的 Claude Code** (`google-vertex-ai.md`): 1 lines added, 1 removed
+- **以程式方式執行 Claude Code** (`headless.md`): 11 lines added, 11 removed
+- **使用 hooks 自動化工作流程** (`hooks-guide.md`): 18 lines added, 18 removed
+- **Hooks 參考** (`hooks.md`): 76 lines added, 28 removed
+- **互動模式** (`interactive-mode.md`): 1 lines added, 2 removed
+- **自訂鍵盤快捷鍵** (`keybindings.md`): 5 lines added, 4 removed
+- **透過 MCP 將 Claude Code 連接到工具** (`mcp.md`): 2 lines added, 0 removed
+- **Microsoft Foundry 上的 Claude Code** (`microsoft-foundry.md`): 1 lines added, 1 removed
+- **模型配置** (`model-config.md`): 19 lines added, 11 removed
+  - New section: "### 自訂固定模型顯示和能力"
+- **監控** (`monitoring-usage.md`): 29 lines added, 9 removed
+  - New section: "#### Hook plugin 指標事件"
+- **輸出樣式** (`output-styles.md`): 4 lines added, 4 removed
+- **設定權限** (`permissions.md`): 5 lines added, 3 removed
+- **Plugins 參考** (`plugins-reference.md`): 14 lines added, 0 removed
+  - New section: "### 無法識別的欄位"
+- **建立 plugins** (`plugins.md`): 13 lines added, 2 removed
+- **Claude Code 設定** (`settings.md`): 12 lines added, 3 removed
+  - New section: "### 編輯何時生效"
+- **使用 skills 擴展 Claude** (`skills.md`): 18 lines added, 0 removed
+  - New section: "### 執行並驗證您的應用程式"
+- **自訂您的狀態列** (`statusline.md`): 18 lines added, 1 removed
+
+---
+
 ## 2026-05-19
 
 247 pages modified

@@ -53,7 +53,11 @@ Anthropic API 및 [Claude Platform on AWS](/ko/claude-platform-on-aws)에서 `op
 3. **환경 변수** - `ANTHROPIC_MODEL=<alias|name>`을 설정합니다.
 4. **설정** - `model` 필드를 사용하여 설정 파일에서 영구적으로 구성합니다.
 
-`/model` 선택은 사용자 설정에 저장되며 재시작 후에도 유지됩니다. v2.1.117부터 프로젝트의 `.claude/settings.json`이 다른 모델을 고정하는 경우, Claude Code는 선택 항목을 `.claude/settings.local.json`에도 작성하므로 재시작 후 해당 프로젝트에서 계속 적용됩니다. 관리되는 설정이 우선순위를 가지며 다음 실행 시 다시 적용됩니다.
+v2.1.144부터 `/model`은 현재 세션에만 적용되며 설정에 기록되지 않습니다. 선택 항목을 새 세션의 기본값으로 저장하려면 선택기에서 강조 표시된 행에서 `d`를 누르면 사용자 설정에서 `model` 필드가 기록됩니다. 관리되는 설정이 우선순위를 가지며 다음 실행 시 다시 적용됩니다.
+
+`--model` 플래그 및 `ANTHROPIC_MODEL` 환경 변수도 이를 사용하여 실행한 세션에만 적용됩니다. 동시에 다른 터미널에서 다른 모델을 실행하려면 `/model`로 전환하는 대신 각각 자신의 `--model` 플래그로 실행합니다.
+
+`claude --resume`, `--continue` 또는 `/resume` 선택기로 시작된 재개된 세션은 현재 `model` 설정에 관계없이 트랜스크립트가 저장되었을 때 사용 중이던 모델을 유지합니다. 해당 모델이 중단된 경우 세션은 일반 우선순위 순서로 폴백됩니다. 이는 다른 세션의 `/model` 선택이 재개 시 모델을 변경하는 것을 방지합니다.
 
 시작 시 활성 모델이 자신의 선택이 아닌 프로젝트 또는 관리되는 설정에서 나온 경우, 시작 헤더는 어느 설정 파일이 이를 설정했는지 표시합니다. `/model`을 실행하여 현재 세션에 대해 재정의합니다.
 
@@ -318,7 +322,11 @@ Claude Code는 `ANTHROPIC_CUSTOM_MODEL_OPTION`에 설정된 모델 ID에 대한 
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7[1m]'
 ```
 
-`[1m]` 접미사는 `opusplan`을 포함한 해당 별칭의 모든 사용에 1M 컨텍스트 윈도우를 적용합니다. Claude Code는 모델 ID를 제공자에게 보내기 전에 접미사를 제거합니다. Opus 4.7 또는 Sonnet 4.6과 같이 기본 모델이 1M 컨텍스트를 지원할 때만 `[1m]`을 추가합니다.
+`[1m]` 접미사는 `opusplan`을 포함한 해당 별칭의 모든 사용에 1M 컨텍스트 윈도우를 적용합니다.
+
+* Claude Code는 모델 ID를 제공자에게 보내기 전에 접미사를 제거합니다.
+* 기본 모델이 1M 컨텍스트를 [지원할 때만](/ko/build-with-claude/context-windows#1m-token-context-window) `[1m]`을 추가합니다.
+* 접미사는 모델별이 아닌 변수별로 읽혀집니다. Bedrock, Vertex 및 Foundry에서 한 변수의 `[1m]` 없는 모델 ID는 다른 변수가 접미사와 함께 동일한 모델을 설정하더라도 200K 컨텍스트를 사용합니다.
 
 <Note>
   `settings.availableModels` 허용 목록은 타사 제공자를 사용할 때도 적용됩니다. 필터링은 제공자별 모델 ID가 아닌 모델 별칭(`opus`, `sonnet`, `haiku`)과 일치합니다.
@@ -388,13 +396,13 @@ export ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES='effort,xhigh_effort,
 
 ### Prompt caching 구성
 
-Claude Code는 성능을 최적화하고 비용을 절감하기 위해 [prompt caching](https://platform.claude.com/docs/ko/build-with-claude/prompt-caching)을 자동으로 사용합니다. 전역적으로 또는 특정 모델 계층에 대해 prompt caching을 비활성화할 수 있습니다:
+Claude Code는 성능을 최적화하고 비용을 절감하기 위해 [prompt caching](/ko/prompt-caching)을 자동으로 사용합니다. 전역적으로 또는 특정 모델 계층에 대해 prompt caching을 비활성화할 수 있습니다:
 
-| 환경 변수                           | 설명                                                     |
-| ------------------------------- | ------------------------------------------------------ |
-| `DISABLE_PROMPT_CACHING`        | 모든 모델에 대해 prompt caching을 비활성화하려면 `1`로 설정(모델별 설정보다 우선) |
-| `DISABLE_PROMPT_CACHING_HAIKU`  | Haiku 모델에 대해서만 prompt caching을 비활성화하려면 `1`로 설정         |
-| `DISABLE_PROMPT_CACHING_SONNET` | Sonnet 모델에 대해서만 prompt caching을 비활성화하려면 `1`로 설정        |
-| `DISABLE_PROMPT_CACHING_OPUS`   | Opus 모델에 대해서만 prompt caching을 비활성화하려면 `1`로 설정          |
+| 환경 변수                           | 설명                                                           |
+| ------------------------------- | ------------------------------------------------------------ |
+| `DISABLE_PROMPT_CACHING`        | 모든 모델에 대해 prompt caching을 비활성화하려면 `1`로 설정합니다. 모델별 설정보다 우선합니다 |
+| `DISABLE_PROMPT_CACHING_HAIKU`  | Haiku 모델에 대해서만 prompt caching을 비활성화하려면 `1`로 설정합니다            |
+| `DISABLE_PROMPT_CACHING_SONNET` | Sonnet 모델에 대해서만 prompt caching을 비활성화하려면 `1`로 설정합니다           |
+| `DISABLE_PROMPT_CACHING_OPUS`   | Opus 모델에 대해서만 prompt caching을 비활성화하려면 `1`로 설정합니다             |
 
-이러한 환경 변수는 prompt caching 동작에 대한 세밀한 제어를 제공합니다. 전역 `DISABLE_PROMPT_CACHING` 설정은 모델별 설정보다 우선하므로 필요할 때 모든 캐싱을 빠르게 비활성화할 수 있습니다. 모델별 설정은 특정 모델 디버깅 또는 다양한 캐싱 구현을 가질 수 있는 클라우드 제공자와 작업할 때와 같이 선택적 제어에 유용합니다.
+캐시 TTL을 변경하거나 캐시 미스를 트리거하는 것이 무엇인지 알아보려면 [Claude Code가 prompt caching을 사용하는 방법](/ko/prompt-caching)을 참조하세요.

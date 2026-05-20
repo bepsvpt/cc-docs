@@ -189,25 +189,25 @@ Hooks определяются в JSON файлах настроек. Конфи
 
 Каждый тип события совпадает с другим полем:
 
-| Событие                                                                                                                         | На что фильтр влияет                                                     | Примеры значений фильтра                                                                                                                           |
-| :------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                      | имя инструмента                                                          | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                                                   |
-| `SessionStart`                                                                                                                  | как сеанс начался                                                        | `startup`, `resume`, `clear`, `compact`                                                                                                            |
-| `Setup`                                                                                                                         | какой флаг CLI запустил setup                                            | `init`, `maintenance`                                                                                                                              |
-| `SessionEnd`                                                                                                                    | почему сеанс закончился                                                  | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                                           |
-| `Notification`                                                                                                                  | тип уведомления                                                          | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`, `elicitation_complete`, `elicitation_response`                           |
-| `SubagentStart`                                                                                                                 | тип агента                                                               | `general-purpose`, `Explore`, `Plan` или пользовательские имена агентов                                                                            |
-| `PreCompact`, `PostCompact`                                                                                                     | что вызвало компактирование                                              | `manual`, `auto`                                                                                                                                   |
-| `SubagentStop`                                                                                                                  | тип агента                                                               | те же значения, что и `SubagentStart`                                                                                                              |
-| `ConfigChange`                                                                                                                  | источник конфигурации                                                    | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                                                 |
-| `CwdChanged`                                                                                                                    | поддержка фильтра отсутствует                                            | всегда срабатывает при каждом изменении каталога                                                                                                   |
-| `FileChanged`                                                                                                                   | буквальные имена файлов для наблюдения (см. [FileChanged](#filechanged)) | `.envrc\|.env`                                                                                                                                     |
-| `StopFailure`                                                                                                                   | тип ошибки                                                               | `rate_limit`, `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens`, `unknown` |
-| `InstructionsLoaded`                                                                                                            | причина загрузки                                                         | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                                                       |
-| `UserPromptExpansion`                                                                                                           | имя команды                                                              | ваши имена skills или команд                                                                                                                       |
-| `Elicitation`                                                                                                                   | имя MCP сервера                                                          | ваши настроенные имена MCP серверов                                                                                                                |
-| `ElicitationResult`                                                                                                             | имя MCP сервера                                                          | те же значения, что и `Elicitation`                                                                                                                |
-| `UserPromptSubmit`, `PostToolBatch`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | поддержка фильтра отсутствует                                            | всегда срабатывает при каждом вхождении                                                                                                            |
+| Событие                                                                                                                         | На что фильтр влияет                                                     | Примеры значений фильтра                                                                                                                                              |
+| :------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `PermissionRequest`, `PermissionDenied`                                      | имя инструмента                                                          | `Bash`, `Edit\|Write`, `mcp__.*`                                                                                                                                      |
+| `SessionStart`                                                                                                                  | как сеанс начался                                                        | `startup`, `resume`, `clear`, `compact`                                                                                                                               |
+| `Setup`                                                                                                                         | какой флаг CLI запустил setup                                            | `init`, `maintenance`                                                                                                                                                 |
+| `SessionEnd`                                                                                                                    | почему сеанс закончился                                                  | `clear`, `resume`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other`                                                                              |
+| `Notification`                                                                                                                  | тип уведомления                                                          | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`, `elicitation_complete`, `elicitation_response`                                              |
+| `SubagentStart`                                                                                                                 | тип агента                                                               | `general-purpose`, `Explore`, `Plan` или пользовательские имена агентов                                                                                               |
+| `PreCompact`, `PostCompact`                                                                                                     | что вызвало компактирование                                              | `manual`, `auto`                                                                                                                                                      |
+| `SubagentStop`                                                                                                                  | тип агента                                                               | те же значения, что и `SubagentStart`                                                                                                                                 |
+| `ConfigChange`                                                                                                                  | источник конфигурации                                                    | `user_settings`, `project_settings`, `local_settings`, `policy_settings`, `skills`                                                                                    |
+| `CwdChanged`                                                                                                                    | поддержка фильтра отсутствует                                            | всегда срабатывает при каждом изменении каталога                                                                                                                      |
+| `FileChanged`                                                                                                                   | буквальные имена файлов для наблюдения (см. [FileChanged](#filechanged)) | `.envrc\|.env`                                                                                                                                                        |
+| `StopFailure`                                                                                                                   | тип ошибки                                                               | `rate_limit`, `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `invalid_request`, `model_not_found`, `server_error`, `max_output_tokens`, `unknown` |
+| `InstructionsLoaded`                                                                                                            | причина загрузки                                                         | `session_start`, `nested_traversal`, `path_glob_match`, `include`, `compact`                                                                                          |
+| `UserPromptExpansion`                                                                                                           | имя команды                                                              | ваши имена skills или команд                                                                                                                                          |
+| `Elicitation`                                                                                                                   | имя MCP сервера                                                          | ваши настроенные имена MCP серверов                                                                                                                                   |
+| `ElicitationResult`                                                                                                             | имя MCP сервера                                                          | те же значения, что и `Elicitation`                                                                                                                                   |
+| `UserPromptSubmit`, `PostToolBatch`, `Stop`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove` | поддержка фильтра отсутствует                                            | всегда срабатывает при каждом вхождении                                                                                                                               |
 
 Фильтр запускается против поля из [JSON входа](#hook-input-and-output), который Claude Code отправляет вашему hook на stdin. Для событий инструмента это поле — `tool_name`. Каждый раздел [hook event](#hook-events) перечисляет полный набор значений фильтра и схему входа для этого события.
 
@@ -732,7 +732,7 @@ Hooks запускаются без управляющего терминала,
 # Notification hook: ping the desktop when Claude Code needs attention.
 input=$(cat)
 title="Claude Code'
-body=$(jq -r '.message // 'Needs your attention'' <<<"$input")
+body=$(jq -r '.message // 'Needs your attention'' <<<'$input')
 seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
 jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 ```
@@ -1748,6 +1748,8 @@ SubagentStart hooks не могут блокировать создание suba
 
 В дополнение к [общим полям входа](#common-input-fields), SubagentStop hooks получают `stop_hook_active`, `agent_id`, `agent_type`, `agent_transcript_path` и `last_assistant_message`. Поле `agent_type` — это значение, используемое для фильтрации фильтра. `transcript_path` — это транскрипт основного сеанса, в то время как `agent_transcript_path` — это собственный транскрипт subagent, хранящийся в вложенной папке `subagents/`. Поле `last_assistant_message` содержит текстовое содержимое финального ответа subagent, поэтому hooks могут получить к нему доступ без анализа файла транскрипта.
 
+SubagentStop hooks также получают массивы `background_tasks` и `session_crons`, описанные в разделе [Stop input](#stop-input), доступные в Claude Code v2.1.145 или позже. Оба массива ограничены родительским сеансом, а не subagent.
+
 ```json theme={null}
 {
   "session_id": "abc123",
@@ -1759,7 +1761,9 @@ SubagentStart hooks не могут блокировать создание suba
   "agent_id": "def456",
   "agent_type": "Explore",
   "agent_transcript_path": "~/.claude/projects/.../abc123/subagents/agent-def456.jsonl",
-  "last_assistant_message": "Analysis complete. Found 3 potential issues..."
+  "last_assistant_message": "Analysis complete. Found 3 potential issues...",
+  "background_tasks": [],
+  "session_crons": []
 }
 ```
 
@@ -1886,7 +1890,34 @@ exit 0
 
 #### Stop input
 
-В дополнение к [общим полям входа](#common-input-fields), Stop hooks получают `stop_hook_active` и `last_assistant_message`. Поле `stop_hook_active` равно `true`, когда Claude Code уже продолжает в результате stop hook. Проверьте это значение или обработайте транскрипт, чтобы предотвратить бесконечное выполнение Claude Code. Поле `last_assistant_message` содержит текстовое содержимое финального ответа Claude, поэтому hooks могут получить к нему доступ без анализа файла транскрипта.
+В дополнение к [общим полям входа](#common-input-fields), Stop hooks получают `stop_hook_active`, `last_assistant_message`, `background_tasks` и `session_crons`. Поле `stop_hook_active` равно `true`, когда Claude Code уже продолжает в результате stop hook. Проверьте это значение или обработайте транскрипт, чтобы предотвратить бесконечное выполнение Claude Code. Поле `last_assistant_message` содержит текстовое содержимое финального ответа Claude, поэтому hooks могут получить к нему доступ без анализа файла транскрипта.
+
+Массивы `background_tasks` и `session_crons`, доступные в Claude Code v2.1.145 или позже, позволяют hooks различать "сеанс завершён" от "сеанс приостановлен в ожидании фоновой работы для его пробуждения". Оба массива присутствуют, когда реестр задач доступен, и пусты, когда ничего не выполняется или не запланировано.
+
+Каждая запись в `background_tasks` описывает одну выполняемую задачу и использует эти поля:
+
+| Поле          | Описание                                                                                                                                                                                                                                                                 |
+| :------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`          | Идентификатор задачи                                                                                                                                                                                                                                                     |
+| `type`        | Дружественный ярлык типа задачи, такой как `shell`, `subagent`, `monitor`, `workflow`, `teammate`, `cloud session` или `MCP task`. Каждый ярлык определяет, какая функция Claude Code создала задачу. Возвращается к необработанному дискриминанту для неизвестных типов |
+| `status`      | Текущий статус задачи                                                                                                                                                                                                                                                    |
+| `description` | Описание в свободной форме, ограниченное 1000 символами с маркером `… [+N chars]` в строке при обрезке                                                                                                                                                                   |
+| `command`     | Командная строка оболочки, ограниченная 1000 символами. Присутствует только для задач `shell`                                                                                                                                                                            |
+| `agent_type`  | Имя типа subagent. Присутствует только для задач `subagent`                                                                                                                                                                                                              |
+| `server`      | Имя MCP сервера. Присутствует только для задач `monitor` и `MCP task`                                                                                                                                                                                                    |
+| `tool`        | Имя MCP инструмента. Присутствует только для задач `monitor` и `MCP task`                                                                                                                                                                                                |
+| `name`        | Имя workflow. Присутствует только для задач `workflow`                                                                                                                                                                                                                   |
+
+Каждая запись в `session_crons` описывает одно запланированное пробуждение, ограниченное сеансом, полученное из `CronCreate` и `/loop`:
+
+| Поле        | Описание                                                                                                                                                   |
+| :---------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`        | Идентификатор cron задачи                                                                                                                                  |
+| `schedule`  | Выражение cron, например `0 9 * * 1-5`                                                                                                                     |
+| `recurring` | `false` для одноразовых пробуждений, чьё расписание кодирует одно время срабатывания, `true` для задач, которые повторно срабатывают при каждом совпадении |
+| `prompt`    | Подсказка, отправленная при срабатывании cron, ограниченная 1000 символами с тем же маркером `… [+N chars]`                                                |
+
+Этот пример показывает Stop input с одной выполняемой shell задачей и одним повторяющимся cron:
 
 ```json theme={null}
 {
@@ -1896,7 +1927,24 @@ exit 0
   "permission_mode": "default",
   "hook_event_name": "Stop",
   "stop_hook_active": true,
-  "last_assistant_message": "I've completed the refactoring. Here's a summary..."
+  "last_assistant_message": "I've completed the refactoring. Here's a summary...",
+  "background_tasks": [
+    {
+      "id": "task-001",
+      "type": "shell",
+      "status": "running",
+      "description": "tail logs",
+      "command": "tail -f /var/log/syslog"
+    }
+  ],
+  "session_crons": [
+    {
+      "id": "cron-001",
+      "schedule": "0 9 * * 1-5",
+      "recurring": true,
+      "prompt": "check the build"
+    }
+  ]
 }
 ```
 
@@ -1926,7 +1974,7 @@ Hooks `Stop` и `SubagentStop` могут управлять тем, продо�
 
 | Поле                     | Описание                                                                                                                                                                                                                                |
 | :----------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `error`                  | Тип ошибки: `rate_limit`, `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `invalid_request`, `server_error`, `max_output_tokens` или `unknown`                                                                       |
+| `error`                  | Тип ошибки: `rate_limit`, `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `invalid_request`, `model_not_found`, `server_error`, `max_output_tokens` или `unknown`                                                    |
 | `error_details`          | Дополнительные детали об ошибке, когда доступны                                                                                                                                                                                         |
 | `last_assistant_message` | Отрендеренный текст ошибки, показанный в разговоре. В отличие от `Stop` и `SubagentStop`, где это поле содержит разговорный выход Claude, для `StopFailure` оно содержит строку ошибки API, такую как `"API Error: Rate limit reached"` |
 
@@ -2017,7 +2065,8 @@ ConfigChange hooks срабатывают для изменений файлов
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/audit-config-change.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/audit-config-change.sh",
+            "args": []
           }
         ]
       }

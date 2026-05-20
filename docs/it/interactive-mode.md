@@ -349,9 +349,8 @@ Quando lavorate su un ramo con una pull request aperta, Claude Code visualizza u
 * Giallo: revisione in sospeso
 * Rosso: modifiche richieste
 * Grigio: bozza
-* Viola: unito
 
-`Cmd+click` (Mac) o `Ctrl+click` (Windows/Linux) sul collegamento per aprire la pull request nel vostro browser. Lo stato si aggiorna automaticamente ogni 60 secondi.
+Il badge scompare una volta che la pull request viene unita o chiusa. `Cmd+click` (Mac) o `Ctrl+click` (Windows/Linux) sul collegamento per aprire la pull request nel vostro browser. Lo stato si aggiorna ogni 60 secondi e immediatamente dopo l'esecuzione di un comando `gh pr` o `git push` nella sessione.
 
 <Note>
   Lo stato PR richiede che la CLI `gh` sia installata e autenticata (`gh auth login`).

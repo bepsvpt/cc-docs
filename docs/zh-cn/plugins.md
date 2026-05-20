@@ -354,14 +354,25 @@ claude --plugin-url "https://example.com/my-plugin.zip https://example.com/other
 
 一旦你的插件在市场中，其他人可以使用 [Discover and install plugins](/zh-CN/discover-plugins) 中的说明安装它。要将插件保持在你的团队内部，请在 [private repository](/zh-CN/plugin-marketplaces#private-repositories) 中托管市场。
 
-### 向官方市场提交你的插件
+### 向社区市场提交你的插件
 
-要向官方 Anthropic 市场提交插件，请使用以下应用内提交表单之一：
+Anthropic 为 Claude Code 插件维护两个公共市场：
+
+* **`claude-plugins-official`**：由 Anthropic 维护的精选插件集。在每个 Claude Code 安装中自动可用。
+* **`claude-community`**：公共社区市场，第三方提交在审查后进入。用户使用 `/plugin marketplace add anthropics/claude-plugins-community` 添加它，并从中安装为 `@claude-community`。
+
+要提交你的插件以供社区市场审查，请使用以下应用内表单之一：
 
 * **Claude.ai**：[claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
 * **Console**：[platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
 
-一旦你的插件被列出，你可以拥有自己的 CLI 提示 Claude Code 用户安装它。请参阅 [Recommend your plugin from your CLI](/zh-CN/plugin-hints)。
+在提交之前，在本地运行 `claude plugin validate`。审查管道对每个提交运行相同的检查，以及自动安全筛选。
+
+批准的插件被固定到 [`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community) 目录中的特定提交 SHA，当你向你的存储库推送新提交时，CI 会自动提升该固定。公共目录每晚从审查管道同步，因此批准和你的插件出现在 `marketplace.json` 中之间可能会有延迟。要检查你的插件是否已可安装，请在[社区目录](https://github.com/anthropics/claude-plugins-community/blob/main/.claude-plugin/marketplace.json)中搜索其名称。
+
+官方市场 `claude-plugins-official` 是单独策划的。Anthropic 自行决定包含哪些插件。没有申请流程，提交表单不会将插件添加到官方市场。
+
+如果 Anthropic 在官方市场中列出你的插件，你的 CLI 可以提示 Claude Code 用户安装它。请参阅 [Recommend your plugin from your CLI](/zh-CN/plugin-hints)。
 
 <Note>
   有关完整的技术规范、调试技术和分发策略，请参阅 [Plugins reference](/zh-CN/plugins-reference)。

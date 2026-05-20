@@ -766,7 +766,9 @@ Si ha iniciado sesión en Claude Code con una cuenta de [Claude.ai](https://clau
   </Step>
 </Steps>
 
-Un servidor que ha agregado en Claude Code tiene [precedencia](#scope-hierarchy-and-precedence) sobre un conector de claude.ai que apunta a la misma URL. Cuando esto sucede, `/mcp` enumera el conector como oculto y muestra cómo eliminar el duplicado si prefiere usar el conector.
+Los conectores de Claude.ai se obtienen solo cuando su [método de autenticación](/es/authentication#authentication-precedence) activo es su suscripción a Claude.ai. No se cargan cuando `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `apiKeyHelper`, o un proveedor de terceros como Bedrock o Vertex está activo, incluso si ejecutó previamente `/login`. Si `/mcp` no enumera un conector que agregó, ejecute `/status` para confirmar qué método de autenticación está activo, desestablezca esa variable de entorno o elimine la configuración `apiKeyHelper`, luego ejecute `/login` para seleccionar su cuenta de Claude.ai.
+
+Un servidor que ha agregado en Claude Code tiene [precedencia](#scope-hierarchy-and-precedence) sobre un conector de Claude.ai que apunta a la misma URL. Cuando esto sucede, `/mcp` enumera el conector como oculto y muestra cómo eliminar el duplicado si prefiere usar el conector.
 
 Para desactivar servidores MCP de Claude.ai en Claude Code, establezca la variable de entorno `ENABLE_CLAUDEAI_MCP_SERVERS` en `false`:
 

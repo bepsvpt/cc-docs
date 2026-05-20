@@ -157,6 +157,7 @@ Claude Code mengirim bidang JSON berikut ke skrip Anda melalui stdin:
 | `workspace.project_dir`                                                          | Direktori tempat Claude Code diluncurkan, yang mungkin berbeda dari `cwd` jika direktori kerja berubah selama sesi                                                                                                                                         |
 | `workspace.added_dirs`                                                           | Direktori tambahan yang ditambahkan melalui `/add-dir` atau `--add-dir`. Array kosong jika tidak ada yang telah ditambahkan                                                                                                                                |
 | `workspace.git_worktree`                                                         | Nama git worktree ketika direktori saat ini berada di dalam linked worktree yang dibuat dengan `git worktree add`. Tidak ada di main working tree. Diisi untuk git worktree apa pun, tidak seperti `worktree.*` yang hanya berlaku untuk sesi `--worktree` |
+| `workspace.repo.host`, `workspace.repo.owner`, `workspace.repo.name`             | Identitas repositori yang diuraikan dari remote `origin`, misalnya `"github.com"`, `"anthropics"`, `"claude-code"`. Tidak ada di luar repositori git atau ketika tidak ada remote `origin` yang dikonfigurasi                                              |
 | `cost.total_cost_usd`                                                            | Perkiraan biaya sesi dalam USD, dihitung sisi klien. Mungkin berbeda dari tagihan aktual Anda                                                                                                                                                              |
 | `cost.total_duration_ms`                                                         | Total waktu dinding jam sejak sesi dimulai, dalam milidetik                                                                                                                                                                                                |
 | `cost.total_api_duration_ms`                                                     | Total waktu yang dihabiskan menunggu respons API dalam milidetik                                                                                                                                                                                           |
@@ -178,6 +179,8 @@ Claude Code mengirim bidang JSON berikut ke skrip Anda melalui stdin:
 | `output_style.name`                                                              | Nama gaya output saat ini                                                                                                                                                                                                                                  |
 | `vim.mode`                                                                       | Mode vim saat ini (`NORMAL`, `INSERT`, `VISUAL`, atau `VISUAL LINE`) ketika [vim mode](/id/interactive-mode#vim-editor-mode) diaktifkan                                                                                                                    |
 | `agent.name`                                                                     | Nama agen saat menjalankan dengan bendera `--agent` atau pengaturan agen dikonfigurasi                                                                                                                                                                     |
+| `pr.number`, `pr.url`                                                            | Buka permintaan tarik untuk cabang saat ini. Mencerminkan lencana PR di bilah status bawah. Tidak ada sampai PR ditemukan, ketika tidak dalam repositori git, atau setelah PR digabungkan atau ditutup                                                     |
+| `pr.review_state`                                                                | Status tinjauan PR terbuka: `approved`, `pending`, `changes_requested`, atau `draft`. Mungkin secara independen tidak ada bahkan ketika `pr` ada                                                                                                           |
 | `worktree.name`                                                                  | Nama worktree aktif. Hadir hanya selama sesi `--worktree`                                                                                                                                                                                                  |
 | `worktree.path`                                                                  | Jalur absolut ke direktori worktree                                                                                                                                                                                                                        |
 | `worktree.branch`                                                                | Nama cabang Git untuk worktree (misalnya, `"worktree-my-feature"`). Tidak ada untuk worktree berbasis hook                                                                                                                                                 |
@@ -201,7 +204,12 @@ Claude Code mengirim bidang JSON berikut ke skrip Anda melalui stdin:
       "current_dir": "/current/working/directory",
       "project_dir": "/original/project/directory",
       "added_dirs": [],
-      "git_worktree": "feature-xyz"
+      "git_worktree": "feature-xyz",
+      "repo": {
+        "host": "github.com",
+        "owner": "anthropics",
+        "name": "claude-code"
+      }
     },
     "version": "2.1.90",
     "output_style": {
@@ -250,6 +258,11 @@ Claude Code mengirim bidang JSON berikut ke skrip Anda melalui stdin:
     "agent": {
       "name": "security-reviewer"
     },
+    "pr": {
+      "number": 1234,
+      "url": "https://github.com/anthropics/claude-code/pull/1234",
+      "review_state": "pending"
+    },
     "worktree": {
       "name": "my-feature",
       "path": "/path/to/.claude/worktrees/my-feature",
@@ -264,9 +277,11 @@ Claude Code mengirim bidang JSON berikut ke skrip Anda melalui stdin:
 
   * `session_name`: muncul hanya ketika nama khusus telah ditetapkan dengan `--name` atau `/rename`
   * `workspace.git_worktree`: muncul hanya ketika direktori saat ini berada di dalam linked git worktree
+  * `workspace.repo`: muncul hanya di dalam repositori git dengan remote `origin` yang dikonfigurasi
   * `effort`: muncul hanya ketika model saat ini mendukung parameter upaya penalaran
   * `vim`: muncul hanya ketika vim mode diaktifkan
   * `agent`: muncul hanya saat menjalankan dengan bendera `--agent` atau pengaturan agen dikonfigurasi
+  * `pr`: muncul hanya saat PR terbuka ditemukan untuk cabang saat ini, dan dihapus setelah PR digabungkan atau ditutup. `pr.review_state` mungkin secara independen tidak ada
   * `worktree`: muncul hanya selama sesi `--worktree`. Ketika ada, `branch` dan `original_branch` juga mungkin tidak ada untuk worktree berbasis hook
   * `rate_limits`: muncul hanya untuk pelanggan Claude.ai (Pro/Max) setelah respons API pertama dalam sesi. Setiap jendela (`five_hour`, `seven_day`) mungkin secara independen tidak ada. Gunakan `jq -r '.rate_limits.five_hour.used_percentage // empty'` untuk menangani ketiadaan dengan anggun.
 
@@ -291,6 +306,8 @@ Objek `current_usage` berisi:
 * `output_tokens`: token output yang dihasilkan
 * `cache_creation_input_tokens`: token yang ditulis ke cache
 * `cache_read_input_tokens`: token yang dibaca dari cache
+
+Untuk apa arti bidang cache dan bagaimana cara penagihan, lihat [periksa kinerja cache](/id/prompt-caching#check-cache-performance).
 
 Bidang `used_percentage` dihitung dari token input saja: `input_tokens + cache_creation_input_tokens + cache_read_input_tokens`. Itu tidak termasuk `output_tokens`.
 

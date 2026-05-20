@@ -76,7 +76,7 @@ Para manter os custos das equipes de agentes gerenciáveis:
 
 ## Reduza o uso de tokens
 
-Os custos de tokens escalam com o tamanho do contexto: quanto mais contexto Claude processa, mais tokens você usa. Claude Code otimiza automaticamente os custos através do prompt caching (que reduz custos para conteúdo repetido como prompts do sistema) e auto-compaction (que resume o histórico de conversa ao se aproximar dos limites de contexto).
+Os custos de tokens escalam com o tamanho do contexto: quanto mais contexto Claude processa, mais tokens você usa. Claude Code otimiza automaticamente os custos através do [prompt caching](/pt/prompt-caching), que reduz custos para conteúdo repetido como prompts do sistema, e auto-compaction, que resume o histórico de conversa ao se aproximar dos limites de contexto.
 
 As seguintes estratégias ajudam você a manter o contexto pequeno e reduzir custos por mensagem.
 
@@ -184,7 +184,7 @@ Solicitações vagas como "melhorar esta base de código" disparam varredura amp
 
 Para trabalho mais longo ou complexo, esses hábitos ajudam a evitar tokens desperdiçados por seguir o caminho errado:
 
-* **Use modo de plano para tarefas complexas**: Pressione Shift+Tab para entrar em [modo de plano](/pt/common-workflows#use-plan-mode-for-safe-code-analysis) antes da implementação. Claude explora a base de código e propõe uma abordagem para sua aprovação, prevenindo retrabalho caro quando a direção inicial está errada.
+* **Use modo de plano para tarefas complexas**: Pressione Shift+Tab para entrar em [modo de plano](/pt/permission-modes#analyze-before-you-edit-with-plan-mode) antes da implementação. Claude explora a base de código e propõe uma abordagem para sua aprovação, prevenindo retrabalho caro quando a direção inicial está errada.
 * **Corrija o curso cedo**: Se Claude começar a seguir a direção errada, pressione Escape para parar imediatamente. Use `/rewind` ou toque duplo em Escape para restaurar conversa e código para um checkpoint anterior.
 * **Dê alvos de verificação**: Inclua casos de teste, cole capturas de tela ou defina saída esperada em seu prompt. Quando Claude pode verificar seu próprio trabalho, detecta problemas antes de você precisar solicitar correções.
 * **Teste incrementalmente**: Escreva um arquivo, teste-o, depois continue. Isto detecta problemas cedo quando são baratos de corrigir.

@@ -356,12 +356,23 @@ claude --plugin-url "https://example.com/my-plugin.zip https://example.com/other
 
 ### 將您的 plugin 提交到官方市場
 
-若要將 plugin 提交到官方 Anthropic 市場，請使用其中一個應用內提交表單：
+Anthropic 為 Claude Code plugins 維護兩個公開市場：
+
+* **`claude-plugins-official`**：由 Anthropic 維護的精選 plugins 集合。在每個 Claude Code 安裝中自動可用。
+* **`claude-community`**：公開社群市場，第三方提交在審查後會進入此市場。使用者使用 `/plugin marketplace add anthropics/claude-plugins-community` 新增它，並將其作為 `@claude-community` 進行安裝。
+
+若要提交您的 plugin 以進行官方市場審查，請使用其中一個應用內提交表單：
 
 * **Claude.ai**：[claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
 * **Console**：[platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
 
-一旦您的 plugin 被列出，您可以讓您自己的 CLI 提示 Claude Code 使用者安裝它。請參閱 [Recommend your plugin from your CLI](/zh-TW/plugin-hints)。
+在提交前在本地執行 `claude plugin validate`。審查管道在每個提交上執行相同的檢查，以及自動安全篩選。
+
+已批准的 plugins 會固定到 [`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community) 目錄中的特定 commit SHA，當您將新 commits 推送到您的儲存庫時，CI 會自動更新該固定。公開目錄每晚從審查管道同步，因此批准和您的 plugin 出現在 `marketplace.json` 之間可能會有延遲。若要檢查您的 plugin 是否已可安裝，請在[官方目錄](https://github.com/anthropics/claude-plugins-community/blob/main/.claude-plugin/marketplace.json)中搜尋其名稱。
+
+官方市場 `claude-plugins-official` 是單獨策劃的。Anthropic 根據其自行決定決定要包含哪些 plugins。沒有應用程序流程，提交表單不會將 plugins 新增到官方市場。
+
+如果 Anthropic 在官方市場中列出您的 plugin，您的 CLI 可以提示 Claude Code 使用者進行安裝。請參閱 [Recommend your plugin from your CLI](/zh-TW/plugin-hints)。
 
 <Note>
   如需完整的技術規格、偵錯技術和分發策略，請參閱 [Plugins reference](/zh-TW/plugins-reference)。

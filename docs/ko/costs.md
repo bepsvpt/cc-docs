@@ -76,7 +76,7 @@ Bedrock, Vertex 및 Foundry에서 Claude Code는 클라우드에서 메트릭을
 
 ## 토큰 사용량 감소
 
-토큰 비용은 컨텍스트 크기에 따라 확장됩니다. Claude가 처리하는 컨텍스트가 많을수록 더 많은 토큰을 사용합니다. Claude Code는 prompt caching(시스템 프롬프트와 같은 반복되는 콘텐츠의 비용을 줄임)과 auto-compaction(컨텍스트 한도에 접근할 때 대화 기록을 요약함)을 통해 비용을 자동으로 최적화합니다.
+토큰 비용은 컨텍스트 크기에 따라 확장됩니다. Claude가 처리하는 컨텍스트가 많을수록 더 많은 토큰을 사용합니다. Claude Code는 [prompt caching](/ko/prompt-caching)(시스템 프롬프트와 같은 반복되는 콘텐츠의 비용을 줄임)과 auto-compaction(컨텍스트 한도에 접근할 때 대화 기록을 요약함)을 통해 비용을 자동으로 최적화합니다.
 
 다음 전략은 컨텍스트를 작게 유지하고 메시지당 비용을 줄이는 데 도움이 됩니다.
 
@@ -184,7 +184,7 @@ MCP 도구 정의는 [기본적으로 연기됩니다](/ko/mcp#scale-with-mcp-to
 
 더 길거나 복잡한 작업의 경우, 이러한 습관은 잘못된 경로로 인한 낭비된 토큰을 피하는 데 도움이 됩니다:
 
-* **복잡한 작업에 plan mode 사용**: Shift+Tab을 눌러 구현 전에 [plan mode](/ko/common-workflows#use-plan-mode-for-safe-code-analysis)에 들어가십시오. Claude는 코드베이스를 탐색하고 승인을 위한 접근 방식을 제안하여, 초기 방향이 잘못되었을 때 비용이 많이 드는 재작업을 방지합니다.
+* **복잡한 작업에 plan mode 사용**: Shift+Tab을 눌러 구현 전에 [plan mode](/ko/permission-modes#analyze-before-you-edit-with-plan-mode)에 들어가십시오. Claude는 코드베이스를 탐색하고 승인을 위한 접근 방식을 제안하여, 초기 방향이 잘못되었을 때 비용이 많이 드는 재작업을 방지합니다.
 * **조기에 방향 수정**: Claude가 잘못된 방향으로 가기 시작하면, Escape를 눌러 즉시 중지하십시오. `/rewind`를 사용하거나 Escape를 두 번 눌러 대화 및 코드를 이전 checkpoint로 복원하십시오.
 * **검증 대상 제공**: 테스트 케이스를 포함하고, 스크린샷을 붙여넣거나, 프롬프트에서 예상 출력을 정의하십시오. Claude가 자신의 작업을 검증할 수 있으면, 수정을 요청해야 하기 전에 문제를 포착합니다.
 * **증분적으로 테스트**: 한 파일을 작성하고, 테스트한 다음, 계속하십시오. 이는 문제가 저렴하게 수정될 수 있을 때 조기에 포착합니다.

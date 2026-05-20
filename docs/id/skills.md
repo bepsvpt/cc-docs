@@ -24,6 +24,22 @@ Claude Code menyertakan serangkaian skills bundel yang tersedia di setiap sesi, 
 
 Skills bundel terdaftar bersama perintah bawaan dalam [referensi perintah](/id/commands), ditandai **Skill** di kolom Tujuan.
 
+### Jalankan dan verifikasi aplikasi Anda
+
+Tiga skills bundel bekerja bersama untuk meluncurkan aplikasi Anda dan mengonfirmasi perubahan terhadap aplikasi yang sedang berjalan alih-alih hanya tes:
+
+| Skill                  | Tujuan                                                                                                                                         |
+| :--------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/run`                 | Luncurkan dan jalankan aplikasi Anda untuk melihat perubahan bekerja                                                                           |
+| `/verify`              | Bangun dan jalankan aplikasi Anda untuk mengonfirmasi perubahan kode melakukan apa yang seharusnya, tanpa kembali ke tes atau pemeriksaan tipe |
+| `/run-skill-generator` | Ajarkan `/run` dan `/verify` cara membangun dan meluncurkan proyek Anda                                                                        |
+
+{/* min-version: 2.1.145 */}Ketiga skills memerlukan Claude Code v2.1.145 atau lebih baru.
+
+`/run` dan `/verify` bekerja tanpa pengaturan. Mereka menyimpulkan peluncuran dari jenis proyek Anda (CLI, server, TUI, berbasis browser) dan dari apa yang ada di README, `package.json`, atau `Makefile` Anda. Kesimpulan itu menjadi tidak dapat diandalkan untuk proyek yang memerlukan apa pun di luar peluncuran standar: database, file env, sesi grafis, build multi-langkah.
+
+`/run-skill-generator` merekam resep sebagai gantinya. Ini membuat aplikasi Anda berjalan dari lingkungan yang bersih, menangkap apa yang berhasil (perintah instalasi, variabel env, skrip peluncuran), dan melakukannya sebagai skill per-proyek di `.claude/skills/run-<name>/`. Setelah itu, `/run`, `/verify`, dan agen lainnya di repo mengikuti resep yang direkam alih-alih menemukannya kembali. Jalankan `/run-skill-generator` sekali per proyek, dan lagi jika proses build atau peluncuran berubah.
+
 ## Memulai
 
 ### Buat skill pertama Anda
@@ -408,6 +424,8 @@ Saat skill ini berjalan:
 Ini adalah preprocessing, bukan sesuatu yang dijalankan Claude. Claude hanya melihat hasil akhir.
 
 Substitusi berjalan sekali di atas file asli. Output perintah dimasukkan sebagai teks biasa dan tidak dipindai ulang untuk placeholder `` !`<command>` `` lebih lanjut, jadi perintah tidak dapat mengeluarkan placeholder untuk pass yang lebih lambat untuk diperluas.
+
+Bentuk inline hanya dikenali ketika `!` muncul di awal baris atau segera setelah whitespace. Jika `!` mengikuti karakter lain, seperti dalam `` KEY=!`cmd` ``, placeholder dibiarkan sebagai teks literal dan perintah tidak berjalan.
 
 Untuk perintah multi-baris, gunakan blok kode yang dibuka dengan ` ```! ` sebagai gantinya dari bentuk inline:
 

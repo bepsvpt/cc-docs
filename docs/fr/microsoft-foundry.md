@@ -167,7 +167,7 @@ Les tâches en arrière-plan telles que la génération de titres de session uti
 
 Pour les ID de modèle actuels et hérités, consultez [Aperçu des modèles](https://platform.claude.com/docs/en/about-claude/models/overview). Consultez [Configuration des modèles](/fr/model-config#pin-models-for-third-party-deployments) pour la liste complète des variables d'environnement.
 
-[Le cache des invites](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) est activé automatiquement. Pour demander un TTL de cache d'une heure au lieu de la valeur par défaut de 5 minutes, définissez la variable suivante ; les écritures de cache avec un TTL d'une heure sont facturées à un taux plus élevé :
+[Le cache des invites](/fr/prompt-caching) est activé automatiquement. Pour demander un TTL de cache d'une heure au lieu de la valeur par défaut de 5 minutes, définissez la variable suivante ; les écritures de cache avec un TTL d'une heure sont facturées à un taux plus élevé :
 
 ```bash theme={null}
 export ENABLE_PROMPT_CACHING_1H=1

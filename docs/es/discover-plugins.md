@@ -39,12 +39,7 @@ Para instalar un plugin del mercado oficial, use `/plugin install <name>@claude-
 Si Claude Code reporta que el plugin no se encuentra en ningún mercado, su mercado está faltando o desactualizado. Ejecute `/plugin marketplace update claude-plugins-official` para actualizarlo, o `/plugin marketplace add anthropics/claude-plugins-official` si no lo ha agregado antes. Luego reintente la instalación.
 
 <Note>
-  El mercado oficial es mantenido por Anthropic. Para enviar un plugin al mercado oficial, use uno de los formularios de envío en la aplicación:
-
-  * **Claude.ai**: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
-  * **Console**: [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
-
-  Para distribuir plugins de forma independiente, [cree su propio mercado](/es/plugin-marketplaces) y compártalo con los usuarios.
+  El mercado oficial es curado por Anthropic, y la inclusión está a discreción de Anthropic. Los formularios de envío en la aplicación agregan plugins al [mercado comunitario](#community-marketplace), no al oficial. Para distribuir plugins de forma independiente, [cree su propio mercado](/es/plugin-marketplaces) y compártalo con los usuarios.
 </Note>
 
 El mercado oficial incluye varias categorías de plugins:
@@ -111,6 +106,22 @@ Personalice cómo responde Claude:
 * **explanatory-output-style**: Información educativa sobre opciones de implementación
 * **learning-output-style**: Modo de aprendizaje interactivo para construcción de skills
 
+## Community marketplace
+
+El mercado comunitario en [`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community) aloja plugins de terceros que han pasado la validación automatizada de Anthropic y el análisis de seguridad. Cada plugin está fijado a un SHA de confirmación específico en el catálogo. A diferencia del mercado oficial, lo agrega manualmente:
+
+```shell theme={null}
+/plugin marketplace add anthropics/claude-plugins-community
+```
+
+Luego instale plugins desde él usando el nombre de mercado `claude-community`:
+
+```shell theme={null}
+/plugin install <plugin-name>@claude-community
+```
+
+Para enviar su propio plugin al mercado comunitario, consulte [Enviar su plugin al mercado comunitario](/es/plugins#submit-your-plugin-to-the-community-marketplace) en la guía de creación de plugins.
+
 ## Pruébelo: agregue el mercado de demostración
 
 Anthropic también mantiene un [mercado de plugins de demostración](https://github.com/anthropics/claude-code/tree/main/plugins) (`claude-code-plugins`) con plugins de ejemplo que muestran lo que es posible con el sistema de plugins. A diferencia del mercado oficial, debe agregar este manualmente.
@@ -138,7 +149,11 @@ Anthropic también mantiene un [mercado de plugins de demostración](https://git
   </Step>
 
   <Step title="Instalar un plugin">
-    Seleccione un plugin para ver sus detalles. {/* min-version: 2.1.143 */}En Claude Code v2.1.143 y posteriores, el panel de detalles incluye una estimación de **Context cost** para que pueda ver cuántos tokens el plugin agregará a su [ventana de contexto](/es/features-overview#understand-context-costs) en cada turno antes de instalarlo.
+    Seleccione un plugin para ver sus detalles. El panel de detalles muestra lo que contiene el plugin y cuánto cuesta:
+
+    * {/* min-version: 2.1.143 */}Una estimación de **Context cost** para que pueda ver cuántos tokens el plugin agregará a su [ventana de contexto](/es/features-overview#understand-context-costs) en cada turno (Claude Code v2.1.143 y posteriores)
+    * {/* min-version: 2.1.144 */}La fecha de **Last updated** del plugin (v2.1.144 y posteriores)
+    * {/* min-version: 2.1.145 */}Una sección **Will install** que enumera los comandos, agentes, skills, hooks y servidores MCP y LSP del plugin, para que pueda revisar exactamente qué agrega antes de instalar (v2.1.145 y posteriores)
 
     Elija un alcance de instalación:
 
@@ -168,7 +183,7 @@ Anthropic también mantiene un [mercado de plugins de demostración](https://git
 
     Esto prepara sus cambios, genera un mensaje de confirmación y crea la confirmación.
 
-    Cada plugin funciona de manera diferente. Consulte la descripción del plugin en la pestaña **Discover** o su página de inicio para aprender qué skills y capacidades proporciona.
+    Cada plugin funciona de manera diferente. Consulte los detalles del plugin en la pestaña **Discover** para ver los comandos y skills que proporciona, o visite su página de inicio para obtener orientación sobre el uso.
   </Step>
 </Steps>
 

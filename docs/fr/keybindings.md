@@ -261,10 +261,11 @@ Actions disponibles dans le contexte `DiffDialog` :
 
 Actions disponibles dans le contexte `ModelPicker` :
 
-| Action                       | Par défaut | Description                  |
-| :--------------------------- | :--------- | :--------------------------- |
-| `modelPicker:decreaseEffort` | Gauche     | Diminuer le niveau d'effort  |
-| `modelPicker:increaseEffort` | Droite     | Augmenter le niveau d'effort |
+| Action                       | Par défaut | Description                                                                           |
+| :--------------------------- | :--------- | :------------------------------------------------------------------------------------ |
+| `modelPicker:decreaseEffort` | Gauche     | Diminuer le niveau d'effort                                                           |
+| `modelPicker:increaseEffort` | Droite     | Augmenter le niveau d'effort                                                          |
+| `modelPicker:setAsDefault`   | d          | Définir le modèle en surbrillance comme modèle par défaut pour les nouvelles sessions |
 
 ### Actions de sélection
 

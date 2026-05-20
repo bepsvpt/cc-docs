@@ -349,9 +349,8 @@ export CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=false
 * 黄：レビュー保留中
 * 赤：変更をリクエスト
 * グレー：ドラフト
-* 紫：マージ済み
 
-`Cmd+click`（Mac）または `Ctrl+click`（Windows/Linux）でリンクをクリックして、プルリクエストをブラウザで開きます。ステータスは 60 秒ごとに自動的に更新されます。
+プルリクエストがマージされるか閉じられると、バッジは消えます。`Cmd+click`（Mac）または `Ctrl+click`（Windows/Linux）でリンクをクリックして、プルリクエストをブラウザで開きます。ステータスは 60 秒ごとに更新され、セッション内で `gh pr` または `git push` コマンドが実行された直後に即座に更新されます。
 
 <Note>
   PR ステータスには、`gh` CLI がインストールされ、認証されている必要があります（`gh auth login`）。

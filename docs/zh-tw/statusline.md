@@ -157,6 +157,7 @@ Claude Code 透過 stdin 將以下 JSON 欄位傳送到您的指令碼：
 | `workspace.project_dir`                                                          | 啟動 Claude Code 的目錄，如果工作階段期間工作目錄變更，可能與 `cwd` 不同                                                                                          |
 | `workspace.added_dirs`                                                           | 透過 `/add-dir` 或 `--add-dir` 新增的其他目錄。如果未新增任何目錄，則為空陣列                                                                                     |
 | `workspace.git_worktree`                                                         | 當目前目錄位於使用 `git worktree add` 建立的連結 worktree 內時的 Git worktree 名稱。在主工作樹中不存在。對任何 git worktree 都會填入，不同於 `worktree.*` 僅適用於 `--worktree` 工作階段 |
+| `workspace.repo.host`, `workspace.repo.owner`, `workspace.repo.name`             | 從 `origin` 遠端解析的儲存庫身分，例如 `"github.com"`、`"anthropics"`、`"claude-code"`。在 git 儲存庫外或未設定 `origin` 遠端時不存在                                   |
 | `cost.total_cost_usd`                                                            | 工作階段總成本（美元），在用戶端計算。可能與您的實際帳單不同                                                                                                          |
 | `cost.total_duration_ms`                                                         | 自工作階段開始以來的總掛鐘時間（毫秒）                                                                                                                     |
 | `cost.total_api_duration_ms`                                                     | 等待 API 回應所花費的總時間（毫秒）                                                                                                                    |
@@ -178,6 +179,8 @@ Claude Code 透過 stdin 將以下 JSON 欄位傳送到您的指令碼：
 | `output_style.name`                                                              | 目前輸出樣式的名稱                                                                                                                               |
 | `vim.mode`                                                                       | 啟用 [vim 模式](/zh-TW/interactive-mode#vim-editor-mode)時的目前 vim 模式（`NORMAL`、`INSERT`、`VISUAL` 或 `VISUAL LINE`）                             |
 | `agent.name`                                                                     | 使用 `--agent` 旗標或設定的代理設定執行時的代理名稱                                                                                                         |
+| `pr.number`, `pr.url`                                                            | 目前分支的開啟提取請求。鏡像底部狀態列中的 PR 徽章。在找到 PR 之前、不在 git 儲存庫中或 PR 合併或關閉後不存在                                                                         |
+| `pr.review_state`                                                                | 開啟 PR 的審查狀態：`approved`、`pending`、`changes_requested` 或 `draft`。即使 `pr` 存在，也可能獨立不存在                                                      |
 | `worktree.name`                                                                  | 作用中 worktree 的名稱。僅在 `--worktree` 工作階段期間出現                                                                                               |
 | `worktree.path`                                                                  | worktree 目錄的絕對路徑                                                                                                                        |
 | `worktree.branch`                                                                | worktree 的 Git 分支名稱（例如 `"worktree-my-feature"`）。對於基於 hook 的 worktree 不存在                                                                |
@@ -201,7 +204,12 @@ Claude Code 透過 stdin 將以下 JSON 欄位傳送到您的指令碼：
       "current_dir": "/current/working/directory",
       "project_dir": "/original/project/directory",
       "added_dirs": [],
-      "git_worktree": "feature-xyz"
+      "git_worktree": "feature-xyz",
+      "repo": {
+        "host": "github.com",
+        "owner": "anthropics",
+        "name": "claude-code"
+      }
     },
     "version": "2.1.90",
     "output_style": {
@@ -250,6 +258,11 @@ Claude Code 透過 stdin 將以下 JSON 欄位傳送到您的指令碼：
     "agent": {
       "name": "security-reviewer"
     },
+    "pr": {
+      "number": 1234,
+      "url": "https://github.com/anthropics/claude-code/pull/1234",
+      "review_state": "pending"
+    },
     "worktree": {
       "name": "my-feature",
       "path": "/path/to/.claude/worktrees/my-feature",
@@ -264,9 +277,11 @@ Claude Code 透過 stdin 將以下 JSON 欄位傳送到您的指令碼：
 
   * `session_name`：僅在使用 `--name` 或 `/rename` 設定自訂名稱時出現
   * `workspace.git_worktree`：僅當目前目錄位於連結 git worktree 內時出現
+  * `workspace.repo`：僅在 git 儲存庫內且設定了 `origin` 遠端時出現
   * `effort`：僅當目前模型支援推理努力參數時出現
   * `vim`：僅在啟用 vim 模式時出現
   * `agent`：僅在使用 `--agent` 旗標或設定的代理設定執行時出現
+  * `pr`：僅在為目前分支找到開啟 PR 時出現，一旦 PR 合併或關閉就會移除。`pr.review_state` 可能獨立不存在
   * `worktree`：僅在 `--worktree` 工作階段期間出現。存在時，`branch` 和 `original_branch` 對於基於 hook 的 worktree 也可能不存在
   * `rate_limits`：僅對 Claude.ai 訂閱者（Pro/Max）在工作階段中第一次 API 回應後出現。每個視窗（`five_hour`、`seven_day`）可能獨立不存在。使用 `jq -r '.rate_limits.five_hour.used_percentage // empty'` 以優雅地處理不存在的情況。
 
@@ -291,6 +306,8 @@ Claude Code 透過 stdin 將以下 JSON 欄位傳送到您的指令碼：
 * `output_tokens`：產生的輸出令牌
 * `cache_creation_input_tokens`：寫入快取的令牌
 * `cache_read_input_tokens`：從快取讀取的令牌
+
+如需了解快取欄位的含義及其計費方式，請參閱[檢查快取效能](/zh-TW/prompt-caching#check-cache-performance)。
 
 `used_percentage` 欄位僅從輸入令牌計算：`input_tokens + cache_creation_input_tokens + cache_read_input_tokens`。它不包括 `output_tokens`。
 

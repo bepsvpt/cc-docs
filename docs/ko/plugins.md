@@ -354,14 +354,25 @@ claude --plugin-url "https://example.com/my-plugin.zip https://example.com/other
 
 플러그인이 마켓플레이스에 있으면 다른 사람들이 [플러그인 발견 및 설치](/ko/discover-plugins)의 지침을 사용하여 설치할 수 있습니다. 플러그인을 팀 내부로만 유지하려면 [비공개 저장소](/ko/plugin-marketplaces#private-repositories)에서 마켓플레이스를 호스팅하세요.
 
-### 플러그인을 공식 마켓플레이스에 제출
+### 플러그인을 커뮤니티 마켓플레이스에 제출
 
-플러그인을 공식 Anthropic 마켓플레이스에 제출하려면 다음 앱 내 제출 양식 중 하나를 사용하세요:
+Anthropic은 Claude Code 플러그인을 위한 두 개의 공개 마켓플레이스를 유지합니다:
+
+* **`claude-plugins-official`**: Anthropic에서 유지 관리하는 엄선된 플러그인 세트입니다. 모든 Claude Code 설치에서 자동으로 사용 가능합니다.
+* **`claude-community`**: 검토 후 타사 제출이 도착하는 공개 커뮤니티 마켓플레이스입니다. 사용자는 `/plugin marketplace add anthropics/claude-plugins-community`로 추가하고 `@claude-community`로 설치합니다.
+
+커뮤니티 마켓플레이스 검토를 위해 플러그인을 제출하려면 다음 앱 내 양식 중 하나를 사용하세요:
 
 * **Claude.ai**: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
 * **Console**: [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
 
-플러그인이 나열되면 CLI에서 Claude Code 사용자에게 설치를 권장할 수 있습니다. [CLI에서 플러그인 권장](/ko/plugin-hints)을 참조하세요.
+제출하기 전에 로컬에서 `claude plugin validate`를 실행하세요. 검토 파이프라인은 모든 제출에 대해 동일한 검사를 실행하며, 자동화된 안전 검사도 함께 수행합니다.
+
+승인된 플러그인은 [`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community) 카탈로그의 특정 커밋 SHA에 고정되며, CI는 저장소에 새 커밋을 푸시할 때 자동으로 핀을 업데이트합니다. 공개 카탈로그는 검토 파이프라인에서 매일 밤 동기화되므로 승인과 플러그인이 `marketplace.json`에 나타나는 사이에 지연이 있을 수 있습니다. 플러그인이 설치 가능한지 확인하려면 [커뮤니티 카탈로그](https://github.com/anthropics/claude-plugins-community/blob/main/.claude-plugin/marketplace.json)에서 이름을 검색하세요.
+
+공식 마켓플레이스인 `claude-plugins-official`은 별도로 엄선됩니다. Anthropic은 자신의 재량에 따라 포함할 플러그인을 결정합니다. 신청 절차가 없으며, 제출 양식은 플러그인을 공식 마켓플레이스에 추가하지 않습니다.
+
+Anthropic이 플러그인을 공식 마켓플레이스에 나열하면 CLI에서 Claude Code 사용자에게 설치를 권장할 수 있습니다. [CLI에서 플러그인 권장](/ko/plugin-hints)을 참조하세요.
 
 <Note>
   완전한 기술 사양, 디버깅 기법, 배포 전략은 [플러그인 참조](/ko/plugins-reference)를 참조하세요.

@@ -270,7 +270,9 @@ export DISABLE_PROMPT_CACHING=1
 export ENABLE_PROMPT_CACHING_1H=1
 ```
 
-<Note>[프롬프트 캐싱](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)은 모든 지역에서 사용할 수 없을 수 있습니다. 1시간 TTL이 있는 캐시 쓰기는 5분 쓰기보다 높은 요금으로 청구됩니다.</Note>
+1시간 캐시 TTL은 5분 기본값보다 높은 요금으로 청구됩니다. [캐시 수명](/ko/prompt-caching#cache-lifetime)을 참조하십시오.
+
+<Note>프롬프트 캐싱은 모든 Bedrock 지역에서 사용할 수 없을 수 있습니다. 캐시 토큰 수가 0으로 유지되면 Bedrock 설명서에서 [지원되는 모델, 지역 및 제한](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html#prompt-caching-models)을 확인하십시오.</Note>
 
 #### 각 모델 버전을 추론 프로필에 매핑
 

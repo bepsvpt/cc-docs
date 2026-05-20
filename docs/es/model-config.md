@@ -53,7 +53,11 @@ Puede configurar su modelo de varias formas, enumeradas en orden de prioridad:
 3. **Variable de entorno** - Establezca `ANTHROPIC_MODEL=<alias|name>`
 4. **Configuración** - Configure permanentemente en su archivo de configuración utilizando el campo `model`.
 
-Su selección de `/model` se guarda en la configuración del usuario y persiste entre reinicios. A partir de v2.1.117, si el archivo `.claude/settings.json` del proyecto fija un modelo diferente, Claude Code también escribe su selección en `.claude/settings.local.json` para que continúe aplicándose en ese proyecto después de un reinicio. La configuración administrada tiene prioridad y se reaplicará en el siguiente lanzamiento.
+A partir de v2.1.144, `/model` se aplica solo a la sesión actual y no se escribe en la configuración. Para guardar su selección como predeterminada para nuevas sesiones, presione `d` en la fila resaltada en el selector, que escribe el campo `model` en su configuración de usuario. La configuración administrada tiene prioridad y se reaplicará en el siguiente lanzamiento.
+
+La bandera `--model` y la variable de entorno `ANTHROPIC_MODEL` también se aplican solo a la sesión que inicia con ellas. Para ejecutar diferentes modelos en diferentes terminales al mismo tiempo, inicie cada uno con su propia bandera `--model` en lugar de cambiar con `/model`.
+
+Las sesiones reanudadas iniciadas con `claude --resume`, `--continue`, o el selector `/resume` mantienen el modelo que estaban usando cuando se guardó la transcripción, independientemente de la configuración actual de `model`. Si ese modelo ha sido retirado, la sesión cae en el orden de precedencia normal. Esto evita que la selección de `/model` de otra sesión cambie el modelo al reanudar.
 
 Cuando el modelo activo al inicio proviene de la configuración del proyecto o administrada en lugar de su propia selección, el encabezado de inicio muestra qué archivo de configuración lo estableció. Ejecute `/model` para anular la selección de la sesión actual.
 
@@ -318,7 +322,11 @@ Para habilitar [contexto extendido](#extended-context) para un modelo fijo, aña
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7[1m]'
 ```
 
-El sufijo `[1m]` aplica la ventana de contexto de 1M a todo el uso de ese alias, incluido `opusplan`. Claude Code elimina el sufijo antes de enviar el ID de modelo a su proveedor. Solo añada `[1m]` cuando el modelo subyacente admita contexto de 1M, como Opus 4.7 o Sonnet 4.6.
+El sufijo `[1m]` aplica la ventana de contexto de 1M a todo el uso de ese alias, incluido `opusplan`.
+
+* Claude Code elimina el sufijo antes de enviar el ID de modelo a su proveedor.
+* Solo añada `[1m]` cuando el modelo subyacente [admita contexto de 1M](https://platform.claude.com/docs/es/build-with-claude/context-windows#1m-token-context-window).
+* El sufijo se lee por variable, no por modelo. En Bedrock, Vertex y Foundry, un ID de modelo sin `[1m]` en una variable utiliza contexto de 200K incluso si otra variable establece el mismo modelo con el sufijo.
 
 <Note>
   La lista de permitidos `settings.availableModels` aún se aplica cuando se utilizan proveedores de terceros. El filtrado coincide con el alias de modelo (`opus`, `sonnet`, `haiku`), no con el ID de modelo específico del proveedor.
@@ -388,13 +396,13 @@ Las anulaciones reemplazan los IDs de modelo integrados que respaldan cada entra
 
 ### Configuración de almacenamiento en caché de indicaciones
 
-Claude Code utiliza automáticamente [almacenamiento en caché de indicaciones](https://platform.claude.com/docs/es/build-with-claude/prompt-caching) para optimizar el rendimiento y reducir costos. Puede desactivar el almacenamiento en caché de indicaciones globalmente o para niveles de modelo específicos:
+Claude Code utiliza automáticamente [almacenamiento en caché de indicaciones](/es/prompt-caching) para optimizar el rendimiento y reducir costos. Puede desactivar el almacenamiento en caché de indicaciones globalmente o para niveles de modelo específicos:
 
 | Variable de entorno             | Descripción                                                                                                                                              |
 | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `DISABLE_PROMPT_CACHING`        | Establezca en `1` para desactivar el almacenamiento en caché de indicaciones para todos los modelos (tiene precedencia sobre configuraciones por modelo) |
+| `DISABLE_PROMPT_CACHING`        | Establezca en `1` para desactivar el almacenamiento en caché de indicaciones para todos los modelos. Tiene precedencia sobre la configuración por modelo |
 | `DISABLE_PROMPT_CACHING_HAIKU`  | Establezca en `1` para desactivar el almacenamiento en caché de indicaciones solo para modelos Haiku                                                     |
 | `DISABLE_PROMPT_CACHING_SONNET` | Establezca en `1` para desactivar el almacenamiento en caché de indicaciones solo para modelos Sonnet                                                    |
 | `DISABLE_PROMPT_CACHING_OPUS`   | Establezca en `1` para desactivar el almacenamiento en caché de indicaciones solo para modelos Opus                                                      |
 
-Estas variables de entorno le dan control granular sobre el comportamiento del almacenamiento en caché de indicaciones. La configuración global `DISABLE_PROMPT_CACHING` tiene precedencia sobre las configuraciones específicas del modelo, permitiéndole desactivar rápidamente todo el almacenamiento en caché cuando sea necesario. Las configuraciones por modelo son útiles para control selectivo, como cuando se depura modelos específicos o se trabaja con proveedores de nube que pueden tener diferentes implementaciones de almacenamiento en caché.
+Para cambiar el TTL de caché u obtener más información sobre qué desencadena un error de caché, consulte [Cómo Claude Code utiliza el almacenamiento en caché de indicaciones](/es/prompt-caching).

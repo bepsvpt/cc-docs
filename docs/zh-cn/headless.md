@@ -152,17 +152,17 @@ claude -p "Write a poem" --output-format stream-json --verbose --include-partial
 
 当 API 请求因可重试错误而失败时，Claude Code 在重试前发出 `system/api_retry` 事件。您可以使用此来显示重试进度或实现自定义退避逻辑。
 
-| 字段               | 类型            | 描述                                                                                                                                                 |
-| ---------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`           | `"system"`    | 消息类型                                                                                                                                               |
-| `subtype`        | `"api_retry"` | 将其标识为重试事件                                                                                                                                          |
-| `attempt`        | 整数            | 当前尝试次数，从 1 开始                                                                                                                                      |
-| `max_retries`    | 整数            | 允许的总重试次数                                                                                                                                           |
-| `retry_delay_ms` | 整数            | 毫秒直到下一次尝试                                                                                                                                          |
-| `error_status`   | 整数或 null      | HTTP 状态代码，或 `null` 表示没有 HTTP 响应的连接错误                                                                                                               |
-| `error`          | 字符串           | 错误类别：`authentication_failed`、`oauth_org_not_allowed`、`billing_error`、`rate_limit`、`invalid_request`、`server_error`、`max_output_tokens` 或 `unknown` |
-| `uuid`           | 字符串           | 唯一事件标识符                                                                                                                                            |
-| `session_id`     | 字符串           | 事件所属的会话                                                                                                                                            |
+| 字段               | 类型            | 描述                                                                                                                                                                   |
+| ---------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`           | `"system"`    | 消息类型                                                                                                                                                                 |
+| `subtype`        | `"api_retry"` | 将其标识为重试事件                                                                                                                                                            |
+| `attempt`        | 整数            | 当前尝试次数，从 1 开始                                                                                                                                                        |
+| `max_retries`    | 整数            | 允许的总重试次数                                                                                                                                                             |
+| `retry_delay_ms` | 整数            | 毫秒直到下一次尝试                                                                                                                                                            |
+| `error_status`   | 整数或 null      | HTTP 状态代码，或 `null` 表示没有 HTTP 响应的连接错误                                                                                                                                 |
+| `error`          | 字符串           | 错误类别：`authentication_failed`、`oauth_org_not_allowed`、`billing_error`、`rate_limit`、`invalid_request`、`model_not_found`、`server_error`、`max_output_tokens` 或 `unknown` |
+| `uuid`           | 字符串           | 唯一事件标识符                                                                                                                                                              |
+| `session_id`     | 字符串           | 事件所属的会话                                                                                                                                                              |
 
 `system/init` 事件报告会话元数据，包括模型、工具、MCP 服务器和加载的插件。它是流中的第一个事件，除非设置了 [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/zh-CN/env-vars)，在这种情况下 `plugin_install` 事件在其之前。使用插件字段在插件未加载时使 CI 失败：
 

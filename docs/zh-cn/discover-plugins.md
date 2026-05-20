@@ -39,12 +39,7 @@
 如果 Claude Code 报告在任何市场中找不到该插件，您的市场要么缺失，要么已过期。运行 `/plugin marketplace update claude-plugins-official` 以刷新它，或如果您之前未添加过，运行 `/plugin marketplace add anthropics/claude-plugins-official`。然后重试安装。
 
 <Note>
-  官方市场由 Anthropic 维护。要向官方市场提交插件，请使用应用内提交表单之一：
-
-  * **Claude.ai**: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
-  * **Console**: [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
-
-  要独立分发插件，请[创建您自己的市场](/zh-CN/plugin-marketplaces)并与用户共享。
+  官方市场由 Anthropic 维护，包含由 Anthropic 自行决定的内容。应用内提交表单将插件添加到[社区市场](#community-marketplace)，而不是官方市场。要独立分发插件，请[创建您自己的市场](/zh-CN/plugin-marketplaces)并与用户共享。
 </Note>
 
 官方市场包括多个插件类别：
@@ -111,6 +106,22 @@
 * **explanatory-output-style**：关于实现选择的教育见解
 * **learning-output-style**：用于技能构建的交互式学习模式
 
+## 社区市场
+
+[`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community) 上的社区市场托管已通过 Anthropic 自动验证和安全筛选的第三方插件。每个插件都固定到目录中的特定提交 SHA。与官方市场不同，您需要手动添加它：
+
+```shell theme={null}
+/plugin marketplace add anthropics/claude-plugins-community
+```
+
+然后使用 `claude-community` 市场名称从中安装插件：
+
+```shell theme={null}
+/plugin install <plugin-name>@claude-community
+```
+
+要将您自己的插件提交到社区市场，请参阅创建插件指南中的[将您的插件提交到社区市场](/zh-CN/plugins#submit-your-plugin-to-the-community-marketplace)。
+
 ## 尝试：添加演示市场
 
 Anthropic 还维护一个[演示插件市场](https://github.com/anthropics/claude-code/tree/main/plugins)（`claude-code-plugins`），其中包含展示插件系统可能性的示例插件。与官方市场不同，您需要手动添加此市场。
@@ -138,7 +149,11 @@ Anthropic 还维护一个[演示插件市场](https://github.com/anthropics/clau
   </Step>
 
   <Step title="安装插件">
-    选择一个插件以查看其详细信息。{/* min-version: 2.1.143 */}在 Claude Code v2.1.143 及更高版本上，详细信息窗格包括**上下文成本**估计，因此您可以在安装插件之前查看插件将在每个回合中向您的[上下文窗口](/zh-CN/features-overview#understand-context-costs)添加多少个令牌。
+    选择一个插件以查看其详细信息。详细信息窗格显示插件包含的内容及其成本：
+
+    * {/* min-version: 2.1.143 */}**上下文成本**估计，因此您可以查看插件将在每个回合中向您的[上下文窗口](/zh-CN/features-overview#understand-context-costs)添加多少个令牌（Claude Code v2.1.143 及更高版本）
+    * {/* min-version: 2.1.144 */}插件的**最后更新**日期（v2.1.144 及更高版本）
+    * {/* min-version: 2.1.145 */}一个**将安装**部分，列出插件的命令、agents、skills、hooks 和 MCP 及 LSP 服务器，因此您可以在安装前查看它添加的确切内容（v2.1.145 及更高版本）
 
     选择安装范围：
 
@@ -168,7 +183,7 @@ Anthropic 还维护一个[演示插件市场](https://github.com/anthropics/clau
 
     这会暂存您的更改、生成提交消息并创建提交。
 
-    每个插件的工作方式不同。检查**发现**选项卡中的插件描述或其主页以了解它提供的 skills 和功能。
+    每个插件的工作方式不同。检查**发现**选项卡中的插件详细信息以查看它提供的命令和 skills，或访问其主页以获取使用指导。
   </Step>
 </Steps>
 

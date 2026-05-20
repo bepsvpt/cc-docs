@@ -407,6 +407,20 @@ Si vous incluez un manifeste, `name` est le seul champ obligatoire.
 
 Ce nom est utilisé pour l'espace de noms des composants. Par exemple, dans l'interface utilisateur, l'agent `agent-creator` pour le plugin avec le nom `plugin-dev` apparaîtra comme `plugin-dev:agent-creator`.
 
+### Champs non reconnus
+
+Claude Code ignore les champs de niveau supérieur qu'il ne reconnaît pas. Vous pouvez conserver les métadonnées d'un autre écosystème dans `plugin.json` et le plugin se charge toujours. Cela rend pratique de maintenir un manifeste unique qui sert également de manifeste d'extension VS Code ou Cursor, un `package.json` npm, ou un manifeste de bundle MCPB/DXT.
+
+`claude plugin validate` signale les champs non reconnus comme des avertissements, pas des erreurs. Si un champ est décalé d'un ou deux caractères par rapport à un champ reconnu, l'avertissement suggère le nom probablement prévu. Un plugin avec seulement des avertissements de champs non reconnus réussit toujours la validation et se charge à l'exécution.
+
+Les champs avec le mauvais type échouent toujours. Par exemple, une valeur `keywords` qui est une chaîne au lieu d'un tableau est une erreur de chargement, et `claude plugin validate` la signale comme telle.
+
+Passez `--strict` pour traiter les avertissements comme des erreurs. Utilisez-le dans CI pour détecter un nom de champ mal orthographié ou un champ laissé par l'outil d'un autre avant la publication, même si le plugin se chargerait à l'exécution.
+
+```bash theme={null}
+claude plugin validate ./my-plugin --strict
+```
+
 ### Champs de métadonnées
 
 | Champ         | Type   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Exemple                                                           |

@@ -18,7 +18,7 @@ Lo **Default** output style di Claude Code è il prompt di sistema esistente, pr
 
 Ci sono tre output styles integrati aggiuntivi:
 
-* **Proactive**: Claude esegue immediatamente, fa ipotesi ragionevoli invece di fermarsi per decisioni di routine, e preferisce l'azione alla pianificazione. Questo applica la stessa guida della [modalità auto](/it/permission-modes#eliminate-prompts-with-auto-mode) senza cambiare la vostra modalità di permesso, quindi vedete comunque i prompt di permesso prima che gli strumenti vengano eseguiti.
+* **Proactive**: Claude esegue immediatamente, fa ipotesi ragionevoli invece di fermarsi per decisioni di routine, e preferisce l'azione alla pianificazione. Questo è una guida di esecuzione autonoma più forte di quella che [auto mode](/it/permission-modes#eliminate-prompts-with-auto-mode) applica, e funziona senza cambiare la vostra modalità di permesso, quindi vedete comunque i prompt di permesso prima che gli strumenti vengano eseguiti.
 
 * **Explanatory**: Fornisce "Insights" educativi tra l'aiuto nel completamento dei compiti di ingegneria del software. Aiuta a comprendere le scelte di implementazione e i pattern del codebase.
 
@@ -36,9 +36,9 @@ Per impostare uno stile senza il menu, modificate direttamente il campo `outputS
 }
 ```
 
-Poiché l'output style è impostato nel prompt di sistema all'avvio della sessione, le modifiche hanno effetto la prossima volta che avviate una nuova sessione. Questo mantiene il prompt di sistema stabile durante una conversazione in modo che il prompt caching possa ridurre la latenza e il costo.
+Output style è parte del prompt di sistema, che Claude Code legge una volta all'avvio della sessione. Le modifiche hanno effetto dopo `/clear` o una nuova sessione. Consultate [Come Claude Code utilizza il prompt caching](/it/prompt-caching#changing-output-style) per sapere cosa fa un cambio di output style sulla cache.
 
-## Creare un output style personalizzato
+## Creare uno stile di output personalizzato
 
 Uno stile di output personalizzato è un file Markdown: frontmatter per i metadati, quindi le istruzioni da aggiungere al prompt di sistema.
 
@@ -72,7 +72,7 @@ Uno stile di output personalizzato è un file Markdown: frontmatter per i metada
   </Step>
 
   <Step title="Passare al vostro stile">
-    Eseguite `/config` e selezionate il vostro stile sotto **Output style**. Ha effetto la prossima volta che avviate una sessione.
+    Eseguite `/config` e selezionate il vostro stile sotto **Output style**. Ha effetto dopo `/clear` o la prossima volta che avviate una sessione.
   </Step>
 </Steps>
 
@@ -114,6 +114,6 @@ Diverse funzionalità personalizzano il comportamento di Claude Code. Gli output
 ## Risorse correlate
 
 * [Settings](/it/settings): dove risiede il campo `outputStyle` e come funziona la precedenza delle impostazioni
-* [Permission modes](/it/permission-modes): lo stile Proactive rispecchia la modalità auto senza cambiare la vostra modalità di permesso
+* [Permission modes](/it/permission-modes): come lo stile Proactive si confronta con la modalità auto
 * [Plugins](/it/plugins): pacchetto e distribuzione degli output styles insieme a skills, hooks e agents
 * [Debug your configuration](/it/debug-your-config): diagnosticare perché uno output style non ha effetto

@@ -18,7 +18,7 @@ Claude Code 的**預設**輸出樣式是現有的系統提示，旨在幫助您�
 
 還有三種額外的內建輸出樣式：
 
-* **Proactive**：Claude 立即執行，做出合理的假設而不是暫停進行例行決策，並偏好行動而非規劃。這應用與[自動模式](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode)相同的指導，而不改變您的權限模式，因此您在工具運行前仍會看到權限提示。
+* **Proactive**：Claude 立即執行，做出合理的假設而不是暫停進行例行決策，並偏好行動而非規劃。這比[自動模式](/zh-TW/permission-modes#eliminate-prompts-with-auto-mode)提供更強的自主執行指導，且無需改變您的權限模式，因此您在工具運行前仍會看到權限提示。
 
 * **Explanatory**：在幫助您完成軟體工程任務的同時提供教育性的「Insights」。幫助您理解實現選擇和程式碼庫模式。
 
@@ -36,7 +36,7 @@ Claude Code 的**預設**輸出樣式是現有的系統提示，旨在幫助您�
 }
 ```
 
-由於輸出樣式是在工作階段開始時在系統提示中設定的，變更將在您下次啟動新工作階段時生效。這使系統提示在整個對話中保持穩定，以便 prompt caching 可以降低延遲和成本。
+輸出樣式是系統提示的一部分，Claude Code 在工作階段開始時會讀取一次。變更會在執行 `/clear` 或新工作階段後生效。請參閱[Claude Code 如何使用 prompt caching](/zh-TW/prompt-caching#changing-output-style)以了解輸出樣式變更對快取的影響。
 
 ## 建立自訂輸出樣式
 
@@ -72,7 +72,7 @@ Claude Code 的**預設**輸出樣式是現有的系統提示，旨在幫助您�
   </Step>
 
   <Step title="切換到您的樣式">
-    執行 `/config` 並在**輸出樣式**下選擇您的樣式。它將在您下次啟動工作階段時生效。
+    執行 `/config` 並在**輸出樣式**下選擇您的樣式。它將在 `/clear` 之後或下次啟動工作階段時生效。
   </Step>
 </Steps>
 
@@ -114,6 +114,6 @@ Token 使用量取決於樣式。將指令添加到系統提示會增加輸入 t
 ## 相關資源
 
 * [Settings](/zh-TW/settings)：`outputStyle` 欄位所在位置以及設定優先順序的工作原理
-* [Permission modes](/zh-TW/permission-modes)：Proactive 樣式鏡像自動模式而不改變您的權限模式
+* [Permission modes](/zh-TW/permission-modes)：Proactive 樣式與自動模式的比較方式
 * [Plugins](/zh-TW/plugins)：與 skills、hooks 和 agents 一起打包和分發輸出樣式
 * [Debug your configuration](/zh-TW/debug-your-config)：診斷為什麼輸出樣式沒有生效

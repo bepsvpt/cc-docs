@@ -354,14 +354,25 @@ Quand votre plugin est prêt à être partagé :
 
 Une fois que votre plugin est dans une marketplace, d'autres peuvent l'installer en utilisant les instructions dans [Découvrir et installer des plugins](/fr/discover-plugins). Pour garder un plugin interne à votre équipe, hébergez la marketplace dans un [référentiel privé](/fr/plugin-marketplaces#private-repositories).
 
-### Soumettez votre plugin à la marketplace officielle
+### Soumettez votre plugin à la marketplace communautaire
 
-Pour soumettre un plugin à la marketplace officielle d'Anthropic, utilisez l'un des formulaires de soumission dans l'application :
+Anthropic maintient deux marketplaces publiques pour les plugins Claude Code :
+
+* **`claude-plugins-official`** : un ensemble organisé de plugins maintenus par Anthropic. Disponible automatiquement dans chaque installation de Claude Code.
+* **`claude-community`** : la marketplace communautaire publique où les soumissions tierces arrivent après examen. Les utilisateurs l'ajoutent avec `/plugin marketplace add anthropics/claude-plugins-community` et l'installent en tant que `@claude-community`.
+
+Pour soumettre votre plugin pour examen de la marketplace communautaire, utilisez l'un des formulaires dans l'application :
 
 * **Claude.ai** : [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
 * **Console** : [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
 
-Une fois que votre plugin est listé, vous pouvez avoir votre propre CLI qui invite les utilisateurs de Claude Code à l'installer. Consultez [Recommander votre plugin à partir de votre CLI](/fr/plugin-hints).
+Exécutez `claude plugin validate` localement avant de soumettre. Le pipeline d'examen exécute la même vérification sur chaque soumission, ainsi qu'un dépistage de sécurité automatisé.
+
+Les plugins approuvés sont épinglés à un SHA de commit spécifique dans le catalogue [`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community), et CI augmente automatiquement l'épingle à mesure que vous poussez de nouveaux commits vers votre référentiel. Le catalogue public se synchronise chaque nuit à partir du pipeline d'examen, il peut donc y avoir un délai entre l'approbation et l'apparition de votre plugin dans `marketplace.json`. Pour vérifier si votre plugin est installable, recherchez son nom dans le [catalogue communautaire](https://github.com/anthropics/claude-plugins-community/blob/main/.claude-plugin/marketplace.json).
+
+La marketplace officielle, `claude-plugins-official`, est organisée séparément. Anthropic décide quels plugins inclure à sa discrétion. Il n'y a pas de processus de candidature, et le formulaire de soumission n'ajoute pas de plugins à la marketplace officielle.
+
+Si Anthropic liste votre plugin dans la marketplace officielle, votre CLI peut inviter les utilisateurs de Claude Code à l'installer. Consultez [Recommander votre plugin à partir de votre CLI](/fr/plugin-hints).
 
 <Note>
   Pour les spécifications techniques complètes, les techniques de débogage et les stratégies de distribution, consultez [Référence des plugins](/fr/plugins-reference).

@@ -132,6 +132,8 @@ Spans schwärzen Benutzer-Prompt-Text, Tool-Eingabedetails und Tool-Inhalte stan
 
 Wenn Tracing aktiv ist, erben Bash- und PowerShell-Subprozesse automatisch eine `TRACEPARENT`-Umgebungsvariable, die den W3C-Trace-Kontext des aktiven Tool-Ausführungs-Spans enthält. Dies ermöglicht jedem Subprozess, der `TRACEPARENT` liest, seine eigenen Spans unter demselben Trace zu verschachteln, was eine End-to-End-verteilte Tracing durch Skripte und Befehle ermöglicht, die Claude ausführt.
 
+Wenn Tracing aktiv ist und Claude Code direkt mit der Anthropic API verbunden ist, trägt jede Modellanfrage einen W3C `traceparent` Header, der auf den Kontext des `claude_code.llm_request` Spans gesetzt ist, und der `traceresponse` Header der API wird als Span-Link aufgezeichnet. Zusammen verbinden diese Claude Code's clientseitige Spans mit dem serverseitigen Trace durch jeden konformen Vermittler. Der Header wird nicht an Drittanbieter gesendet.
+
 In Agent SDK und nicht-interaktiven Sitzungen, die mit `-p` gestartet werden, liest Claude Code auch `TRACEPARENT` und `TRACESTATE` aus seiner eigenen Umgebung, wenn jeder Interaktions-Span gestartet wird. Dies ermöglicht einem Embedding-Prozess, seinen aktiven W3C-Trace-Kontext in den Subprozess zu übergeben, sodass Claude Code's Spans als untergeordnete Elemente des Aufrufers verteilter Trace erscheinen. Interaktive Sitzungen ignorieren eingehende `TRACEPARENT`, um zu vermeiden, dass versehentlich Umgebungswerte aus CI oder Container-Umgebungen geerbt werden.
 
 #### Span-Hierarchie
@@ -196,15 +198,17 @@ Jeder Wiederholungsversuch wird auch als `gen_ai.request.attempt` Span-Ereignis 
 
 **`claude_code.tool`**
 
-| Attribut        | Beschreibung                                                     | Gated durch             |
-| --------------- | ---------------------------------------------------------------- | ----------------------- |
-| `tool_name`     | Tool-Name                                                        |                         |
-| `duration_ms`   | Wanduhr-Dauer einschließlich Berechtigungswartung und Ausführung |                         |
-| `result_tokens` | Ungefähre Token-Größe des Tool-Ergebnisses                       |                         |
-| `file_path`     | Zieldateipfad für Read-, Edit- und Write-Tools                   | `OTEL_LOG_TOOL_DETAILS` |
-| `full_command`  | Befehlszeichenkette für das Bash-Tool                            | `OTEL_LOG_TOOL_DETAILS` |
-| `skill_name`    | Skill-Name für das Skill-Tool                                    | `OTEL_LOG_TOOL_DETAILS` |
-| `subagent_type` | Subagent-Typ für das Task-Tool                                   | `OTEL_LOG_TOOL_DETAILS` |
+| Attribut          | Beschreibung                                                                                                               | Gated durch             |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| `tool_name`       | Tool-Name                                                                                                                  |                         |
+| `duration_ms`     | Wanduhr-Dauer einschließlich Berechtigungswartung und Ausführung                                                           |                         |
+| `result_tokens`   | Ungefähre Token-Größe des Tool-Ergebnisses                                                                                 |                         |
+| `agent_id`        | Kennung des Subagenten oder Teamkollegen, der das Tool ausgeführt hat. Fehlt in der Hauptsitzung                           |                         |
+| `parent_agent_id` | Kennung des Agenten, der diesen erzeugt hat. Fehlt für die Hauptsitzung und für Agenten, die direkt von ihr erzeugt wurden |                         |
+| `file_path`       | Zieldateipfad für Read-, Edit- und Write-Tools                                                                             | `OTEL_LOG_TOOL_DETAILS` |
+| `full_command`    | Befehlszeichenkette für das Bash-Tool                                                                                      | `OTEL_LOG_TOOL_DETAILS` |
+| `skill_name`      | Skill-Name für das Skill-Tool                                                                                              | `OTEL_LOG_TOOL_DETAILS` |
+| `subagent_type`   | Subagent-Typ für das Task-Tool                                                                                             | `OTEL_LOG_TOOL_DETAILS` |
 
 Wenn `OTEL_LOG_TOOL_CONTENT=1`, zeichnet dieser Span auch ein `tool.output` Span-Ereignis auf, dessen Attribute die Tool-Eingabe- und Ausgabetexte enthalten, gekürzt bei 60 KB pro Attribut.
 
@@ -885,6 +889,22 @@ Protokolliert, wenn alle Hooks für ein Hook-Ereignis abgeschlossen sind.
 * `managed_only`: `"true"`, wenn nur verwaltete Richtlinien-Hooks zulässig sind
 * `hook_source`: `"policySettings"` oder `"merged"`
 * `hook_definitions`: JSON-serialisierte Hook-Konfiguration. Nur enthalten, wenn sowohl detailliertes Beta-Tracing als auch `OTEL_LOG_TOOL_DETAILS=1` aktiviert sind
+
+#### Hook-Plugin-Metriken-Ereignis
+
+Protokolliert, wenn ein offizieller Marketplace-Plugin-Hook Pro-Invokations-Metriken ausgibt. Nur Plugins, die von einem offiziellen Anthropic-Marketplace installiert wurden, können diese ausgeben. Drittanbieter-Marketplace-Plugins und benutzerdefinierte Hooks geben nicht zu diesem Ereignis aus. Verwenden Sie dieses Ereignis, um Plugin-Verhalten wie Findungsraten, Kosten und Dauern aus Ihrem eigenen Observability-Stack zu überwachen.
+
+**Ereignisname**: `claude_code.hook_plugin_metrics`
+
+**Attribute**:
+
+* Alle [Standardattribute](#standardattribute)
+* `event.name`: `"hook_plugin_metrics"`
+* `event.timestamp`: ISO 8601-Zeitstempel
+* `event.sequence`: monoton steigende Zähler zur Sortierung von Ereignissen innerhalb einer Sitzung
+* `plugin_id`: Plugin-Kennung in `<name>@<marketplace>` Form
+* `hook_event`: Hook-Ereignistyp, der die Metriken ausgegeben hat
+* Bis zu 20 Plugin-ausgegebene Metrik-Schlüssel. Namen entsprechen `^[a-z][a-z0-9_]{0,39}$`. Werte sind boolescher Wert oder Zahl.
 
 #### Kompaktierungs-Ereignis
 

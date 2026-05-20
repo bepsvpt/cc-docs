@@ -348,9 +348,8 @@ Ketika bekerja pada cabang dengan permintaan tarik terbuka, Claude Code menampil
 * Kuning: menunggu tinjauan
 * Merah: perubahan diminta
 * Abu-abu: draft
-* Ungu: digabungkan
 
-`Cmd+click` (Mac) atau `Ctrl+click` (Windows/Linux) tautan untuk membuka permintaan tarik di browser Anda. Status diperbarui secara otomatis setiap 60 detik.
+Lencana menghilang setelah permintaan tarik digabungkan atau ditutup. `Cmd+click` (Mac) atau `Ctrl+click` (Windows/Linux) tautan untuk membuka permintaan tarik di browser Anda. Status diperbarui setiap 60 detik, dan segera setelah perintah `gh pr` atau `git push` dijalankan dalam sesi.
 
 <Note>
   Status PR memerlukan CLI `gh` untuk diinstal dan diautentikasi (`gh auth login`).

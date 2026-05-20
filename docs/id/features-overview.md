@@ -20,6 +20,7 @@ Ekstensi terhubung ke bagian berbeda dari loop agentic:
 
 * **[CLAUDE.md](/id/memory)** menambahkan konteks persisten yang Claude lihat setiap sesi
 * **[Skills](/id/skills)** menambahkan pengetahuan yang dapat digunakan kembali dan alur kerja yang dapat dipanggil
+* **[Code intelligence](/id/tools-reference#lsp-tool-behavior)** menghubungkan Claude ke language server untuk navigasi tingkat simbol dan kesalahan tipe langsung
 * **[MCP](/id/mcp)** menghubungkan Claude ke layanan dan alat eksternal
 * **[Subagents](/id/sub-agents)** menjalankan loop mereka sendiri dalam konteks terisolasi, mengembalikan ringkasan
 * **[Agent teams](/id/agent-teams)** mengoordinasikan beberapa sesi independen dengan tugas bersama dan pesan peer-to-peer
@@ -32,14 +33,15 @@ Ekstensi terhubung ke bagian berbeda dari loop agentic:
 
 Fitur berkisar dari konteks yang selalu aktif yang Claude lihat setiap sesi, hingga kemampuan on-demand yang dapat Anda atau Claude panggil, hingga otomasi latar belakang yang berjalan pada acara tertentu. Tabel di bawah menunjukkan apa yang tersedia dan kapan masing-masing masuk akal.
 
-| Fitur                              | Apa yang dilakukannya                                                | Kapan menggunakannya                                                             | Contoh                                                                                       |
-| ---------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| **CLAUDE.md**                      | Konteks persisten dimuat setiap percakapan                           | Konvensi proyek, aturan "selalu lakukan X"                                       | "Gunakan pnpm, bukan npm. Jalankan tes sebelum commit."                                      |
-| **Skill**                          | Instruksi, pengetahuan, dan alur kerja yang dapat digunakan Claude   | Konten yang dapat digunakan kembali, dokumen referensi, tugas yang dapat diulang | `/deploy` menjalankan daftar periksa deployment Anda; skill dokumen API dengan pola endpoint |
-| **Subagent**                       | Konteks eksekusi terisolasi yang mengembalikan hasil ringkasan       | Isolasi konteks, tugas paralel, pekerja khusus                                   | Tugas penelitian yang membaca banyak file tetapi hanya mengembalikan temuan kunci            |
-| **[Agent teams](/id/agent-teams)** | Mengoordinasikan beberapa sesi Claude Code independen                | Penelitian paralel, pengembangan fitur baru, debugging dengan hipotesis bersaing | Spawn reviewer untuk memeriksa keamanan, performa, dan tes secara bersamaan                  |
-| **MCP**                            | Terhubung ke layanan eksternal                                       | Data atau tindakan eksternal                                                     | Kueri database Anda, posting ke Slack, kontrol browser                                       |
-| **Hook**                           | Skrip, permintaan HTTP, prompt, atau subagent yang dipicu oleh acara | Otomasi yang harus berjalan pada setiap acara yang cocok                         | Jalankan ESLint setelah setiap edit file                                                     |
+| Fitur                                                          | Apa yang dilakukannya                                                | Kapan menggunakannya                                                             | Contoh                                                                                       |
+| -------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| **CLAUDE.md**                                                  | Konteks persisten dimuat setiap percakapan                           | Konvensi proyek, aturan "selalu lakukan X"                                       | "Gunakan pnpm, bukan npm. Jalankan tes sebelum commit."                                      |
+| **Skill**                                                      | Instruksi, pengetahuan, dan alur kerja yang dapat digunakan Claude   | Konten yang dapat digunakan kembali, dokumen referensi, tugas yang dapat diulang | `/deploy` menjalankan daftar periksa deployment Anda; skill dokumen API dengan pola endpoint |
+| **Subagent**                                                   | Konteks eksekusi terisolasi yang mengembalikan hasil ringkasan       | Isolasi konteks, tugas paralel, pekerja khusus                                   | Tugas penelitian yang membaca banyak file tetapi hanya mengembalikan temuan kunci            |
+| **[Agent teams](/id/agent-teams)**                             | Mengoordinasikan beberapa sesi Claude Code independen                | Penelitian paralel, pengembangan fitur baru, debugging dengan hipotesis bersaing | Spawn reviewer untuk memeriksa keamanan, performa, dan tes secara bersamaan                  |
+| **[Code intelligence](/id/tools-reference#lsp-tool-behavior)** | Navigasi language-server dan diagnostik                              | Bahasa yang diketik, basis kode besar di mana grep lambat atau tidak presisi     | Lompat ke definisi simbol daripada membaca seluruh file                                      |
+| **MCP**                                                        | Terhubung ke layanan eksternal                                       | Data atau tindakan eksternal                                                     | Kueri database Anda, posting ke Slack, kontrol browser                                       |
+| **Hook**                                                       | Skrip, permintaan HTTP, prompt, atau subagent yang dipicu oleh acara | Otomasi yang harus berjalan pada setiap acara yang cocok                         | Jalankan ESLint setelah setiap edit file                                                     |
 
 **[Plugins](/id/plugins)** adalah lapisan pengemasan. Plugin menggabungkan skills, hooks, subagents, dan MCP servers menjadi satu unit yang dapat diinstal. Plugin skills memiliki namespace (seperti `/my-plugin:review`) sehingga beberapa plugin dapat hidup berdampingan. Gunakan plugins ketika Anda ingin menggunakan kembali setup yang sama di beberapa repositori atau mendistribusikan ke orang lain melalui **[marketplace](/id/plugin-marketplaces)**.
 
@@ -47,15 +49,16 @@ Fitur berkisar dari konteks yang selalu aktif yang Claude lihat setiap sesi, hin
 
 Anda tidak perlu mengonfigurasi semuanya di awal. Setiap fitur memiliki pemicu yang dapat dikenali, dan sebagian besar tim menambahkannya dalam urutan yang kira-kira seperti ini:
 
-| Pemicu                                                                                          | Tambahkan                                                        |
-| :---------------------------------------------------------------------------------------------- | :--------------------------------------------------------------- |
-| Claude mendapatkan konvensi atau perintah yang salah dua kali                                   | Tambahkan ke [CLAUDE.md](/id/memory)                             |
-| Anda terus mengetik prompt yang sama untuk memulai tugas                                        | Simpan sebagai [skill](/id/skills) yang dapat dipanggil pengguna |
-| Anda menempel playbook yang sama atau prosedur multi-langkah ke chat untuk ketiga kalinya       | Tangkap sebagai [skill](/id/skills)                              |
-| Anda terus menyalin data dari tab browser yang Claude tidak bisa lihat                          | Hubungkan sistem itu sebagai [server MCP](/id/mcp)               |
-| Tugas sampingan membanjiri percakapan Anda dengan output yang tidak akan Anda referensikan lagi | Arahkan melalui [subagent](/id/sub-agents)                       |
-| Anda ingin sesuatu terjadi setiap kali tanpa bertanya                                           | Tulis [hook](/id/hooks-guide)                                    |
-| Repositori kedua membutuhkan setup yang sama                                                    | Paket sebagai [plugin](/id/plugins)                              |
+| Pemicu                                                                                          | Tambahkan                                                                                   |
+| :---------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
+| Claude mendapatkan konvensi atau perintah yang salah dua kali                                   | Tambahkan ke [CLAUDE.md](/id/memory)                                                        |
+| Anda terus mengetik prompt yang sama untuk memulai tugas                                        | Simpan sebagai [skill](/id/skills) yang dapat dipanggil pengguna                            |
+| Anda menempel playbook yang sama atau prosedur multi-langkah ke chat untuk ketiga kalinya       | Tangkap sebagai [skill](/id/skills)                                                         |
+| Anda terus menyalin data dari tab browser yang Claude tidak bisa lihat                          | Hubungkan sistem itu sebagai [server MCP](/id/mcp)                                          |
+| Claude membaca banyak file untuk menemukan di mana simbol didefinisikan atau digunakan          | Instal [plugin code intelligence](/id/discover-plugins#code-intelligence) untuk bahasa Anda |
+| Tugas sampingan membanjiri percakapan Anda dengan output yang tidak akan Anda referensikan lagi | Arahkan melalui [subagent](/id/sub-agents)                                                  |
+| Anda ingin sesuatu terjadi setiap kali tanpa bertanya                                           | Tulis [hook](/id/hooks-guide)                                                               |
+| Repositori kedua membutuhkan setup yang sama                                                    | Paket sebagai [plugin](/id/plugins)                                                         |
 
 Pemicu yang sama memberi tahu Anda kapan harus memperbarui apa yang sudah Anda miliki. Kesalahan berulang atau komentar tinjauan berulang adalah edit CLAUDE.md, bukan koreksi satu kali dalam chat. Alur kerja yang terus Anda sesuaikan dengan tangan adalah skill yang memerlukan revisi lain.
 
@@ -211,13 +214,14 @@ Setiap fitur yang Anda tambahkan mengonsumsi beberapa konteks Claude. Terlalu ba
 
 Setiap fitur memiliki strategi pemuatan dan biaya konteks yang berbeda:
 
-| Fitur          | Kapan dimuat                 | Apa yang dimuat                                  | Biaya konteks                                    |
-| -------------- | ---------------------------- | ------------------------------------------------ | ------------------------------------------------ |
-| **CLAUDE.md**  | Awal sesi                    | Konten penuh                                     | Setiap permintaan                                |
-| **Skills**     | Awal sesi + ketika digunakan | Deskripsi di awal, konten penuh ketika digunakan | Rendah (deskripsi setiap permintaan)\*           |
-| **Server MCP** | Awal sesi                    | Nama alat; skema penuh on demand                 | Rendah sampai alat digunakan                     |
-| **Subagents**  | Ketika dispawn               | Konteks segar dengan skills yang ditentukan      | Terisolasi dari sesi utama                       |
-| **Hooks**      | Saat dipicu                  | Tidak ada (berjalan secara eksternal)            | Nol, kecuali hook mengembalikan konteks tambahan |
+| Fitur                 | Kapan dimuat                          | Apa yang dimuat                                             | Biaya konteks                                    |
+| --------------------- | ------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------ |
+| **CLAUDE.md**         | Awal sesi                             | Konten penuh                                                | Setiap permintaan                                |
+| **Skills**            | Awal sesi + ketika digunakan          | Deskripsi di awal, konten penuh ketika digunakan            | Rendah (deskripsi setiap permintaan)\*           |
+| **Server MCP**        | Awal sesi                             | Nama alat; skema penuh on demand                            | Rendah sampai alat digunakan                     |
+| **Code intelligence** | Setelah pengeditan file dan on demand | Diagnostik setelah pengeditan; lokasi simbol saat pencarian | Rendah; mengurangi pembacaan file di tempat lain |
+| **Subagents**         | Ketika dispawn                        | Konteks segar dengan skills yang ditentukan                 | Terisolasi dari sesi utama                       |
+| **Hooks**             | Saat dipicu                           | Tidak ada (berjalan secara eksternal)                       | Nol, kecuali hook mengembalikan konteks tambahan |
 
 \*Secara default, deskripsi skill dimuat saat awal sesi sehingga Claude dapat memutuskan kapan menggunakannya. Atur `disable-model-invocation: true` di frontmatter skill untuk menyembunyikannya dari Claude sepenuhnya sampai Anda memanggilnya secara manual. Ini mengurangi biaya konteks menjadi nol untuk skills yang hanya Anda picu sendiri. Untuk skill yang tidak Anda tulis, atur [`skillOverrides`](/id/skills#override-skill-visibility-from-settings) di settings untuk melakukan hal yang sama tanpa mengedit filenya.
 
@@ -264,6 +268,16 @@ Setiap fitur dimuat pada titik berbeda dalam sesi Anda. Tab di bawah menjelaskan
     **Catatan keandalan:** Koneksi MCP dapat gagal secara diam-diam di tengah sesi. Jika server terputus, alatnya hilang tanpa peringatan. Claude mungkin mencoba menggunakan alat yang tidak lagi ada. Jika Anda melihat Claude gagal menggunakan alat MCP yang sebelumnya dapat diakses, periksa koneksi dengan `/mcp`.
 
     <Tip>Jalankan `/mcp` untuk melihat biaya token per server. Putuskan server yang tidak Anda gunakan secara aktif.</Tip>
+  </Tab>
+
+  <Tab title="Code intelligence">
+    **Kapan:** Setelah pengeditan file, dan on demand ketika Claude menavigasi kode.
+
+    **Apa yang dimuat:** Kesalahan tipe dan peringatan setelah setiap pengeditan file. Informasi definisi, referensi, dan tipe ketika Claude mencari simbol.
+
+    **Biaya konteks:** Rendah. Pencarian simbol sering menggantikan pembacaan file yang luas, jadi penggunaan konteks bersih dapat turun.
+
+    <Tip>Alat LSP tidak aktif sampai Anda memasang [plugin code intelligence](/id/discover-plugins#code-intelligence) untuk bahasa Anda.</Tip>
   </Tab>
 
   <Tab title="Subagents">

@@ -28,6 +28,8 @@ Anda dapat melihat dan mengelola izin alat Claude Code dengan `/permissions`. UI
 
 Aturan dievaluasi secara berurutan: **deny -> ask -> allow**. Aturan pertama yang cocok menang, jadi aturan deny selalu memiliki prioritas.
 
+Aturan deny berperilaku berbeda tergantung pada apakah mereka menamai alat atau membatasi pola dalam satu alat. Nama alat biasa seperti `Bash` menghapus alat dari konteks Claude sepenuhnya, jadi Claude tidak pernah melihatnya. Aturan yang dibatasi seperti `Bash(rm *)` membiarkan alat tersedia dan memblokir panggilan yang cocok ketika Claude mencoba menggunakannya.
+
 <Note>
   Aturan izin ditegakkan oleh Claude Code, bukan oleh model. Instruksi dalam prompt Anda atau `CLAUDE.md` membentuk apa yang Claude coba lakukan, tetapi mereka tidak mengubah apa yang Claude Code izinkan. Untuk memberikan atau mencabut akses, gunakan `/permissions`, aturan yang dijelaskan di sini, [mode izin](/id/permission-modes), atau [hook PreToolUse](#extend-permissions-with-hooks).
 </Note>
@@ -65,7 +67,7 @@ Untuk mencocokkan semua penggunaan alat, gunakan hanya nama alat tanpa tanda kur
 | `WebFetch` | Mencocokkan semua permintaan pengambilan web |
 | `Read`     | Mencocokkan semua pembacaan file             |
 
-`Bash(*)` setara dengan `Bash` dan mencocokkan semua perintah Bash.
+`Bash(*)` setara dengan `Bash` dan mencocokkan semua perintah Bash. Sebagai aturan penolakan, kedua bentuk menghapus alat dari konteks Claude.
 
 ### Gunakan specifier untuk kontrol terperinci
 
@@ -186,7 +188,7 @@ Claude Code mengurai AST PowerShell dan memeriksa setiap perintah dalam perintah
 
 ### Read dan Edit
 
-Aturan `Edit` berlaku untuk semua alat bawaan yang mengedit file. Claude membuat upaya terbaik untuk menerapkan aturan `Read` ke semua alat bawaan yang membaca file seperti Grep dan Glob.
+Aturan `Edit` berlaku untuk semua alat bawaan yang mengedit file. Claude membuat upaya terbaik untuk menerapkan aturan `Read` ke semua alat bawaan yang membaca file seperti Grep dan Glob, ke penyebutan `@file` dalam prompt Anda, dan ke seleksi dan konteks file terbuka yang [IDE](/id/vs-code#the-built-in-ide-mcp-server) yang terhubung bagikan dengan Claude.
 
 <Warning>
   Aturan deny Read dan Edit berlaku untuk alat file bawaan Claude dan untuk perintah file yang Claude Code kenali di Bash, seperti `cat`, `head`, `tail`, dan `sed`. Mereka tidak berlaku untuk subproses arbitrer yang membaca atau menulis file secara tidak langsung, seperti skrip Python atau Node yang membuka file itu sendiri. Untuk penegakan tingkat OS yang memblokir semua proses dari mengakses jalur, [aktifkan sandbox](/id/sandboxing).

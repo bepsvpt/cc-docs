@@ -766,6 +766,8 @@ Claude Code 在執行 helper 時設定這些環境變數：
   </Step>
 </Steps>
 
+Claude.ai connectors 只有在您的活躍[驗證方法](/zh-TW/authentication#authentication-precedence)是您的 Claude.ai 訂閱時才會被取得。當 `ANTHROPIC_API_KEY`、`ANTHROPIC_AUTH_TOKEN`、`apiKeyHelper` 或第三方提供者（例如 Bedrock 或 Vertex）處於活躍狀態時，它們不會被載入，即使您之前執行過 `/login`。如果 `/mcp` 沒有列出您新增的 connector，請執行 `/status` 以確認哪個驗證方法處於活躍狀態，取消設定該環境變數或移除 `apiKeyHelper` 設定，然後執行 `/login` 以選擇您的 Claude.ai 帳戶。
+
 您在 Claude Code 中新增的 server 優先於指向相同 URL 的 claude.ai connector。發生這種情況時，`/mcp` 會將 connector 列為隱藏，並顯示如何移除重複項（如果您寧願使用 connector）。
 
 若要在 Claude Code 中停用 claude.ai MCP servers，請將 `ENABLE_CLAUDEAI_MCP_SERVERS` 環境變數設定為 `false`：

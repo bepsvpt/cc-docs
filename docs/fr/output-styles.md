@@ -18,7 +18,7 @@ Le style de sortie **Default** de Claude Code est l'invite système existante, c
 
 Il existe trois styles de sortie intégrés supplémentaires :
 
-* **Proactive** : Claude s'exécute immédiatement, fait des hypothèses raisonnables au lieu de s'arrêter pour les décisions courantes, et préfère l'action à la planification. Cela applique les mêmes conseils que le [mode auto](/fr/permission-modes#eliminate-prompts-with-auto-mode) sans modifier votre mode de permission, vous voyez donc toujours les invites de permission avant l'exécution des outils.
+* **Proactive** : Claude s'exécute immédiatement, fait des hypothèses raisonnables au lieu de s'arrêter pour les décisions courantes, et préfère l'action à la planification. Ceci applique des conseils d'exécution autonome plus forts que le [mode auto](/fr/permission-modes#eliminate-prompts-with-auto-mode), et cela fonctionne sans modifier votre mode de permission, vous voyez donc toujours les invites de permission avant l'exécution des outils.
 
 * **Explanatory** : Fournit des « Insights » éducatifs entre les tâches d'ingénierie logicielle pour vous aider à les accomplir. Vous aide à comprendre les choix d'implémentation et les modèles de base de code.
 
@@ -36,7 +36,7 @@ Pour définir un style sans le menu, modifiez directement le champ `outputStyle`
 }
 ```
 
-Comme le style de sortie est défini dans l'invite système au démarrage de la session, les modifications prennent effet la prochaine fois que vous démarrez une nouvelle session. Cela maintient l'invite système stable tout au long d'une conversation afin que la mise en cache des invites puisse réduire la latence et les coûts.
+Le style de sortie fait partie de l'invite système, que Claude Code lit une seule fois au démarrage de la session. Les modifications prennent effet après `/clear` ou une nouvelle session. Consultez [Comment Claude Code utilise la mise en cache des invites](/fr/prompt-caching#changing-output-style) pour savoir ce qu'un changement de style de sortie fait au cache.
 
 ## Créer un style de sortie personnalisé
 
@@ -72,7 +72,7 @@ Un style de sortie personnalisé est un fichier Markdown : frontmatter pour les 
   </Step>
 
   <Step title="Basculer vers votre style">
-    Exécutez `/config` et sélectionnez votre style sous **Output style**. Il prend effet la prochaine fois que vous démarrez une session.
+    Exécutez `/config` et sélectionnez votre style sous **Output style**. Il prend effet après `/clear` ou la prochaine fois que vous démarrez une session.
   </Step>
 </Steps>
 
@@ -114,6 +114,6 @@ Plusieurs fonctionnalités personnalisent le comportement de Claude Code. Les st
 ## Ressources connexes
 
 * [Settings](/fr/settings) : où se trouve le champ `outputStyle` et comment fonctionne la précédence des paramètres
-* [Permission modes](/fr/permission-modes) : le style Proactive reflète le mode auto sans modifier votre mode de permission
+* [Permission modes](/fr/permission-modes) : comment le style Proactive se compare au mode auto
 * [Plugins](/fr/plugins) : empaquetez et distribuez les styles de sortie aux côtés des skills, des hooks et des agents
 * [Debug your configuration](/fr/debug-your-config) : diagnostiquez pourquoi un style de sortie ne prend pas effet

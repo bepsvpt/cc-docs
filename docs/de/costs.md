@@ -76,7 +76,7 @@ Um Agent-Team-Kosten überschaubar zu halten:
 
 ## Reduzieren Sie die Token-Nutzung
 
-Token-Kosten skalieren mit der Kontextgröße: Je mehr Kontext Claude verarbeitet, desto mehr Token verwenden Sie. Claude Code optimiert Kosten automatisch durch Prompt Caching (das Kosten für wiederholte Inhalte wie Systemprompts reduziert) und Auto-Compaction (das Gesprächsverlauf zusammenfasst, wenn sich dem Kontextlimit genähert wird).
+Token-Kosten skalieren mit der Kontextgröße: Je mehr Kontext Claude verarbeitet, desto mehr Token verwenden Sie. Claude Code optimiert Kosten automatisch durch [Prompt Caching](/de/prompt-caching), das Kosten für wiederholte Inhalte wie Systemprompts reduziert, und Auto-Compaction, das Gesprächsverlauf zusammenfasst, wenn sich dem Kontextlimit genähert wird.
 
 Die folgenden Strategien helfen Ihnen, den Kontext klein zu halten und die Kosten pro Nachricht zu reduzieren.
 
@@ -184,7 +184,7 @@ Vage Anfragen wie „Verbessern Sie diese Codebasis" lösen breites Scannen aus.
 
 Für längere oder komplexere Arbeiten helfen diese Gewohnheiten, verschwendete Token durch das Gehen des falschen Weges zu vermeiden:
 
-* **Verwenden Sie Plan Mode für komplexe Aufgaben**: Drücken Sie Shift+Tab, um [Plan Mode](/de/common-workflows#use-plan-mode-for-safe-code-analysis) vor der Implementierung zu betreten. Claude erkundet die Codebasis und schlägt einen Ansatz zur Genehmigung vor, was teure Überarbeitungen verhindert, wenn die anfängliche Richtung falsch ist.
+* **Verwenden Sie Plan Mode für komplexe Aufgaben**: Drücken Sie Shift+Tab, um [Plan Mode](/de/permission-modes#analyze-before-you-edit-with-plan-mode) vor der Implementierung zu betreten. Claude erkundet die Codebasis und schlägt einen Ansatz zur Genehmigung vor, was teure Überarbeitungen verhindert, wenn die anfängliche Richtung falsch ist.
 * **Korrigieren Sie den Kurs früh**: Wenn Claude in die falsche Richtung geht, drücken Sie Escape, um sofort zu stoppen. Verwenden Sie `/rewind` oder doppeltippen Sie Escape, um das Gespräch und den Code zu einem vorherigen Checkpoint wiederherzustellen.
 * **Geben Sie Verifizierungsziele an**: Fügen Sie Testfälle ein, fügen Sie Screenshots ein oder definieren Sie erwartete Ausgabe in Ihrem Prompt. Wenn Claude seine eigene Arbeit verifizieren kann, erkennt es Probleme, bevor Sie Korrektionen anfordern müssen.
 * **Testen Sie schrittweise**: Schreiben Sie eine Datei, testen Sie sie, dann fahren Sie fort. Dies erkennt Probleme früh, wenn sie billig zu beheben sind.

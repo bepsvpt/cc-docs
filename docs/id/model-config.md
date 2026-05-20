@@ -53,11 +53,11 @@ Anda dapat mengonfigurasi model Anda dengan beberapa cara, yang tercantum dalam 
 3. **Variabel lingkungan** - Atur `ANTHROPIC_MODEL=<alias|name>`
 4. **Pengaturan** - Konfigurasi secara permanen di file pengaturan Anda menggunakan bidang `model`.
 
-<Note>
-  Pilihan `/model` Anda disimpan ke pengaturan pengguna dan bertahan di seluruh restart. Mulai dari v2.1.117, jika `.claude/settings.json` proyek menetapkan model yang berbeda, Claude Code juga menulis pilihan Anda ke `.claude/settings.local.json` sehingga terus berlaku di proyek tersebut setelah restart. Pengaturan yang dikelola memiliki prioritas dan diterapkan kembali pada peluncuran berikutnya.
-</Note>
+Mulai dari v2.1.144, `/model` berlaku hanya untuk sesi saat ini dan tidak ditulis ke pengaturan. Untuk menyimpan pilihan Anda sebagai default untuk sesi baru, tekan `d` pada baris yang disorot dalam pemilih, yang menulis bidang `model` di pengaturan pengguna Anda. Pengaturan yang dikelola memiliki prioritas dan diterapkan kembali pada peluncuran berikutnya.
 
-Bendera `--model` dan variabel lingkungan `ANTHROPIC_MODEL` hanya berlaku untuk sesi yang Anda luncurkan dengan mereka dan tidak disimpan. Untuk menjalankan model yang berbeda di terminal yang berbeda pada waktu yang sama, luncurkan masing-masing dengan bendera `--model` miliknya sendiri daripada beralih dengan `/model`.
+Bendera `--model` dan variabel lingkungan `ANTHROPIC_MODEL` juga hanya berlaku untuk sesi yang Anda luncurkan dengan mereka. Untuk menjalankan model yang berbeda di terminal yang berbeda pada waktu yang sama, luncurkan masing-masing dengan bendera `--model` miliknya sendiri daripada beralih dengan `/model`.
+
+Sesi yang dilanjutkan dimulai dengan `claude --resume`, `--continue`, atau pemilih `/resume` menyimpan model yang mereka gunakan ketika transkrip disimpan, terlepas dari pengaturan `model` saat ini. Jika model tersebut telah pensiun, sesi jatuh melalui urutan prioritas normal. Ini mencegah pilihan `/model` sesi lain dari mengubah model saat dilanjutkan.
 
 Ketika model aktif saat startup berasal dari pengaturan proyek atau yang dikelola daripada pilihan Anda sendiri, header startup menunjukkan file pengaturan mana yang menetapkannya. Jalankan `/model` untuk mengganti untuk sesi saat ini.
 
@@ -322,7 +322,11 @@ Untuk mengaktifkan [konteks diperluas](#extended-context) untuk model yang ditet
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7[1m]'
 ```
 
-Akhiran `[1m]` menerapkan jendela konteks 1M ke semua penggunaan alias tersebut, termasuk `opusplan`. Claude Code menghapus akhiran sebelum mengirim ID model ke penyedia Anda. Hanya tambahkan `[1m]` ketika model yang mendasar mendukung konteks 1M, seperti Opus 4.7 atau Sonnet 4.6.
+Akhiran `[1m]` menerapkan jendela konteks 1M ke semua penggunaan alias tersebut, termasuk `opusplan`.
+
+* Claude Code menghapus akhiran sebelum mengirim ID model ke penyedia Anda.
+* Hanya tambahkan `[1m]` ketika model yang mendasar [mendukung konteks 1M](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window).
+* Akhiran dibaca per variabel, bukan per model. Di Bedrock, Vertex, dan Foundry, ID model tanpa `[1m]` dalam satu variabel menggunakan konteks 200K bahkan jika variabel lain menetapkan model yang sama dengan akhiran.
 
 <Note>
   Allowlist `settings.availableModels` masih berlaku saat menggunakan penyedia pihak ketiga. Penyaringan cocok pada alias model (`opus`, `sonnet`, `haiku`), bukan ID model spesifik penyedia.
@@ -392,13 +396,13 @@ Penggantian menggantikan ID model bawaan yang mendukung setiap entri di pemilih 
 
 ### Konfigurasi prompt caching
 
-Claude Code secara otomatis menggunakan [prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) untuk mengoptimalkan kinerja dan mengurangi biaya. Anda dapat menonaktifkan prompt caching secara global atau untuk tingkat model tertentu:
+Claude Code secara otomatis menggunakan [prompt caching](/id/prompt-caching) untuk mengoptimalkan kinerja dan mengurangi biaya. Anda dapat menonaktifkan prompt caching secara global atau untuk tingkat model tertentu:
 
-| Variabel lingkungan             | Deskripsi                                                                                              |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `DISABLE_PROMPT_CACHING`        | Atur ke `1` untuk menonaktifkan prompt caching untuk semua model (mengambil alih pengaturan per-model) |
-| `DISABLE_PROMPT_CACHING_HAIKU`  | Atur ke `1` untuk menonaktifkan prompt caching hanya untuk model Haiku                                 |
-| `DISABLE_PROMPT_CACHING_SONNET` | Atur ke `1` untuk menonaktifkan prompt caching hanya untuk model Sonnet                                |
-| `DISABLE_PROMPT_CACHING_OPUS`   | Atur ke `1` untuk menonaktifkan prompt caching hanya untuk model Opus                                  |
+| Variabel lingkungan             | Deskripsi                                                                                             |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `DISABLE_PROMPT_CACHING`        | Atur ke `1` untuk menonaktifkan prompt caching untuk semua model. Mengambil alih pengaturan per-model |
+| `DISABLE_PROMPT_CACHING_HAIKU`  | Atur ke `1` untuk menonaktifkan prompt caching hanya untuk model Haiku                                |
+| `DISABLE_PROMPT_CACHING_SONNET` | Atur ke `1` untuk menonaktifkan prompt caching hanya untuk model Sonnet                               |
+| `DISABLE_PROMPT_CACHING_OPUS`   | Atur ke `1` untuk menonaktifkan prompt caching hanya untuk model Opus                                 |
 
-Variabel lingkungan ini memberi Anda kontrol terperinci atas perilaku prompt caching. Pengaturan global `DISABLE_PROMPT_CACHING` mengambil alih pengaturan spesifik model, memungkinkan Anda dengan cepat menonaktifkan semua caching saat diperlukan. Pengaturan per-model berguna untuk kontrol selektif, seperti saat men-debug model tertentu atau bekerja dengan penyedia cloud yang mungkin memiliki implementasi caching berbeda.
+Untuk mengubah cache TTL atau mempelajari apa yang memicu cache miss, lihat [Bagaimana Claude Code menggunakan prompt caching](/id/prompt-caching).

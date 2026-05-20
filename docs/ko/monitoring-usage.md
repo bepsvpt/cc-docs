@@ -132,6 +132,8 @@ OTLP 내보내기를 위한 클라이언트 인증서를 구성하는 방법은 
 
 추적이 활성화되면 Bash 및 PowerShell 하위 프로세스는 활성 도구 실행 스팬의 W3C 추적 컨텍스트를 포함하는 `TRACEPARENT` 환경 변수를 자동으로 상속합니다. 이를 통해 `TRACEPARENT`를 읽는 모든 하위 프로세스가 자신의 스팬을 동일한 추적 아래에 부모로 지정할 수 있으므로 Claude가 실행하는 스크립트 및 명령을 통한 엔드투엔드 분산 추적이 가능합니다.
 
+추적이 활성화되고 Claude Code가 Anthropic API에 직접 연결되어 있으면 각 모델 요청은 `claude_code.llm_request` 스팬의 컨텍스트로 설정된 W3C `traceparent` 헤더를 전달하고, API의 `traceresponse` 헤더는 스팬 링크로 기록됩니다. 이들은 함께 Claude Code의 클라이언트 측 스팬을 모든 호환 중간 계층을 통해 서버 측 추적에 연결합니다. 헤더는 타사 제공자에게 전송되지 않습니다.
+
 Agent SDK 및 `-p`로 시작된 비대화형 세션에서 Claude Code는 각 상호 작용 스팬을 시작할 때 자신의 환경에서 `TRACEPARENT` 및 `TRACESTATE`를 읽습니다. 이를 통해 임베딩 프로세스가 활성 W3C 추적 컨텍스트를 하위 프로세스에 전달할 수 있으므로 Claude Code의 스팬이 호출자의 분산 추적의 자식으로 나타납니다. 대화형 세션은 CI 또는 컨테이너 환경의 주변 값을 실수로 상속하는 것을 피하기 위해 인바운드 `TRACEPARENT`를 무시합니다.
 
 #### 스팬 계층 구조
@@ -196,15 +198,17 @@ Agent SDK 및 `claude -p` 세션에서 `TRACEPARENT`가 환경에 설정되면 `
 
 **`claude_code.tool`**
 
-| 속성              | 설명                              | 게이트 대상                  |
-| --------------- | ------------------------------- | ----------------------- |
-| `tool_name`     | 도구 이름                           |                         |
-| `duration_ms`   | 권한 대기 및 실행을 포함한 벽시계 지속 시간       |                         |
-| `result_tokens` | 도구 결과의 대략적인 토큰 크기               |                         |
-| `file_path`     | Read, Edit 및 Write 도구의 대상 파일 경로 | `OTEL_LOG_TOOL_DETAILS` |
-| `full_command`  | Bash 도구의 명령 문자열                 | `OTEL_LOG_TOOL_DETAILS` |
-| `skill_name`    | Skill 도구의 스킬 이름                 | `OTEL_LOG_TOOL_DETAILS` |
-| `subagent_type` | Task 도구의 하위 에이전트 유형             | `OTEL_LOG_TOOL_DETAILS` |
+| 속성                | 설명                                             | 게이트 대상                  |
+| ----------------- | ---------------------------------------------- | ----------------------- |
+| `tool_name`       | 도구 이름                                          |                         |
+| `duration_ms`     | 권한 대기 및 실행을 포함한 벽시계 지속 시간                      |                         |
+| `result_tokens`   | 도구 결과의 대략적인 토큰 크기                              |                         |
+| `agent_id`        | 도구를 실행한 하위 에이전트 또는 팀원의 식별자. 주 세션에는 없음          |                         |
+| `parent_agent_id` | 이 에이전트를 생성한 에이전트의 식별자. 주 세션 및 직접 생성된 에이전트에는 없음 |                         |
+| `file_path`       | Read, Edit 및 Write 도구의 대상 파일 경로                | `OTEL_LOG_TOOL_DETAILS` |
+| `full_command`    | Bash 도구의 명령 문자열                                | `OTEL_LOG_TOOL_DETAILS` |
+| `skill_name`      | Skill 도구의 스킬 이름                                | `OTEL_LOG_TOOL_DETAILS` |
+| `subagent_type`   | Task 도구의 하위 에이전트 유형                            | `OTEL_LOG_TOOL_DETAILS` |
 
 `OTEL_LOG_TOOL_CONTENT=1`일 때 이 스팬은 속성에 도구의 입력 및 출력 본문을 포함하는 `tool.output` 스팬 이벤트도 기록합니다 (속성당 60KB에서 잘림).
 
@@ -885,6 +889,22 @@ API 요청이 두 번 이상 시도 후 실패할 때 한 번 기록됩니다. �
 * `managed_only`: 관리 정책 훅만 허용될 때 `"true"`
 * `hook_source`: `"policySettings"` 또는 `"merged"`
 * `hook_definitions`: JSON 직렬화된 훅 구성. 상세 베타 추적과 `OTEL_LOG_TOOL_DETAILS=1`이 모두 활성화되어 있을 때만 포함됨
+
+#### 훅 플러그인 메트릭 이벤트
+
+공식 마켓플레이스 플러그인 훅이 호출별 메트릭을 내보낼 때 기록됩니다. 공식 Anthropic 마켓플레이스에서 설치된 플러그인만 이를 내보낼 수 있습니다. 타사 마켓플레이스 플러그인 및 사용자 구성 훅은 이 이벤트로 내보내지 않습니다. 이 이벤트를 사용하여 플러그인 동작 (예: 찾기 비율, 비용, 지속 시간)을 자신의 관찰성 스택에서 모니터링합니다.
+
+**이벤트 이름**: `claude_code.hook_plugin_metrics`
+
+**속성**:
+
+* 모든 [표준 속성](#standard-attributes)
+* `event.name`: `"hook_plugin_metrics"`
+* `event.timestamp`: ISO 8601 타임스탬프
+* `event.sequence`: 세션 내 이벤트 순서 지정을 위한 단조 증가 카운터
+* `plugin_id`: `<name>@<marketplace>` 형식의 플러그인 식별자
+* `hook_event`: 메트릭을 내보낸 훅 이벤트 유형
+* 최대 20개의 플러그인 내보낸 메트릭 키. 이름은 `^[a-z][a-z0-9_]{0,39}$`와 일치합니다. 값은 부울 또는 숫자입니다.
 
 #### 압축 이벤트
 

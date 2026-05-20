@@ -270,7 +270,9 @@ export DISABLE_PROMPT_CACHING=1
 export ENABLE_PROMPT_CACHING_1H=1
 ```
 
-<Note>[La mise en cache des invites](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) peut ne pas être disponible dans toutes les régions. Les écritures de cache avec un TTL d'une heure sont facturées à un taux plus élevé que les écritures de cinq minutes.</Note>
+Le TTL du cache d'une heure est facturé à un taux plus élevé que la valeur par défaut de cinq minutes. Voir [durée de vie du cache](/fr/prompt-caching#cache-lifetime).
+
+<Note>La mise en cache des invites peut ne pas être disponible dans toutes les régions Bedrock. Si les nombres de jetons de cache restent à zéro, vérifiez les [modèles, régions et limites pris en charge](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html#prompt-caching-models) dans la documentation Bedrock.</Note>
 
 #### Mapper chaque version de modèle à un profil d'inférence
 

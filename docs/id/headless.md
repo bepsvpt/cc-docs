@@ -152,17 +152,17 @@ claude -p "Write a poem" --output-format stream-json --verbose --include-partial
 
 Ketika permintaan API gagal dengan kesalahan yang dapat dicoba ulang, Claude Code memancarkan acara `system/api_retry` sebelum mencoba ulang. Anda dapat menggunakan ini untuk menampilkan kemajuan percobaan ulang atau menerapkan logika backoff kustom.
 
-| Bidang           | Tipe              | Deskripsi                                                                                                                                                                   |
-| ---------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`           | `"system"`        | tipe pesan                                                                                                                                                                  |
-| `subtype`        | `"api_retry"`     | mengidentifikasi ini sebagai acara percobaan ulang                                                                                                                          |
-| `attempt`        | integer           | nomor percobaan saat ini, dimulai dari 1                                                                                                                                    |
-| `max_retries`    | integer           | total percobaan ulang yang diizinkan                                                                                                                                        |
-| `retry_delay_ms` | integer           | milidetik hingga percobaan berikutnya                                                                                                                                       |
-| `error_status`   | integer atau null | kode status HTTP, atau `null` untuk kesalahan koneksi tanpa respons HTTP                                                                                                    |
-| `error`          | string            | kategori kesalahan: `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `rate_limit`, `invalid_request`, `server_error`, `max_output_tokens`, atau `unknown` |
-| `uuid`           | string            | pengidentifikasi acara unik                                                                                                                                                 |
-| `session_id`     | string            | sesi yang dimiliki acara                                                                                                                                                    |
+| Bidang           | Tipe              | Deskripsi                                                                                                                                                                                      |
+| ---------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`           | `"system"`        | tipe pesan                                                                                                                                                                                     |
+| `subtype`        | `"api_retry"`     | mengidentifikasi ini sebagai acara percobaan ulang                                                                                                                                             |
+| `attempt`        | integer           | nomor percobaan saat ini, dimulai dari 1                                                                                                                                                       |
+| `max_retries`    | integer           | total percobaan ulang yang diizinkan                                                                                                                                                           |
+| `retry_delay_ms` | integer           | milidetik hingga percobaan berikutnya                                                                                                                                                          |
+| `error_status`   | integer atau null | kode status HTTP, atau `null` untuk kesalahan koneksi tanpa respons HTTP                                                                                                                       |
+| `error`          | string            | kategori kesalahan: `authentication_failed`, `oauth_org_not_allowed`, `billing_error`, `rate_limit`, `invalid_request`, `model_not_found`, `server_error`, `max_output_tokens`, atau `unknown` |
+| `uuid`           | string            | pengidentifikasi acara unik                                                                                                                                                                    |
+| `session_id`     | string            | sesi yang dimiliki acara                                                                                                                                                                       |
 
 Acara `system/init` melaporkan metadata sesi termasuk model, alat, server MCP, dan plugin yang dimuat. Ini adalah acara pertama dalam aliran kecuali [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/id/env-vars) diatur, dalam hal ini acara `plugin_install` mendahuluinya. Gunakan bidang plugin untuk gagal CI ketika plugin tidak dimuat:
 

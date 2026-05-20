@@ -76,7 +76,7 @@ Total code changes:    0 lines added, 0 lines removed
 
 ## 减少令牌使用
 
-令牌成本随上下文大小而扩展：Claude 处理的上下文越多，您使用的令牌就越多。Claude Code 通过 prompt caching（减少重复内容（如系统提示）的成本）和 auto-compact（在接近上下文限制时总结对话历史）自动优化成本。
+令牌成本随上下文大小而扩展：Claude 处理的上下文越多，您使用的令牌就越多。Claude Code 通过 [prompt caching](/zh-CN/prompt-caching)（减少重复内容（如系统提示）的成本）和 auto-compact（在接近上下文限制时总结对话历史）自动优化成本。
 
 以下策略可帮助您保持上下文较小并降低每条消息的成本。
 
@@ -97,7 +97,7 @@ When you are using compact, please focus on test output and code changes
 
 ### 选择正确的模型
 
-Sonnet 处理大多数编码任务效果很好，成本低于 Opus。为复杂的架构决策或多步推理保留 Opus。使用 `/model` 在会话中途切换模型，或在 `/config` 中设置默认值。对于简单的 subagent 任务，在您的[subagent 配置](/zh-CN/sub-agents#choose-a-model)中指定 `model: haiku`。
+Sonnet 处理大多数编码任务效果很好，成本低于 Opus。为复杂的架构决策或多步推理保留 Opus。使用 `/model` 在会话中途切换模型，或在 `/config` 中设置默认值。对于简单的 subagent 任务，在您的 [subagent 配置](/zh-CN/sub-agents#choose-a-model)中指定 `model: haiku`。
 
 ### 减少 MCP server 开销
 
@@ -112,7 +112,7 @@ MCP 工具定义[默认被延迟](/zh-CN/mcp#scale-with-mcp-tool-search)，因�
 
 ### 将处理卸载到 hooks 和 skills
 
-自定义[hooks](/zh-CN/hooks)可以在 Claude 看到数据之前对其进行预处理。Claude 不是读取 10,000 行日志文件来查找错误，hook 可以 grep `ERROR` 并仅返回匹配的行，将上下文从数万个令牌减少到数百个。
+自定义 [hooks](/zh-CN/hooks)可以在 Claude 看到数据之前对其进行预处理。Claude 不是读取 10,000 行日志文件来查找错误，hook 可以 grep `ERROR` 并仅返回匹配的行，将上下文从数万个令牌减少到数百个。
 
 [skill](/zh-CN/skills)可以为 Claude 提供领域知识，这样它就不必进行探索。例如，"codebase-overview" skill 可以描述您的项目架构、关键目录和命名约定。当 Claude 调用该 skill 时，它会立即获得此上下文，而不是花费令牌读取多个文件来理解结构。
 
@@ -120,7 +120,7 @@ MCP 工具定义[默认被延迟](/zh-CN/mcp#scale-with-mcp-tool-search)，因�
 
 <Tabs>
   <Tab title="settings.json">
-    将此添加到您的[settings.json](/zh-CN/settings#settings-files)以在每个 Bash 命令之前运行 hook：
+    将此添加到您的 [settings.json](/zh-CN/settings#settings-files)以在每个 Bash 命令之前运行 hook：
 
     ```json theme={null}
     {
@@ -162,19 +162,19 @@ MCP 工具定义[默认被延迟](/zh-CN/mcp#scale-with-mcp-tool-search)，因�
 
 ### 将指令从 CLAUDE.md 移动到 skills
 
-您的[CLAUDE.md](/zh-CN/memory)文件在会话开始时加载到上下文中。如果它包含特定工作流的详细指令（如 PR 审查或数据库迁移），即使您在做不相关的工作时，这些令牌也会存在。[Skills](/zh-CN/skills)仅在调用时按需加载，因此将专门指令移动到 skills 中可以保持您的基础上下文较小。目标是通过仅包含必要内容来将 CLAUDE.md 保持在 200 行以下。
+您的 [CLAUDE.md](/zh-CN/memory)文件在会话开始时加载到上下文中。如果它包含特定工作流的详细指令（如 PR 审查或数据库迁移），即使您在做不相关的工作时，这些令牌也会存在。[Skills](/zh-CN/skills)仅在调用时按需加载，因此将专门指令移动到 skills 中可以保持您的基础上下文较小。目标是通过仅包含必要内容来将 CLAUDE.md 保持在 200 行以下。
 
 ### 调整扩展思考
 
-扩展思考默认启用，因为它显著改进了复杂规划和推理任务的性能。思考令牌作为输出令牌计费，默认预算可能是每个请求数万个令牌，具体取决于模型。对于不需要深度推理的更简单任务，您可以通过在 `/effort` 中或在 `/model` 中降低[努力级别](/zh-CN/model-config#adjust-effort-level)、在 `/config` 中禁用思考或使用 `MAX_THINKING_TOKENS=8000` 降低预算来降低成本。
+扩展思考默认启用，因为它显著改进了复杂规划和推理任务的性能。思考令牌作为输出令牌计费，默认预算可能是每个请求数万个令牌，具体取决于模型。对于不需要深度推理的更简单任务，您可以通过在 `/effort` 中或在 `/model` 中降低 [effort level](/zh-CN/model-config#adjust-effort-level)、在 `/config` 中禁用思考或使用 `MAX_THINKING_TOKENS=8000` 降低预算来降低成本。
 
 ### 将冗长的操作委托给 subagents
 
-运行测试、获取文档或处理日志文件可能会消耗大量上下文。将这些委托给[subagents](/zh-CN/sub-agents#isolate-high-volume-operations)，以便冗长的输出保留在 subagent 的上下文中，而只有摘要返回到您的主对话。
+运行测试、获取文档或处理日志文件可能会消耗大量上下文。将这些委托给 [subagents](/zh-CN/sub-agents#isolate-high-volume-operations)，以便冗长的输出保留在 subagent 的上下文中，而只有摘要返回到您的主对话。
 
 ### 管理 agent 团队成本
 
-当队友在 plan mode 中运行时，Agent 团队使用的令牌大约是标准会话的 7 倍，因为每个队友维护自己的上下文窗口并作为单独的 Claude 实例运行。保持团队任务小且独立，以限制每个队友的令牌使用。有关详细信息，请参阅[agent 团队](/zh-CN/agent-teams)。
+当队友在 plan mode 中运行时，Agent 团队使用的令牌大约是标准会话的 7 倍，因为每个队友维护自己的上下文窗口并作为单独的 Claude 实例运行。保持团队任务小且独立，以限制每个队友的令牌使用。有关详细信息，请参阅 [agent 团队](/zh-CN/agent-teams)。
 
 ### 编写具体的提示
 
@@ -184,7 +184,7 @@ MCP 工具定义[默认被延迟](/zh-CN/mcp#scale-with-mcp-tool-search)，因�
 
 对于较长或更复杂的工作，这些习惯有助于避免因走错路而浪费的令牌：
 
-* **对复杂任务使用 plan mode**：按 Shift+Tab 进入[plan mode](/zh-CN/common-workflows#use-plan-mode-for-safe-code-analysis)，然后再进行实现。Claude 探索代码库并提出一个方法供您批准，防止当初始方向错误时的昂贵返工。
+* **对复杂任务使用 plan mode**：按 Shift+Tab 进入 [plan mode](/zh-CN/permission-modes#analyze-before-you-edit-with-plan-mode)，然后再进行实现。Claude 探索代码库并提出一个方法供您批准，防止当初始方向错误时的昂贵返工。
 * **尽早纠正方向**：如果 Claude 开始朝错误的方向发展，按 Escape 立即停止。使用 `/rewind` 或双击 Escape 将对话和代码恢复到之前的 checkpoint。
 * **给出验证目标**：在您的提示中包含测试用例、粘贴屏幕截图或定义预期输出。当 Claude 可以验证自己的工作时，它会在您需要请求修复之前捕获问题。
 * **增量测试**：编写一个文件，测试它，然后继续。这会在问题便宜时尽早捕获问题。

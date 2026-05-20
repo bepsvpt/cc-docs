@@ -132,6 +132,8 @@ Spans menyunting teks prompt pengguna, detail input alat, dan konten alat secara
 
 Saat tracing aktif, subproses Bash dan PowerShell secara otomatis mewarisi variabel lingkungan `TRACEPARENT` yang berisi konteks trace W3C dari span eksekusi alat yang aktif. Ini memungkinkan subproses apa pun yang membaca `TRACEPARENT` untuk membuat parent spans-nya di bawah trace yang sama, memungkinkan distributed tracing end-to-end melalui skrip dan perintah yang dijalankan Claude.
 
+Saat tracing aktif dan Claude Code terhubung langsung ke API Anthropic, setiap permintaan model membawa header W3C `traceparent` yang diatur ke konteks span `claude_code.llm_request`, dan header `traceresponse` API dicatat sebagai link span. Bersama-sama ini menghubungkan spans sisi klien Claude Code ke trace sisi server melalui perantara yang sesuai. Header tidak dikirim ke penyedia pihak ketiga.
+
 Dalam sesi Agent SDK dan non-interaktif yang dimulai dengan `-p`, Claude Code juga membaca `TRACEPARENT` dan `TRACESTATE` dari lingkungannya sendiri saat memulai setiap span interaksi. Ini memungkinkan proses embedding untuk melewatkan konteks trace W3C aktifnya ke dalam subproses sehingga spans Claude Code muncul sebagai anak dari distributed trace pemanggil. Sesi interaktif mengabaikan `TRACEPARENT` inbound untuk menghindari secara tidak sengaja mewarisi nilai ambient dari lingkungan CI atau container.
 
 #### Hierarki span
@@ -196,15 +198,17 @@ Setiap upaya retry juga dicatat sebagai acara span `gen_ai.request.attempt` deng
 
 **`claude_code.tool`**
 
-| Atribut         | Deskripsi                                           | Gated by                |
-| --------------- | --------------------------------------------------- | ----------------------- |
-| `tool_name`     | Nama alat                                           |                         |
-| `duration_ms`   | Durasi wall-clock termasuk tunggu izin dan eksekusi |                         |
-| `result_tokens` | Ukuran token perkiraan dari hasil alat              |                         |
-| `file_path`     | Jalur file target untuk alat Read, Edit, dan Write  | `OTEL_LOG_TOOL_DETAILS` |
-| `full_command`  | String perintah untuk alat Bash                     | `OTEL_LOG_TOOL_DETAILS` |
-| `skill_name`    | Nama skill untuk alat Skill                         | `OTEL_LOG_TOOL_DETAILS` |
-| `subagent_type` | Jenis subagent untuk alat Task                      | `OTEL_LOG_TOOL_DETAILS` |
+| Atribut           | Deskripsi                                                                                                                    | Gated by                |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| `tool_name`       | Nama alat                                                                                                                    |                         |
+| `duration_ms`     | Durasi wall-clock termasuk tunggu izin dan eksekusi                                                                          |                         |
+| `result_tokens`   | Ukuran token perkiraan dari hasil alat                                                                                       |                         |
+| `agent_id`        | Pengidentifikasi subagent atau rekan kerja yang menjalankan alat. Tidak ada pada sesi utama                                  |                         |
+| `parent_agent_id` | Pengidentifikasi agen yang menghasilkan yang ini. Tidak ada untuk sesi utama dan untuk agen yang dihasilkan langsung darinya |                         |
+| `file_path`       | Jalur file target untuk alat Read, Edit, dan Write                                                                           | `OTEL_LOG_TOOL_DETAILS` |
+| `full_command`    | String perintah untuk alat Bash                                                                                              | `OTEL_LOG_TOOL_DETAILS` |
+| `skill_name`      | Nama skill untuk alat Skill                                                                                                  | `OTEL_LOG_TOOL_DETAILS` |
+| `subagent_type`   | Jenis subagent untuk alat Task                                                                                               | `OTEL_LOG_TOOL_DETAILS` |
 
 Saat `OTEL_LOG_TOOL_CONTENT=1`, span ini juga mencatat acara span `tool.output` yang atributnya berisi badan input dan output alat, dipotong pada 60 KB per atribut.
 
@@ -654,7 +658,7 @@ Dicatat saat keputusan izin alat dibuat (terima/tolak).
 * `tool_use_id`: Pengidentifikasi unik untuk invokasi alat ini. Cocok dengan `tool_use_id` yang diteruskan ke hooks, memungkinkan korelasi antara acara OTel dan data yang ditangkap hook.
 * `decision`: Baik `"accept"` atau `"reject"`
 * `source`: Sumber keputusan:
-  * `"config"`: Diputuskan secara otomatis tanpa diminta, berdasarkan pengaturan proyek, kebijakan terkelola perusahaan, flag `--allowedTools` atau `--disallowedTools`, mode izin aktif, atau karena alat itu aman secara inheren. Acara tidak menunjukkan sumber mana yang cocok.
+  * `"config"`: Diputuskan secara otomatis tanpa diminta, berdasarkan pengaturan proyek, aturan izin dalam pengaturan pribadi pengguna, kebijakan terkelola perusahaan, flag `--allowedTools` atau `--disallowedTools`, mode izin aktif, hibah berskop sesi dari prompt sebelumnya dalam sesi CLI interaktif yang sama, atau karena alat itu aman secara inheren. Acara tidak menunjukkan sumber mana yang cocok.
   * `"hook"`: Hook `PreToolUse` atau `PermissionRequest` mengembalikan keputusan.
   * `"user_permanent"`: Dipancarkan saat pengguna memilih "Ya, dan jangan tanya lagi untuk ..." saat diminta, yang menyimpan aturan izin ke pengaturan pribadi mereka. Dalam CLI interaktif ini dipancarkan hanya untuk pilihan itu sendiri; panggilan nanti yang cocok dengan aturan tersimpan memancarkan `"config"` sebagai gantinya. Dalam sesi Agent SDK atau non-interaktif `-p`, baik pilihan awal maupun kecocokan aturan nanti memancarkan `"user_permanent"`. Diperlakukan sebagai penerimaan.
   * `"user_temporary"`: Dipancarkan saat pengguna memilih "Ya" saat diminta untuk persetujuan satu kali, atau memilih salah satu opsi "... selama sesi ini" pada prompt pengeditan atau pembacaan file. Dalam CLI interaktif ini dipancarkan hanya untuk pilihan itu sendiri; panggilan nanti yang diizinkan oleh hibah berskop sesi itu memancarkan `"config"` sebagai gantinya. Dalam sesi Agent SDK atau non-interaktif `-p`, baik pilihan maupun kecocokan nanti memancarkan `"user_temporary"`. Diperlakukan sebagai penerimaan.
@@ -885,6 +889,22 @@ Dicatat saat semua hooks untuk acara hook selesai.
 * `managed_only`: `"true"` saat hanya hooks kebijakan terkelola yang diizinkan
 * `hook_source`: `"policySettings"` atau `"merged"`
 * `hook_definitions`: Konfigurasi hook yang diserialisasi JSON. Disertakan hanya saat detailed beta tracing dan `OTEL_LOG_TOOL_DETAILS=1` keduanya diaktifkan
+
+#### Acara metrik plugin hook
+
+Dicatat saat hook plugin marketplace resmi memancarkan metrik per-invokasi. Hanya plugin yang diinstal dari marketplace Anthropic resmi yang dapat memancarkan ini. Plugin marketplace pihak ketiga dan hook yang dikonfigurasi pengguna tidak memancarkan ke acara ini. Gunakan acara ini untuk memantau perilaku plugin seperti tingkat penemuan, biaya, dan durasi dari stack observabilitas Anda sendiri.
+
+**Nama Acara**: `claude_code.hook_plugin_metrics`
+
+**Atribut**:
+
+* Semua [atribut standar](#standard-attributes)
+* `event.name`: `"hook_plugin_metrics"`
+* `event.timestamp`: Stempel waktu ISO 8601
+* `event.sequence`: penghitung yang meningkat secara monoton untuk mengurutkan acara dalam sesi
+* `plugin_id`: pengidentifikasi plugin dalam bentuk `<name>@<marketplace>`
+* `hook_event`: jenis acara hook yang memancarkan metrik
+* Hingga 20 kunci metrik yang dipancarkan plugin. Nama cocok dengan `^[a-z][a-z0-9_]{0,39}$`. Nilai adalah boolean atau angka.
 
 #### Acara pemadatan
 

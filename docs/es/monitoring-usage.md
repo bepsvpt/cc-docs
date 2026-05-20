@@ -132,6 +132,8 @@ Los spans redactan el texto del mensaje del usuario, los detalles de entrada de 
 
 Cuando el trazado está activo, los subprocesos de Bash y PowerShell heredan automáticamente una variable de entorno `TRACEPARENT` que contiene el contexto de traza W3C del span de ejecución de herramienta activo. Esto permite que cualquier subproceso que lea `TRACEPARENT` padre sus propios spans bajo la misma traza, habilitando trazado distribuido de extremo a extremo a través de scripts y comandos que Claude ejecuta.
 
+Cuando el trazado está activo y Claude Code está conectado directamente a la API de Anthropic, cada solicitud de modelo lleva un encabezado W3C `traceparent` establecido en el contexto del span `claude_code.llm_request`, y el encabezado `traceresponse` de la API se registra como un enlace de span. Juntos, estos conectan los spans del lado del cliente de Claude Code a la traza del lado del servidor a través de cualquier intermediario compatible. El encabezado no se envía a proveedores de terceros.
+
 En sesiones del SDK de Agent y no interactivas iniciadas con `-p`, Claude Code también lee `TRACEPARENT` y `TRACESTATE` de su propio entorno cuando inicia cada span de interacción. Esto permite que un proceso de incrustación pase su contexto de traza W3C activo al subproceso para que los spans de Claude Code aparezcan como hijos de la traza distribuida del llamador. Las sesiones interactivas ignoran `TRACEPARENT` entrante para evitar heredar accidentalmente valores ambientes de entornos de CI o contenedor.
 
 #### Jerarquía de spans
@@ -196,15 +198,17 @@ Cada intento de reintento también se registra como un evento de span `gen_ai.re
 
 **`claude_code.tool`**
 
-| Atributo        | Descripción                                                      | Controlado Por          |
-| --------------- | ---------------------------------------------------------------- | ----------------------- |
-| `tool_name`     | Nombre de la herramienta                                         |                         |
-| `duration_ms`   | Duración de pared incluyendo espera de permiso y ejecución       |                         |
-| `result_tokens` | Tamaño aproximado de token del resultado de la herramienta       |                         |
-| `file_path`     | Ruta de archivo de destino para herramientas Read, Edit, y Write | `OTEL_LOG_TOOL_DETAILS` |
-| `full_command`  | Cadena de comando para la herramienta Bash                       | `OTEL_LOG_TOOL_DETAILS` |
-| `skill_name`    | Nombre de habilidad para la herramienta Skill                    | `OTEL_LOG_TOOL_DETAILS` |
-| `subagent_type` | Tipo de subagente para la herramienta Task                       | `OTEL_LOG_TOOL_DETAILS` |
+| Atributo          | Descripción                                                                                                                 | Controlado Por          |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| `tool_name`       | Nombre de la herramienta                                                                                                    |                         |
+| `duration_ms`     | Duración de pared incluyendo espera de permiso y ejecución                                                                  |                         |
+| `result_tokens`   | Tamaño aproximado de token del resultado de la herramienta                                                                  |                         |
+| `agent_id`        | Identificador del subagente o compañero que ejecutó la herramienta. Ausente en la sesión principal                          |                         |
+| `parent_agent_id` | Identificador del agente que generó este. Ausente para la sesión principal y para agentes generados directamente desde ella |                         |
+| `file_path`       | Ruta de archivo de destino para herramientas Read, Edit, y Write                                                            | `OTEL_LOG_TOOL_DETAILS` |
+| `full_command`    | Cadena de comando para la herramienta Bash                                                                                  | `OTEL_LOG_TOOL_DETAILS` |
+| `skill_name`      | Nombre de habilidad para la herramienta Skill                                                                               | `OTEL_LOG_TOOL_DETAILS` |
+| `subagent_type`   | Tipo de subagente para la herramienta Task                                                                                  | `OTEL_LOG_TOOL_DETAILS` |
 
 Cuando `OTEL_LOG_TOOL_CONTENT=1`, este span también registra un evento de span `tool.output` cuyos atributos contienen los cuerpos de entrada y salida de la herramienta, truncados en 60 KB por atributo.
 
@@ -885,6 +889,22 @@ Se registra cuando todos los hooks para un evento de hook han terminado.
 * `managed_only`: `"true"` cuando solo se permiten hooks de política administrada
 * `hook_source`: `"policySettings"` o `"merged"`
 * `hook_definitions`: Configuración de hook serializada en JSON. Se incluye solo cuando tanto el trazado beta detallado como `OTEL_LOG_TOOL_DETAILS=1` están habilitados
+
+#### Evento de métricas de plugin de hook
+
+Se registra cuando un hook de plugin del mercado oficial emite métricas por invocación. Solo los plugins instalados desde un mercado oficial de Anthropic pueden emitir estos. Los plugins de mercado de terceros y los hooks configurados por el usuario no emiten a este evento. Usa este evento para monitorear el comportamiento del plugin como tasas de búsqueda, costos y duraciones desde tu propia pila de observabilidad.
+
+**Nombre del Evento**: `claude_code.hook_plugin_metrics`
+
+**Atributos**:
+
+* Todos los [atributos estándar](#standard-attributes)
+* `event.name`: `"hook_plugin_metrics"`
+* `event.timestamp`: Marca de tiempo ISO 8601
+* `event.sequence`: Contador monotónicamente creciente para ordenar eventos dentro de una sesión
+* `plugin_id`: identificador del plugin en forma `<name>@<marketplace>`
+* `hook_event`: tipo de evento de hook que emitió las métricas
+* Hasta 20 claves de métricas emitidas por el plugin. Los nombres coinciden con `^[a-z][a-z0-9_]{0,39}$`. Los valores son booleanos o números.
 
 #### Evento de compactación
 

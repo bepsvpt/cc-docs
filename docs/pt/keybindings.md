@@ -261,10 +261,11 @@ Ações disponíveis no contexto `DiffDialog`:
 
 Ações disponíveis no contexto `ModelPicker`:
 
-| Ação                         | Padrão | Descrição                 |
-| :--------------------------- | :----- | :------------------------ |
-| `modelPicker:decreaseEffort` | Left   | Diminuir nível de esforço |
-| `modelPicker:increaseEffort` | Right  | Aumentar nível de esforço |
+| Ação                         | Padrão | Descrição                                                 |
+| :--------------------------- | :----- | :-------------------------------------------------------- |
+| `modelPicker:decreaseEffort` | Left   | Diminuir nível de esforço                                 |
+| `modelPicker:increaseEffort` | Right  | Aumentar nível de esforço                                 |
+| `modelPicker:setAsDefault`   | d      | Definir o modelo destacado como padrão para novas sessões |
 
 ### Ações de seleção
 

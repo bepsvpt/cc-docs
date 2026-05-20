@@ -18,7 +18,7 @@ Claude Code의 **Default** 출력 스타일은 기존 시스템 프롬프트이�
 
 세 가지 추가 기본 제공 출력 스타일이 있습니다:
 
-* **Proactive**: Claude가 즉시 실행하고, 일상적인 결정을 위해 일시 중지하는 대신 합리적인 가정을 하며, 계획보다 행동을 선호합니다. 이는 [자동 모드](/ko/permission-modes#eliminate-prompts-with-auto-mode)와 동일한 지침을 적용하지만 권한 모드를 변경하지 않으므로, 도구가 실행되기 전에 여전히 권한 프롬프트를 볼 수 있습니다.
+* **Proactive**: Claude가 즉시 실행하고, 일상적인 결정을 위해 일시 중지하는 대신 합리적인 가정을 하며, 계획보다 행동을 선호합니다. 이는 [자동 모드](/ko/permission-modes#eliminate-prompts-with-auto-mode)가 적용하는 것보다 더 강력한 자율 실행 지침이며, 권한 모드를 변경하지 않고도 작동하므로, 도구가 실행되기 전에 여전히 권한 프롬프트를 볼 수 있습니다.
 
 * **Explanatory**: 소프트웨어 엔지니어링 작업을 완료하는 동안 교육용 "Insights"를 제공합니다. 구현 선택 사항과 코드베이스 패턴을 이해하는 데 도움이 됩니다.
 
@@ -36,7 +36,7 @@ Claude Code의 **Default** 출력 스타일은 기존 시스템 프롬프트이�
 }
 ```
 
-출력 스타일은 세션 시작 시 시스템 프롬프트에 설정되므로, 변경 사항은 새 세션을 시작할 때 적용됩니다. 이렇게 하면 시스템 프롬프트가 대화 전체에서 안정적으로 유지되어 prompt caching이 지연 시간과 비용을 줄일 수 있습니다.
+출력 스타일은 시스템 프롬프트의 일부이며, Claude Code는 세션 시작 시 이를 한 번 읽습니다. 변경 사항은 `/clear` 후 또는 새 세션 후에 적용됩니다. 출력 스타일 변경이 캐시에 미치는 영향에 대해서는 [Claude Code가 prompt caching을 사용하는 방법](/ko/prompt-caching#changing-output-style)을 참조하십시오.
 
 ## 사용자 정의 출력 스타일 만들기
 
@@ -72,7 +72,7 @@ Claude Code의 **Default** 출력 스타일은 기존 시스템 프롬프트이�
   </Step>
 
   <Step title="스타일로 전환">
-    `/config`를 실행하고 **Output style** 아래에서 스타일을 선택합니다. 새 세션을 시작할 때 적용됩니다.
+    `/config`를 실행하고 **출력 스타일** 아래에서 스타일을 선택합니다. `/clear` 후 또는 다음 세션을 시작할 때 적용됩니다.
   </Step>
 </Steps>
 
@@ -114,6 +114,6 @@ Claude Code의 **Default** 출력 스타일은 기존 시스템 프롬프트이�
 ## 관련 리소스
 
 * [Settings](/ko/settings): `outputStyle` 필드가 있는 위치 및 설정 우선순위 작동 방식
-* [Permission modes](/ko/permission-modes): Proactive 스타일은 권한 모드를 변경하지 않고 자동 모드를 미러링합니다
+* [Permission modes](/ko/permission-modes): Proactive 스타일이 자동 모드와 어떻게 비교되는지
 * [Plugins](/ko/plugins): skills, hooks, agents와 함께 출력 스타일을 패키징하고 배포합니다
 * [Debug your configuration](/ko/debug-your-config): 출력 스타일이 적용되지 않는 이유를 진단합니다

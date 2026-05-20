@@ -152,17 +152,17 @@ claude -p "Write a poem" --output-format stream-json --verbose --include-partial
 
 當 API 請求因可重試錯誤而失敗時，Claude Code 會在重試前發出 `system/api_retry` 事件。您可以使用此來顯示重試進度或實施自訂退避邏輯。
 
-| 欄位               | 類型            | 描述                                                                                                                                                 |
-| ---------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`           | `"system"`    | 訊息類型                                                                                                                                               |
-| `subtype`        | `"api_retry"` | 將此識別為重試事件                                                                                                                                          |
-| `attempt`        | 整數            | 目前嘗試次數，從 1 開始                                                                                                                                      |
-| `max_retries`    | 整數            | 允許的總重試次數                                                                                                                                           |
-| `retry_delay_ms` | 整數            | 毫秒直到下一次嘗試                                                                                                                                          |
-| `error_status`   | 整數或 null      | HTTP 狀態碼，或 `null` 表示沒有 HTTP 回應的連線錯誤                                                                                                                |
-| `error`          | 字串            | 錯誤類別：`authentication_failed`、`oauth_org_not_allowed`、`billing_error`、`rate_limit`、`invalid_request`、`server_error`、`max_output_tokens` 或 `unknown` |
-| `uuid`           | 字串            | 唯一事件識別碼                                                                                                                                            |
-| `session_id`     | 字串            | 事件所屬的工作階段                                                                                                                                          |
+| 欄位               | 類型            | 描述                                                                                                                                                                   |
+| ---------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`           | `"system"`    | 訊息類型                                                                                                                                                                 |
+| `subtype`        | `"api_retry"` | 將此識別為重試事件                                                                                                                                                            |
+| `attempt`        | 整數            | 目前嘗試次數，從 1 開始                                                                                                                                                        |
+| `max_retries`    | 整數            | 允許的總重試次數                                                                                                                                                             |
+| `retry_delay_ms` | 整數            | 毫秒直到下一次嘗試                                                                                                                                                            |
+| `error_status`   | 整數或 null      | HTTP 狀態碼，或 `null` 表示沒有 HTTP 回應的連線錯誤                                                                                                                                  |
+| `error`          | 字串            | 錯誤類別：`authentication_failed`、`oauth_org_not_allowed`、`billing_error`、`rate_limit`、`invalid_request`、`model_not_found`、`server_error`、`max_output_tokens` 或 `unknown` |
+| `uuid`           | 字串            | 唯一事件識別碼                                                                                                                                                              |
+| `session_id`     | 字串            | 事件所屬的工作階段                                                                                                                                                            |
 
 `system/init` 事件報告工作階段中繼資料，包括模型、工具、MCP 伺服器和載入的外掛程式。除非設定了 [`CLAUDE_CODE_SYNC_PLUGIN_INSTALL`](/zh-TW/env-vars)，否則它是串流中的第一個事件，在這種情況下 `plugin_install` 事件在其之前。使用外掛程式欄位在外掛程式未載入時使 CI 失敗：
 

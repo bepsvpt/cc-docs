@@ -270,7 +270,9 @@ export DISABLE_PROMPT_CACHING=1
 export ENABLE_PROMPT_CACHING_1H=1
 ```
 
-<Note>[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) puede no estar disponible en todas las regiones. Las escrituras de caché con un TTL de 1 hora se facturan a una tasa más alta que las escrituras de 5 minutos.</Note>
+La TTL de caché de 1 hora se factura a una tasa más alta que la predeterminada de 5 minutos. Vea [duración del caché](/es/prompt-caching#cache-lifetime).
+
+<Note>Prompt caching puede no estar disponible en todas las regiones de Bedrock. Si los recuentos de tokens de caché permanecen en cero, verifique [modelos, regiones y límites compatibles](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html#prompt-caching-models) en la documentación de Bedrock.</Note>
 
 #### Asignar cada versión de modelo a un perfil de inferencia
 

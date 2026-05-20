@@ -18,7 +18,7 @@ O estilo de saída **Default** do Claude Code é o prompt do sistema existente, 
 
 Existem três estilos de saída integrados adicionais:
 
-* **Proactive**: Claude executa imediatamente, faz suposições razoáveis em vez de pausar para decisões rotineiras e prefere ação ao planejamento. Isso aplica a mesma orientação que [modo automático](/pt/permission-modes#eliminate-prompts-with-auto-mode) sem alterar seu modo de permissão, portanto você ainda vê prompts de permissão antes das ferramentas serem executadas.
+* **Proactive**: Claude executa imediatamente, faz suposições razoáveis em vez de pausar para decisões rotineiras e prefere ação ao planejamento. Isso é uma orientação de execução autônoma mais forte do que o [modo automático](/pt/permission-modes#eliminate-prompts-with-auto-mode) aplica, e funciona sem alterar seu modo de permissão, portanto você ainda vê prompts de permissão antes das ferramentas serem executadas.
 
 * **Explanatory**: Fornece "Insights" educacionais entre ajudá-lo a completar tarefas de engenharia de software. Ajuda você a entender as escolhas de implementação e padrões da base de código.
 
@@ -36,7 +36,7 @@ Para definir um estilo sem o menu, edite o campo `outputStyle` diretamente em um
 }
 ```
 
-Como o estilo de saída é definido no prompt do sistema no início da sessão, as alterações entram em vigor na próxima vez que você iniciar uma nova sessão. Isso mantém o prompt do sistema estável durante uma conversa para que o prompt caching possa reduzir a latência e o custo.
+O estilo de saída faz parte do prompt do sistema, que Claude Code lê uma vez no início da sessão. As alterações entram em vigor após `/clear` ou uma nova sessão. Consulte [Como Claude Code usa prompt caching](/pt/prompt-caching#changing-output-style) para saber o que uma mudança de estilo de saída faz no cache.
 
 ## Crie um estilo de saída personalizado
 
@@ -72,7 +72,7 @@ Um estilo de saída personalizado é um arquivo Markdown: frontmatter para metad
   </Step>
 
   <Step title="Mude para seu estilo">
-    Execute `/config` e selecione seu estilo em **Output style**. Ele entra em vigor na próxima vez que você iniciar uma sessão.
+    Execute `/config` e selecione seu estilo em **Output style**. Ele entra em vigor após `/clear` ou na próxima vez que você iniciar uma sessão.
   </Step>
 </Steps>
 
@@ -114,6 +114,6 @@ Vários recursos personalizam como Claude Code se comporta. Os estilos de saída
 ## Recursos relacionados
 
 * [Settings](/pt/settings): onde o campo `outputStyle` reside e como a precedência de configurações funciona
-* [Permission modes](/pt/permission-modes): o estilo Proactive espelha o modo automático sem alterar seu modo de permissão
+* [Permission modes](/pt/permission-modes): como o estilo Proactive se compara ao modo automático
 * [Plugins](/pt/plugins): empacote e distribua estilos de saída junto com skills, hooks e agents
 * [Debug your configuration](/pt/debug-your-config): diagnostique por que um estilo de saída não está entrando em vigor

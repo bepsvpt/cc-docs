@@ -349,9 +349,8 @@ Ao trabalhar em uma branch com um pull request aberto, Claude Code exibe um link
 * Amarelo: revisão pendente
 * Vermelho: mudanças solicitadas
 * Cinza: rascunho
-* Roxo: mesclado
 
-`Cmd+click` (Mac) ou `Ctrl+click` (Windows/Linux) no link para abrir o pull request no seu navegador. O status é atualizado automaticamente a cada 60 segundos.
+O badge desaparece assim que o pull request é mesclado ou fechado. `Cmd+click` (Mac) ou `Ctrl+click` (Windows/Linux) no link para abrir o pull request no seu navegador. O status é atualizado a cada 60 segundos e imediatamente após um comando `gh pr` ou `git push` ser executado na sessão.
 
 <Note>
   O status de PR requer que o CLI `gh` esteja instalado e autenticado (`gh auth login`).

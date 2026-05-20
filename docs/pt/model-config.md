@@ -53,7 +53,11 @@ Você pode configurar seu modelo de várias maneiras, listadas em ordem de prior
 3. **Variável de ambiente** - Defina `ANTHROPIC_MODEL=<alias|name>`
 4. **Configurações** - Configure permanentemente em seu arquivo de configurações usando o campo `model`.
 
-Sua seleção de `/model` é salva nas configurações do usuário e persiste entre reinicializações. A partir da v2.1.117, se o `.claude/settings.json` do projeto fixar um modelo diferente, Claude Code também escreve sua escolha em `.claude/settings.local.json` para que continue a se aplicar nesse projeto após uma reinicialização. As configurações gerenciadas têm precedência e são reaplicadas no próximo lançamento.
+A partir da v2.1.144, `/model` se aplica apenas à sessão atual e não é escrito nas configurações. Para salvar sua escolha como padrão para novas sessões, pressione `d` na linha destacada no seletor, que escreve o campo `model` em suas configurações de usuário. As configurações gerenciadas têm precedência e são reaplicadas no próximo lançamento.
+
+O sinalizador `--model` e a variável de ambiente `ANTHROPIC_MODEL` também se aplicam apenas à sessão que você inicia com eles. Para executar modelos diferentes em terminais diferentes ao mesmo tempo, inicie cada um com seu próprio sinalizador `--model` em vez de alternar com `/model`.
+
+As sessões retomadas iniciadas com `claude --resume`, `--continue` ou o seletor `/resume` mantêm o modelo que estavam usando quando a transcrição foi salva, independentemente da configuração `model` atual. Se esse modelo foi descontinuado, a sessão cai para a ordem de precedência normal. Isso evita que a escolha `/model` de outra sessão altere o modelo ao retomar.
 
 Quando o modelo ativo na inicialização vem das configurações do projeto ou gerenciadas em vez de sua própria seleção, o cabeçalho de inicialização mostra qual arquivo de configurações o definiu. Execute `/model` para substituir pela sessão atual.
 
@@ -318,7 +322,11 @@ Para habilitar [contexto estendido](#extended-context) para um modelo fixado, an
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7[1m]'
 ```
 
-O sufixo `[1m]` aplica a janela de contexto 1M a todo o uso desse alias, incluindo `opusplan`. Claude Code remove o sufixo antes de enviar o ID do modelo para seu provedor. Apenas anexe `[1m]` quando o modelo subjacente suportar contexto 1M, como Opus 4.7 ou Sonnet 4.6.
+O sufixo `[1m]` aplica a janela de contexto 1M a todo o uso desse alias, incluindo `opusplan`.
+
+* Claude Code remove o sufixo antes de enviar o ID do modelo para seu provedor.
+* Apenas anexe `[1m]` quando o modelo subjacente [suportar contexto 1M](https://platform.claude.com/docs/pt/build-with-claude/context-windows#1m-token-context-window).
+* O sufixo é lido por variável, não por modelo. No Bedrock, Vertex e Foundry, um ID de modelo sem `[1m]` em uma variável usa contexto 200K mesmo se outra variável define o mesmo modelo com o sufixo.
 
 <Note>
   A lista de permissões `settings.availableModels` ainda se aplica ao usar provedores de terceiros. A filtragem corresponde ao alias de modelo (`opus`, `sonnet`, `haiku`), não ao ID de modelo específico do provedor.
@@ -388,13 +396,13 @@ As substituições substituem os IDs de modelo integrados que suportam cada entr
 
 ### Configuração de prompt caching
 
-Claude Code usa automaticamente [prompt caching](https://platform.claude.com/docs/pt/build-with-claude/prompt-caching) para otimizar o desempenho e reduzir custos. Você pode desabilitar prompt caching globalmente ou para níveis de modelo específicos:
+Claude Code usa automaticamente [prompt caching](/pt/prompt-caching) para otimizar o desempenho e reduzir custos. Você pode desabilitar prompt caching globalmente ou para níveis de modelo específicos:
 
-| Variável de ambiente            | Descrição                                                                                                              |
-| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `DISABLE_PROMPT_CACHING`        | Defina como `1` para desabilitar prompt caching para todos os modelos (tem precedência sobre configurações por modelo) |
-| `DISABLE_PROMPT_CACHING_HAIKU`  | Defina como `1` para desabilitar prompt caching apenas para modelos Haiku                                              |
-| `DISABLE_PROMPT_CACHING_SONNET` | Defina como `1` para desabilitar prompt caching apenas para modelos Sonnet                                             |
-| `DISABLE_PROMPT_CACHING_OPUS`   | Defina como `1` para desabilitar prompt caching apenas para modelos Opus                                               |
+| Variável de ambiente            | Descrição                                                                                                                |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `DISABLE_PROMPT_CACHING`        | Defina como `1` para desabilitar prompt caching para todos os modelos. Tem precedência sobre as configurações por modelo |
+| `DISABLE_PROMPT_CACHING_HAIKU`  | Defina como `1` para desabilitar prompt caching apenas para modelos Haiku                                                |
+| `DISABLE_PROMPT_CACHING_SONNET` | Defina como `1` para desabilitar prompt caching apenas para modelos Sonnet                                               |
+| `DISABLE_PROMPT_CACHING_OPUS`   | Defina como `1` para desabilitar prompt caching apenas para modelos Opus                                                 |
 
-Essas variáveis de ambiente oferecem controle refinado sobre o comportamento de prompt caching. A configuração global `DISABLE_PROMPT_CACHING` tem precedência sobre as configurações específicas do modelo, permitindo que você desabilite rapidamente todo o caching quando necessário. As configurações por modelo são úteis para controle seletivo, como ao depurar modelos específicos ou trabalhar com provedores de nuvem que podem ter implementações de caching diferentes.
+Para alterar o TTL do cache ou aprender o que dispara uma falha de cache, veja [Como Claude Code usa prompt caching](/pt/prompt-caching).

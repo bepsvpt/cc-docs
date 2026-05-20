@@ -39,12 +39,7 @@
 如果 Claude Code 報告在任何市場中找不到外掛程式，您的市場可能遺失或已過期。執行 `/plugin marketplace update claude-plugins-official` 以重新整理它，或如果您之前未新增過，執行 `/plugin marketplace add anthropics/claude-plugins-official`。然後重試安裝。
 
 <Note>
-  官方市場由 Anthropic 維護。若要將外掛程式提交到官方市場，請使用其中一個應用內提交表單：
-
-  * **Claude.ai**: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
-  * **Console**: [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
-
-  若要獨立分發外掛程式，請[建立您自己的市場](/zh-TW/plugin-marketplaces)並與使用者共享。
+  官方市場由 Anthropic 維護，包含由 Anthropic 自行決定。應用內提交表單會將外掛程式新增到[社群市場](#community-marketplace)，而不是官方市場。若要獨立分發外掛程式，請[建立您自己的市場](/zh-TW/plugin-marketplaces)並與使用者共享。
 </Note>
 
 官方市場包括多個外掛程式類別：
@@ -111,6 +106,22 @@
 * **explanatory-output-style**：關於實現選擇的教育見解
 * **learning-output-style**：用於技能建立的互動式學習模式
 
+## 社群市場
+
+位於 [`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community) 的社群市場託管已通過 Anthropic 自動驗證和安全篩選的第三方外掛程式。每個外掛程式都固定到目錄中的特定提交 SHA。與官方市場不同，您需要手動新增它：
+
+```shell theme={null}
+/plugin marketplace add anthropics/claude-plugins-community
+```
+
+然後使用 `claude-community` 市場名稱從中安裝外掛程式：
+
+```shell theme={null}
+/plugin install <plugin-name>@claude-community
+```
+
+若要將您自己的外掛程式提交到社群市場，請參閱建立外掛程式指南中的[將您的外掛程式提交到社群市場](/zh-TW/plugins#submit-your-plugin-to-the-community-marketplace)。
+
 ## 試試看：新增演示市場
 
 Anthropic 也維護一個[演示外掛程式市場](https://github.com/anthropics/claude-code/tree/main/plugins)（`claude-code-plugins`），其中包含展示外掛程式系統可能性的範例外掛程式。與官方市場不同，您需要手動新增此市場。
@@ -138,7 +149,11 @@ Anthropic 也維護一個[演示外掛程式市場](https://github.com/anthropic
   </Step>
 
   <Step title="安裝外掛程式">
-    選擇外掛程式以檢視其詳細資訊。{/* min-version: 2.1.143 */}在 Claude Code v2.1.143 及更新版本上，詳細資訊窗格包含 **Context cost** 估計，讓您可以在安裝外掛程式之前查看它每回合會為您的[內容視窗](/zh-TW/features-overview#understand-context-costs)新增多少個 token。
+    選擇外掛程式以檢視其詳細資訊。詳細資訊窗格會顯示外掛程式包含的內容及其成本：
+
+    * {/* min-version: 2.1.143 */}**Context cost** 估計，讓您可以查看外掛程式每回合會為您的[內容視窗](/zh-TW/features-overview#understand-context-costs)新增多少個 token（Claude Code v2.1.143 及更新版本）
+    * {/* min-version: 2.1.144 */}外掛程式的 **Last updated** 日期（v2.1.144 及更新版本）
+    * {/* min-version: 2.1.145 */}**Will install** 區段，列出外掛程式的命令、代理程式、技能、hooks 和 MCP 及 LSP 伺服器，讓您可以在安裝前檢視它新增的確切內容（v2.1.145 及更新版本）
 
     選擇安裝範圍：
 
@@ -168,7 +183,7 @@ Anthropic 也維護一個[演示外掛程式市場](https://github.com/anthropic
 
     這會暫存您的變更、產生提交訊息並建立提交。
 
-    每個外掛程式的工作方式不同。檢查 **Discover** 標籤中的外掛程式描述或其首頁，以瞭解它提供的技能和功能。
+    每個外掛程式的工作方式不同。檢查 **Discover** 標籤中的外掛程式詳細資訊以查看它提供的命令和技能，或造訪其首頁以取得使用指導。
   </Step>
 </Steps>
 

@@ -53,7 +53,11 @@
 3. **環境變數** - 設定 `ANTHROPIC_MODEL=<alias|name>`
 4. **設定** - 在設定檔中使用 `model` 欄位永久配置。
 
-您的 `/model` 選擇會儲存到使用者設定並在重新啟動後保持。自 v2.1.117 起，如果專案的 `.claude/settings.json` 固定了不同的模型，Claude Code 也會將您的選擇寫入 `.claude/settings.local.json`，以便在重新啟動後在該專案中繼續應用。受管設定優先級最高，並在下次啟動時重新應用。
+自 v2.1.144 起，`/model` 僅適用於目前會話，不會寫入設定。若要將您的選擇儲存為新會話的預設值，請在選擇器中的反白列上按 `d`，這會在您的使用者設定中寫入 `model` 欄位。受管設定優先級最高，並在下次啟動時重新應用。
+
+`--model` 旗標和 `ANTHROPIC_MODEL` 環境變數也僅適用於您啟動它們的會話。若要同時在不同終端中執行不同的模型，請使用各自的 `--model` 旗標啟動每個終端，而不是使用 `/model` 切換。
+
+使用 `claude --resume`、`--continue` 或 `/resume` 選擇器啟動的已恢復會話會保持它們在儲存文字記錄時使用的模型，無論目前的 `model` 設定如何。如果該模型已被淘汰，會話會回到正常的優先順序。這可防止另一個會話的 `/model` 選擇在恢復時改變模型。
 
 當啟動時的活動模型來自專案或受管設定而非您自己的選擇時，啟動標題會顯示哪個設定檔設定了它。執行 `/model` 以覆蓋目前會話。
 
@@ -318,13 +322,17 @@ Claude Code 會跳過在 `ANTHROPIC_CUSTOM_MODEL_OPTION` 中設定的模型 ID �
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7[1m]'
 ```
 
-`[1m]` 後綴將 1M context window 應用於該別名的所有使用，包括 `opusplan`。Claude Code 在將模型 ID 發送到您的提供者之前會移除該後綴。只有當基礎模型支援 1M context（例如 Opus 4.7 或 Sonnet 4.6）時，才附加 `[1m]`。
+`[1m]` 後綴將 1M context window 應用於該別名的所有使用，包括 `opusplan`。
+
+* Claude Code 在將模型 ID 發送到您的提供者之前會移除該後綴。
+* 只有當基礎模型[支援 1M context](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window) 時，才附加 `[1m]`。
+* 後綴是按變數讀取的，而不是按模型讀取的。在 Bedrock、Vertex 和 Foundry 上，一個變數中沒有 `[1m]` 的模型 ID 會使用 200K context，即使另一個變數設定相同的模型並帶有後綴。
 
 <Note>
   使用第三方提供者時，`settings.availableModels` 允許清單仍然適用。篩選會根據模型別名（`opus`、`sonnet`、`haiku`）進行匹配，而不是提供者特定的模型 ID。
 </Note>
 
-### 為第三方部署自訂固定模型顯示和能力
+### 自訂固定模型顯示和能力
 
 當您在第三方提供者上固定模型時，提供者特定的 ID 會按原樣出現在 `/model` 選擇器中，Claude Code 可能無法識別模型支援的功能。您可以使用每個固定模型的伴隨環境變數覆蓋顯示名稱並宣告能力。
 
@@ -388,13 +396,13 @@ export ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES='effort,xhigh_effort,
 
 ### Prompt caching 配置
 
-Claude Code 自動使用 [prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) 來優化效能並降低成本。您可以全域禁用 prompt caching 或針對特定模型層級禁用：
+Claude Code 自動使用 [prompt caching](/zh-TW/prompt-caching) 來優化效能並降低成本。您可以全域禁用 prompt caching 或針對特定模型層級禁用：
 
-| 環境變數                            | 描述                                          |
-| ------------------------------- | ------------------------------------------- |
-| `DISABLE_PROMPT_CACHING`        | 設定為 `1` 以禁用所有模型的 prompt caching（優先於每個模型的設定） |
-| `DISABLE_PROMPT_CACHING_HAIKU`  | 設定為 `1` 以僅禁用 Haiku 模型的 prompt caching       |
-| `DISABLE_PROMPT_CACHING_SONNET` | 設定為 `1` 以僅禁用 Sonnet 模型的 prompt caching      |
-| `DISABLE_PROMPT_CACHING_OPUS`   | 設定為 `1` 以僅禁用 Opus 模型的 prompt caching        |
+| 環境變數                            | 描述                                         |
+| ------------------------------- | ------------------------------------------ |
+| `DISABLE_PROMPT_CACHING`        | 設定為 `1` 以禁用所有模型的 prompt caching。優先於每個模型的設定 |
+| `DISABLE_PROMPT_CACHING_HAIKU`  | 設定為 `1` 以僅禁用 Haiku 模型的 prompt caching      |
+| `DISABLE_PROMPT_CACHING_SONNET` | 設定為 `1` 以僅禁用 Sonnet 模型的 prompt caching     |
+| `DISABLE_PROMPT_CACHING_OPUS`   | 設定為 `1` 以僅禁用 Opus 模型的 prompt caching       |
 
-這些環境變數為您提供對 prompt caching 行為的細粒度控制。全域 `DISABLE_PROMPT_CACHING` 設定優先於模型特定的設定，讓您可以在需要時快速禁用所有快取。每個模型的設定對於選擇性控制很有用，例如在偵錯特定模型或使用可能具有不同快取實現的雲端提供者時。
+若要變更快取 TTL 或瞭解什麼會觸發快取未命中，請參閱 [Claude Code 如何使用 prompt caching](/zh-TW/prompt-caching)。

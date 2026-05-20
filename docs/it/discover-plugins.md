@@ -39,12 +39,7 @@ Per installare un plugin dal marketplace ufficiale, utilizzate `/plugin install 
 Se Claude Code segnala che il plugin non è trovato in alcun marketplace, il vostro marketplace è mancante o obsoleto. Eseguite `/plugin marketplace update claude-plugins-official` per aggiornarlo, oppure `/plugin marketplace add anthropics/claude-plugins-official` se non lo avete ancora aggiunto. Quindi riprovate l'installazione.
 
 <Note>
-  Il marketplace ufficiale è mantenuto da Anthropic. Per inviare un plugin al marketplace ufficiale, utilizzate uno dei moduli di invio in-app:
-
-  * **Claude.ai**: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit)
-  * **Console**: [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit)
-
-  Per distribuire plugin in modo indipendente, [create il vostro marketplace](/it/plugin-marketplaces) e condividetelo con gli utenti.
+  Il marketplace ufficiale è curato da Anthropic e l'inclusione è a discrezione di Anthropic. I moduli di invio in-app aggiungono plugin al [marketplace della comunità](#community-marketplace), non a quello ufficiale. Per distribuire plugin in modo indipendente, [create il vostro marketplace](/it/plugin-marketplaces) e condividetelo con gli utenti.
 </Note>
 
 Il marketplace ufficiale include diverse categorie di plugin:
@@ -111,6 +106,22 @@ Personalizzate come Claude risponde:
 * **explanatory-output-style**: Approfondimenti educativi sulle scelte di implementazione
 * **learning-output-style**: Modalità di apprendimento interattivo per la costruzione di competenze
 
+## Marketplace della comunità
+
+Il marketplace della comunità su [`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community) ospita plugin di terze parti che hanno superato la convalida automatica e lo screening di sicurezza di Anthropic. Ogni plugin è fissato a uno specifico commit SHA nel catalogo. A differenza del marketplace ufficiale, lo aggiungete manualmente:
+
+```shell theme={null}
+/plugin marketplace add anthropics/claude-plugins-community
+```
+
+Quindi installate i plugin da esso utilizzando il nome del marketplace `claude-community`:
+
+```shell theme={null}
+/plugin install <plugin-name>@claude-community
+```
+
+Per inviare il vostro plugin al marketplace della comunità, consultate [Inviare il vostro plugin al marketplace della comunità](/it/plugins#submit-your-plugin-to-the-community-marketplace) nella guida di creazione dei plugin.
+
 ## Provate: aggiungere il marketplace demo
 
 Anthropic mantiene anche un [marketplace di plugin demo](https://github.com/anthropics/claude-code/tree/main/plugins) (`claude-code-plugins`) con plugin di esempio che mostrano cosa è possibile con il sistema di plugin. A differenza del marketplace ufficiale, dovete aggiungere questo manualmente.
@@ -138,7 +149,11 @@ Anthropic mantiene anche un [marketplace di plugin demo](https://github.com/anth
   </Step>
 
   <Step title="Installare un plugin">
-    Selezionate un plugin per visualizzare i suoi dettagli. {/* min-version: 2.1.143 */}Su Claude Code v2.1.143 e versioni successive, il riquadro dei dettagli include una stima di **Context cost** in modo da poter vedere quanti token il plugin aggiungerà alla vostra [finestra di contesto](/it/features-overview#understand-context-costs) ad ogni turno prima di installarlo.
+    Selezionate un plugin per visualizzare i suoi dettagli. Il riquadro dei dettagli mostra cosa contiene il plugin e quanto costa:
+
+    * {/* min-version: 2.1.143 */}Una stima di **Context cost** in modo da poter vedere quanti token il plugin aggiungerà alla vostra [finestra di contesto](/it/features-overview#understand-context-costs) ad ogni turno (Claude Code v2.1.143 e versioni successive)
+    * {/* min-version: 2.1.144 */}La data di **Last updated** del plugin (v2.1.144 e versioni successive)
+    * {/* min-version: 2.1.145 */}Una sezione **Will install** che elenca i comandi, gli agenti, le skills, gli hook e i server MCP e LSP del plugin, in modo che possiate rivedere esattamente cosa aggiunge prima di installare (v2.1.145 e versioni successive)
 
     Scegliete un ambito di installazione:
 
@@ -168,7 +183,7 @@ Anthropic mantiene anche un [marketplace di plugin demo](https://github.com/anth
 
     Questo mette in stage le vostre modifiche, genera un messaggio di commit e crea il commit.
 
-    Ogni plugin funziona diversamente. Controllate la descrizione del plugin nella scheda **Discover** o la sua homepage per sapere quali skills e funzionalità fornisce.
+    Ogni plugin funziona diversamente. Controllate i dettagli del plugin nella scheda **Discover** per vedere i comandi e le skills che fornisce, oppure visitate la sua homepage per indicazioni sull'utilizzo.
   </Step>
 </Steps>
 

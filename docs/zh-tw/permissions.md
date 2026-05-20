@@ -28,6 +28,8 @@ Claude Code 使用分層權限系統來平衡功能和安全性：
 
 規則按順序評估：**deny -> ask -> allow**。第一個符合的規則獲勝，因此 deny 規則始終優先。
 
+Deny 規則的行為取決於它們是否命名工具或在工具內限定模式。像 `Bash` 這樣的裸工具名稱會將工具從 Claude 的上下文中完全移除，因此 Claude 永遠看不到它。像 `Bash(rm *)` 這樣的限定規則會保留工具可用性，並在 Claude 嘗試時阻止符合的呼叫。
+
 <Note>
   權限規則由 Claude Code 強制執行，而不是由模型強制執行。您的提示或 `CLAUDE.md` 中的指令會影響 Claude 嘗試執行的操作，但不會改變 Claude Code 允許的操作。若要授予或撤銷存取權限，請使用 `/permissions`、此處描述的規則、[permission mode](/zh-TW/permission-modes) 或 [PreToolUse hook](#extend-permissions-with-hooks)。
 </Note>
@@ -65,7 +67,7 @@ Claude Code 支援多種權限模式來控制工具的批准方式。請參閱 [
 | `WebFetch` | 符合所有網頁擷取請求   |
 | `Read`     | 符合所有檔案讀取     |
 
-`Bash(*)` 等同於 `Bash` 並符合所有 Bash 命令。
+`Bash(*)` 等同於 `Bash` 並符合所有 Bash 命令。作為拒絕規則，兩種形式都會從 Claude 的上下文中移除該工具。
 
 ### 使用指定符進行細粒度控制
 
@@ -100,7 +102,7 @@ Bash 規則支援使用 `*` 的 glob 模式。萬用字元可以出現在命令�
 
 `*` 前的空格很重要：`Bash(ls *)` 符合 `ls -la` 但不符合 `lsof`，而 `Bash(ls*)` 兩者都符合。`:*` 後綴是寫入尾部萬用字元的等效方式，所以 `Bash(ls:*)` 符合與 `Bash(ls *)` 相同的命令。
 
-當您為命令前綴選擇"是，不要再問"時，權限對話框會寫入空格分隔的形式。`:*` 形式僅在模式末尾被識別。在像 `Bash(git:* push)` 這樣的模式中，冒號被視為字面字元，不會符合 git 命令。
+當您為命令前綴選擇「是，不要再問」時，權限對話框會寫入空格分隔的形式。`:*` 形式僅在模式末尾被識別。在像 `Bash(git:* push)` 這樣的模式中，冒號被視為字面字元，不會符合 git 命令。
 
 ## 工具特定的權限規則
 
@@ -186,7 +188,7 @@ Claude Code 解析 PowerShell AST 並獨立檢查複合命令中的每個命令�
 
 ### Read 和 Edit
 
-`Edit` 規則適用於所有編輯檔案的內建工具。Claude 會盡力嘗試將 `Read` 規則應用於所有讀取檔案的內建工具，如 Grep 和 Glob。
+`Edit` 規則適用於所有編輯檔案的內建工具。Claude 會盡力嘗試將 `Read` 規則應用於所有讀取檔案的內建工具，如 Grep 和 Glob，以及您提示中的 `@file` 提及，以及連接的 [IDE](/zh-TW/vs-code#the-built-in-ide-mcp-server) 與 Claude 共享的選擇和開啟檔案內容。
 
 <Warning>
   Read 和 Edit deny 規則適用於 Claude 的內建檔案工具和 Claude Code 在 Bash 中識別的檔案命令，如 `cat`、`head`、`tail` 和 `sed`。它們不適用於間接讀取或寫入檔案的任意子程序，如自行開啟檔案的 Python 或 Node 指令碼。為了進行作業系統級別的強制執行，以阻止所有程序存取路徑，請 [enable the sandbox](/zh-TW/sandboxing)。
