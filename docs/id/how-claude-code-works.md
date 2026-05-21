@@ -197,7 +197,10 @@ Ketika upaya pertama tidak benar, Anda tidak memulai dari awal. Anda melakukan i
 
 #### Ganggu dan arahkan
 
-Anda dapat mengganggu Claude kapan saja. Jika Claude sedang menuju jalur yang salah, cukup ketik koreksi Anda dan tekan Enter. Claude akan berhenti melakukan apa yang sedang dilakukan dan menyesuaikan pendekatannya berdasarkan input Anda. Anda tidak harus menunggu sampai selesai atau memulai dari awal.
+Anda dapat mengalihkan Claude kapan saja tanpa menunggu giliran selesai atau memulai dari awal:
+
+* **Tekan `Esc`** untuk menghentikan Claude segera. Panggilan tool yang sedang berjalan dibatalkan dan Claude menunggu instruksi Anda berikutnya.
+* **Ketik koreksi dan tekan `Enter`** untuk mengirimnya tanpa menghentikan tool yang sedang berjalan. Claude membacanya segera setelah tindakan saat ini selesai dan menyesuaikan sebelum memutuskan langkah berikutnya.
 
 ### Jadilah spesifik di awal
 

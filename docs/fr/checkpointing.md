@@ -22,7 +22,13 @@ Claude Code suit toutes les modifications apportées par ses outils d'édition d
 
 ### Rembobiner et résumer
 
-Appuyez sur `Esc` deux fois (`Esc` + `Esc`) ou utilisez la commande `/rewind` pour ouvrir le menu de rembobinage. Une liste déroulante affiche chacune de vos invites de la session. Sélectionnez le point sur lequel vous souhaitez agir, puis choisissez une action :
+Exécutez `/rewind`, ou appuyez sur `Esc` deux fois lorsque le champ de saisie d'invite est vide, pour ouvrir le menu de rembobinage.
+
+<Note>
+  Si le champ de saisie d'invite contient du texte, double `Esc` l'efface à la place d'ouvrir le menu. Le texte effacé est enregistré dans votre historique de saisie, appuyez donc sur `Haut` pour le rappeler après avoir terminé dans le menu de rembobinage.
+</Note>
+
+Le menu de rembobinage répertorie chaque invite que vous avez envoyée pendant la session. Sélectionnez le point sur lequel vous souhaitez agir, puis choisissez une action :
 
 * **Restaurer le code et la conversation** : revenir au code et à la conversation à ce moment
 * **Restaurer la conversation** : rembobiner jusqu'à ce message tout en conservant le code actuel

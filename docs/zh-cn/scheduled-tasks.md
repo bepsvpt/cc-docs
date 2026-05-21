@@ -93,7 +93,7 @@ Claude 不会启动该范围之外的新举措，不可逆的操作（如推送�
 裸 `/loop` 在[动态选择的间隔](#let-claude-choose-the-interval)上运行此提示词。添加间隔，例如 `/loop 15m`，以在固定计划上运行它。要用您自己的默认值替换内置提示词，请参阅[使用 loop.md 自定义默认提示词](#customize-the-default-prompt-with-loop-md)。
 
 <Note>
-  在 Bedrock、Vertex AI 和 Microsoft Foundry 上，没有提示词的 `/loop` 打印使用消息而不是启动维护循环。
+  内置维护提示词还不是对所有人都可用的，在 Bedrock、Vertex AI 或 Microsoft Foundry 上不受支持。在它不活跃的地方，没有提示词的 `/loop` 会打印使用消息。
 </Note>
 
 ### 使用 loop.md 自定义默认提示词
@@ -117,6 +117,10 @@ quiet, say so in one line.
 ```
 
 对 `loop.md` 的编辑在下一次迭代时生效，所以您可以在循环运行时优化说明。当任一位置都不存在 `loop.md` 时，循环回退到内置维护提示词。保持文件简洁：超过 25,000 字节的内容会被截断。
+
+<Note>
+  `loop.md` 遵循与[内置维护提示词](#run-the-built-in-maintenance-prompt)相同的可用性。在维护提示词不活跃的地方，没有提示词的 `/loop` 会打印使用消息，文件不会被读取。
+</Note>
 
 ### 停止循环
 

@@ -22,12 +22,19 @@ Claude Code verfolgt alle Änderungen, die von seinen Datei-Bearbeitungswerkzeug
 
 ### Zurückspulen und zusammenfassen
 
-Drücken Sie `Esc` zweimal (`Esc` + `Esc`) oder verwenden Sie den `/rewind` Befehl, um das Zurückspul-Menü zu öffnen. Eine scrollbare Liste zeigt jede Ihrer Eingaben aus der Sitzung. Wählen Sie den Punkt aus, auf den Sie einwirken möchten, und wählen Sie dann eine Aktion:
+Führen Sie `/rewind` aus, oder drücken Sie `Esc` zweimal, wenn das Eingabefeld leer ist, um das Zurückspul-Menü zu öffnen.
+
+<Note>
+  Wenn das Eingabefeld Text enthält, löscht doppeltes `Esc` diesen stattdessen, anstatt das Menü zu öffnen. Der gelöschte Text wird in Ihrem Eingabeverlauf gespeichert, sodass Sie `Oben` drücken können, um ihn abzurufen, nachdem Sie das Zurückspul-Menü verlassen haben.
+</Note>
+
+Das Zurückspul-Menü listet jede Eingabe auf, die Sie während der Sitzung gesendet haben. Wählen Sie den Punkt aus, auf den Sie einwirken möchten, und wählen Sie dann eine Aktion:
 
 * **Code und Konversation wiederherstellen**: Setzt sowohl Code als auch Konversation auf diesen Punkt zurück
 * **Konversation wiederherstellen**: Zurückspulen zu dieser Nachricht, während der aktuelle Code beibehalten wird
 * **Code wiederherstellen**: Dateiänderungen rückgängig machen, während die Konversation beibehalten wird
 * **Von hier aus zusammenfassen**: Komprimieren Sie die Konversation von diesem Punkt an in eine Zusammenfassung und geben Sie Kontextfensterplatz frei
+* **Bis hier zusammenfassen**: Komprimieren Sie die Konversation vor diesem Punkt in eine Zusammenfassung und behalten Sie spätere Nachrichten intakt
 * **Nie Sinn**: Kehren Sie zur Nachrichtenliste zurück, ohne Änderungen vorzunehmen
 
 Nach dem Wiederherstellen der Konversation oder dem Auswählen von „Von hier aus zusammenfassen" wird die ursprüngliche Eingabe aus der ausgewählten Nachricht in das Eingabefeld wiederhergestellt, sodass Sie sie erneut senden oder bearbeiten können.

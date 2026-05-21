@@ -63,7 +63,7 @@ Avec l'onglet Code ouvert, choisissez un projet et donnez à Claude quelque chos
     Vous pouvez également sélectionner :
 
     * **Remote** : Exécutez les sessions sur l'infrastructure cloud d'Anthropic qui continue même si vous fermez l'application. Les sessions distantes utilisent la même infrastructure que [Claude Code sur le web](/fr/claude-code-on-the-web).
-    * **SSH** : Connectez-vous à une machine distante via SSH (vos propres serveurs, VM cloud ou conteneurs de développement). Claude Code doit être installé sur la machine distante.
+    * **SSH** : Connectez-vous à une machine distante via SSH, comme vos propres serveurs, VM cloud ou conteneurs de développement. Desktop installe Claude Code sur la machine distante automatiquement la première fois que vous vous connectez.
   </Step>
 
   <Step title="Choisir un modèle">
@@ -95,7 +95,7 @@ Avec l'onglet Code ouvert, choisissez un projet et donnez à Claude quelque chos
 
 Vous avez fait votre première modification. Pour la référence complète sur tout ce que Desktop peut faire, consultez [Utiliser Claude Code Desktop](/fr/desktop). Voici quelques choses à essayer ensuite.
 
-**Interrompre et diriger.** Vous pouvez interrompre Claude à tout moment. S'il prend la mauvaise direction, cliquez sur le bouton d'arrêt ou tapez votre correction et appuyez sur **Entrée**. Claude arrête ce qu'il fait et s'ajuste en fonction de votre entrée. Vous n'avez pas besoin d'attendre qu'il finisse ou de recommencer.
+**Interrompre et diriger.** Vous pouvez rediriger Claude à tout moment. Cliquez sur le bouton d'arrêt pour interrompre immédiatement, ou tapez une correction et appuyez sur **Entrée** pour l'envoyer sans arrêter l'action en cours. De toute façon, vous n'avez pas besoin d'attendre qu'elle se termine ou de recommencer.
 
 **Donner à Claude plus de contexte.** Tapez `@filename` dans la boîte de saisie pour extraire un fichier spécifique dans la conversation, joignez des images et des PDF en utilisant le bouton de pièce jointe, ou glissez-déposez des fichiers directement dans la saisie. Plus Claude a de contexte, meilleurs sont les résultats. Consultez [Ajouter des fichiers et du contexte](/fr/desktop#add-files-and-context-to-prompts).
 

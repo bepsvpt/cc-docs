@@ -51,7 +51,7 @@ For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/
 
 ### 使用提示框
 
-输入你想让 Claude 做的事情并按 **Enter** 发送。Claude 读取你的项目文件，进行更改，并根据你的[权限模式](#choose-a-permission-mode)运行命令。你可以随时中断 Claude：点击停止按钮或输入你的更正并按 **Enter**。Claude 停止正在做的事情并根据你的输入进行调整。
+输入你想让 Claude 做的事情并按 **Enter** 发送。Claude 读取你的项目文件，进行更改，并根据你的[权限模式](#choose-a-permission-mode)运行命令。你可以随时重定向 Claude：点击停止按钮立即中断，或输入更正并按 **Enter** 发送，无需停止正在运行的操作。Claude 在当前操作完成后立即读取更正，并在下一步之前进行调整。
 
 提示框旁的 **+** 按钮让你可以访问文件附件、[skills](#use-skills)、[连接器](#connect-external-tools) 和[插件](#install-plugins)。
 
@@ -642,7 +642,7 @@ Desktop 可以通过企业部署工具分发：
 
 如果你已经使用 Claude Code CLI，Desktop 运行相同的底层引擎，具有图形界面。你可以在同一机器上同时运行两者，甚至在同一项目上。每个维护单独的会话历史，但它们通过 CLAUDE.md 文件共享配置和项目内存。
 
-要将 CLI 会话移动到 Desktop，在终端中运行 `/desktop`。Claude 保存你的会话并在桌面应用中打开它，然后退出 CLI。此命令仅在 macOS 和 Windows 上可用。
+要将 CLI 会话移动到 Desktop，在终端中运行 `/desktop`。Claude 保存你的会话并在桌面应用中打开它，然后退出 CLI。此命令在 macOS 和 Windows 上可用，当你使用 Claude 订阅登录时。它不适用于 API 密钥身份验证或 Bedrock、Vertex 或 Foundry。
 
 <Tip>
   何时使用 Desktop vs CLI：当你想要管理一个窗口中的并行会话、并排排列窗格或可视化审查更改时，使用 Desktop。当你需要脚本、自动化或更喜欢终端工作流时，使用 CLI。

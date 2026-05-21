@@ -545,18 +545,18 @@ if echo "$COMMAND" | grep -q "drop table"; then
   exit 2 # exit 2 = Aktion blockieren
 fi
 
-exit 0  # exit 0 = fortfahren
+exit 0  # exit 0 = keine Entscheidung; der normale Berechtigungsfluss gilt
 ```
 
 Der Exit-Code bestimmt, was als nächstes passiert:
 
-* **Exit 0**: die Aktion wird fortgesetzt. Für `UserPromptSubmit`, `UserPromptExpansion` und `SessionStart`-Hooks wird alles, was Sie auf stdout schreiben, zu Claudes Kontext hinzugefügt.
+* **Exit 0**: der Hook meldet keinen Einwand und die Aktion wird normal fortgesetzt. Für einen `PreToolUse`-Hook genehmigt dies nicht den Tool-Aufruf: der normale [Berechtigungsfluss](/de/permissions) gilt weiterhin. Für `UserPromptSubmit`-, `UserPromptExpansion`- und `SessionStart`-Hooks wird alles, was Sie auf stdout schreiben, zu Claudes Kontext hinzugefügt.
 * **Exit 2**: die Aktion wird blockiert. Schreiben Sie einen Grund auf stderr, und Claude erhält ihn als Feedback, sodass er sich anpassen kann. Einige Events können nicht blockiert werden: Für `SessionStart`, `Setup`, `Notification` und andere zeigt exit 2 stderr dem Benutzer an und die Ausführung wird fortgesetzt. Siehe [Exit-Code-2-Verhalten pro Event](/de/hooks#exit-code-2-behavior-per-event) für die vollständige Liste.
 * **Jeder andere Exit-Code**: die Aktion wird fortgesetzt. Das Transkript zeigt eine `<hook name> hook error`-Meldung gefolgt von der ersten Zeile von stderr; das vollständige stderr geht in das [Debug-Protokoll](/de/hooks#debug-hooks).
 
 #### Strukturierte JSON-Ausgabe
 
-Exit-Codes geben Ihnen zwei Optionen: zulassen oder blockieren. Für mehr Kontrolle beenden Sie mit 0 und geben stattdessen ein JSON-Objekt auf stdout aus.
+Exit-Codes geben Ihnen nur die Möglichkeit, zu blockieren oder zu schweigen. Für mehr Kontrolle beenden Sie mit 0 und geben stattdessen ein JSON-Objekt auf stdout aus.
 
 <Note>
   Verwenden Sie exit 2, um mit einer stderr-Meldung zu blockieren, oder exit 0 mit JSON für strukturierte Kontrolle. Mischen Sie sie nicht: Claude Code ignoriert JSON, wenn Sie mit 2 beenden.

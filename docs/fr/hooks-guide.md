@@ -545,18 +545,18 @@ if echo "$COMMAND" | grep -q "drop table"; then
   exit 2 # exit 2 = block the action
 fi
 
-exit 0  # exit 0 = let it proceed
+exit 0  # exit 0 = no decision; the normal permission flow applies
 ```
 
 Le code de sortie détermine ce qui se passe ensuite :
 
-* **Exit 0** : l'action se poursuit. Pour les hooks `UserPromptSubmit`, `UserPromptExpansion` et `SessionStart`, tout ce que vous écrivez sur stdout est ajouté au contexte de Claude.
+* **Exit 0** : le hook ne signale aucune objection et l'action se poursuit normalement. Pour un hook `PreToolUse`, cela n'approuve pas l'appel d'outil : le [flux de permission](/fr/permissions) normal s'applique toujours. Pour les hooks `UserPromptSubmit`, `UserPromptExpansion` et `SessionStart`, tout ce que vous écrivez sur stdout est ajouté au contexte de Claude.
 * **Exit 2** : l'action est bloquée. Écrivez une raison sur stderr, et Claude la reçoit comme retour afin qu'il puisse s'ajuster. Certains événements ne peuvent pas être bloqués : pour `SessionStart`, `Setup`, `Notification` et autres, exit 2 affiche stderr à l'utilisateur et l'exécution continue. Consultez [comportement du code de sortie 2 par événement](/fr/hooks#exit-code-2-behavior-per-event) pour la liste complète.
 * **Tout autre code de sortie** : l'action se poursuit. La transcription affiche un avis `<hook name> hook error` suivi de la première ligne de stderr ; le stderr complet va au [journal de débogage](/fr/hooks#debug-hooks).
 
 #### Sortie JSON structurée
 
-Les codes de sortie vous donnent deux options : autoriser ou bloquer. Pour plus de contrôle, quittez 0 et imprimez un objet JSON sur stdout à la place.
+Les codes de sortie vous donnent seulement deux options : bloquer ou rester silencieux. Pour plus de contrôle, quittez 0 et imprimez un objet JSON sur stdout à la place.
 
 <Note>
   Utilisez exit 2 pour bloquer avec un message stderr, ou exit 0 avec JSON pour un contrôle structuré. Ne les mélangez pas : Claude Code ignore JSON lorsque vous quittez 2.
@@ -754,7 +754,7 @@ L'endroit où vous ajoutez un hook détermine son périmètre :
 | [Plugin](/fr/plugins) `hooks/hooks.json`                   | Lorsque le plugin est activé              | Oui, fourni avec le plugin               |
 | [Skill](/fr/skills) ou [agent](/fr/sub-agents) frontmatter | Pendant que le skill ou l'agent est actif | Oui, défini dans le fichier du composant |
 
-Exécutez [`/hooks`](/fr/hooks#the-hooks-menu) dans Claude Code pour parcourir tous les hooks configurés regroupés par événement. Pour désactiver tous les hooks à la fois, définissez `"disableAllHooks": true` dans votre fichier de paramètres. Les hooks configurés dans les paramètres gérés s'exécutent toujours sauf si `disableAllHooks` est également défini là.
+Exécutez [`/hooks`](/fr/hooks#the-hooks-menu) dans Claude Code pour parcourir tous les hooks configurés regroupés par événement. Pour désactiver les hooks, définissez `"disableAllHooks": true` dans votre fichier de paramètres. Les hooks configurés dans les paramètres gérés s'exécutent toujours sauf si `disableAllHooks` est également défini là.
 
 Si vous modifiez les fichiers de paramètres directement pendant que Claude Code s'exécute, l'observateur de fichiers récupère normalement les modifications de hook automatiquement.
 

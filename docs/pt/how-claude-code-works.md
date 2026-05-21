@@ -197,7 +197,10 @@ Quando a primeira tentativa não está certa, você não começa do zero. Você 
 
 #### Interrompa e oriente
 
-Você pode interromper Claude em qualquer ponto. Se ele está indo pelo caminho errado, apenas digite sua correção e pressione Enter. Claude parará o que está fazendo e ajustará sua abordagem com base em sua entrada. Você não precisa esperar que termine ou começar do zero.
+Você pode redirecionar Claude em qualquer ponto sem esperar que o turno termine ou começar do zero:
+
+* **Pressione `Esc`** para parar Claude imediatamente. A chamada de ferramenta em execução é cancelada e Claude aguarda sua próxima instrução.
+* **Digite uma correção e pressione `Enter`** para enviá-la sem parar a ferramenta em execução. Claude a lê assim que a ação atual é concluída e se ajusta antes de decidir seu próximo passo.
 
 ### Seja específico desde o início
 

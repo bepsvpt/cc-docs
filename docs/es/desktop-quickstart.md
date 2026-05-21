@@ -63,7 +63,7 @@ Con la pestaña Code abierta, elija un proyecto y dele a Claude algo que hacer.
     También puede seleccionar:
 
     * **Remote**: Ejecute sesiones en la infraestructura en la nube de Anthropic que continúan incluso si cierra la aplicación. Las sesiones remotas utilizan la misma infraestructura que [Claude Code en la web](/es/claude-code-on-the-web).
-    * **SSH**: Conéctese a una máquina remota a través de SSH (sus propios servidores, VMs en la nube o contenedores de desarrollo). Claude Code debe estar instalado en la máquina remota.
+    * **SSH**: Conéctese a una máquina remota a través de SSH, como sus propios servidores, máquinas virtuales en la nube o contenedores de desarrollo. Desktop instala Claude Code en la máquina remota automáticamente la primera vez que se conecta.
   </Step>
 
   <Step title="Elegir un modelo">
@@ -95,7 +95,7 @@ Con la pestaña Code abierta, elija un proyecto y dele a Claude algo que hacer.
 
 Ha realizado su primera edición. Para la referencia completa sobre todo lo que Desktop puede hacer, consulte [Usar Claude Code Desktop](/es/desktop). Aquí hay algunas cosas para probar a continuación.
 
-**Interrumpir y dirigir.** Puede interrumpir a Claude en cualquier momento. Si va por el camino equivocado, haga clic en el botón de parada o escriba su corrección y presione **Enter**. Claude detiene lo que está haciendo y se ajusta según su entrada. No tiene que esperar a que termine o comenzar de nuevo.
+**Interrumpir y dirigir.** Puede redirigir a Claude en cualquier momento. Haga clic en el botón de parada para interrumpir inmediatamente, o escriba una corrección y presione **Enter** para enviarla sin detener la acción en ejecución. De cualquier forma, no tiene que esperar a que termine o comenzar de nuevo.
 
 **Proporcione más contexto a Claude.** Escriba `@filename` en el cuadro de solicitud para extraer un archivo específico a la conversación, adjunte imágenes y PDF usando el botón de adjuntos, o arrastre y suelte archivos directamente en la solicitud. Cuanto más contexto tenga Claude, mejores serán los resultados. Consulte [Agregar archivos y contexto](/es/desktop#add-files-and-context-to-prompts).
 

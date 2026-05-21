@@ -474,8 +474,8 @@ Hook 이벤트는 Claude Code의 라이프사이클의 특정 지점에서 발�
 
 * `"type": "http"`: 이벤트 데이터를 URL에 POST합니다. [HTTP hooks](#http-hooks)를 참조하세요.
 * `"type": "mcp_tool"`: 이미 연결된 MCP 서버에서 도구를 호출합니다. [MCP tool hooks](/ko/hooks#mcp-tool-hook-fields)를 참조하세요.
-* `"type": "prompt"`: 단일 턴 LLM 평가. [프롬프트 기반 hooks](#prompt-based-hooks)를 참조하세요.
-* `"type": "agent"`: 도구 액세스를 통한 다중 턴 검증. 에이전트 hooks는 실험적이며 변경될 수 있습니다. [에이전트 기반 hooks](#agent-based-hooks)를 참조하세요.
+* `"type": "prompt"`: 단일 턴 LLM 평가입니다. [프롬프트 기반 hooks](#prompt-based-hooks)를 참조하세요.
+* `"type": "agent"`: 도구 액세스를 통한 다중 턴 검증입니다. 에이전트 hooks는 실험적이며 변경될 수 있습니다. [에이전트 기반 hooks](#agent-based-hooks)를 참조하세요.
 
 ### 여러 hooks의 결과 결합
 
@@ -550,13 +550,13 @@ exit 0  # exit 0 = 진행 허용
 
 종료 코드는 다음에 일어날 일을 결정합니다:
 
-* **Exit 0**: 작업이 진행됩니다. `UserPromptSubmit`, `UserPromptExpansion` 및 `SessionStart` hooks의 경우 stdout에 쓰는 모든 것이 Claude의 컨텍스트에 추가됩니다.
+* **Exit 0**: hook은 이의를 제기하지 않으며 작업이 정상적으로 진행됩니다. `PreToolUse` hook의 경우 이것은 도구 호출을 승인하지 않습니다: 정상적인 [권한 흐름](/ko/permissions)이 여전히 적용됩니다. `UserPromptSubmit`, `UserPromptExpansion` 및 `SessionStart` hooks의 경우 stdout에 쓰는 모든 것이 Claude의 컨텍스트에 추가됩니다.
 * **Exit 2**: 작업이 차단됩니다. stderr에 이유를 쓰면 Claude가 피드백으로 받아 조정할 수 있습니다. 일부 이벤트는 차단될 수 없습니다: `SessionStart`, `Setup`, `Notification` 및 기타의 경우 exit 2는 stderr를 사용자에게 표시하고 실행이 계속됩니다. 이벤트별 전체 목록은 [이벤트별 exit 코드 2 동작](/ko/hooks#exit-code-2-behavior-per-event)을 참조하세요.
 * **다른 종료 코드**: 작업이 진행됩니다. 트랜스크립트는 `<hook name> hook error` 공지를 표시한 후 stderr의 첫 번째 줄을 표시합니다. 전체 stderr는 [디버그 로그](/ko/hooks#debug-hooks)로 이동합니다.
 
 #### 구조화된 JSON 출력
 
-종료 코드는 두 가지 옵션을 제공합니다: 허용 또는 차단. 더 많은 제어를 위해 exit 0을 하고 stdout에 JSON 객체를 인쇄합니다.
+종료 코드는 차단하거나 침묵하는 것만 허용합니다. 더 많은 제어를 위해 exit 0을 하고 stdout에 JSON 객체를 인쇄합니다.
 
 <Note>
   Exit 2를 사용하여 stderr 메시지로 차단하거나 exit 0을 사용하여 구조화된 제어를 위해 JSON을 사용합니다. 혼합하지 마세요: Claude Code는 exit 2일 때 JSON을 무시합니다.
@@ -582,7 +582,7 @@ exit 0  # exit 0 = 진행 허용
 
 네 번째 값인 `"defer"`는 `-p` 플래그가 있는 [비대화형 모드](/ko/headless)에서 사용 가능합니다. 도구 호출을 보존하여 프로세스를 종료하므로 Agent SDK 래퍼가 입력을 수집하고 재개할 수 있습니다. 참조의 [나중에 도구 호출 연기](/ko/hooks#defer-a-tool-call-for-later)를 참조하세요.
 
-`"allow"`를 반환하면 대화형 프롬프트를 건너뜁니다. 하지만 [권한 규칙](/ko/permissions#manage-permissions)은 적용되지 않습니다. 거부 규칙이 도구 호출과 일치하면 hook이 `"allow"`를 반환하더라도 호출이 차단됩니다. 요청 규칙이 일치하면 사용자가 여전히 프롬프트됩니다. 이는 [관리형 설정](/ko/settings#settings-files)을 포함한 모든 설정 범위의 거부 규칙이 hook 승인보다 항상 우선한다는 의미입니다.
+`"allow"`를 반환하면 대화형 프롬프트를 건너뜁니다. 하지만 [권한 규칙](/ko/permissions#manage-permissions)을 재정의하지 않습니다. 거부 규칙이 도구 호출과 일치하면 hook이 `"allow"`를 반환하더라도 호출이 차단됩니다. 요청 규칙이 일치하면 사용자가 여전히 프롬프트됩니다. 이는 [관리형 설정](/ko/settings#settings-files)을 포함한 모든 설정 범위의 거부 규칙이 hook 승인보다 항상 우선한다는 의미입니다.
 
 다른 이벤트는 다른 결정 패턴을 사용합니다. 예를 들어 `PostToolUse` 및 `Stop` hooks는 최상위 `decision: "block"` 필드를 사용하고 `PermissionRequest`는 `hookSpecificOutput.decision.behavior`를 사용합니다. 이벤트별 전체 분석은 참조의 [요약 표](/ko/hooks#decision-control)를 참조하세요.
 

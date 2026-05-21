@@ -244,6 +244,7 @@ Claude Code는 설정 파일을 감시하고 변경될 때 다시 로드하므�
 | `sshConfigs`                      | [Desktop](/ko/desktop#pre-configure-ssh-connections-for-your-team) 환경 드롭다운에 표시할 SSH 연결입니다. 각 항목에는 `id`, `name` 및 `sshHost`가 필요하며, `sshPort`, `sshIdentityFile` 및 `startDirectory`는 선택 사항입니다. Managed 설정에서 설정되면 연결은 사용자에게 읽기 전용입니다. Managed 및 사용자 설정에서만 읽음                                                                                                                                                                          | `[{"id": "dev-vm", "name": "Dev VM", "sshHost": "user@dev.example.com"}]`                                                      |
 | `statusLine`                      | 컨텍스트를 표시하기 위한 사용자 정의 상태 줄을 구성합니다. [`statusLine` 문서](/ko/statusline)를 참조하세요                                                                                                                                                                                                                                                                                                                                                         | `{"type": "command", "command": "~/.claude/statusline.sh"}`                                                                    |
 | `strictKnownMarketplaces`         | (Managed 설정만) 플러그인 마켓플레이스 소스의 허용 목록입니다. 정의되지 않음 = 제한 없음, 빈 배열 = 잠금. 마켓플레이스 추가 및 플러그인 설치, 업데이트, 새로고침 및 자동 업데이트에 적용되므로 정책이 설정되기 전에 추가된 마켓플레이스는 플러그인을 가져오는 데 사용할 수 없습니다. [Managed 마켓플레이스 제한](/ko/plugin-marketplaces#managed-marketplace-restrictions)을 참조하세요                                                                                                                                                                         | `[{ "source": "github", "repo": "acme-corp/plugins" }]`                                                                        |
+| `strictPluginOnlyCustomization`   | (Managed 설정만) 플러그인 또는 managed 설정에서만 올 수 있도록 사용자 및 프로젝트 소스에서 skills, agents, hooks 및 MCP 서버를 차단합니다. `true`는 네 가지 모두를 잠그고, 배열은 명명된 것만 잠급니다. [`strictPluginOnlyCustomization`](#strictpluginonlycustomization)을 참조하세요                                                                                                                                                                                                                 | `["skills", "hooks"]`                                                                                                          |
 | `syntaxHighlightingDisabled`      | diffs, 코드 블록 및 파일 미리보기에서 구문 강조 비활성화                                                                                                                                                                                                                                                                                                                                                                                                | `true`                                                                                                                         |
 | `teammateMode`                    | [에이전트 팀](/ko/agent-teams) 팀원이 표시되는 방식: `auto` (tmux 또는 iTerm2에서 분할 창 선택, 그 외에는 in-process), `in-process` 또는 `tmux`. `--teammate-mode`은 한 세션에 대해 이를 재정의합니다. [디스플레이 모드 선택](/ko/agent-teams#choose-a-display-mode)을 참조하세요                                                                                                                                                                                                             | `"in-process"`                                                                                                                 |
 | `terminalProgressBarEnabled`      | 지원되는 터미널에서 터미널 진행률 표시줄을 표시합니다: ConEmu, Ghostty 1.2.0+ 및 iTerm2 3.6.6+. 기본값: `true`. `/config`에 **터미널 진행률 표시줄**로 표시됩니다                                                                                                                                                                                                                                                                                                              | `false`                                                                                                                        |
@@ -959,6 +960,33 @@ Claude Code는 skills, agents, hooks 및 MCP servers로 기능을 확장할 수 
 * Managed 설정은 최고 우선순위를 가지며 재정의할 수 없습니다
 
 사용자 대면 문서는 [Managed 마켓플레이스 제한](/ko/plugin-marketplaces#managed-marketplace-restrictions)을 참조하세요.
+
+#### `strictPluginOnlyCustomization`
+
+**Managed 설정만**: skills, agents, hooks 및 MCP servers가 사용자 및 프로젝트 소스에서 로드되는 것을 차단하므로 플러그인 또는 managed 설정에서만 가져올 수 있습니다. `strictKnownMarketplaces`와 결합하여 전체 사용자 정의 공급 체인을 제어합니다: 마켓플레이스 허용 목록은 사용자가 설치할 수 있는 플러그인을 제어하고 이 설정은 플러그인 또는 managed 설정에서 오지 않는 모든 것을 차단합니다.
+
+<Note>
+  `strictPluginOnlyCustomization`은 Claude Code v2.1.82 이상이 필요합니다. 이전 버전은 키를 무시하고 사용자 및 프로젝트 사용자 정의를 계속 로드하므로 클라이언트가 업데이트될 때까지 잠금이 적용되지 않습니다.
+</Note>
+
+값은 모든 4개 표면을 잠그려면 `true`이거나 잠글 표면을 명명하는 배열입니다:
+
+```json theme={null}
+{
+  "strictPluginOnlyCustomization": ["skills", "hooks"]
+}
+```
+
+각 잠긴 표면에 대해 Claude Code는 사용자 수준 및 프로젝트 수준 소스를 건너뛰고 플러그인 제공 및 managed 소스만 로드합니다:
+
+| 표면       | 잠금 시 차단됨                                 | 여전히 로드됨                                                                           |
+| :------- | :--------------------------------------- | :-------------------------------------------------------------------------------- |
+| `skills` | `~/.claude/skills/`, `.claude/skills/`   | 플러그인 skills, 번들된 skills, managed 정책 디렉토리의 skills                                  |
+| `agents` | `~/.claude/agents/`, `.claude/agents/`   | 플러그인 agents, 기본 제공 agents, managed 정책 디렉토리의 agents                                |
+| `hooks`  | 사용자, 프로젝트 및 local `settings.json`의 hooks | 플러그인 hooks, managed 설정의 hooks                                                     |
+| `mcp`    | `~/.claude.json` 및 `.mcp.json`의 서버       | 플러그인 MCP servers, [`managed-mcp.json`](/ko/mcp#managed-mcp-configuration) servers |
+
+Claude Code 버전이 인식하지 못하는 표면 이름은 설정 파일을 실패시키지 않고 무시되므로 모든 클라이언트가 업데이트되기 전에 새 표면 이름을 추가할 수 있습니다.
 
 ### 플러그인 관리
 

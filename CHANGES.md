@@ -1,5 +1,235 @@
 # Documentation Changes
 
+## 2026-05-21
+
+138 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Checkpointing** (`checkpointing.md`): 8 lines added, 1 removed
+- **Erste Schritte mit der Desktop-App** (`desktop-quickstart.md`): 2 lines added, 2 removed
+- **Desktop-Anwendung** (`desktop.md`): 2 lines added, 2 removed
+- **Claude Code erweitern** (`features-overview.md`): 39 lines added, 25 removed
+- **Automatisieren Sie Workflows mit Hooks** (`hooks-guide.md`): 3 lines added, 3 removed
+- **Hooks-Referenz** (`hooks.md`): 34 lines added, 28 removed
+- **So funktioniert Claude Code** (`how-claude-code-works.md`): 5 lines added, 2 removed
+- **Interaktiver Modus** (`interactive-mode.md`): 2 lines added, 2 removed
+- **Tastaturkürzel anpassen** (`keybindings.md`): 5 lines added, 4 removed
+- **Berechtigungen konfigurieren** (`permissions.md`): 15 lines added, 14 removed
+- **Erstellen und Verteilen eines Plugin-Marktplatzes** (`plugin-marketplaces.md`): 12 lines added, 10 removed
+- **Prompts nach Zeitplan ausführen** (`scheduled-tasks.md`): 6 lines added, 2 removed
+- **Claude Code-Einstellungen** (`settings.md`): 28 lines added, 0 removed
+  - New section: "#### `strictPluginOnlyCustomization`"
+
+### English
+
+
+**Modified**
+
+- **Changelog** (`changelog.md`): 19 lines added, 0 removed
+- **Checkpointing** (`checkpointing.md`): 7 lines added, 1 removed
+- **Commands** (`commands.md`): 3 lines added, 3 removed
+- **Get started with the desktop app** (`desktop-quickstart.md`): 1 lines added, 1 removed
+- **Desktop application** (`desktop.md`): 2 lines added, 2 removed
+- **Automate workflows with hooks** (`hooks-guide.md`): 3 lines added, 3 removed
+- **Hooks reference** (`hooks.md`): 35 lines added, 29 removed
+- **How Claude Code works** (`how-claude-code-works.md`): 4 lines added, 1 removed
+- **Interactive mode** (`interactive-mode.md`): 2 lines added, 2 removed
+- **Configure permissions** (`permissions.md`): 15 lines added, 14 removed
+- **Create and distribute a plugin marketplace** (`plugin-marketplaces.md`): 12 lines added, 10 removed
+- **Run prompts on a schedule** (`scheduled-tasks.md`): 5 lines added, 1 removed
+- **Claude Code settings** (`settings.md`): 28 lines added, 0 removed
+  - New section: "#### `strictPluginOnlyCustomization`"
+- **Tools reference** (`tools-reference.md`): 42 lines added, 41 removed
+
+### Español
+
+
+**Modified**
+
+- **Checkpointing** (`checkpointing.md`): 7 lines added, 1 removed
+- **Comenzar con la aplicación de escritorio** (`desktop-quickstart.md`): 2 lines added, 2 removed
+- **Aplicación de escritorio** (`desktop.md`): 2 lines added, 2 removed
+- **Automatizar flujos de trabajo con hooks** (`hooks-guide.md`): 5 lines added, 5 removed
+- **Referencia de hooks** (`hooks.md`): 25 lines added, 19 removed
+- **Cómo funciona Claude Code** (`how-claude-code-works.md`): 4 lines added, 1 removed
+- **Modo interactivo** (`interactive-mode.md`): 3 lines added, 4 removed
+- **Estilos de salida** (`output-styles.md`): 4 lines added, 4 removed
+- **Configurar permisos** (`permissions.md`): 19 lines added, 16 removed
+- **Crear y distribuir un marketplace de plugins** (`plugin-marketplaces.md`): 12 lines added, 10 removed
+- **Ejecutar prompts en un horario** (`scheduled-tasks.md`): 5 lines added, 1 removed
+- **Configuración de Claude Code** (`settings.md`): 28 lines added, 0 removed
+  - New section: "#### `strictPluginOnlyCustomization`"
+
+### Français
+
+
+**Modified**
+
+- **Checkpointing** (`checkpointing.md`): 7 lines added, 1 removed
+- **Démarrer avec l'application de bureau** (`desktop-quickstart.md`): 2 lines added, 2 removed
+- **Application de bureau** (`desktop.md`): 9 lines added, 9 removed
+- **Automatiser les workflows avec les hooks** (`hooks-guide.md`): 4 lines added, 4 removed
+- **Référence des hooks** (`hooks.md`): 38 lines added, 31 removed
+- **Comment fonctionne Claude Code** (`how-claude-code-works.md`): 4 lines added, 1 removed
+- **Mode interactif** (`interactive-mode.md`): 2 lines added, 2 removed
+- **Configurer les autorisations** (`permissions.md`): 15 lines added, 14 removed
+- **Créer et distribuer une place de marché de plugins** (`plugin-marketplaces.md`): 12 lines added, 10 removed
+- **Exécuter des prompts selon un calendrier** (`scheduled-tasks.md`): 5 lines added, 1 removed
+- **Paramètres Claude Code** (`settings.md`): 28 lines added, 0 removed
+  - New section: "#### `strictPluginOnlyCustomization`"
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Checkpointing** (`checkpointing.md`): 7 lines added, 1 removed
+- **Memulai dengan aplikasi desktop** (`desktop-quickstart.md`): 8 lines added, 6 removed
+- **Aplikasi desktop** (`desktop.md`): 2 lines added, 2 removed
+- **Otomatisasi alur kerja dengan hooks** (`hooks-guide.md`): 3 lines added, 3 removed
+- **Referensi hooks** (`hooks.md`): 37 lines added, 31 removed
+- **Cara Kerja Claude Code** (`how-claude-code-works.md`): 4 lines added, 1 removed
+- **Mode interaktif** (`interactive-mode.md`): 20 lines added, 20 removed
+- **Konfigurasi izin** (`permissions.md`): 15 lines added, 14 removed
+- **Buat dan distribusikan marketplace plugin** (`plugin-marketplaces.md`): 12 lines added, 10 removed
+- **Jalankan prompt sesuai jadwal** (`scheduled-tasks.md`): 5 lines added, 1 removed
+- **Pengaturan Claude Code** (`settings.md`): 28 lines added, 0 removed
+  - New section: "#### `strictPluginOnlyCustomization`"
+
+### Italiano
+
+
+**Modified**
+
+- **Checkpointing** (`checkpointing.md`): 8 lines added, 2 removed
+- **Iniziare con l'app desktop** (`desktop-quickstart.md`): 2 lines added, 2 removed
+- **Applicazione desktop** (`desktop.md`): 4 lines added, 4 removed
+- **Automatizzare i flussi di lavoro con hooks** (`hooks-guide.md`): 3 lines added, 3 removed
+- **Riferimento dei hooks** (`hooks.md`): 27 lines added, 21 removed
+- **Come funziona Claude Code** (`how-claude-code-works.md`): 4 lines added, 1 removed
+- **Modalità interattiva** (`interactive-mode.md`): 2 lines added, 2 removed
+- **Configurare le autorizzazioni** (`permissions.md`): 15 lines added, 14 removed
+- **Creare e distribuire un marketplace di plugin** (`plugin-marketplaces.md`): 17 lines added, 15 removed
+- **Eseguire prompt in base a una pianificazione** (`scheduled-tasks.md`): 6 lines added, 2 removed
+- **Impostazioni di Claude Code** (`settings.md`): 28 lines added, 0 removed
+  - New section: "#### `strictPluginOnlyCustomization`"
+
+### 日本語
+
+
+**Modified**
+
+- **チェックポイント** (`checkpointing.md`): 7 lines added, 1 removed
+- **デスクトップアプリを始める** (`desktop-quickstart.md`): 7 lines added, 7 removed
+- **Desktop application** (`desktop.md`): 2 lines added, 2 removed
+- **hooks でワークフローを自動化する** (`hooks-guide.md`): 3 lines added, 3 removed
+- **Hooks リファレンス** (`hooks.md`): 33 lines added, 27 removed
+- **Claude Code の仕組み** (`how-claude-code-works.md`): 4 lines added, 1 removed
+- **インタラクティブモード** (`interactive-mode.md`): 4 lines added, 4 removed
+- **権限を設定する** (`permissions.md`): 15 lines added, 14 removed
+- **プラグインマーケットプレイスの作成と配布** (`plugin-marketplaces.md`): 12 lines added, 10 removed
+- **スケジュールに従ってプロンプトを実行する** (`scheduled-tasks.md`): 5 lines added, 1 removed
+- **Claude Code の設定** (`settings.md`): 28 lines added, 0 removed
+  - New section: "#### `strictPluginOnlyCustomization`"
+
+### 한국어
+
+
+**Modified**
+
+- **Checkpointing** (`checkpointing.md`): 8 lines added, 2 removed
+  - New section: "## Checkpoint의 작동 방식"
+- **데스크톱 앱 시작하기** (`desktop-quickstart.md`): 4 lines added, 2 removed
+- **Desktop 애플리케이션** (`desktop.md`): 8 lines added, 8 removed
+- **hooks를 사용하여 워크플로우 자동화** (`hooks-guide.md`): 5 lines added, 5 removed
+- **Hooks 참조** (`hooks.md`): 33 lines added, 27 removed
+- **Claude Code의 작동 방식** (`how-claude-code-works.md`): 4 lines added, 1 removed
+- **대화형 모드** (`interactive-mode.md`): 2 lines added, 2 removed
+- **권한 구성** (`permissions.md`): 15 lines added, 14 removed
+- **플러그인 마켓플레이스 생성 및 배포** (`plugin-marketplaces.md`): 12 lines added, 10 removed
+- **일정에 따라 프롬프트 실행하기** (`scheduled-tasks.md`): 4 lines added, 0 removed
+- **Claude Code 설정** (`settings.md`): 28 lines added, 0 removed
+  - New section: "#### `strictPluginOnlyCustomization`"
+
+### Português
+
+
+**Modified**
+
+- **Checkpointing** (`checkpointing.md`): 7 lines added, 1 removed
+- **Comece com o aplicativo de desktop** (`desktop-quickstart.md`): 2 lines added, 2 removed
+- **Aplicativo Desktop** (`desktop.md`): 2 lines added, 2 removed
+- **Automatizar fluxos de trabalho com hooks** (`hooks-guide.md`): 2 lines added, 2 removed
+- **Referência de hooks** (`hooks.md`): 36 lines added, 30 removed
+- **Como Claude Code funciona** (`how-claude-code-works.md`): 4 lines added, 1 removed
+- **Modo interativo** (`interactive-mode.md`): 2 lines added, 2 removed
+- **Configurar permissões** (`permissions.md`): 15 lines added, 14 removed
+- **Criar e distribuir um marketplace de plugins** (`plugin-marketplaces.md`): 12 lines added, 10 removed
+- **Executar prompts em um cronograma** (`scheduled-tasks.md`): 5 lines added, 1 removed
+- **Configurações do Claude Code** (`settings.md`): 28 lines added, 0 removed
+  - New section: "#### `strictPluginOnlyCustomization`"
+
+### Русский
+
+
+**Modified**
+
+- **Checkpointing** (`checkpointing.md`): 7 lines added, 1 removed
+- **Начало работы с настольным приложением** (`desktop-quickstart.md`): 2 lines added, 2 removed
+- **Настольное приложение** (`desktop.md`): 2 lines added, 2 removed
+- **Автоматизация рабочих процессов с помощью hooks** (`hooks-guide.md`): 3 lines added, 3 removed
+- **Справочник по hooks** (`hooks.md`): 39 lines added, 31 removed
+- **Как работает Claude Code** (`how-claude-code-works.md`): 4 lines added, 1 removed
+- **Интерактивный режим** (`interactive-mode.md`): 20 lines added, 20 removed
+- **Настройка разрешений** (`permissions.md`): 15 lines added, 14 removed
+- **Создание и распространение marketplace плагинов** (`plugin-marketplaces.md`): 12 lines added, 10 removed
+- **Запуск подсказок по расписанию** (`scheduled-tasks.md`): 5 lines added, 1 removed
+- **Параметры Claude Code** (`settings.md`): 28 lines added, 0 removed
+  - New section: "#### `strictPluginOnlyCustomization`"
+
+### 简体中文
+
+
+**Modified**
+
+- **Checkpointing** (`checkpointing.md`): 10 lines added, 3 removed
+- **开始使用桌面应用** (`desktop-quickstart.md`): 2 lines added, 2 removed
+- **Desktop application** (`desktop.md`): 2 lines added, 2 removed
+- **使用 hooks 自动化工作流** (`hooks-guide.md`): 3 lines added, 3 removed
+- **Hooks 参考** (`hooks.md`): 38 lines added, 31 removed
+- **Claude Code 如何工作** (`how-claude-code-works.md`): 5 lines added, 2 removed
+- **交互模式** (`interactive-mode.md`): 2 lines added, 2 removed
+- **配置权限** (`permissions.md`): 15 lines added, 14 removed
+- **创建和分发 plugin marketplace** (`plugin-marketplaces.md`): 12 lines added, 10 removed
+- **按计划运行提示词** (`scheduled-tasks.md`): 5 lines added, 1 removed
+- **Claude Code 设置** (`settings.md`): 28 lines added, 0 removed
+  - New section: "#### `strictPluginOnlyCustomization`"
+
+### 繁體中文
+
+
+**Modified**
+
+- **Checkpointing** (`checkpointing.md`): 8 lines added, 2 removed
+- **開始使用桌面應用程式** (`desktop-quickstart.md`): 2 lines added, 2 removed
+- **Desktop 應用程式** (`desktop.md`): 2 lines added, 2 removed
+- **使用 hooks 自動化工作流程** (`hooks-guide.md`): 5 lines added, 5 removed
+- **Hooks 參考** (`hooks.md`): 36 lines added, 30 removed
+- **Claude Code 如何運作** (`how-claude-code-works.md`): 5 lines added, 2 removed
+- **互動模式** (`interactive-mode.md`): 2 lines added, 2 removed
+- **設定權限** (`permissions.md`): 15 lines added, 14 removed
+- **建立並分發 plugin marketplace** (`plugin-marketplaces.md`): 12 lines added, 10 removed
+- **按排程執行提示** (`scheduled-tasks.md`): 6 lines added, 2 removed
+- **Claude Code 設定** (`settings.md`): 28 lines added, 0 removed
+  - New section: "#### `strictPluginOnlyCustomization`"
+
+---
+
 ## 2026-05-20
 
 268 pages modified

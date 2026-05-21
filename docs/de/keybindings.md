@@ -261,10 +261,11 @@ Aktionen verfügbar im `DiffDialog`-Kontext:
 
 Aktionen verfügbar im `ModelPicker`-Kontext:
 
-| Aktion                       | Standard | Beschreibung             |
-| :--------------------------- | :------- | :----------------------- |
-| `modelPicker:decreaseEffort` | Links    | Aufwandsstufe verringern |
-| `modelPicker:increaseEffort` | Rechts   | Aufwandsstufe erhöhen    |
+| Aktion                       | Standard | Beschreibung                                                     |
+| :--------------------------- | :------- | :--------------------------------------------------------------- |
+| `modelPicker:decreaseEffort` | Links    | Aufwandsstufe verringern                                         |
+| `modelPicker:increaseEffort` | Rechts   | Aufwandsstufe erhöhen                                            |
+| `modelPicker:setAsDefault`   | d        | Hervorgehobenes Modell als Standard für neue Sitzungen festlegen |
 
 ### Select-Aktionen
 

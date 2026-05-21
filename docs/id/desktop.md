@@ -51,7 +51,7 @@ Berikan Claude konteks yang tepat, kontrol berapa banyak yang dilakukannya sendi
 
 ### Gunakan kotak prompt
 
-Ketik apa yang ingin Anda lakukan Claude dan tekan **Enter** untuk mengirim. Claude membaca file proyek Anda, membuat perubahan, dan menjalankan perintah berdasarkan [permission mode](#choose-a-permission-mode) Anda. Anda dapat menghentikan Claude kapan saja: klik tombol stop atau ketik koreksi Anda dan tekan **Enter**. Claude berhenti melakukan apa yang sedang dilakukannya dan menyesuaikan berdasarkan input Anda.
+Ketik apa yang ingin Anda lakukan Claude dan tekan **Enter** untuk mengirim. Claude membaca file proyek Anda, membuat perubahan, dan menjalankan perintah berdasarkan [permission mode](#choose-a-permission-mode) Anda. Anda dapat mengarahkan ulang Claude kapan saja: klik tombol stop untuk menghentikan segera, atau ketik koreksi dan tekan **Enter** untuk mengirimnya tanpa menghentikan tindakan yang sedang berjalan. Claude membaca koreksi segera setelah tindakan saat ini selesai dan menyesuaikan sebelum langkah berikutnya.
 
 Tombol **+** di sebelah kotak prompt memberi Anda akses ke lampiran file, [skills](#use-skills), [konektor](#connect-external-tools), dan [plugins](#install-plugins).
 
@@ -642,7 +642,7 @@ Untuk referensi konfigurasi enterprise lengkap, lihat [enterprise configuration 
 
 Jika Anda sudah menggunakan CLI Claude Code, Desktop menjalankan mesin yang sama dengan antarmuka grafis. Anda dapat menjalankan keduanya secara bersamaan di mesin yang sama, bahkan di proyek yang sama. Masing-masing mempertahankan riwayat sesi terpisah, tetapi mereka berbagi konfigurasi dan memori proyek melalui file CLAUDE.md.
 
-Untuk memindahkan sesi CLI ke Desktop, jalankan `/desktop` di terminal. Claude menyimpan sesi Anda dan membukanya di aplikasi desktop, kemudian keluar dari CLI. Perintah ini hanya tersedia di macOS dan Windows.
+Untuk memindahkan sesi CLI ke Desktop, jalankan `/desktop` di terminal. Claude menyimpan sesi Anda dan membukanya di aplikasi desktop, kemudian keluar dari CLI. Perintah ini tersedia di macOS dan Windows ketika Anda masuk dengan langganan Claude. Perintah ini tidak tersedia dengan autentikasi kunci API atau di Bedrock, Vertex, atau Foundry.
 
 <Tip>
   Kapan menggunakan Desktop vs CLI: gunakan Desktop ketika Anda ingin mengelola sesi paralel di satu jendela, mengatur pane berdampingan, atau meninjau perubahan secara visual. Gunakan CLI ketika Anda memerlukan scripting, otomasi, atau lebih suka alur kerja terminal.

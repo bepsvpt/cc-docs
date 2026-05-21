@@ -51,7 +51,7 @@ Geben Sie Claude den richtigen Kontext, kontrollieren Sie, wie viel es eigenstä
 
 ### Verwenden Sie das Eingabefeld
 
-Geben Sie ein, was Claude tun soll, und drücken Sie **Eingabe**, um zu senden. Claude liest Ihre Projektdateien, nimmt Änderungen vor und führt Befehle basierend auf Ihrem [Berechtigungsmodus](#choose-a-permission-mode) aus. Sie können Claude jederzeit unterbrechen: Klicken Sie auf die Stoppschaltfläche oder geben Sie Ihre Korrektur ein und drücken Sie **Eingabe**. Claude stoppt, was es tut, und passt sich basierend auf Ihrer Eingabe an.
+Geben Sie ein, was Claude tun soll, und drücken Sie **Eingabe**, um zu senden. Claude liest Ihre Projektdateien, nimmt Änderungen vor und führt Befehle basierend auf Ihrem [Berechtigungsmodus](#choose-a-permission-mode) aus. Sie können Claude jederzeit unterbrechen: Klicken Sie auf die Stoppschaltfläche, um sofort zu unterbrechen, oder geben Sie eine Korrektur ein und drücken Sie **Eingabe**, um sie zu senden, ohne die laufende Aktion zu stoppen. Claude liest die Korrektur, sobald die aktuelle Aktion abgeschlossen ist, und passt sich an, bevor der nächste Schritt erfolgt.
 
 Die Schaltfläche **+** neben dem Eingabefeld gibt Ihnen Zugriff auf Dateianhänge, [Skills](#use-skills), [Konnektoren](#connect-external-tools) und [Plugins](#install-plugins).
 
@@ -642,7 +642,7 @@ Für die vollständige Enterprise-Konfigurationsreferenz siehe das [Enterprise-K
 
 Wenn Sie bereits die Claude Code CLI verwenden, führt Desktop dieselbe zugrunde liegende Engine mit einer grafischen Benutzeroberfläche aus. Sie können beide gleichzeitig auf demselben Computer ausführen, sogar auf demselben Projekt. Jede behält separate Sitzungsverlauf, aber sie teilen Konfiguration und Projektgedächtnis über CLAUDE.md-Dateien.
 
-Um eine CLI-Sitzung in Desktop zu verschieben, führen Sie `/desktop` im Terminal aus. Claude speichert Ihre Sitzung und öffnet sie in der Desktop-App, dann beendet die CLI. Dieser Befehl ist nur auf macOS und Windows verfügbar.
+Um eine CLI-Sitzung in Desktop zu verschieben, führen Sie `/desktop` im Terminal aus. Claude speichert Ihre Sitzung und öffnet sie in der Desktop-App, dann beendet die CLI. Dieser Befehl ist auf macOS und Windows verfügbar, wenn Sie mit einem Claude-Abonnement angemeldet sind. Er ist nicht mit API-Schlüssel-Authentifizierung oder auf Bedrock, Vertex oder Foundry verfügbar.
 
 <Tip>
   Wann Desktop vs CLI verwendet werden: Verwenden Sie Desktop, wenn Sie parallele Sitzungen in einem Fenster verwalten, Panes nebeneinander anordnen oder Änderungen visuell überprüfen möchten. Verwenden Sie die CLI, wenn Sie Scripting, Automatisierung oder einen Terminal-Workflow bevorzugen.

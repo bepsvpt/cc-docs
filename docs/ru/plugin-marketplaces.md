@@ -945,21 +945,23 @@ claude plugin marketplace update [name]
 
 * Проверьте, что URL marketplace доступен
 * Убедитесь, что `.claude-plugin/marketplace.json` существует по указанному пути
-* Убедитесь, что синтаксис JSON действителен и frontmatter хорошо сформирован, используя `claude plugin validate` или `/plugin validate`
+* Убедитесь, что синтаксис JSON действителен, используя `claude plugin validate` или `/plugin validate`. Чтобы проверить frontmatter skill, agent и command, запустите команду для каждого каталога плагина
 * Для частных репозиториев подтвердите, что у вас есть разрешения доступа
 
 ### Ошибки валидации marketplace
 
-Запустите `claude plugin validate .` или `/plugin validate .` из каталога вашего marketplace, чтобы проверить наличие проблем. Валидатор проверяет `plugin.json`, frontmatter skill/agent/command и `hooks/hooks.json` на синтаксис и ошибки схемы. Общие ошибки:
+Запустите `claude plugin validate .` или `/plugin validate .` из каталога вашего marketplace, чтобы проверить наличие проблем. Когда валидатор указывает на каталог marketplace, он проверяет только `marketplace.json`: схему, дублирующиеся имена плагинов, обход пути источника и несоответствия версий для каждого упомянутого `plugin.json`.
 
-| Ошибка                                            | Причина                                        | Решение                                                                                                 |
-| :------------------------------------------------ | :--------------------------------------------- | :------------------------------------------------------------------------------------------------------ |
-| `File not found: .claude-plugin/marketplace.json` | Отсутствует манифест                           | Создайте `.claude-plugin/marketplace.json` с обязательными полями                                       |
-| `Invalid JSON syntax: Unexpected token...`        | Ошибка синтаксиса JSON в marketplace.json      | Проверьте отсутствующие запятые, лишние запятые или неквотированные строки                              |
-| `Duplicate plugin name "x" found in marketplace`  | Два плагина имеют одно имя                     | Дайте каждому плагину уникальное значение `name`                                                        |
-| `plugins[0].source: Path contains ".."`           | Путь источника содержит `..`                   | Используйте пути относительно корня marketplace без `..`. См. [Относительные пути](#relative-paths)     |
-| `YAML frontmatter failed to parse: ...`           | Неверный YAML в файле skill, agent или command | Исправьте синтаксис YAML в блоке frontmatter. Во время выполнения этот файл загружается без метаданных. |
-| `Invalid JSON syntax: ...` (hooks.json)           | Неправильный формат `hooks/hooks.json`         | Исправьте синтаксис JSON. Неправильный `hooks/hooks.json` предотвращает загрузку всего плагина.         |
+Чтобы валидировать `plugin.json` отдельного плагина и его файлы skill, agent, command и hook, запустите команду для самого каталога плагина, например `claude plugin validate ./plugins/my-plugin`. Распространенные ошибки:
+
+| Ошибка                                            | Причина                                        | Решение                                                                                                                                                  |
+| :------------------------------------------------ | :--------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `File not found: .claude-plugin/marketplace.json` | Отсутствует манифест                           | Создайте `.claude-plugin/marketplace.json` с обязательными полями                                                                                        |
+| `Invalid JSON syntax: Unexpected token...`        | Ошибка синтаксиса JSON в marketplace.json      | Проверьте отсутствующие запятые, лишние запятые или неквотированные строки                                                                               |
+| `Duplicate plugin name "x" found in marketplace`  | Два плагина имеют одно имя                     | Дайте каждому плагину уникальное значение `name`                                                                                                         |
+| `plugins[0].source: Path contains ".."`           | Путь источника содержит `..`                   | Используйте пути относительно корня marketplace без `..`. См. [Относительные пути](#relative-paths)                                                      |
+| `YAML frontmatter failed to parse: ...`           | Неверный YAML в файле skill, agent или command | Исправьте синтаксис YAML в блоке frontmatter. Во время выполнения этот файл загружается без метаданных. Сообщается только при валидации каталога плагина |
+| `Invalid JSON syntax: ...` (hooks.json)           | Неправильный формат `hooks/hooks.json`         | Исправьте синтаксис JSON. Неправильный `hooks/hooks.json` предотвращает загрузку всего плагина. Сообщается только при валидации каталога плагина         |
 
 **Предупреждения** (не блокирующие):
 

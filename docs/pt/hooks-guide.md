@@ -550,13 +550,13 @@ exit 0  # exit 0 = deixar prosseguir
 
 O código de saída determina o que acontece a seguir:
 
-* **Exit 0**: a ação prossegue. Para hooks `UserPromptSubmit`, `UserPromptExpansion` e `SessionStart`, qualquer coisa que você escrever para stdout é adicionada ao contexto do Claude.
+* **Exit 0**: o hook não relata objeção e a ação prossegue normalmente. Para um hook `PreToolUse` isso não aprova a chamada de ferramenta: o [fluxo de permissão](/pt/permissions) normal ainda se aplica. Para hooks `UserPromptSubmit`, `UserPromptExpansion` e `SessionStart`, qualquer coisa que você escrever para stdout é adicionada ao contexto do Claude.
 * **Exit 2**: a ação é bloqueada. Escreva um motivo para stderr, e Claude o recebe como feedback para que possa se ajustar. Alguns eventos não podem ser bloqueados: para `SessionStart`, `Setup`, `Notification` e outros, exit 2 mostra stderr ao usuário e a execução continua. Consulte [comportamento do código de saída 2 por evento](/pt/hooks#exit-code-2-behavior-per-event) para a lista completa.
 * **Qualquer outro código de saída**: a ação prossegue. A transcrição mostra um aviso `<hook name> hook error` seguido pela primeira linha de stderr; o stderr completo vai para o [log de debug](/pt/hooks#debug-hooks).
 
 #### Saída JSON estruturada
 
-Códigos de saída lhe dão duas opções: permitir ou bloquear. Para mais controle, saia com 0 e imprima um objeto JSON para stdout em vez disso.
+Códigos de saída lhe dão apenas bloquear ou ficar em silêncio. Para mais controle, saia com 0 e imprima um objeto JSON para stdout em vez disso.
 
 <Note>
   Use exit 2 para bloquear com uma mensagem stderr, ou exit 0 com JSON para controle estruturado. Não misture: Claude Code ignora JSON quando você sai com 2.

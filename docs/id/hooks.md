@@ -96,7 +96,7 @@ if echo "$COMMAND" | grep -q 'rm -rf'; then
     }
   }'
 else
-  exit 0  # allow the command
+  exit 0  # no decision; normal permission flow applies
 fi
 ```
 
@@ -136,11 +136,11 @@ Sekarang anggaplah Claude Code memutuskan untuk menjalankan `Bash "rm -rf /tmp/b
     }
     ```
 
-    Jika perintah telah menjadi varian `rm` yang lebih aman seperti `rm file.txt`, skrip akan mencapai `exit 0` sebagai gantinya, yang memberitahu Claude Code untuk mengizinkan pemanggilan tool tanpa tindakan lebih lanjut.
+    Jika perintah telah menjadi varian `rm` yang lebih aman seperti `rm file.txt`, skrip akan mencapai `exit 0` sebagai gantinya. Kode keluar 0 tanpa output berarti hook tidak memiliki keputusan untuk dilaporkan, jadi pemanggilan tool berlanjut melalui [alur izin](/id/permissions) normal. Hook dapat menolak pemanggilan, tetapi tetap diam tidak menyetujuinya.
   </Step>
 
   <Step title="Claude Code bertindak atas hasil">
-    Claude Code membaca keputusan JSON, memblokir pemanggilan tool, dan menunjukkan alasannya kepada Claude.
+    Claude Code membaca keputusan JSON, memblokir pemanggilan tool, dan menunjukkan Claude alasannya.
   </Step>
 </Steps>
 
@@ -622,7 +622,7 @@ if [[ "$command" == rm* ]]; then
   exit 2  # Blocking error: tool call is prevented
 fi
 
-exit 0  # Success: tool call proceeds
+exit 0  # No decision: the normal permission flow applies
 ```
 
 <Warning>
@@ -679,7 +679,7 @@ Tidak seperti command hooks, HTTP hooks tidak dapat menandakan kesalahan blockin
 
 ### Output JSON
 
-Kode keluar memungkinkan Anda mengizinkan atau memblokir, tetapi output JSON memberikan kontrol yang lebih halus. Alih-alih keluar dengan kode 2 untuk memblokir, keluar 0 dan cetak objek JSON ke stdout. Claude Code membaca bidang tertentu dari JSON itu untuk mengontrol perilaku, termasuk [decision control](#decision-control) untuk memblokir, mengizinkan, atau meningkatkan ke pengguna.
+Kode keluar memungkinkan Anda memblokir atau tetap diam, tetapi output JSON memberikan kontrol yang lebih halus. Alih-alih keluar dengan kode 2 untuk memblokir, keluar 0 dan cetak objek JSON ke stdout. Claude Code membaca bidang tertentu dari JSON itu untuk mengontrol perilaku, termasuk [decision control](#decision-control) untuk memblokir, mengizinkan, atau meningkatkan ke pengguna.
 
 <Note>
   Anda harus memilih satu pendekatan per hook, bukan keduanya: gunakan kode keluar saja untuk signaling, atau keluar 0 dan cetak JSON untuk kontrol terstruktur. Claude Code hanya memproses JSON pada exit 0. Jika Anda keluar 2, JSON apa pun diabaikan.
@@ -699,7 +699,7 @@ Objek JSON mendukung tiga jenis bidang:
 | :----------------- | :-------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `continue`         | `true`    | Jika `false`, Claude berhenti memproses sepenuhnya setelah hook dijalankan. Mengambil alih bidang keputusan spesifik event apa pun                                                                                                                                                                                                       |
 | `stopReason`       | tidak ada | Pesan ditampilkan ke pengguna saat `continue` adalah `false`. Tidak ditampilkan ke Claude                                                                                                                                                                                                                                                |
-| `suppressOutput`   | `false`   | Jika `true`, menyembunyikan stdout dari debug log                                                                                                                                                                                                                                                                                        |
+| `suppressOutput`   | `false`   | Jika `true`, menyembunyikan stdout dari hook dari transkrip. Stdout masih muncul dalam debug log                                                                                                                                                                                                                                         |
 | `systemMessage`    | tidak ada | Pesan peringatan ditampilkan ke pengguna                                                                                                                                                                                                                                                                                                 |
 | `terminalSequence` | tidak ada | Urutan escape terminal untuk Claude Code yang akan dipancarkan atas nama Anda, seperti notifikasi desktop, judul jendela, atau bel. Dibatasi pada OSC `0`/`1`/`2`/`9`/`99`/`777` dan BEL. Jika nilai berisi apa pun di luar daftar putih, bidang diabaikan. Gunakan ini alih-alih menulis ke `/dev/tty`, yang tidak tersedia untuk hooks |
 
@@ -732,7 +732,7 @@ Contoh di bawah menjalankan notifikasi desktop dari hook `Notification`. Urutan 
 # Notification hook: ping desktop ketika Claude Code membutuhkan perhatian.
 input=$(cat)
 title="Claude Code'
-body=$(jq -r '.message // 'Needs your attention'' <<<'$input')
+body=$(jq -r '.message // "Needs your attention"' <<<"$input")
 seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
 jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 ```
@@ -782,17 +782,18 @@ Setelah disuntikkan, teks disimpan dalam transkrip sesi. Untuk events mid-sessio
 
 Tidak setiap event mendukung pemblokiran atau kontrol perilaku melalui JSON. Events yang melakukannya masing-masing menggunakan set bidang yang berbeda untuk mengekspresikan keputusan itu. Gunakan tabel ini sebagai referensi cepat sebelum menulis hook:
 
-| Events                                                                                                                              | Pola keputusan                     | Bidang kunci                                                                                                                                                                        |
-| :---------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| UserPromptSubmit, UserPromptExpansion, PostToolUse, PostToolUseFailure, PostToolBatch, Stop, SubagentStop, ConfigChange, PreCompact | Top-level `decision`               | `decision: "block"`, `reason`                                                                                                                                                       |
-| TeammateIdle, TaskCreated, TaskCompleted                                                                                            | Kode keluar atau `continue: false` | Kode keluar 2 memblokir tindakan dengan umpan balik stderr. JSON `{"continue": false, "stopReason": "..."}` juga menghentikan teammate sepenuhnya, mencocokkan perilaku hook `Stop` |
-| PreToolUse                                                                                                                          | `hookSpecificOutput`               | `permissionDecision` (allow/deny/ask/defer), `permissionDecisionReason`                                                                                                             |
-| PermissionRequest                                                                                                                   | `hookSpecificOutput`               | `decision.behavior` (allow/deny)                                                                                                                                                    |
-| PermissionDenied                                                                                                                    | `hookSpecificOutput`               | `retry: true` memberitahu model itu dapat mencoba lagi pemanggilan tool yang ditolak                                                                                                |
-| WorktreeCreate                                                                                                                      | path return                        | Command hook mencetak path di stdout; HTTP hook mengembalikan `hookSpecificOutput.worktreePath`. Kegagalan hook atau path yang hilang gagal membuat                                 |
-| Elicitation                                                                                                                         | `hookSpecificOutput`               | `action` (accept/decline/cancel), `content` (nilai field form untuk accept)                                                                                                         |
-| ElicitationResult                                                                                                                   | `hookSpecificOutput`               | `action` (accept/decline/cancel), `content` (nilai field form override)                                                                                                             |
-| WorktreeRemove, Notification, SessionEnd, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged                     | Tidak ada                          | Tidak ada kontrol keputusan. Digunakan untuk efek samping seperti logging atau cleanup                                                                                              |
+| Events                                                                                                                              | Pola keputusan                     | Bidang kunci                                                                                                                                                                                                          |
+| :---------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| UserPromptSubmit, UserPromptExpansion, PostToolUse, PostToolUseFailure, PostToolBatch, Stop, SubagentStop, ConfigChange, PreCompact | Top-level `decision`               | `decision: "block"`, `reason`                                                                                                                                                                                         |
+| TeammateIdle, TaskCreated, TaskCompleted                                                                                            | Kode keluar atau `continue: false` | Kode keluar 2 memblokir tindakan dengan umpan balik stderr. JSON `{"continue": false, "stopReason": "..."}` juga menghentikan teammate sepenuhnya, mencocokkan perilaku hook `Stop`                                   |
+| PreToolUse                                                                                                                          | `hookSpecificOutput`               | `permissionDecision` (allow/deny/ask/defer), `permissionDecisionReason`                                                                                                                                               |
+| PermissionRequest                                                                                                                   | `hookSpecificOutput`               | `decision.behavior` (allow/deny)                                                                                                                                                                                      |
+| PermissionDenied                                                                                                                    | `hookSpecificOutput`               | `retry: true` memberitahu model itu dapat mencoba lagi pemanggilan tool yang ditolak                                                                                                                                  |
+| WorktreeCreate                                                                                                                      | path return                        | Command hook mencetak path di stdout; HTTP hook mengembalikan `hookSpecificOutput.worktreePath`. Kegagalan hook atau path yang hilang gagal membuat                                                                   |
+| Elicitation                                                                                                                         | `hookSpecificOutput`               | `action` (accept/decline/cancel), `content` (nilai field form untuk accept)                                                                                                                                           |
+| ElicitationResult                                                                                                                   | `hookSpecificOutput`               | `action` (accept/decline/cancel), `content` (nilai field form override)                                                                                                                                               |
+| SessionStart, Setup, SubagentStart                                                                                                  | Context only                       | `hookSpecificOutput.additionalContext` menambahkan konteks untuk Claude. SessionStart juga menerima [`initialUserMessage` dan `watchPaths`](#sessionstart-decision-control). Tidak ada kontrol blocking atau decision |
+| WorktreeRemove, Notification, SessionEnd, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged                     | Tidak ada                          | Tidak ada kontrol keputusan. Digunakan untuk efek samping seperti logging atau cleanup                                                                                                                                |
 
 Berikut adalah contoh setiap pola dalam aksi:
 
@@ -881,9 +882,11 @@ Selain [bidang input umum](#common-input-fields), SessionStart hooks menerima `s
 
 Teks apa pun yang dicetak skrip hook ke stdout ditambahkan sebagai konteks untuk Claude. Selain [bidang output JSON](#json-output) yang tersedia untuk semua hooks, Anda dapat mengembalikan bidang spesifik event ini:
 
-| Bidang              | Deskripsi                                                                                                                                                                                                    |
-| :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `additionalContext` | String ditambahkan ke konteks Claude pada awal percakapan, sebelum prompt pertama. Lihat [Tambahkan konteks untuk Claude](#add-context-for-claude) untuk cara teks disampaikan dan apa yang harus dimasukkan |
+| Bidang               | Deskripsi                                                                                                                                                                                                                                                                                                                                                       |
+| :------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `additionalContext`  | String ditambahkan ke konteks Claude pada awal percakapan, sebelum prompt pertama. Lihat [Tambahkan konteks untuk Claude](#add-context-for-claude) untuk cara teks disampaikan dan apa yang harus dimasukkan                                                                                                                                                    |
+| `initialUserMessage` | String digunakan sebagai pesan pengguna pertama sesi. Berlaku dalam [mode non-interaktif](/id/headless) (`-p`), di mana itu menjadi giliran pertama bahkan jika tidak ada prompt yang disediakan. Jika prompt disediakan, itu mengikuti sebagai giliran berikutnya. Tidak seperti `additionalContext`, yang menempel pada giliran yang ada, ini membuat giliran |
+| `watchPaths`         | Array path absolut untuk menonton untuk event [FileChanged](#filechanged) selama sesi ini                                                                                                                                                                                                                                                                       |
 
 ```json theme={null}
 {
@@ -1056,12 +1059,13 @@ Plain stdout ditampilkan sebagai output hook dalam transkrip. Bidang `additional
 
 Untuk memblokir prompt, kembalikan objek JSON dengan `decision` diatur ke `"block"`:
 
-| Bidang              | Deskripsi                                                                                                                            |
-| :------------------ | :----------------------------------------------------------------------------------------------------------------------------------- |
-| `decision`          | `"block"` mencegah prompt diproses dan menghapusnya dari konteks. Hilangkan untuk mengizinkan prompt dilanjutkan                     |
-| `reason`            | Ditampilkan ke pengguna saat `decision` adalah `"block"`. Tidak ditambahkan ke konteks                                               |
-| `additionalContext` | String ditambahkan ke konteks Claude bersama prompt yang dikirimkan. Lihat [Tambahkan konteks untuk Claude](#add-context-for-claude) |
-| `sessionTitle`      | Menetapkan judul sesi. Gunakan untuk memberi nama sesi secara otomatis berdasarkan konten prompt                                     |
+| Bidang                   | Deskripsi                                                                                                                            |
+| :----------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
+| `decision`               | `"block"` mencegah prompt diproses dan menghapusnya dari konteks. Hilangkan untuk mengizinkan prompt dilanjutkan                     |
+| `reason`                 | Ditampilkan ke pengguna saat `decision` adalah `"block"`. Tidak ditambahkan ke konteks                                               |
+| `additionalContext`      | String ditambahkan ke konteks Claude bersama prompt yang dikirimkan. Lihat [Tambahkan konteks untuk Claude](#add-context-for-claude) |
+| `sessionTitle`           | Menetapkan judul sesi. Gunakan untuk memberi nama sesi secara otomatis berdasarkan konten prompt                                     |
+| `suppressOriginalPrompt` | Jika `true` saat `decision` adalah `"block"`, menghilangkan teks prompt asli dari pesan blok yang ditampilkan ke pengguna            |
 
 ```json theme={null}
 {
@@ -1411,7 +1415,7 @@ Bidang output `updatedPermissions` dan bidang input [`permission_suggestions`](#
 | `addRules`          | `rules`, `behavior`, `destination` | Menambahkan aturan izin. `rules` adalah array dari objek `{toolName, ruleContent?}`. Hilangkan `ruleContent` untuk mencocokkan seluruh tool. `behavior` adalah `"allow"`, `"deny"`, atau `"ask"` |
 | `replaceRules`      | `rules`, `behavior`, `destination` | Mengganti semua aturan dari `behavior` yang diberikan di `destination` dengan `rules` yang disediakan                                                                                            |
 | `removeRules`       | `rules`, `behavior`, `destination` | Menghapus aturan yang cocok dari `behavior` yang diberikan                                                                                                                                       |
-| `setMode`           | `mode`, `destination`              | Mengubah mode izin. Mode yang valid adalah `default`, `acceptEdits`, `dontAsk`, `bypassPermissions`, dan `plan`                                                                                  |
+| `setMode`           | `mode`, `destination`              | Mengubah mode izin. Mode yang valid adalah `default`, `auto`, `acceptEdits`, `dontAsk`, `bypassPermissions`, dan `plan`                                                                          |
 | `addDirectories`    | `directories`, `destination`       | Menambahkan direktori kerja. `directories` adalah array dari string path                                                                                                                         |
 | `removeDirectories` | `directories`, `destination`       | Menghapus direktori kerja                                                                                                                                                                        |
 
@@ -1910,7 +1914,7 @@ Setiap entry dalam `background_tasks` menjelaskan satu tugas yang sedang berlang
 | `tool`        | Nama tool MCP. Hadir hanya untuk tugas `monitor` dan `MCP task`                                                                                                                                                                                                     |
 | `name`        | Nama workflow. Hadir hanya untuk tugas `workflow`                                                                                                                                                                                                                   |
 
-Setiap entry dalam `session_crons` menjelaskan satu wakeup terjadwal yang bersifat sesi, bersumber dari `CronCreate` dan `/loop`:
+Setiap entry dalam `session_crons` menjelaskan satu wakeup terjadwal yang bersifat sesi, bersumber dari `CronCreate`, `ScheduleWakeup`, dan `/loop`:
 
 | Bidang      | Deskripsi                                                                                                                            |
 | :---------- | :----------------------------------------------------------------------------------------------------------------------------------- |
@@ -2492,6 +2496,7 @@ Selain command, HTTP, dan MCP tool hooks, Claude Code mendukung prompt-based hoo
 
 Events yang mendukung semua lima tipe hook (`command`, `http`, `mcp_tool`, `prompt`, dan `agent`):
 
+* `PermissionDenied`
 * `PermissionRequest`
 * `PostToolBatch`
 * `PostToolUse`
@@ -2501,6 +2506,7 @@ Events yang mendukung semua lima tipe hook (`command`, `http`, `mcp_tool`, `prom
 * `SubagentStop`
 * `TaskCompleted`
 * `TaskCreated`
+* `TeammateIdle`
 * `UserPromptExpansion`
 * `UserPromptSubmit`
 
@@ -2513,13 +2519,11 @@ Events yang mendukung hooks `command`, `http`, dan `mcp_tool` tetapi bukan `prom
 * `FileChanged`
 * `InstructionsLoaded`
 * `Notification`
-* `PermissionDenied`
 * `PostCompact`
 * `PreCompact`
 * `SessionEnd`
 * `StopFailure`
 * `SubagentStart`
-* `TeammateIdle`
 * `WorktreeCreate`
 * `WorktreeRemove`
 
@@ -2587,7 +2591,9 @@ Apa yang terjadi pada `ok: false` tergantung pada event:
 * `PostToolUse`: secara default giliran berakhir dan alasan muncul dalam chat sebagai baris peringatan. Atur `continueOnBlock: true` untuk umpankan alasan kembali ke Claude dan lanjutkan giliran alih-alih
 * `PostToolBatch`, `UserPromptSubmit`, dan `UserPromptExpansion`: giliran berakhir dan alasan muncul sebagai baris peringatan. Events ini mengakhiri giliran pada `decision: "block"` terlepas dari `continue`
 * `PostToolUseFailure`, `TaskCreated`, dan `TaskCompleted`: alasan dikembalikan ke Claude sebagai kesalahan tool, mirip dengan `PreToolUse`
+* `TeammateIdle`: secara default rekan kerja berhenti dan alasan muncul sebagai baris peringatan. Atur `continueOnBlock: true` untuk umpankan alasan kembali ke rekan kerja dan biarkan tetap bekerja alih-alih
 * `PermissionRequest`: `ok: false` tidak berpengaruh. Untuk menolak persetujuan dari hook, gunakan [command hook](#command-hook-fields) yang mengembalikan `hookSpecificOutput.decision.behavior: "deny"`
+* `PermissionDenied`: `ok: false` tidak berpengaruh karena penolakan sudah terjadi. Satu-satunya output yang dibaca event ini adalah `hookSpecificOutput.retry`, yang prompt dan agent hooks tidak dapat atur — mereka berjalan pada event ini, tetapi output mereka diabaikan. Gunakan [command hook](#command-hook-fields) untuk mengembalikan `retry`
 
 Jika Anda memerlukan kontrol yang lebih halus pada event apa pun, gunakan [command hook](#command-hook-fields) dengan bidang per-event yang dijelaskan dalam [Decision control](#decision-control).
 

@@ -51,7 +51,7 @@ Proporcione a Claude el contexto correcto, controle cuánto hace por su cuenta y
 
 ### Usar el cuadro de solicitud
 
-Escriba lo que desea que Claude haga y presione **Enter** para enviar. Claude lee los archivos de su proyecto, realiza cambios y ejecuta comandos según su [modo de permisos](#choose-a-permission-mode). Puede interrumpir a Claude en cualquier momento: haga clic en el botón de parada o escriba su corrección y presione **Enter**. Claude detiene lo que está haciendo y se ajusta según su entrada.
+Escriba lo que desea que Claude haga y presione **Enter** para enviar. Claude lee los archivos de su proyecto, realiza cambios y ejecuta comandos según su [modo de permisos](#choose-a-permission-mode). Puede redirigir a Claude en cualquier momento: haga clic en el botón de parada para interrumpir inmediatamente, o escriba una corrección y presione **Enter** para enviarla sin detener la acción en ejecución. Claude lee la corrección tan pronto como se completa la acción actual y se ajusta antes de su siguiente paso.
 
 El botón **+** junto al cuadro de solicitud le da acceso a archivos adjuntos, [skills](#use-skills), [conectores](#connect-external-tools) y [plugins](#install-plugins).
 
@@ -642,7 +642,7 @@ Para la referencia completa de configuración empresarial, consulte la [guía de
 
 Si ya usa la CLI de Claude Code, Desktop ejecuta el mismo motor subyacente con una interfaz gráfica. Puede ejecutar ambos simultáneamente en la misma máquina, incluso en el mismo proyecto. Cada uno mantiene historial de sesión separado, pero comparten configuración y memoria del proyecto a través de archivos CLAUDE.md.
 
-Para mover una sesión de CLI a Desktop, ejecute `/desktop` en la terminal. Claude guarda su sesión y la abre en la aplicación de escritorio, luego sale de la CLI. Este comando está disponible solo en macOS y Windows.
+Para mover una sesión de CLI a Desktop, ejecute `/desktop` en la terminal. Claude guarda su sesión y la abre en la aplicación de escritorio, luego sale de la CLI. Este comando está disponible en macOS y Windows cuando inicia sesión con una suscripción de Claude. No está disponible con autenticación de clave API ni en Bedrock, Vertex o Foundry.
 
 <Tip>
   Cuándo usar Desktop vs CLI: use Desktop cuando desee gestionar sesiones paralelas en una ventana, organizar paneles lado a lado o revisar cambios visualmente. Use la CLI cuando necesite scripting, automatización o prefiera un flujo de trabajo de terminal.

@@ -945,21 +945,23 @@ Baik `remove` maupun `update` gagal ketika dijalankan terhadap marketplace yang 
 
 * Verifikasi URL marketplace dapat diakses
 * Periksa bahwa `.claude-plugin/marketplace.json` ada di jalur yang ditentukan
-* Pastikan sintaks JSON valid dan frontmatter terbentuk dengan baik menggunakan `claude plugin validate` atau `/plugin validate`
+* Pastikan sintaks JSON valid menggunakan `claude plugin validate` atau `/plugin validate`. Untuk memeriksa frontmatter skill, agent, dan command, jalankan perintah terhadap setiap direktori plugin
 * Untuk repositori pribadi, konfirmasi Anda memiliki izin akses
 
 ### Kesalahan validasi marketplace
 
-Jalankan `claude plugin validate .` atau `/plugin validate .` dari direktori marketplace Anda untuk memeriksa masalah. Validator memeriksa `plugin.json`, frontmatter skill/agent/command, dan `hooks/hooks.json` untuk kesalahan sintaks dan skema. Kesalahan umum:
+Jalankan `claude plugin validate .` atau `/plugin validate .` dari direktori marketplace Anda untuk memeriksa masalah. Ketika ditunjukkan ke direktori marketplace, validator memeriksa `marketplace.json` saja: skema, nama plugin duplikat, traversal jalur sumber, dan ketidaksesuaian versi terhadap setiap `plugin.json` yang direferensikan.
 
-| Kesalahan                                         | Penyebab                                               | Solusi                                                                                                          |
-| :------------------------------------------------ | :----------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- |
-| `File not found: .claude-plugin/marketplace.json` | Manifest hilang                                        | Buat `.claude-plugin/marketplace.json` dengan field yang diperlukan                                             |
-| `Invalid JSON syntax: Unexpected token...`        | Kesalahan sintaks JSON dalam marketplace.json          | Periksa koma yang hilang, koma ekstra, atau string yang tidak dikutip                                           |
-| `Duplicate plugin name "x" found in marketplace`  | Dua plugin berbagi nama yang sama                      | Berikan setiap plugin nilai `name` yang unik                                                                    |
-| `plugins[0].source: Path contains ".."`           | Jalur sumber berisi `..`                               | Gunakan jalur relatif terhadap root marketplace tanpa `..`. Lihat [Jalur relatif](#relative-paths)              |
-| `YAML frontmatter failed to parse: ...`           | YAML tidak valid dalam file skill, agent, atau command | Perbaiki sintaks YAML dalam blok frontmatter. Saat runtime file ini dimuat tanpa metadata.                      |
-| `Invalid JSON syntax: ...` (hooks.json)           | `hooks/hooks.json` yang tidak terbentuk dengan baik    | Perbaiki sintaks JSON. `hooks/hooks.json` yang tidak terbentuk dengan baik mencegah seluruh plugin dari dimuat. |
+Untuk memvalidasi `plugin.json` plugin individual dan file skill, agent, command, dan hook-nya, jalankan perintah terhadap direktori plugin itu sendiri, misalnya `claude plugin validate ./plugins/my-plugin`. Kesalahan umum:
+
+| Kesalahan                                         | Penyebab                                               | Solusi                                                                                                                                                             |
+| :------------------------------------------------ | :----------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `File not found: .claude-plugin/marketplace.json` | Manifest hilang                                        | Buat `.claude-plugin/marketplace.json` dengan field yang diperlukan                                                                                                |
+| `Invalid JSON syntax: Unexpected token...`        | Kesalahan sintaks JSON dalam marketplace.json          | Periksa koma yang hilang, koma ekstra, atau string yang tidak dikutip                                                                                              |
+| `Duplicate plugin name "x" found in marketplace`  | Dua plugin berbagi nama yang sama                      | Berikan setiap plugin nilai `name` yang unik                                                                                                                       |
+| `plugins[0].source: Path contains ".."`           | Jalur sumber berisi `..`                               | Gunakan jalur relatif terhadap root marketplace tanpa `..`. Lihat [Jalur relatif](#relative-paths)                                                                 |
+| `YAML frontmatter failed to parse: ...`           | YAML tidak valid dalam file skill, agent, atau command | Perbaiki sintaks YAML dalam blok frontmatter. Saat runtime file ini dimuat tanpa metadata. Dilaporkan hanya saat memvalidasi direktori plugin                      |
+| `Invalid JSON syntax: ...` (hooks.json)           | `hooks/hooks.json` yang tidak terbentuk dengan baik    | Perbaiki sintaks JSON. `hooks/hooks.json` yang tidak terbentuk dengan baik mencegah seluruh plugin dari dimuat. Dilaporkan hanya saat memvalidasi direktori plugin |
 
 **Peringatan** (non-blocking):
 

@@ -22,7 +22,13 @@ Claude Code realiza un seguimiento de todos los cambios realizados por sus herra
 
 ### Revertir y resumir
 
-Presione `Esc` dos veces (`Esc` + `Esc`) o use el comando `/rewind` para abrir el menú de rewind. Una lista desplazable muestra cada una de sus solicitudes de la sesión. Seleccione el punto en el que desea actuar y luego elija una acción:
+Ejecute `/rewind`, o presione `Esc` dos veces cuando el campo de entrada de solicitud esté vacío, para abrir el menú de rewind.
+
+<Note>
+  Si el campo de entrada de solicitud contiene texto, presionar `Esc` dos veces lo borra en lugar de abrir el menú. El texto borrado se guarda en su historial de entrada, por lo que presione `Arriba` para recuperarlo después de terminar en el menú de rewind.
+</Note>
+
+El menú de rewind enumera cada solicitud que envió durante la sesión. Seleccione el punto en el que desea actuar y luego elija una acción:
 
 * **Restaurar código y conversación**: revierte tanto el código como la conversación a ese punto
 * **Restaurar conversación**: revierte a ese mensaje mientras mantiene el código actual

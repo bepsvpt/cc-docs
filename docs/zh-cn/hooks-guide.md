@@ -545,18 +545,18 @@ if echo "$COMMAND" | grep -q "drop table"; then
   exit 2 # exit 2 = 阻止操作
 fi
 
-exit 0  # exit 0 = 让它继续
+exit 0  # exit 0 = 没有决策；正常权限流程适用
 ```
 
 退出代码确定接下来会发生什么：
 
-* **退出 0**：操作继续。对于 `UserPromptSubmit`、`UserPromptExpansion` 和 `SessionStart` hooks，你写入 stdout 的任何内容都会添加到 Claude 的上下文中。
+* **退出 0**：hook 报告没有异议，操作正常进行。对于 `PreToolUse` hook，这不会批准工具调用：正常的 [权限流程](/zh-CN/permissions) 仍然适用。对于 `UserPromptSubmit`、`UserPromptExpansion` 和 `SessionStart` hooks，你写入 stdout 的任何内容都会添加到 Claude 的上下文中。
 * **退出 2**：操作被阻止。写入原因到 stderr，Claude 会收到它作为反馈，以便它可以调整。某些事件无法被阻止：对于 `SessionStart`、`Setup`、`Notification` 和其他事件，退出 2 向用户显示 stderr，执行继续。有关每个事件的退出代码 2 行为的完整列表，请参阅 [每个事件的退出代码 2 行为](/zh-CN/hooks#exit-code-2-behavior-per-event)。
 * **任何其他退出代码**：操作继续。成绩单显示 `<hook name> hook error` 通知，后跟 stderr 的第一行；完整的 stderr 进入 [调试日志](/zh-CN/hooks#debug-hooks)。
 
 #### 结构化 JSON 输出
 
-退出代码给你两个选项：允许或阻止。为了获得更多控制，退出 0 并改为将 JSON 对象打印到 stdout。
+退出代码只让你阻止或保持沉默。为了获得更多控制，退出 0 并改为将 JSON 对象打印到 stdout。
 
 <Note>
   使用退出 2 以 stderr 消息阻止，或使用 JSON 退出 0 以获得结构化控制。不要混合它们：Claude Code 在你退出 2 时忽略 JSON。

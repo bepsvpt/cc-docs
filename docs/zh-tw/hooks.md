@@ -96,7 +96,7 @@ if echo "$COMMAND" | grep -q 'rm -rf'; then
     }
   }'
 else
-  exit 0  # allow the command
+  exit 0  # no decision; normal permission flow applies
 fi
 ```
 
@@ -136,7 +136,7 @@ fi
     }
     ```
 
-    如果命令是更安全的 `rm` 變體，如 `rm file.txt`，指令碼會改為執行 `exit 0`，這告訴 Claude Code 允許工具呼叫而無需進一步操作。
+    如果命令是更安全的 `rm` 變體，如 `rm file.txt`，指令碼會改為執行 `exit 0`。Exit code 0 且沒有輸出表示 hook 沒有決定要報告，因此工具呼叫會繼續通過正常的[權限流程](/zh-TW/permissions)。Hook 可以拒絕呼叫，但保持沉默不會批准它。
   </Step>
 
   <Step title="Claude Code 根據結果採取行動">
@@ -144,7 +144,7 @@ fi
   </Step>
 </Steps>
 
-下面的 [配置](#configuration) 部分記錄了完整架構，每個 [hook 事件](#hook-events) 部分記錄了您的命令接收的輸入以及它可以返回的輸出。
+下面的[配置](#configuration)部分記錄了完整架構，每個 [hook 事件](#hook-events)部分記錄了您的命令接收的輸入以及它可以返回的輸出。
 
 ## 配置
 
@@ -622,7 +622,7 @@ if [[ "$command" == rm* ]]; then
   exit 2  # 阻止性錯誤：工具呼叫被阻止
 fi
 
-exit 0  # 成功：工具呼叫進行
+exit 0  # 無決定：正常權限流程適用
 ```
 
 <Warning>
@@ -699,7 +699,7 @@ JSON 物件支援三種欄位：
 | :----------------- | :------ | :------------------------------------------------------------------------------------------------------------------------------------------ |
 | `continue`         | `true`  | 如果為 `false`，Claude 在 hook 執行後完全停止處理。優先於任何事件特定的決定欄位                                                                                          |
 | `stopReason`       | 無       | 當 `continue` 為 `false` 時向使用者顯示的訊息。不向 Claude 顯示                                                                                              |
-| `suppressOutput`   | `false` | 如果為 `true`，隱藏詳細日誌中的 stdout                                                                                                                  |
+| `suppressOutput`   | `false` | 如果為 `true`，隱藏詳細日誌中的 hook stdout                                                                                                             |
 | `systemMessage`    | 無       | 向使用者顯示的警告訊息                                                                                                                                 |
 | `terminalSequence` | 無       | Claude Code 代表您發出的終端逃逸序列，例如桌面通知、視窗標題或響鈴。限制為 OSC `0`/`1`/`2`/`9`/`99`/`777` 和 BEL。如果值包含允許清單外的任何內容，該欄位將被忽略。使用此項而不是寫入 `/dev/tty`，後者對 hooks 不可用 |
 
@@ -732,7 +732,7 @@ Hooks 在沒有控制終端的情況下執行，因此直接寫入逃逸序列�
 # Notification hook：當 Claude Code 需要注意時 ping 桌面。
 input=$(cat)
 title="Claude Code'
-body=$(jq -r '.message // 'Needs your attention'' <<<'$input')
+body=$(jq -r '.message // "Needs your attention"' <<<"$input")
 seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
 jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 ```
@@ -782,17 +782,18 @@ jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 
 並非每個事件都支援阻止或通過 JSON 控制行為。支援的事件各自使用不同的欄位集來表達該決定。在編寫 hook 之前，使用此表作為快速參考：
 
-| 事件                                                                                                                          | 決定模式                    | 關鍵欄位                                                                                               |
-| :-------------------------------------------------------------------------------------------------------------------------- | :---------------------- | :------------------------------------------------------------------------------------------------- |
-| UserPromptSubmit、UserPromptExpansion、PostToolUse、PostToolUseFailure、PostToolBatch、Stop、SubagentStop、ConfigChange、PreCompact | 頂層 `decision`           | `decision: "block"`、`reason`                                                                       |
-| TeammateIdle、TaskCreated、TaskCompleted                                                                                      | 退出代碼或 `continue: false` | 退出代碼 2 使用 stderr 反饋阻止操作。JSON `{"continue": false, "stopReason": "..."}` 也會完全停止隊友，匹配 `Stop` hook 行為 |
-| PreToolUse                                                                                                                  | `hookSpecificOutput`    | `permissionDecision`（allow/deny/ask/defer）、`permissionDecisionReason`                              |
-| PermissionRequest                                                                                                           | `hookSpecificOutput`    | `decision.behavior`（allow/deny）                                                                    |
-| PermissionDenied                                                                                                            | `hookSpecificOutput`    | `retry: true` 告訴模型它可能重試被拒絕的工具呼叫                                                                    |
-| WorktreeCreate                                                                                                              | 路徑返回                    | 命令 hook 在 stdout 上列印路徑；HTTP hook 通過 `hookSpecificOutput.worktreePath` 返回。Hook 失敗或缺少路徑會導致建立失敗       |
-| Elicitation                                                                                                                 | `hookSpecificOutput`    | `action`（accept/decline/cancel）、`content`（accept 的表單欄位值）                                           |
-| ElicitationResult                                                                                                           | `hookSpecificOutput`    | `action`（accept/decline/cancel）、`content`（覆蓋表單欄位值）                                                 |
-| WorktreeRemove、Notification、SessionEnd、PostCompact、InstructionsLoaded、StopFailure、CwdChanged、FileChanged                    | 無                       | 無決定控制。用於副作用，如記錄或清理                                                                                 |
+| 事件                                                                                                                          | 決定模式                    | 關鍵欄位                                                                                                                                                  |
+| :-------------------------------------------------------------------------------------------------------------------------- | :---------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| UserPromptSubmit、UserPromptExpansion、PostToolUse、PostToolUseFailure、PostToolBatch、Stop、SubagentStop、ConfigChange、PreCompact | 頂層 `decision`           | `decision: "block"`、`reason`                                                                                                                          |
+| TeammateIdle、TaskCreated、TaskCompleted                                                                                      | 退出代碼或 `continue: false` | 退出代碼 2 使用 stderr 反饋阻止操作。JSON `{"continue": false, "stopReason": "..."}` 也會完全停止隊友，匹配 `Stop` hook 行為                                                    |
+| PreToolUse                                                                                                                  | `hookSpecificOutput`    | `permissionDecision`（allow/deny/ask/defer）、`permissionDecisionReason`                                                                                 |
+| PermissionRequest                                                                                                           | `hookSpecificOutput`    | `decision.behavior`（allow/deny）                                                                                                                       |
+| PermissionDenied                                                                                                            | `hookSpecificOutput`    | `retry: true` 告訴模型它可能重試被拒絕的工具呼叫                                                                                                                       |
+| WorktreeCreate                                                                                                              | 路徑返回                    | 命令 hook 在 stdout 上列印路徑；HTTP hook 通過 `hookSpecificOutput.worktreePath` 返回。Hook 失敗或缺少路徑會導致建立失敗                                                          |
+| Elicitation                                                                                                                 | `hookSpecificOutput`    | `action`（accept/decline/cancel）、`content`（accept 的表單欄位值）                                                                                              |
+| ElicitationResult                                                                                                           | `hookSpecificOutput`    | `action`（accept/decline/cancel）、`content`（覆蓋表單欄位值）                                                                                                    |
+| SessionStart、Setup、SubagentStart                                                                                            | 僅上下文                    | `hookSpecificOutput.additionalContext` 為 Claude 新增上下文。SessionStart 也接受 [`initialUserMessage` 和 `watchPaths`](#sessionstart-decision-control)。無阻止或決定控制 |
+| WorktreeRemove、Notification、SessionEnd、PostCompact、InstructionsLoaded、StopFailure、CwdChanged、FileChanged                    | 無                       | 無決定控制。用於副作用，如記錄或清理                                                                                                                                    |
 
 以下是每種模式的實際範例：
 
@@ -881,9 +882,11 @@ SessionStart 在每個工作階段執行，因此請保持這些 hooks 快速。
 
 您的 hook 指令碼列印到 stdout 的任何文字都被新增為 Claude 的上下文。除了所有 hooks 可用的 [JSON 輸出欄位](#json-output) 外，您還可以返回這些事件特定欄位：
 
-| 欄位                  | 描述                                                                                              |
-| :------------------ | :---------------------------------------------------------------------------------------------- |
-| `additionalContext` | 新增到 Claude 上下文開始處的字串，在第一個提示之前。請參閱 [為 Claude 新增上下文](#add-context-for-claude) 以了解文字如何傳遞以及要放入其中的內容 |
+| 欄位                   | 描述                                                                                                                                    |
+| :------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| `additionalContext`  | 新增到 Claude 上下文開始處的字串，在第一個提示之前。請參閱 [為 Claude 新增上下文](#add-context-for-claude) 以了解文字如何傳遞以及要放入其中的內容                                       |
+| `initialUserMessage` | 用作工作階段第一個使用者訊息的字串。適用於 [非互動模式](/zh-TW/headless)（`-p`），其中即使未提供提示，它也成為第一個轉向。如果提供了提示，它作為下一個轉向跟隨。與 `additionalContext` 不同，後者附加到現有轉向，這會建立轉向 |
+| `watchPaths`         | 絕對路徑的陣列，用於在此工作階段期間監視 [FileChanged](#filechanged) 事件                                                                                   |
 
 ```json theme={null}
 {
@@ -1056,12 +1059,13 @@ InstructionsLoaded hooks 沒有決定控制。它們無法阻止或修改指令�
 
 要阻止提示，請返回一個 JSON 物件，其中 `decision` 設定為 `"block"`：
 
-| 欄位                  | 描述                                                                       |
-| :------------------ | :----------------------------------------------------------------------- |
-| `decision`          | `"block"` 防止提示被處理並從上下文中清除它。省略以允許提示進行                                     |
-| `reason`            | 當 `decision` 為 `"block"` 時向使用者顯示。不新增到上下文                                 |
-| `additionalContext` | 新增到 Claude 上下文的字串，與提交的提示一起。請參閱 [為 Claude 新增上下文](#add-context-for-claude) |
-| `sessionTitle`      | 設定工作階段標題。使用此項根據提示內容自動命名工作階段                                              |
+| 欄位                       | 描述                                                                       |
+| :----------------------- | :----------------------------------------------------------------------- |
+| `decision`               | `"block"` 防止提示被處理並從上下文中清除它。省略以允許提示進行                                     |
+| `reason`                 | 當 `decision` 為 `"block"` 時向使用者顯示。不新增到上下文                                 |
+| `additionalContext`      | 新增到 Claude 上下文的字串，與提交的提示一起。請參閱 [為 Claude 新增上下文](#add-context-for-claude) |
+| `sessionTitle`           | 設定工作階段標題。使用此項根據提示內容自動命名工作階段                                              |
+| `suppressOriginalPrompt` | 如果在 `decision` 為 `"block"` 時為 `true`，則從向使用者顯示的阻止訊息中省略原始提示文字              |
 
 ```json theme={null}
 {
@@ -1410,7 +1414,7 @@ PermissionRequest hooks 接收 `tool_name` 和 `tool_input` 欄位，如 PreTool
 | `addRules`          | `rules`、`behavior`、`destination` | 新增權限規則。`rules` 是 `{toolName, ruleContent?}` 物件的陣列。省略 `ruleContent` 以匹配整個工具。`behavior` 是 `"allow"`、`"deny"` 或 `"ask"` |
 | `replaceRules`      | `rules`、`behavior`、`destination` | 用提供的 `rules` 替換 `destination` 處給定 `behavior` 的所有規則                                                                   |
 | `removeRules`       | `rules`、`behavior`、`destination` | 移除匹配的給定 `behavior` 的規則                                                                                               |
-| `setMode`           | `mode`、`destination`             | 變更權限模式。有效模式為 `default`、`acceptEdits`、`dontAsk`、`bypassPermissions` 和 `plan`                                          |
+| `setMode`           | `mode`、`destination`             | 變更權限模式。有效模式為 `default`、`auto`、`acceptEdits`、`dontAsk`、`bypassPermissions` 和 `plan`                                   |
 | `addDirectories`    | `directories`、`destination`      | 新增工作目錄。`directories` 是路徑字串的陣列                                                                                        |
 | `removeDirectories` | `directories`、`destination`      | 移除工作目錄                                                                                                               |
 
@@ -1911,7 +1915,7 @@ exit 0
 | `tool`        | MCP 工具名稱。僅針對 `monitor` 和 `MCP task` 任務出現                                                                                                     |
 | `name`        | 工作流名稱。僅針對 `workflow` 任務出現                                                                                                                    |
 
-`session_crons` 中的每個項目描述一個工作階段範圍的計劃喚醒，來自 `CronCreate` 和 `/loop`：
+`session_crons` 中的每個項目描述一個工作階段範圍的計劃喚醒，來自 `CronCreate`、`ScheduleWakeup` 和 `/loop`：
 
 | 欄位          | 描述                                                   |
 | :---------- | :--------------------------------------------------- |
@@ -2493,6 +2497,7 @@ CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
 
 支援所有五種 hook 類型（`command`、`http`、`mcp_tool`、`prompt` 和 `agent`）的事件：
 
+* `PermissionDenied`
 * `PermissionRequest`
 * `PostToolBatch`
 * `PostToolUse`
@@ -2502,6 +2507,7 @@ CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
 * `SubagentStop`
 * `TaskCompleted`
 * `TaskCreated`
+* `TeammateIdle`
 * `UserPromptExpansion`
 * `UserPromptSubmit`
 
@@ -2514,13 +2520,11 @@ CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
 * `FileChanged`
 * `InstructionsLoaded`
 * `Notification`
-* `PermissionDenied`
 * `PostCompact`
 * `PreCompact`
 * `SessionEnd`
 * `StopFailure`
 * `SubagentStart`
-* `TeammateIdle`
 * `WorktreeCreate`
 * `WorktreeRemove`
 
@@ -2588,7 +2592,9 @@ LLM 必須以包含以下內容的 JSON 回應：
 * `PostToolUse`：預設情況下轉換結束，原因在聊天中顯示為警告行。設定 `continueOnBlock: true` 以將原因反饋給 Claude 並繼續轉換
 * `PostToolBatch`、`UserPromptSubmit` 和 `UserPromptExpansion`：轉換結束，原因顯示為警告行。這些事件在 `decision: "block"` 上結束轉換，無論 `continue` 如何
 * `PostToolUseFailure`、`TaskCreated` 和 `TaskCompleted`：原因作為工具錯誤返回給 Claude，類似於 `PreToolUse`
+* `TeammateIdle`：預設情況下隊友停止，原因顯示為警告行。設定 `continueOnBlock: true` 以將原因反饋給隊友並保持其工作狀態
 * `PermissionRequest`：`ok: false` 沒有效果。要從 hook 拒絕批准，請使用[命令 hook](#command-hook-fields)返回 `hookSpecificOutput.decision.behavior: "deny"`
+* `PermissionDenied`：`ok: false` 沒有效果，因為拒絕已經發生。此事件讀取的唯一輸出是 `hookSpecificOutput.retry`，提示和代理 hooks 無法設定 — 它們在此事件上執行，但其輸出被丟棄。使用[命令 hook](#command-hook-fields)返回 `retry`
 
 如果您需要對任何事件進行更精細的控制，請使用[命令 hook](#command-hook-fields)，其中包含[決定控制](#decision-control)中描述的每個事件欄位。
 

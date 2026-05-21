@@ -945,21 +945,23 @@ Sia `remove` che `update` non riescono quando eseguiti su un marketplace gestito
 
 * Verifica che l'URL del marketplace sia accessibile
 * Controlla che `.claude-plugin/marketplace.json` esista nel percorso specificato
-* Assicurati che la sintassi JSON sia valida e che il frontmatter sia ben formato utilizzando `claude plugin validate` o `/plugin validate`
+* Assicurati che la sintassi JSON sia valida utilizzando `claude plugin validate` o `/plugin validate`. Per verificare il frontmatter di skill, agente e comando, esegui il comando su ogni directory di plugin
 * Per i repository privati, conferma di avere i permessi di accesso
 
 ### Errori di validazione del marketplace
 
-Esegui `claude plugin validate .` o `/plugin validate .` dalla directory del tuo marketplace per verificare i problemi. Il validatore controlla `plugin.json`, il frontmatter di skill/agente/comando e `hooks/hooks.json` per errori di sintassi e schema. Errori comuni:
+Esegui `claude plugin validate .` o `/plugin validate .` dalla directory del tuo marketplace per verificare i problemi. Quando puntato a una directory del marketplace, il validatore controlla solo `marketplace.json`: schema, nomi di plugin duplicati, traversal del percorso di origine e mancate corrispondenze di versione rispetto a ogni `plugin.json` referenziato.
 
-| Errore                                            | Causa                                                 | Soluzione                                                                                               |
-| :------------------------------------------------ | :---------------------------------------------------- | :------------------------------------------------------------------------------------------------------ |
-| `File not found: .claude-plugin/marketplace.json` | Manifest mancante                                     | Crea `.claude-plugin/marketplace.json` con i campi obbligatori                                          |
-| `Invalid JSON syntax: Unexpected token...`        | Errore di sintassi JSON in marketplace.json           | Controlla le virgole mancanti, le virgole extra o le stringhe non quotate                               |
-| `Duplicate plugin name "x" found in marketplace`  | Due plugin condividono lo stesso nome                 | Dai a ogni plugin un valore `name` univoco                                                              |
-| `plugins[0].source: Path contains ".."`           | Il percorso di fonte contiene `..`                    | Usa percorsi relativi alla radice del marketplace senza `..`. Vedi [Percorsi relativi](#relative-paths) |
-| `YAML frontmatter failed to parse: ...`           | YAML non valido in un file di skill, agente o comando | Correggi la sintassi YAML nel blocco frontmatter. Al runtime questo file si carica senza metadati.      |
-| `Invalid JSON syntax: ...` (hooks.json)           | `hooks/hooks.json` malformato                         | Correggi la sintassi JSON. Un `hooks/hooks.json` malformato impedisce al plugin intero di caricarsi.    |
+Per validare il `plugin.json` di un singolo plugin e i suoi file di skill, agente, comando e hook, esegui il comando sulla directory del plugin stesso, ad esempio `claude plugin validate ./plugins/my-plugin`. Errori comuni:
+
+| Errore                                            | Causa                                                 | Soluzione                                                                                                                                                    |
+| :------------------------------------------------ | :---------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `File not found: .claude-plugin/marketplace.json` | Manifest mancante                                     | Crea `.claude-plugin/marketplace.json` con i campi obbligatori                                                                                               |
+| `Invalid JSON syntax: Unexpected token...`        | Errore di sintassi JSON in marketplace.json           | Controlla le virgole mancanti, le virgole extra o le stringhe non quotate                                                                                    |
+| `Duplicate plugin name "x" found in marketplace`  | Due plugin condividono lo stesso nome                 | Dai a ogni plugin un valore `name` univoco                                                                                                                   |
+| `plugins[0].source: Path contains ".."`           | Il percorso di origine contiene `..`                  | Usa percorsi relativi alla radice del marketplace senza `..`. Vedi [Percorsi relativi](#relative-paths)                                                      |
+| `YAML frontmatter failed to parse: ...`           | YAML non valido in un file di skill, agente o comando | Correggi la sintassi YAML nel blocco frontmatter. Al runtime questo file si carica senza metadati. Segnalato solo quando si valida una directory di plugin   |
+| `Invalid JSON syntax: ...` (hooks.json)           | `hooks/hooks.json` malformato                         | Correggi la sintassi JSON. Un `hooks/hooks.json` malformato impedisce al plugin intero di caricarsi. Segnalato solo quando si valida una directory di plugin |
 
 **Avvisi** (non bloccanti):
 
@@ -973,10 +975,10 @@ Esegui `claude plugin validate .` o `/plugin validate .` dalla directory del tuo
 
 **Soluzioni**:
 
-* Verifica che gli URL di fonte del plugin siano accessibili
+* Verifica che gli URL di origine del plugin siano accessibili
 * Controlla che le directory dei plugin contengano i file richiesti
-* Per le fonti GitHub, assicurati che i repository siano pubblici o che tu abbia accesso
-* Testa manualmente le fonti dei plugin clonando/scaricando
+* Per le origini GitHub, assicurati che i repository siano pubblici o che tu abbia accesso
+* Testa manualmente le origini dei plugin clonando/scaricando
 
 ### L'autenticazione del repository privato non riesce
 
@@ -1026,13 +1028,13 @@ export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000  # 5 minuti
 
 ### I plugin con percorsi relativi non riescono nei marketplace basati su URL
 
-**Sintomi**: Hai aggiunto un marketplace tramite URL (come `https://example.com/marketplace.json`), ma i plugin con fonti di percorso relativo come `"./plugins/my-plugin"` non riescono a installare con errori "path not found".
+**Sintomi**: Hai aggiunto un marketplace tramite URL (come `https://example.com/marketplace.json`), ma i plugin con origini di percorso relativo come `"./plugins/my-plugin"` non riescono a installare con errori "path not found".
 
 **Causa**: I marketplace basati su URL scaricano solo il file `marketplace.json` stesso. Non scaricano i file dei plugin dal server. I percorsi relativi nella voce del marketplace fanno riferimento a file sul server remoto che non sono stati scaricati.
 
 **Soluzioni**:
 
-* **Usa fonti esterne**: Cambia le voci dei plugin per usare GitHub, npm o fonti URL git invece di percorsi relativi:
+* **Usa origini esterne**: Cambia le voci dei plugin per usare GitHub, npm o origini URL git invece di percorsi relativi:
   ```json theme={null}
   { "name": "my-plugin", "source": { "source": "github", "repo": "owner/repo" } }
   ```

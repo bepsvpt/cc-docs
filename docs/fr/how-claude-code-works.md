@@ -197,7 +197,10 @@ Lorsque la première tentative n'est pas correcte, vous ne recommencez pas. Vous
 
 #### Interrompre et orienter
 
-Vous pouvez interrompre Claude à tout moment. S'il va dans la mauvaise direction, tapez simplement votre correction et appuyez sur Entrée. Claude arrêtera ce qu'il fait et ajustera son approche en fonction de votre contribution. Vous n'avez pas à attendre qu'il finisse ou à recommencer.
+Vous pouvez rediriger Claude à tout moment sans attendre que le tour se termine ou recommencer :
+
+* **Appuyez sur `Esc`** pour arrêter Claude immédiatement. L'appel d'outil en cours est annulé et Claude attend votre prochaine instruction.
+* **Tapez une correction et appuyez sur `Entrée`** pour l'envoyer sans arrêter l'outil en cours. Claude la lit dès que l'action actuelle se termine et s'ajuste avant de décider de son prochain pas.
 
 ### Être spécifique dès le départ
 

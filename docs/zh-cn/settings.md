@@ -244,6 +244,7 @@ Claude Code 监视您的设置文件，并在它们更改时重新加载它们�
 | `sshConfigs`                      | 要在[桌面](/zh-CN/desktop#pre-configure-ssh-connections-for-your-team)环境下拉菜单中显示的 SSH 连接。每个条目需要 `id`、`name` 和 `sshHost`；`sshPort`、`sshIdentityFile` 和 `startDirectory` 是可选的。在 managed 设置中设置时，连接对用户是只读的。仅从 managed 和用户设置读取                                                                                                                      | `[{"id": "dev-vm", "name": "Dev VM", "sshHost": "user@dev.example.com"}]`                                                     |
 | `statusLine`                      | 配置自定义状态行以显示上下文。请参阅[`statusLine` 文档](/zh-CN/statusline)                                                                                                                                                                                                                                                                                    | `{"type": "command", "command": "~/.claude/statusline.sh"}`                                                                   |
 | `strictKnownMarketplaces`         | （仅 Managed 设置）插件市场源的允许列表。未定义 = 无限制，空数组 = 锁定。在市场添加和插件安装、更新、刷新和自动更新时强制执行，因此在设置策略之前添加的市场无法用于获取插件。请参阅 [Managed 市场限制](/zh-CN/plugin-marketplaces#managed-marketplace-restrictions)                                                                                                                                                             | `[{ "source": "github", "repo": "acme-corp/plugins" }]`                                                                       |
+| `strictPluginOnlyCustomization`   | （仅 Managed 设置）阻止 skills、agents、hooks 和 MCP servers 来自用户和项目源，因此它们只能来自插件或 managed 设置。`true` 锁定所有四个表面；数组仅锁定命名的表面。请参阅 [`strictPluginOnlyCustomization`](#strictpluginonlycustomization)                                                                                                                                                       | `["skills", "hooks"]`                                                                                                         |
 | `syntaxHighlightingDisabled`      | 禁用 diffs、代码块和文件预览中的语法高亮                                                                                                                                                                                                                                                                                                                   | `true`                                                                                                                        |
 | `teammateMode`                    | [agent team](/zh-CN/agent-teams) 队友的显示方式：`auto`（在 tmux 或 iTerm2 中选择分割窗格，否则进程内）、`in-process` 或 `tmux`。`--teammate-mode` 覆盖此用于一个会话。请参阅[选择显示模式](/zh-CN/agent-teams#choose-a-display-mode)                                                                                                                                                    | `"in-process"`                                                                                                                |
 | `terminalProgressBarEnabled`      | 在支持的终端中显示终端进度条：ConEmu、Ghostty 1.2.0+ 和 iTerm2 3.6.6+。默认：`true`。在 `/config` 中显示为**终端进度条**                                                                                                                                                                                                                                                  | `false`                                                                                                                       |
@@ -958,6 +959,33 @@ Claude Code 支持一个插件系统，让您可以使用 skills、agents、hook
 * Managed 设置具有最高优先级，无法被覆盖
 
 请参阅 [Managed 市场限制](/zh-CN/plugin-marketplaces#managed-marketplace-restrictions)了解面向用户的文档。
+
+#### `strictPluginOnlyCustomization`
+
+**仅 Managed 设置**：阻止 skills、agents、hooks 和 MCP servers 来自用户和项目源，因此它们只能来自插件或 managed 设置。将其与 `strictKnownMarketplaces` 结合以控制完整的自定义供应链：市场允许列表控制用户可以安装哪些插件，此设置阻止所有不来自插件或 managed 设置的内容。
+
+<Note>
+  `strictPluginOnlyCustomization` 需要 Claude Code v2.1.82 或更高版本。早期版本忽略该键并继续加载用户和项目自定义，因此锁定在客户端更新之前不会强制执行。
+</Note>
+
+该值要么是 `true` 以锁定所有四个表面，要么是命名要锁定的表面的数组：
+
+```json theme={null}
+{
+  "strictPluginOnlyCustomization": ["skills", "hooks"]
+}
+```
+
+对于每个锁定的表面，Claude Code 跳过用户级和项目级源，仅加载插件提供的和 managed 源：
+
+| 表面       | 锁定时被阻止                                | 仍然加载                                                                          |
+| :------- | :------------------------------------ | :---------------------------------------------------------------------------- |
+| `skills` | `~/.claude/skills/`、`.claude/skills/` | 插件 skills、捆绑 skills、managed 策略目录中的 skills                                     |
+| `agents` | `~/.claude/agents/`、`.claude/agents/` | 插件 agents、内置 agents、managed 策略目录中的 agents                                     |
+| `hooks`  | 用户、项目和本地 `settings.json` 中的 hooks     | 插件 hooks、managed 设置中的 hooks                                                   |
+| `mcp`    | `~/.claude.json` 和 `.mcp.json` 中的服务器  | 插件 MCP servers、[`managed-mcp.json`](/zh-CN/mcp#managed-mcp-configuration) 服务器 |
+
+Claude Code 版本不识别的表面名称被忽略而不是导致设置文件失败，因此您可以在所有客户端更新之前添加新的表面名称。
 
 ### 管理插件
 

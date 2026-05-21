@@ -22,14 +22,20 @@ Claude Code traccia tutti i cambiamenti effettuati dai suoi strumenti di modific
 
 ### Riavvolgi e riassumi
 
-Premi `Esc` due volte (`Esc` + `Esc`) o usa il comando `/rewind` per aprire il menu di riavvolgimento. Un elenco scorrevole mostra ciascuno dei tuoi prompt dalla sessione. Seleziona il punto su cui desideri agire, quindi scegli un'azione:
+Esegui `/rewind`, oppure premi `Esc` due volte quando il campo di input del prompt è vuoto, per aprire il menu di riavvolgimento.
+
+<Note>
+  Se il campo di input del prompt contiene testo, doppio `Esc` lo cancella invece di aprire il menu. Il testo cancellato viene salvato nella cronologia di input, quindi premi `Su` per richiamarlo dopo aver terminato nel menu di riavvolgimento.
+</Note>
+
+Il menu di riavvolgimento elenca ogni prompt che hai inviato durante la sessione. Seleziona il punto su cui desideri agire, quindi scegli un'azione:
 
 * **Ripristina codice e conversazione**: ripristina sia il codice che la conversazione a quel punto
 * **Ripristina conversazione**: riavvolgi al messaggio mantenendo il codice attuale
 * **Ripristina codice**: ripristina le modifiche ai file mantenendo la conversazione
 * **Riassumi da qui**: comprimi la conversazione da questo punto in avanti in un riassunto, liberando spazio nella context window
 * **Riassumi fino a qui**: comprimi la conversazione prima di questo punto in un riassunto, mantenendo i messaggi successivi intatti
-* **Annulla**: torna all'elenco dei messaggi senza apportare modifiche
+* **Non importa**: torna all'elenco dei messaggi senza apportare modifiche
 
 Dopo aver ripristinato la conversazione o aver scelto Riassumi da qui, il prompt originale dal messaggio selezionato viene ripristinato nel campo di input in modo che tu possa reinviarlo o modificarlo.
 

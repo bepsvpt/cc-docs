@@ -63,7 +63,7 @@ Wählen Sie mit der geöffneten Registerkarte „Code" ein Projekt aus und geben
     Sie können auch auswählen:
 
     * **Remote**: Führen Sie Sitzungen auf der Cloud-Infrastruktur von Anthropic aus, die auch dann fortgesetzt werden, wenn Sie die App schließen. Remote-Sitzungen verwenden die gleiche Infrastruktur wie [Claude Code im Web](/de/claude-code-on-the-web).
-    * **SSH**: Verbinden Sie sich über SSH mit einem Remote-Computer (Ihre eigenen Server, Cloud-VMs oder Dev-Container). Claude Code muss auf dem Remote-Computer installiert sein.
+    * **SSH**: Verbinden Sie sich über SSH mit einem Remote-Computer, z. B. Ihren eigenen Servern, Cloud-VMs oder Dev-Containern. Desktop installiert Claude Code beim ersten Verbindungsaufbau automatisch auf dem Remote-Computer.
   </Step>
 
   <Step title="Wählen Sie ein Modell">
@@ -95,7 +95,7 @@ Wählen Sie mit der geöffneten Registerkarte „Code" ein Projekt aus und geben
 
 Sie haben Ihre erste Bearbeitung vorgenommen. Für die vollständige Referenz zu allem, was Desktop kann, siehe [Claude Code Desktop verwenden](/de/desktop). Hier sind einige Dinge, die Sie als Nächstes versuchen können.
 
-**Unterbrechen und lenken.** Sie können Claude jederzeit unterbrechen. Wenn es den falschen Weg geht, klicken Sie auf die Stoppschaltfläche oder geben Sie Ihre Korrektur ein und drücken Sie **Eingabe**. Claude stoppt, was es tut, und passt sich basierend auf Ihrer Eingabe an. Sie müssen nicht warten, bis es fertig ist, oder von vorne anfangen.
+**Unterbrechen und lenken.** Sie können Claude jederzeit unterbrechen. Klicken Sie auf die Stoppschaltfläche, um sofort zu unterbrechen, oder geben Sie eine Korrektur ein und drücken Sie **Eingabe**, um sie zu senden, ohne die laufende Aktion zu stoppen. In jedem Fall müssen Sie nicht warten, bis sie fertig ist, oder von vorne anfangen.
 
 **Geben Sie Claude mehr Kontext.** Geben Sie `@filename` im Eingabefeld ein, um eine bestimmte Datei in die Konversation zu ziehen, fügen Sie Bilder und PDFs mit der Schaltfläche „Anhang" an, oder ziehen Sie Dateien direkt in das Eingabefeld. Je mehr Kontext Claude hat, desto besser sind die Ergebnisse. Siehe [Dateien und Kontext zu Eingaben hinzufügen](/de/desktop#add-files-and-context-to-prompts).
 

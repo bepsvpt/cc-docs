@@ -36,7 +36,7 @@ Claude Code offers three ways to schedule recurring or one-off work:
 
 ## 使用 /loop 重複執行提示
 
-`/loop` [bundled skill](/zh-TW/commands) 是排程重複執行提示的最快方式，同時工作階段保持開啟。間隔和提示都是選用的，您提供的內容決定了迴圈的行為方式。
+`/loop` [bundled skill](/zh-TW/commands) 是在工作階段保持開啟的情況下重複執行提示的最快方式。間隔和提示都是選用的，您提供的內容決定了迴圈的行為方式。
 
 | 您提供的內容 | 範例                          | 發生的情況                                                                |
 | :----- | :-------------------------- | :------------------------------------------------------------------- |
@@ -93,7 +93,7 @@ Claude 不會在該範圍之外啟動新的計畫，不可逆的操作（例如�
 裸 `/loop` 在[動態選擇的間隔](#let-claude-choose-the-interval)上執行此提示。新增間隔（例如 `/loop 15m`）以改為在固定排程上執行它。若要用您自己的預設值替換內建提示，請參閱[使用 loop.md 自訂預設提示](#customize-the-default-prompt-with-loop-md)。
 
 <Note>
-  在 Bedrock、Vertex AI 和 Microsoft Foundry 上，沒有提示的 `/loop` 會列印使用訊息，而不是啟動維護迴圈。
+  內建維護提示尚未提供給所有人，並且在 Bedrock、Vertex AI 或 Microsoft Foundry 上不受支援。在它不活躍的地方，沒有提示的 `/loop` 會列印使用訊息。
 </Note>
 
 ### 使用 loop.md 自訂預設提示
@@ -117,6 +117,10 @@ quiet, say so in one line.
 ```
 
 對 `loop.md` 的編輯在下次迭代時生效，因此您可以在迴圈執行時精煉指示。當任一位置都不存在 `loop.md` 時，迴圈會回退到內建維護提示。保持檔案簡潔：超過 25,000 位元組的內容會被截斷。
+
+<Note>
+  `loop.md` 遵循與[內建維護提示](#run-the-built-in-maintenance-prompt)相同的可用性。在維護提示不活躍的地方，沒有提示的 `/loop` 會列印使用訊息，並且不會讀取該檔案。
+</Note>
 
 ### 停止迴圈
 

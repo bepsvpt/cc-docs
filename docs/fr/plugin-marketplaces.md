@@ -945,21 +945,23 @@ claude plugin marketplace update [name]
 
 * Vérifiez que l'URL de la place de marché est accessible
 * Vérifiez que `.claude-plugin/marketplace.json` existe au chemin spécifié
-* Assurez-vous que la syntaxe JSON est valide et que le frontmatter est bien formé en utilisant `claude plugin validate` ou `/plugin validate`
+* Assurez-vous que la syntaxe JSON est valide en utilisant `claude plugin validate` ou `/plugin validate`. Pour vérifier le frontmatter des compétences, agents et commandes, exécutez la commande sur chaque répertoire de plugin
 * Pour les dépôts privés, confirmez que vous avez les permissions d'accès
 
 ### Erreurs de validation de la place de marché
 
-Exécutez `claude plugin validate .` ou `/plugin validate .` à partir de votre répertoire de place de marché pour vérifier les problèmes. Le validateur vérifie `plugin.json`, le frontmatter des compétences/agents/commandes et `hooks/hooks.json` pour les erreurs de syntaxe et de schéma. Erreurs courantes :
+Exécutez `claude plugin validate .` ou `/plugin validate .` à partir de votre répertoire de place de marché pour vérifier les problèmes. Lorsqu'il est pointé sur un répertoire de place de marché, le validateur vérifie `marketplace.json` uniquement : schéma, noms de plugins en doublon, traversée de chemin source et incompatibilités de version par rapport à chaque `plugin.json` référencé.
 
-| Erreur                                            | Cause                                                               | Solution                                                                                                            |
-| :------------------------------------------------ | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------ |
-| `File not found: .claude-plugin/marketplace.json` | Manifeste manquant                                                  | Créez `.claude-plugin/marketplace.json` avec les champs obligatoires                                                |
-| `Invalid JSON syntax: Unexpected token...`        | Erreur de syntaxe JSON dans marketplace.json                        | Vérifiez les virgules manquantes, les virgules supplémentaires ou les chaînes non citées                            |
-| `Duplicate plugin name "x" found in marketplace`  | Deux plugins partagent le même nom                                  | Donnez à chaque plugin une valeur `name` unique                                                                     |
-| `plugins[0].source: Path contains ".."`           | Le chemin source contient `..`                                      | Utilisez des chemins relatifs à la racine de la place de marché sans `..`. Voir [Chemins relatifs](#relative-paths) |
-| `YAML frontmatter failed to parse: ...`           | YAML invalide dans un fichier de compétence, d'agent ou de commande | Corrigez la syntaxe YAML dans le bloc frontmatter. À l'exécution, ce fichier se charge sans métadonnées.            |
-| `Invalid JSON syntax: ...` (hooks.json)           | `hooks/hooks.json` mal formé                                        | Corrigez la syntaxe JSON. Un `hooks/hooks.json` mal formé empêche le chargement du plugin entier.                   |
+Pour valider le `plugin.json` d'un plugin individuel et ses fichiers de compétence, agent, commande et hook, exécutez la commande sur le répertoire du plugin lui-même, par exemple `claude plugin validate ./plugins/my-plugin`. Erreurs courantes :
+
+| Erreur                                            | Cause                                                               | Solution                                                                                                                                                                    |
+| :------------------------------------------------ | :------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `File not found: .claude-plugin/marketplace.json` | Manifeste manquant                                                  | Créez `.claude-plugin/marketplace.json` avec les champs obligatoires                                                                                                        |
+| `Invalid JSON syntax: Unexpected token...`        | Erreur de syntaxe JSON dans marketplace.json                        | Vérifiez les virgules manquantes, les virgules supplémentaires ou les chaînes non citées                                                                                    |
+| `Duplicate plugin name "x" found in marketplace`  | Deux plugins partagent le même nom                                  | Donnez à chaque plugin une valeur `name` unique                                                                                                                             |
+| `plugins[0].source: Path contains ".."`           | Le chemin source contient `..`                                      | Utilisez des chemins relatifs à la racine de la place de marché sans `..`. Voir [Chemins relatifs](#relative-paths)                                                         |
+| `YAML frontmatter failed to parse: ...`           | YAML invalide dans un fichier de compétence, d'agent ou de commande | Corrigez la syntaxe YAML dans le bloc frontmatter. À l'exécution, ce fichier se charge sans métadonnées. Signalé uniquement lors de la validation d'un répertoire de plugin |
+| `Invalid JSON syntax: ...` (hooks.json)           | `hooks/hooks.json` mal formé                                        | Corrigez la syntaxe JSON. Un `hooks/hooks.json` mal formé empêche le chargement du plugin entier. Signalé uniquement lors de la validation d'un répertoire de plugin        |
 
 **Avertissements** (non bloquants) :
 

@@ -197,7 +197,10 @@ Cuando el primer intento no es correcto, no comienza de nuevo. Itera.
 
 #### Interrumpir y dirigir
 
-Puede interrumpir a Claude en cualquier momento. Si va por el camino equivocado, simplemente escriba su corrección y presione Enter. Claude dejará de hacer lo que está haciendo y ajustará su enfoque basándose en su entrada. No tiene que esperar a que termine o comenzar de nuevo.
+Puede redirigir a Claude en cualquier momento sin esperar a que termine el turno o comenzar de nuevo:
+
+* **Presione `Esc`** para detener a Claude inmediatamente. La llamada de herramienta en ejecución se cancela y Claude espera su siguiente instrucción.
+* **Escriba una corrección y presione `Enter`** para enviarla sin detener la herramienta en ejecución. Claude la lee tan pronto como se completa la acción actual y se ajusta antes de decidir su siguiente paso.
 
 ### Sea específico desde el principio
 

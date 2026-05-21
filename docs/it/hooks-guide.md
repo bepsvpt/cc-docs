@@ -545,18 +545,18 @@ if echo "$COMMAND" | grep -q "drop table"; then
   exit 2 # exit 2 = block the action
 fi
 
-exit 0  # exit 0 = let it proceed
+exit 0  # exit 0 = no decision; the normal permission flow applies
 ```
 
 Il codice di uscita determina cosa succede dopo:
 
-* **Exit 0**: l'azione procede. Per gli hook `UserPromptSubmit`, `UserPromptExpansion` e `SessionStart`, qualsiasi cosa scriviate su stdout viene aggiunta al contesto di Claude.
+* **Exit 0**: l'hook non riporta obiezioni e l'azione procede normalmente. Per un hook `PreToolUse` questo non approva la chiamata dello strumento: il normale [flusso di autorizzazione](/it/permissions) si applica ancora. Per gli hook `UserPromptSubmit`, `UserPromptExpansion` e `SessionStart`, qualsiasi cosa scriviate su stdout viene aggiunta al contesto di Claude.
 * **Exit 2**: l'azione è bloccata. Scrivete un motivo su stderr, e Claude lo riceve come feedback in modo da poter adattarsi. Alcuni eventi non possono essere bloccati: per `SessionStart`, `Setup`, `Notification` e altri, exit 2 mostra stderr all'utente e l'esecuzione continua. Consultate [exit code 2 behavior per evento](/it/hooks#exit-code-2-behavior-per-event) per l'elenco completo.
 * **Qualsiasi altro codice di uscita**: l'azione procede. La trascrizione mostra un avviso `<hook name> hook error` seguito dalla prima riga di stderr; lo stderr completo va al [debug log](/it/hooks#debug-hooks).
 
 #### Output JSON strutturato
 
-I codici di uscita vi danno due opzioni: consentire o bloccare. Per un controllo maggiore, uscite con 0 e stampate un oggetto JSON su stdout invece.
+I codici di uscita vi permettono solo di bloccare o stare in silenzio. Per un controllo maggiore, uscite con 0 e stampate un oggetto JSON su stdout invece.
 
 <Note>
   Utilizzate exit 2 per bloccare con un messaggio stderr, o exit 0 con JSON per un controllo strutturato. Non mescolateli: Claude Code ignora JSON quando uscite con 2.

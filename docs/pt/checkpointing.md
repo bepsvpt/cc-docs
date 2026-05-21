@@ -22,7 +22,13 @@ Claude Code rastreia todas as alterações feitas por suas ferramentas de ediç�
 
 ### Rewind e resumo
 
-Pressione `Esc` duas vezes (`Esc` + `Esc`) ou use o comando `/rewind` para abrir o menu de rewind. Uma lista rolável mostra cada um dos seus prompts da sessão. Selecione o ponto em que deseja agir e escolha uma ação:
+Execute `/rewind`, ou pressione `Esc` duas vezes quando o campo de entrada de prompt estiver vazio, para abrir o menu de rewind.
+
+<Note>
+  Se o campo de entrada de prompt contiver texto, duplo `Esc` o limpa em vez de abrir o menu. O texto limpo é salvo no seu histórico de entrada, então pressione `Up` para recuperá-lo após terminar no menu de rewind.
+</Note>
+
+O menu de rewind lista cada prompt que você enviou durante a sessão. Selecione o ponto em que deseja agir e escolha uma ação:
 
 * **Restaurar código e conversa**: reverte tanto o código quanto a conversa para esse ponto
 * **Restaurar conversa**: reverte para essa mensagem mantendo o código atual

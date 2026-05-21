@@ -96,7 +96,7 @@ if echo "$COMMAND" | grep -q 'rm -rf'; then
     }
   }'
 else
-  exit 0  # allow the command
+  exit 0  # no decision; normal permission flow applies
 fi
 ```
 
@@ -136,7 +136,7 @@ Angenommen, Claude Code entscheidet sich, `Bash "rm -rf /tmp/build"` auszuführe
     }
     ```
 
-    Wenn der Befehl eine sicherere `rm`-Variante gewesen wäre, wie `rm file.txt`, würde das Skript stattdessen `exit 0` treffen, was Claude Code mitteilt, den Tool-Aufruf zuzulassen, ohne weitere Maßnahmen zu ergreifen.
+    Wenn der Befehl eine sicherere `rm`-Variante gewesen wäre, wie `rm file.txt`, würde das Skript stattdessen `exit 0` treffen. Exit-Code 0 ohne Ausgabe bedeutet, dass der Hook keine Entscheidung zu melden hat, daher wird der Tool-Aufruf durch den normalen [Berechtigungsfluss](/de/permissions) fortgesetzt. Der Hook kann den Aufruf ablehnen, aber Stille bedeutet nicht, dass er ihn genehmigt.
   </Step>
 
   <Step title="Claude Code handelt nach dem Ergebnis">
@@ -699,7 +699,7 @@ Das JSON-Objekt unterstützt drei Arten von Feldern:
 | :----------------- | :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `continue`         | `true`   | Wenn `false`, stoppt Claude die Verarbeitung vollständig, nachdem der Hook ausgeführt wurde. Hat Vorrang vor allen ereignisspezifischen Entscheidungsfeldern                                                                                                                                                                                                                             |
 | `stopReason`       | keine    | Nachricht, die dem Benutzer angezeigt wird, wenn `continue` `false` ist. Wird Claude nicht angezeigt                                                                                                                                                                                                                                                                                     |
-| `suppressOutput`   | `false`  | Wenn `true`, verbirgt stdout aus dem Debug-Log                                                                                                                                                                                                                                                                                                                                           |
+| `suppressOutput`   | `false`  | Wenn `true`, verbirgt stdout aus dem Transkript. Stdout wird weiterhin im Debug-Log angezeigt                                                                                                                                                                                                                                                                                            |
 | `systemMessage`    | keine    | Warnmeldung, die dem Benutzer angezeigt wird                                                                                                                                                                                                                                                                                                                                             |
 | `terminalSequence` | keine    | Eine Terminal-Escape-Sequenz, die Claude Code in Ihrem Namen ausgeben soll, wie eine Desktop-Benachrichtigung, ein Fenstertitel oder eine Glocke. Beschränkt auf OSC `0`/`1`/`2`/`9`/`99`/`777` und BEL. Wenn der Wert etwas außerhalb der Zulassungsliste enthält, wird das Feld ignoriert. Verwenden Sie dies anstelle des Schreibens zu `/dev/tty`, das für Hooks nicht verfügbar ist |
 
@@ -732,7 +732,7 @@ Das folgende Beispiel löst eine Desktop-Benachrichtigung aus einem `Notificatio
 # Notification-Hook: Ping des Desktops, wenn Claude Code Aufmerksamkeit benötigt.
 input=$(cat)
 title="Claude Code'
-body=$(jq -r '.message // 'Needs your attention'' <<<'$input')
+body=$(jq -r '.message // "Needs your attention"' <<<"$input")
 seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
 jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 ```
@@ -782,17 +782,18 @@ Nach der Injektion wird der Text im Sitzungstranskript gespeichert. Für Mid-Ses
 
 Nicht jedes Ereignis unterstützt das Blockieren oder Steuern des Verhaltens durch JSON. Die Ereignisse, die dies tun, verwenden jeweils einen anderen Satz von Feldern, um diese Entscheidung auszudrücken. Verwenden Sie diese Tabelle als schnelle Referenz, bevor Sie einen Hook schreiben:
 
-| Ereignisse                                                                                                                          | Entscheidungsmuster              | Schlüsselfelder                                                                                                                                                                      |
-| :---------------------------------------------------------------------------------------------------------------------------------- | :------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| UserPromptSubmit, UserPromptExpansion, PostToolUse, PostToolUseFailure, PostToolBatch, Stop, SubagentStop, ConfigChange, PreCompact | Top-Level `decision`             | `decision: "block"`, `reason`                                                                                                                                                        |
-| TeammateIdle, TaskCreated, TaskCompleted                                                                                            | Exit-Code oder `continue: false` | Exit-Code 2 blockiert die Aktion mit stderr-Feedback. JSON `{"continue": false, "stopReason": "..."}` stoppt auch den Teammate vollständig, was dem `Stop`-Hook-Verhalten entspricht |
-| PreToolUse                                                                                                                          | `hookSpecificOutput`             | `permissionDecision` (allow/deny/ask/defer), `permissionDecisionReason`                                                                                                              |
-| PermissionRequest                                                                                                                   | `hookSpecificOutput`             | `decision.behavior` (allow/deny)                                                                                                                                                     |
-| PermissionDenied                                                                                                                    | `hookSpecificOutput`             | `retry: true` teilt dem Modell mit, dass es möglicherweise den verweigerten Tool-Aufruf erneut versuchen kann                                                                        |
-| WorktreeCreate                                                                                                                      | Pfad-Rückgabe                    | Command-Hook gibt Pfad auf stdout aus; HTTP-Hook gibt `hookSpecificOutput.worktreePath` zurück. Hook-Fehler oder fehlender Pfad schlägt die Erstellung fehl                          |
-| Elicitation                                                                                                                         | `hookSpecificOutput`             | `action` (accept/decline/cancel), `content` (Formularfeldwerte für accept)                                                                                                           |
-| ElicitationResult                                                                                                                   | `hookSpecificOutput`             | `action` (accept/decline/cancel), `content` (Formularfeldwerte überschreiben)                                                                                                        |
-| WorktreeRemove, Notification, SessionEnd, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged                     | Keine                            | Keine Entscheidungskontrolle. Wird für Nebenwirkungen wie Protokollierung oder Bereinigung verwendet                                                                                 |
+| Ereignisse                                                                                                                          | Entscheidungsmuster              | Schlüsselfelder                                                                                                                                                                                                           |
+| :---------------------------------------------------------------------------------------------------------------------------------- | :------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| UserPromptSubmit, UserPromptExpansion, PostToolUse, PostToolUseFailure, PostToolBatch, Stop, SubagentStop, ConfigChange, PreCompact | Top-Level `decision`             | `decision: "block"`, `reason`                                                                                                                                                                                             |
+| TeammateIdle, TaskCreated, TaskCompleted                                                                                            | Exit-Code oder `continue: false` | Exit-Code 2 blockiert die Aktion mit stderr-Feedback. JSON `{"continue": false, "stopReason": "..."}` stoppt auch den Teammate vollständig, was dem `Stop`-Hook-Verhalten entspricht                                      |
+| PreToolUse                                                                                                                          | `hookSpecificOutput`             | `permissionDecision` (allow/deny/ask/defer), `permissionDecisionReason`                                                                                                                                                   |
+| PermissionRequest                                                                                                                   | `hookSpecificOutput`             | `decision.behavior` (allow/deny)                                                                                                                                                                                          |
+| PermissionDenied                                                                                                                    | `hookSpecificOutput`             | `retry: true` teilt dem Modell mit, dass es möglicherweise den verweigerten Tool-Aufruf erneut versuchen kann                                                                                                             |
+| WorktreeCreate                                                                                                                      | Pfad-Rückgabe                    | Command-Hook gibt Pfad auf stdout aus; HTTP-Hook gibt `hookSpecificOutput.worktreePath` zurück. Hook-Fehler oder fehlender Pfad schlägt die Erstellung fehl                                                               |
+| Elicitation                                                                                                                         | `hookSpecificOutput`             | `action` (accept/decline/cancel), `content` (Formularfeldwerte für accept)                                                                                                                                                |
+| ElicitationResult                                                                                                                   | `hookSpecificOutput`             | `action` (accept/decline/cancel), `content` (Formularfeldwerte überschreiben)                                                                                                                                             |
+| SessionStart, Setup, SubagentStart                                                                                                  | Nur Kontext                      | `hookSpecificOutput.additionalContext` fügt Kontext für Claude hinzu. SessionStart akzeptiert auch [`initialUserMessage` und `watchPaths`](#sessionstart-decision-control). Keine Blockierung oder Entscheidungskontrolle |
+| WorktreeRemove, Notification, SessionEnd, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged                     | Keine                            | Keine Entscheidungskontrolle. Wird für Nebenwirkungen wie Protokollierung oder Bereinigung verwendet                                                                                                                      |
 
 Hier sind Beispiele für jedes Muster in Aktion:
 
@@ -881,9 +882,11 @@ Zusätzlich zu den [gemeinsamen Eingabefeldern](#common-input-fields) erhalten S
 
 Jeder Text, den Ihr Hook-Skript auf stdout ausgibt, wird als Kontext für Claude hinzugefügt. Zusätzlich zu den [JSON-Ausgabefeldern](#json-output), die für alle Hooks verfügbar sind, können Sie diese ereignisspezifischen Felder zurückgeben:
 
-| Feld                | Beschreibung                                                                                                                                                                                                                                              |
-| :------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `additionalContext` | Zeichenkette, die zu Claudes Kontext am Anfang des Gesprächs hinzugefügt wird, vor dem ersten Prompt. Siehe [Kontext für Claude hinzufügen](#add-context-for-claude), um zu erfahren, wie der Text bereitgestellt wird und was Sie darin einfügen sollten |
+| Feld                 | Beschreibung                                                                                                                                                                                                                                                                                                                                                                           |
+| :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `additionalContext`  | Zeichenkette, die zu Claudes Kontext am Anfang des Gesprächs hinzugefügt wird, vor dem ersten Prompt. Siehe [Kontext für Claude hinzufügen](#add-context-for-claude), um zu erfahren, wie der Text bereitgestellt wird und was Sie darin einfügen sollten                                                                                                                              |
+| `initialUserMessage` | Zeichenkette, die als erste Benutzernachricht der Sitzung verwendet wird. Gilt im [nicht-interaktiven Modus](/de/headless) (`-p`), wo sie zur ersten Runde wird, auch wenn kein Prompt bereitgestellt wird. Wenn ein Prompt bereitgestellt wird, folgt er als nächste Runde. Im Gegensatz zu `additionalContext`, das an eine vorhandene Runde angehängt wird, erstellt dies die Runde |
+| `watchPaths`         | Array von absoluten Pfaden zum Überwachen von [FileChanged](#filechanged)-Ereignissen während dieser Sitzung                                                                                                                                                                                                                                                                           |
 
 ```json theme={null}
 {
@@ -1056,12 +1059,13 @@ Plain-stdout wird als Hook-Ausgabe im Transkript angezeigt. Das Feld `additional
 
 Um einen Prompt zu blockieren, geben Sie ein JSON-Objekt mit `decision` auf `"block"` zurück:
 
-| Feld                | Beschreibung                                                                                                                                                 |
-| :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `decision`          | `"block"` verhindert die Verarbeitung des Prompts und löscht ihn aus dem Kontext. Weglassen, um den Prompt fortzusetzen                                      |
-| `reason`            | Wird dem Benutzer angezeigt, wenn `decision` `"block"` ist. Wird nicht zum Kontext hinzugefügt                                                               |
-| `additionalContext` | Zeichenkette, die zu Claudes Kontext hinzugefügt wird, zusammen mit dem eingereichten Prompt. Siehe [Kontext für Claude hinzufügen](#add-context-for-claude) |
-| `sessionTitle`      | Setzt den Sitzungstitel. Verwenden Sie, um Sitzungen automatisch basierend auf dem Prompt-Inhalt zu benennen                                                 |
+| Feld                     | Beschreibung                                                                                                                                                 |
+| :----------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `decision`               | `"block"` verhindert die Verarbeitung des Prompts und löscht ihn aus dem Kontext. Weglassen, um den Prompt fortzusetzen                                      |
+| `reason`                 | Wird dem Benutzer angezeigt, wenn `decision` `"block"` ist. Wird nicht zum Kontext hinzugefügt                                                               |
+| `additionalContext`      | Zeichenkette, die zu Claudes Kontext hinzugefügt wird, zusammen mit dem eingereichten Prompt. Siehe [Kontext für Claude hinzufügen](#add-context-for-claude) |
+| `sessionTitle`           | Setzt den Sitzungstitel. Verwenden Sie, um Sitzungen automatisch basierend auf dem Prompt-Inhalt zu benennen                                                 |
+| `suppressOriginalPrompt` | Wenn `true`, wenn `decision` `"block"` ist, lässt den ursprünglichen Prompt-Text aus der Blockierungsmeldung aus, die dem Benutzer angezeigt wird            |
 
 ```json theme={null}
 {
@@ -1411,7 +1415,7 @@ Das Ausgabefeld `updatedPermissions` und das [`permission_suggestions`-Eingabefe
 | `addRules`          | `rules`, `behavior`, `destination` | Fügt Berechtigungsregeln hinzu. `rules` ist ein Array von `{toolName, ruleContent?}` Objekten. Lassen Sie `ruleContent` weg, um das ganze Tool zu treffen. `behavior` ist `"allow"`, `"deny"` oder `"ask"` |
 | `replaceRules`      | `rules`, `behavior`, `destination` | Ersetzt alle Regeln des gegebenen `behavior` am `destination` mit den bereitgestellten `rules`                                                                                                             |
 | `removeRules`       | `rules`, `behavior`, `destination` | Entfernt passende Regeln des gegebenen `behavior`                                                                                                                                                          |
-| `setMode`           | `mode`, `destination`              | Ändert den Berechtigungsmodus. Gültige Modi sind `default`, `acceptEdits`, `dontAsk`, `bypassPermissions` und `plan`                                                                                       |
+| `setMode`           | `mode`, `destination`              | Ändert den Berechtigungsmodus. Gültige Modi sind `default`, `auto`, `acceptEdits`, `dontAsk`, `bypassPermissions` und `plan`                                                                               |
 | `addDirectories`    | `directories`, `destination`       | Fügt Arbeitsverzeichnisse hinzu. `directories` ist ein Array von Pfad-Zeichenketten                                                                                                                        |
 | `removeDirectories` | `directories`, `destination`       | Entfernt Arbeitsverzeichnisse                                                                                                                                                                              |
 
@@ -1910,7 +1914,7 @@ Jeder Eintrag in `background_tasks` beschreibt eine laufende Aufgabe und verwend
 | `tool`        | MCP-Tool-Name. Nur für `monitor`- und `MCP task`-Aufgaben vorhanden                                                                                                                                                                                                                |
 | `name`        | Workflow-Name. Nur für `workflow`-Aufgaben vorhanden                                                                                                                                                                                                                               |
 
-Jeder Eintrag in `session_crons` beschreibt einen sitzungsspezifischen geplanten Wakeup, stammt von `CronCreate` und `/loop`:
+Jeder Eintrag in `session_crons` beschreibt einen sitzungsspezifischen geplanten Wakeup, stammt von `CronCreate`, `ScheduleWakeup` und `/loop`:
 
 | Feld        | Beschreibung                                                                                                                          |
 | :---------- | :------------------------------------------------------------------------------------------------------------------------------------ |
@@ -2492,6 +2496,7 @@ Zusätzlich zu Command-, HTTP- und MCP-Tool-Hooks unterstützt Claude Code Promp
 
 Ereignisse, die alle fünf Hook-Typen unterstützen (`command`, `http`, `mcp_tool`, `prompt` und `agent`):
 
+* `PermissionDenied`
 * `PermissionRequest`
 * `PostToolBatch`
 * `PostToolUse`
@@ -2501,6 +2506,7 @@ Ereignisse, die alle fünf Hook-Typen unterstützen (`command`, `http`, `mcp_too
 * `SubagentStop`
 * `TaskCompleted`
 * `TaskCreated`
+* `TeammateIdle`
 * `UserPromptExpansion`
 * `UserPromptSubmit`
 
@@ -2513,13 +2519,11 @@ Ereignisse, die `command`, `http` und `mcp_tool` Hooks unterstützen, aber nicht
 * `FileChanged`
 * `InstructionsLoaded`
 * `Notification`
-* `PermissionDenied`
 * `PostCompact`
 * `PreCompact`
 * `SessionEnd`
 * `StopFailure`
 * `SubagentStart`
-* `TeammateIdle`
 * `WorktreeCreate`
 * `WorktreeRemove`
 
@@ -2587,7 +2591,9 @@ Was bei `ok: false` passiert, hängt vom Ereignis ab:
 * `PostToolUse`: standardmäßig endet der Turn und der Grund wird im Chat als Warnzeile angezeigt. Setzen Sie `continueOnBlock: true`, um den Grund an Claude zurückzugeben und den Turn stattdessen fortzusetzen
 * `PostToolBatch`, `UserPromptSubmit` und `UserPromptExpansion`: der Turn endet und der Grund wird als Warnzeile angezeigt. Diese Ereignisse beenden den Turn bei `decision: "block"` unabhängig von `continue`
 * `PostToolUseFailure`, `TaskCreated` und `TaskCompleted`: der Grund wird an Claude als Tool-Fehler zurückgegeben, ähnlich wie `PreToolUse`
+* `TeammateIdle`: standardmäßig stoppt der Teammate und der Grund wird als Warnzeile angezeigt. Setzen Sie `continueOnBlock: true`, um den Grund an den Teammate zurückzugeben und ihn stattdessen weiterarbeiten zu lassen
 * `PermissionRequest`: `ok: false` hat keine Auswirkung. Um eine Genehmigung von einem Hook zu verweigern, verwenden Sie einen [Command-Hook](#command-hook-fields) mit `hookSpecificOutput.decision.behavior: "deny"`
+* `PermissionDenied`: `ok: false` hat keine Auswirkung, da die Verweigerung bereits erfolgt ist. Die einzige Ausgabe, die dieses Ereignis liest, ist `hookSpecificOutput.retry`, die Prompt- und Agent-Hooks nicht setzen können — sie werden bei diesem Ereignis ausgeführt, aber ihre Ausgabe wird verworfen. Verwenden Sie einen [Command-Hook](#command-hook-fields), um `retry` zurückzugeben
 
 Wenn Sie eine feinere Kontrolle bei einem Ereignis benötigen, verwenden Sie einen [Command-Hook](#command-hook-fields) mit den ereignisspezifischen Feldern, die in [Entscheidungskontrolle](#decision-control) beschrieben sind.
 

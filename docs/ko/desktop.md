@@ -51,9 +51,9 @@ Claude에게 올바른 컨텍스트를 제공하고, 자동으로 수행할 작�
 
 ### 프롬프트 상자 사용하기
 
-Claude가 수행할 작업을 입력하고 **Enter**를 눌러 보냅니다. Claude는 프로젝트 파일을 읽고, 변경 사항을 만들고, [권한 모드](#choose-a-permission-mode)에 따라 명령을 실행합니다. 언제든지 Claude를 중단할 수 있습니다: 중지 버튼을 클릭하거나 수정 사항을 입력하고 **Enter**를 누릅니다. Claude는 작업을 중지하고 입력에 따라 조정합니다.
+Claude가 수행할 작업을 입력하고 **Enter**를 눌러 보냅니다. Claude는 프로젝트 파일을 읽고, 변경 사항을 만들고, [권한 모드](#choose-a-permission-mode)에 따라 명령을 실행합니다. 언제든지 Claude를 중단할 수 있습니다: 중지 버튼을 클릭하여 즉시 중단하거나, 수정 사항을 입력하고 **Enter**를 눌러 실행 중인 작업을 중지하지 않고 보냅니다. Claude는 현재 작업이 완료되면 수정 사항을 읽고 다음 단계 전에 조정합니다.
 
-프롬프트 상자 옆의 **+** 버튼을 클릭하면 파일 첨부, [skills](#use-skills), [커넥터](#connect-external-tools), [플러그인](#install-plugins)에 액세스할 수 있습니다.
+프롬프트 상자 옆의 **+** 버튼을 클릭하면 파일 첨부, [skills](#use-skills), [connectors](#connect-external-tools), [plugins](#install-plugins)에 액세스할 수 있습니다.
 
 ### 프롬프트에 파일 및 컨텍스트 추가하기
 
@@ -96,11 +96,11 @@ Claude는 개발 서버를 시작하고 임베드된 브라우저를 열어 변�
 
 미리보기 패널에서 다음을 수행할 수 있습니다:
 
-* 임베드된 브라우저에서 실행 중인 앱과 직접 상호작용
+* 임베드된 브라우저에서 실행 중인 앱과 직접 상호작용합니다
 * Claude가 자동으로 자신의 변경 사항을 확인하는 것을 봅니다: 스크린샷을 찍고, DOM을 검사하고, 요소를 클릭하고, 양식을 채우고, 발견한 문제를 수정합니다
-* 세션 도구 모음의 **Preview** 드롭다운에서 서버 시작 또는 중지
-* **Persist sessions**을 드롭다운에서 선택하여 서버 재시작 시 쿠키 및 로컬 스토리지를 유지하므로 개발 중에 다시 로그인할 필요가 없습니다
-* 서버 구성을 편집하거나 모든 서버를 한 번에 중지
+* 세션 도구 모음의 **Preview** 드롭다운에서 서버를 시작하거나 중지합니다
+* 드롭다운에서 **Persist sessions**을 선택하여 서버 재시작 시 쿠키 및 로컬 스토리지를 유지하므로 개발 중에 다시 로그인할 필요가 없습니다
+* 서버 구성을 편집하거나 모든 서버를 한 번에 중지합니다
 
 Claude는 프로젝트를 기반으로 초기 서버 구성을 만듭니다. 앱이 사용자 정의 개발 명령을 사용하는 경우 `.claude/launch.json`을 편집하여 설정과 일치시킵니다. 전체 참조는 [미리보기 서버 구성](#configure-preview-servers)을 참조하세요.
 
@@ -642,7 +642,7 @@ Desktop은 엔터프라이즈 배포 도구를 통해 배포할 수 있습니다
 
 이미 Claude Code CLI를 사용하는 경우 Desktop은 그래픽 인터페이스를 사용하여 동일한 기본 엔진을 실행합니다. 동일한 머신에서 동일한 프로젝트에서도 동시에 둘 다 실행할 수 있습니다. 각각은 별도의 세션 기록을 유지하지만 CLAUDE.md 파일을 통해 구성 및 프로젝트 메모리를 공유합니다.
 
-CLI 세션을 Desktop으로 이동하려면 터미널에서 `/desktop`을 실행합니다. Claude는 세션을 저장하고 데스크톱 앱에서 열고 CLI를 종료합니다. 이 명령은 macOS 및 Windows에서만 사용 가능합니다.
+CLI 세션을 Desktop으로 이동하려면 터미널에서 `/desktop`을 실행합니다. Claude는 세션을 저장하고 데스크톱 앱에서 열고 CLI를 종료합니다. 이 명령은 Claude 구독으로 로그인했을 때 macOS 및 Windows에서 사용 가능합니다. API 키 인증이나 Bedrock, Vertex 또는 Foundry에서는 사용할 수 없습니다.
 
 <Tip>
   Desktop vs CLI를 사용할 때: 병렬 세션을 한 창에서 관리하거나, 패널을 나란히 정렬하거나, 변경 사항을 시각적으로 검토하려고 할 때 Desktop을 사용합니다. 스크립팅, 자동화, 터미널 워크플로우를 선호할 때 CLI를 사용합니다.
@@ -659,7 +659,7 @@ CLI 세션을 Desktop으로 이동하려면 터미널에서 `/desktop`을 실행
 | `--permission-mode`                   | 전송 버튼 옆의 모드 선택기                                                                            |
 | `--dangerously-skip-permissions`      | 권한 무시 모드. Settings → Claude Code → "권한 무시 모드 허용"에서 활성화합니다. 엔터프라이즈 관리자는 이 설정을 비활성화할 수 있습니다. |
 | `--add-dir`                           | 원격 세션에서 **+** 버튼으로 여러 저장소 추가                                                               |
-| `--allowedTools`, `--disallowedTools` | [설정 파일](/ko/settings)의 권한 규칙이 여전히 적용됩니다. Desktop 세션별 동등물이 없습니다.                            |
+| `--allowedTools`, `--disallowedTools` | 세션별 동등물이 없습니다. [설정 파일](/ko/settings)의 권한 규칙이 여전히 적용됩니다.                                    |
 | `--verbose`                           | [Verbose 보기 모드](#switch-view-modes) (Transcript 보기 드롭다운)                                   |
 | `--print`, `--output-format`          | 사용할 수 없습니다. Desktop은 대화형만 가능합니다.                                                           |
 | `ANTHROPIC_MODEL` env var             | 전송 버튼 옆의 모델 드롭다운                                                                           |

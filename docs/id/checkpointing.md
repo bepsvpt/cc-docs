@@ -22,7 +22,13 @@ Claude Code melacak semua perubahan yang dibuat oleh alat pengeditan filenya:
 
 ### Putar ulang dan ringkas
 
-Tekan `Esc` dua kali (`Esc` + `Esc`) atau gunakan perintah `/rewind` untuk membuka menu putar ulang. Daftar yang dapat digulir menunjukkan setiap prompt Anda dari sesi. Pilih titik yang ingin Anda tindaklanjuti, kemudian pilih tindakan:
+Jalankan `/rewind`, atau tekan `Esc` dua kali ketika bidang input prompt kosong, untuk membuka menu putar ulang.
+
+<Note>
+  Jika bidang input prompt berisi teks, tekan `Esc` dua kali akan menghapusnya alih-alih membuka menu. Teks yang dihapus disimpan ke riwayat input Anda, jadi tekan `Up` untuk memanggilnya kembali setelah Anda selesai di menu putar ulang.
+</Note>
+
+Menu putar ulang mencantumkan setiap prompt yang Anda kirim selama sesi. Pilih titik yang ingin Anda tindaklanjuti, kemudian pilih tindakan:
 
 * **Pulihkan kode dan percakapan**: kembalikan kode dan percakapan ke titik tersebut
 * **Pulihkan percakapan**: putar ulang ke pesan tersebut sambil mempertahankan kode saat ini

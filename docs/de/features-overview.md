@@ -20,6 +20,7 @@ Erweiterungen verbinden sich mit verschiedenen Teilen der Agentenschleife:
 
 * **[CLAUDE.md](/de/memory)** fügt persistenten Kontext hinzu, den Claude in jeder Sitzung sieht
 * **[Skills](/de/skills)** fügen wiederverwendbares Wissen und aufrufbare Workflows hinzu
+* **[Code-Intelligenz](/de/tools-reference#lsp-tool-behavior)** verbindet Claude mit einem Language Server für Symbol-Navigation und Live-Typfehler
 * **[MCP](/de/mcp)** verbindet Claude mit externen Diensten und Tools
 * **[Subagents](/de/sub-agents)** führen ihre eigenen Schleifen in isoliertem Kontext aus und geben Zusammenfassungen zurück
 * **[Agent teams](/de/agent-teams)** koordinieren mehrere unabhängige Sitzungen mit gemeinsamen Aufgaben und Peer-to-Peer-Messaging
@@ -32,14 +33,15 @@ Erweiterungen verbinden sich mit verschiedenen Teilen der Agentenschleife:
 
 Funktionen reichen von immer aktivem Kontext, den Claude in jeder Sitzung sieht, bis zu On-Demand-Funktionen, die Sie oder Claude aufrufen können, bis zu Hintergrundautomatisierung, die bei bestimmten Ereignissen ausgeführt wird. Die folgende Tabelle zeigt, was verfügbar ist und wann jede Funktion sinnvoll ist.
 
-| Funktion                           | Was sie tut                                                               | Wann man sie verwendet                                                                   | Beispiel                                                                                 |
-| ---------------------------------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| **CLAUDE.md**                      | Persistenter Kontext, der in jeder Konversation geladen wird              | Projektkonventionen, „immer X tun"-Regeln                                                | „Verwenden Sie pnpm, nicht npm. Führen Sie Tests vor dem Commit aus."                    |
-| **Skill**                          | Anweisungen, Wissen und Workflows, die Claude verwenden kann              | Wiederverwendbarer Inhalt, Referenzdokumente, wiederholbare Aufgaben                     | `/deploy` führt Ihre Bereitstellungs-Checkliste aus; API-Docs-Skill mit Endpunkt-Mustern |
-| **Subagent**                       | Isolierter Ausführungskontext, der zusammengefasste Ergebnisse zurückgibt | Kontextisolation, parallele Aufgaben, spezialisierte Worker                              | Recherche-Aufgabe, die viele Dateien liest, aber nur wichtige Erkenntnisse zurückgibt    |
-| **[Agent teams](/de/agent-teams)** | Koordinieren Sie mehrere unabhängige Claude Code-Sitzungen                | Parallele Recherche, neue Funktionsentwicklung, Debugging mit konkurrierenden Hypothesen | Spawnen Sie Reviewer, um Sicherheit, Leistung und Tests gleichzeitig zu überprüfen       |
-| **MCP**                            | Verbindung zu externen Diensten                                           | Externe Daten oder Aktionen                                                              | Abfrage Ihrer Datenbank, Posten auf Slack, Steuerung eines Browsers                      |
-| **Hook**                           | Skript, HTTP-Anfrage, Prompt oder Subagent, ausgelöst durch Ereignisse    | Automatisierung, die bei jedem übereinstimmenden Ereignis ausgeführt werden muss         | Führen Sie ESLint nach jeder Dateibearbeitung aus                                        |
+| Funktion                                                       | Was sie tut                                                               | Wann man sie verwendet                                                                   | Beispiel                                                                                 |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| **CLAUDE.md**                                                  | Persistenter Kontext, der in jeder Konversation geladen wird              | Projektkonventionen, „immer X tun"-Regeln                                                | „Verwenden Sie pnpm, nicht npm. Führen Sie Tests vor dem Commit aus."                    |
+| **Skill**                                                      | Anweisungen, Wissen und Workflows, die Claude verwenden kann              | Wiederverwendbarer Inhalt, Referenzdokumente, wiederholbare Aufgaben                     | `/deploy` führt Ihre Bereitstellungs-Checkliste aus; API-Docs-Skill mit Endpunkt-Mustern |
+| **Subagent**                                                   | Isolierter Ausführungskontext, der zusammengefasste Ergebnisse zurückgibt | Kontextisolation, parallele Aufgaben, spezialisierte Worker                              | Recherche-Aufgabe, die viele Dateien liest, aber nur wichtige Erkenntnisse zurückgibt    |
+| **[Agent teams](/de/agent-teams)**                             | Koordinieren Sie mehrere unabhängige Claude Code-Sitzungen                | Parallele Recherche, neue Funktionsentwicklung, Debugging mit konkurrierenden Hypothesen | Spawnen Sie Reviewer, um Sicherheit, Leistung und Tests gleichzeitig zu überprüfen       |
+| **[Code intelligence](/de/tools-reference#lsp-tool-behavior)** | Language-Server-Navigation und Diagnostik                                 | Typisierte Sprachen, große Codebases, bei denen grep langsam oder ungenau ist            | Springen Sie zur Definition eines Symbols, anstatt die ganze Datei zu lesen              |
+| **MCP**                                                        | Verbindung zu externen Diensten                                           | Externe Daten oder Aktionen                                                              | Abfrage Ihrer Datenbank, Posten auf Slack, Steuerung eines Browsers                      |
+| **Hook**                                                       | Skript, HTTP-Anfrage, Prompt oder Subagent, ausgelöst durch Ereignisse    | Automatisierung, die bei jedem übereinstimmenden Ereignis ausgeführt werden muss         | Führen Sie ESLint nach jeder Dateibearbeitung aus                                        |
 
 **[Plugins](/de/plugins)** sind die Verpackungsebene. Ein Plugin bündelt Skills, Hooks, Subagents und MCP-Server in eine einzelne installierbare Einheit. Plugin-Skills sind namensgebunden (wie `/my-plugin:review`), sodass mehrere Plugins nebeneinander existieren können. Verwenden Sie Plugins, wenn Sie dasselbe Setup über mehrere Repositories hinweg wiederverwenden möchten oder es über einen **[Marketplace](/de/plugin-marketplaces)** an andere verteilen möchten.
 
@@ -47,15 +49,16 @@ Funktionen reichen von immer aktivem Kontext, den Claude in jeder Sitzung sieht,
 
 Sie müssen nicht alles im Voraus konfigurieren. Jede Funktion hat einen erkennbaren Trigger, und die meisten Teams fügen sie ungefähr in dieser Reihenfolge hinzu:
 
-| Trigger                                                                                               | Hinzufügen                                                 |
-| :---------------------------------------------------------------------------------------------------- | :--------------------------------------------------------- |
-| Claude bekommt eine Konvention oder einen Befehl zweimal falsch                                       | Fügen Sie es zu [CLAUDE.md](/de/memory) hinzu              |
-| Sie tippen immer wieder denselben Prompt, um eine Aufgabe zu starten                                  | Speichern Sie es als benutzer-aufrufen [Skill](/de/skills) |
-| Sie fügen zum dritten Mal dasselbe Playbook oder mehrstufige Verfahren in den Chat ein                | Erfassen Sie es als [Skill](/de/skills)                    |
-| Sie kopieren immer wieder Daten aus einer Browser-Registerkarte, die Claude nicht sehen kann          | Verbinden Sie dieses System als [MCP-Server](/de/mcp)      |
-| Eine Nebenaufgabe überschwemmt Ihre Konversation mit Ausgabe, auf die Sie nicht mehr verweisen werden | Leiten Sie sie durch einen [Subagent](/de/sub-agents)      |
-| Sie möchten, dass etwas jedes Mal passiert, ohne zu fragen                                            | Schreiben Sie einen [Hook](/de/hooks-guide)                |
-| Ein zweites Repository benötigt dasselbe Setup                                                        | Verpacken Sie es als [Plugin](/de/plugins)                 |
+| Trigger                                                                                               | Hinzufügen                                                                                               |
+| :---------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| Claude bekommt eine Konvention oder einen Befehl zweimal falsch                                       | Fügen Sie es zu [CLAUDE.md](/de/memory) hinzu                                                            |
+| Sie tippen immer wieder denselben Prompt, um eine Aufgabe zu starten                                  | Speichern Sie es als benutzer-aufrufen [Skill](/de/skills)                                               |
+| Sie fügen zum dritten Mal dasselbe Playbook oder mehrstufige Verfahren in den Chat ein                | Erfassen Sie es als [Skill](/de/skills)                                                                  |
+| Sie kopieren immer wieder Daten aus einer Browser-Registerkarte, die Claude nicht sehen kann          | Verbinden Sie dieses System als [MCP-Server](/de/mcp)                                                    |
+| Claude liest viele Dateien, um zu finden, wo ein Symbol definiert oder verwendet wird                 | Installieren Sie ein [Code-Intelligence-Plugin](/de/discover-plugins#code-intelligence) für Ihre Sprache |
+| Eine Nebenaufgabe überschwemmt Ihre Konversation mit Ausgabe, auf die Sie nicht mehr verweisen werden | Leiten Sie sie durch einen [Subagent](/de/sub-agents)                                                    |
+| Sie möchten, dass etwas jedes Mal passiert, ohne zu fragen                                            | Schreiben Sie einen [Hook](/de/hooks-guide)                                                              |
+| Ein zweites Repository benötigt dasselbe Setup                                                        | Verpacken Sie es als [Plugin](/de/plugins)                                                               |
 
 Die gleichen Trigger sagen Ihnen, wann Sie das aktualisieren, was Sie bereits haben. Ein wiederholter Fehler oder ein wiederkehrender Review-Kommentar ist eine CLAUDE.md-Bearbeitung, keine einmalige Korrektur im Chat. Ein Workflow, den Sie immer wieder von Hand anpassen, ist ein Skill, der eine weitere Überarbeitung benötigt.
 
@@ -211,13 +214,14 @@ Jede Funktion, die Sie hinzufügen, verbraucht etwas von Claudes Kontext. Zu vie
 
 Jede Funktion hat eine andere Ladestrategie und Kontextkosten:
 
-| Funktion       | Wann sie lädt                  | Was lädt                                                       | Kontextkosten                                            |
-| -------------- | ------------------------------ | -------------------------------------------------------------- | -------------------------------------------------------- |
-| **CLAUDE.md**  | Sitzungsstart                  | Vollständiger Inhalt                                           | Jede Anfrage                                             |
-| **Skills**     | Sitzungsstart + wenn verwendet | Beschreibungen beim Start, vollständiger Inhalt bei Verwendung | Niedrig (Beschreibungen jede Anfrage)\*                  |
-| **MCP-Server** | Sitzungsstart                  | Tool-Namen; vollständige Schemas bei Bedarf                    | Niedrig bis ein Tool verwendet wird                      |
-| **Subagents**  | Wenn gespawnt                  | Frischer Kontext mit angegebenen Skills                        | Isoliert von Hauptsitzung                                |
-| **Hooks**      | Bei Auslösung                  | Nichts (läuft extern)                                          | Null, es sei denn, Hook gibt zusätzlichen Kontext zurück |
+| Funktion             | Wann sie lädt                          | Was lädt                                                       | Kontextkosten                                            |
+| -------------------- | -------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------- |
+| **CLAUDE.md**        | Sitzungsstart                          | Vollständiger Inhalt                                           | Jede Anfrage                                             |
+| **Skills**           | Sitzungsstart + wenn verwendet         | Beschreibungen beim Start, vollständiger Inhalt bei Verwendung | Niedrig (Beschreibungen jede Anfrage)\*                  |
+| **MCP-Server**       | Sitzungsstart                          | Tool-Namen; vollständige Schemas bei Bedarf                    | Niedrig bis ein Tool verwendet wird                      |
+| **Code-Intelligenz** | Nach Dateibearbeitungen und bei Bedarf | Diagnosen nach Bearbeitungen; Symbol-Positionen bei Suche      | Niedrig; reduziert Dateileser anderswo                   |
+| **Subagents**        | Wenn gespawnt                          | Frischer Kontext mit angegebenen Skills                        | Isoliert von Hauptsitzung                                |
+| **Hooks**            | Bei Auslösung                          | Nichts (läuft extern)                                          | Null, es sei denn, Hook gibt zusätzlichen Kontext zurück |
 
 \*Standardmäßig werden Skill-Beschreibungen beim Sitzungsstart geladen, damit Claude entscheiden kann, wann sie verwendet werden. Setzen Sie `disable-model-invocation: true` in das Frontmatter eines Skills, um es vollständig vor Claude zu verbergen, bis Sie es manuell aufrufen. Dies reduziert die Kontextkosten auf Null für Skills, die Sie nur selbst auslösen. Für einen Skill, den Sie nicht geschrieben haben, setzen Sie [`skillOverrides`](/de/skills#override-skill-visibility-from-settings) in den Einstellungen, um dasselbe zu tun, ohne die Datei zu bearbeiten.
 
@@ -266,8 +270,18 @@ Jede Funktion wird an verschiedenen Punkten in Ihrer Sitzung geladen. Die Regist
     <Tip>Führen Sie `/mcp` aus, um Token-Kosten pro Server zu sehen. Trennen Sie Server, die Sie nicht aktiv verwenden.</Tip>
   </Tab>
 
+  <Tab title="Code-Intelligenz">
+    **Wann:** Nach Dateibearbeitungen und bei Bedarf, wenn Claude Code navigiert.
+
+    **Was lädt:** Typfehler und Warnungen nach jeder Dateibearbeitung. Definitions-, Referenz- und Typinformationen, wenn Claude ein Symbol nachschlägt.
+
+    **Kontextkosten:** Niedrig. Symbol-Suchen ersetzen oft umfangreiche Dateileser, sodass die Netto-Kontextnutzung sinken kann.
+
+    <Tip>Das LSP-Tool ist inaktiv, bis Sie ein [Code-Intelligenz-Plugin](/de/discover-plugins#code-intelligence) für Ihre Sprache installieren.</Tip>
+  </Tab>
+
   <Tab title="Subagents">
-    **Wann:** On Demand, wenn Sie oder Claude einen für eine Aufgabe spawnt.
+    **Wann:** Bei Bedarf, wenn Sie oder Claude einen für eine Aufgabe spawnt.
 
     **Was lädt:** Frischer, isolierter Kontext, der Folgendes enthält:
 

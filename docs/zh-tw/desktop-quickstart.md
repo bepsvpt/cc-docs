@@ -63,7 +63,7 @@ Chat 和 Cowork 涵蓋在 [Claude Desktop 支援文章](https://support.claude.c
     您也可以選擇：
 
     * **Remote**：在 Anthropic 的雲端基礎設施上執行會話，即使您關閉應用程式也會繼續。遠端會話使用與 [Claude Code on the web](/zh-TW/claude-code-on-the-web) 相同的基礎設施。
-    * **SSH**：透過 SSH 連接到遠端機器（您自己的伺服器、雲端 VM 或開發容器）。Claude Code 必須安裝在遠端機器上。
+    * **SSH**：透過 SSH 連接到遠端機器，例如您自己的伺服器、雲端 VM 或開發容器。Desktop 在您第一次連接時會自動在遠端機器上安裝 Claude Code。
   </Step>
 
   <Step title="選擇模型">
@@ -95,7 +95,7 @@ Chat 和 Cowork 涵蓋在 [Claude Desktop 支援文章](https://support.claude.c
 
 您已進行了第一次編輯。如需 Desktop 可執行的所有操作的完整參考，請參閱 [使用 Claude Code Desktop](/zh-TW/desktop)。以下是一些接下來要嘗試的事項。
 
-**中斷並引導。** 您可以隨時中斷 Claude。如果它走錯了方向，點擊停止按鈕或輸入您的更正並按 **Enter**。Claude 停止正在進行的操作並根據您的輸入進行調整。您無需等待它完成或重新開始。
+**中斷並引導。** 您可以隨時中斷 Claude。點擊停止按鈕立即中斷，或輸入更正並按 **Enter** 以在不停止執行中操作的情況下發送。無論哪種方式，您都無需等待它完成或重新開始。
 
 **給 Claude 更多上下文。** 在提示框中輸入 `@filename` 以將特定檔案拉入對話，使用附件按鈕附加影像和 PDF，或直接將檔案拖放到提示中。Claude 擁有的上下文越多，結果越好。請參閱 [新增檔案和上下文](/zh-TW/desktop#add-files-and-context-to-prompts)。
 

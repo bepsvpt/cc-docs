@@ -541,22 +541,22 @@ INPUT=$(cat)
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
 
 if echo "$COMMAND" | grep -q "drop table"; then
-  echo "Blocked: dropping tables is not allowed" >&2  # stderr 變成 Claude 的回饋
-  exit 2 # exit 2 = 阻止操作
+  echo "Blocked: dropping tables is not allowed" >&2  // stderr 變成 Claude 的回饋
+  exit 2 // exit 2 = 阻止操作
 fi
 
-exit 0  # exit 0 = 讓它繼續
+exit 0  // exit 0 = 沒有決策；正常的權限流程適用
 ```
 
 退出代碼決定接下來會發生什麼：
 
-* **Exit 0**：操作繼續。對於 `UserPromptSubmit`、`UserPromptExpansion` 和 `SessionStart` hooks，您寫入 stdout 的任何內容都會新增到 Claude 的上下文中。
+* **Exit 0**：hook 報告沒有異議，操作正常進行。對於 `PreToolUse` hook，這不會批准工具呼叫：正常的[權限流程](/zh-TW/permissions)仍然適用。對於 `UserPromptSubmit`、`UserPromptExpansion` 和 `SessionStart` hooks，您寫入 stdout 的任何內容都會新增到 Claude 的上下文中。
 * **Exit 2**：操作被阻止。寫入原因到 stderr，Claude 會收到它作為回饋，以便它可以調整。某些事件無法被阻止：對於 `SessionStart`、`Setup`、`Notification` 和其他事件，exit 2 會向使用者顯示 stderr，執行繼續。有關完整清單，請參閱[每個事件的 exit code 2 行為](/zh-TW/hooks#exit-code-2-behavior-per-event)。
 * **任何其他退出代碼**：操作繼續。文字記錄顯示 `<hook name> hook error` 通知，後面跟著 stderr 的第一行；完整的 stderr 進入[除錯日誌](/zh-TW/hooks#debug-hooks)。
 
 #### 結構化 JSON 輸出
 
-退出代碼給您兩個選項：允許或阻止。為了獲得更多控制，退出 0 並改為將 JSON 物件列印到 stdout。
+退出代碼只讓您阻止或保持沉默。為了獲得更多控制，退出 0 並改為將 JSON 物件列印到 stdout。
 
 <Note>
   使用 exit 2 以 stderr 訊息阻止，或使用 exit 0 和 JSON 進行結構化控制。不要混合它們：Claude Code 在您退出 2 時忽略 JSON。

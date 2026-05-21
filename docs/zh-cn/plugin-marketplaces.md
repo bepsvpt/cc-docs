@@ -945,21 +945,23 @@ claude plugin marketplace update [name]
 
 * 验证 marketplace URL 是否可访问
 * 检查 `.claude-plugin/marketplace.json` 是否存在于指定路径
-* 使用 `claude plugin validate` 或 `/plugin validate` 确保 JSON 语法有效且 frontmatter 格式正确
+* 使用 `claude plugin validate` 或 `/plugin validate` 确保 JSON 语法有效。要检查 skill、agent 和 command frontmatter，请针对每个 plugin 目录运行该命令
 * 对于私有存储库，确认你有访问权限
 
 ### Marketplace 验证错误
 
-从你的 marketplace 目录运行 `claude plugin validate .` 或 `/plugin validate .` 来检查问题。验证器检查 `plugin.json`、skill/agent/command frontmatter 和 `hooks/hooks.json` 的语法和架构错误。常见错误：
+从你的 marketplace 目录运行 `claude plugin validate .` 或 `/plugin validate .` 来检查问题。当指向 marketplace 目录时，验证器仅检查 `marketplace.json`：schema、重复的 plugin 名称、源路径遍历和版本不匹配与每个引用的 `plugin.json`。
 
-| 错误                                                | 原因                                 | 解决方案                                                       |
-| :------------------------------------------------ | :--------------------------------- | :--------------------------------------------------------- |
-| `File not found: .claude-plugin/marketplace.json` | 缺少 manifest                        | 使用必需字段创建 `.claude-plugin/marketplace.json`                 |
-| `Invalid JSON syntax: Unexpected token...`        | JSON 语法错误                          | 检查缺少的逗号、多余的逗号或未引用的字符串                                      |
-| `Duplicate plugin name "x" found in marketplace`  | 两个 plugins 共享相同的名称                 | 给每个 plugin 一个唯一的 `name` 值                                  |
-| `plugins[0].source: Path contains ".."`           | 源路径包含 `..`                         | 使用相对于 marketplace 根目录的路径，不包含 `..`。见[相对路径](#relative-paths) |
-| `YAML frontmatter failed to parse: ...`           | skill、agent 或 command 文件中的 YAML 无效 | 修复 frontmatter 块中的 YAML 语法。在运行时，此文件加载时不带元数据。               |
-| `Invalid JSON syntax: ...`（hooks.json）            | 格式错误的 `hooks/hooks.json`           | 修复 JSON 语法。格式错误的 `hooks/hooks.json` 会阻止整个 plugin 加载。       |
+要验证单个 plugin 的 `plugin.json` 及其 skill、agent、command 和 hook 文件，请针对 plugin 目录本身运行该命令，例如 `claude plugin validate ./plugins/my-plugin`。常见错误：
+
+| 错误                                                | 原因                                 | 解决方案                                                                  |
+| :------------------------------------------------ | :--------------------------------- | :-------------------------------------------------------------------- |
+| `File not found: .claude-plugin/marketplace.json` | 缺少 manifest                        | 使用必需字段创建 `.claude-plugin/marketplace.json`                            |
+| `Invalid JSON syntax: Unexpected token...`        | JSON 语法错误                          | 检查缺少的逗号、多余的逗号或未引用的字符串                                                 |
+| `Duplicate plugin name "x" found in marketplace`  | 两个 plugins 共享相同的名称                 | 给每个 plugin 一个唯一的 `name` 值                                             |
+| `plugins[0].source: Path contains ".."`           | 源路径包含 `..`                         | 使用相对于 marketplace 根目录的路径，不包含 `..`。见[相对路径](#relative-paths)            |
+| `YAML frontmatter failed to parse: ...`           | skill、agent 或 command 文件中的 YAML 无效 | 修复 frontmatter 块中的 YAML 语法。在运行时，此文件加载时不带元数据。仅在验证 plugin 目录时报告         |
+| `Invalid JSON syntax: ...`（hooks.json）            | 格式错误的 `hooks/hooks.json`           | 修复 JSON 语法。格式错误的 `hooks/hooks.json` 会阻止整个 plugin 加载。仅在验证 plugin 目录时报告 |
 
 **警告**（非阻止）：
 

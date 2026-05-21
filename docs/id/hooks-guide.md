@@ -545,18 +545,18 @@ if echo "$COMMAND" | grep -q "drop table"; then
   exit 2 # exit 2 = block the action
 fi
 
-exit 0  # exit 0 = let it proceed
+exit 0  # exit 0 = no decision; the normal permission flow applies
 ```
 
 Kode keluar menentukan apa yang terjadi selanjutnya:
 
-* **Exit 0**: tindakan berlanjut. Untuk hook `UserPromptSubmit`, `UserPromptExpansion`, dan `SessionStart`, apa pun yang Anda tulis ke stdout ditambahkan ke konteks Claude.
+* **Exit 0**: hook melaporkan tidak ada keberatan dan tindakan berlanjut secara normal. Untuk hook `PreToolUse` ini tidak menyetujui panggilan alat: [alur izin](/id/permissions) normal masih berlaku. Untuk hook `UserPromptSubmit`, `UserPromptExpansion`, dan `SessionStart`, apa pun yang Anda tulis ke stdout ditambahkan ke konteks Claude.
 * **Exit 2**: tindakan diblokir. Tulis alasan ke stderr, dan Claude menerimanya sebagai umpan balik sehingga dapat menyesuaikan. Beberapa acara tidak dapat diblokir: untuk `SessionStart`, `Setup`, `Notification`, dan lainnya, exit 2 menampilkan stderr kepada pengguna dan eksekusi berlanjut. Lihat [exit code 2 behavior per event](/id/hooks#exit-code-2-behavior-per-event) untuk daftar lengkap.
 * **Kode keluar lainnya**: tindakan berlanjut. Transkrip menunjukkan pemberitahuan `<hook name> hook error` diikuti oleh baris pertama stderr; stderr lengkap masuk ke [debug log](/id/hooks#debug-hooks).
 
 #### Structured JSON output
 
-Kode keluar memberi Anda dua opsi: izinkan atau blokir. Untuk kontrol lebih, keluar 0 dan cetak objek JSON ke stdout sebagai gantinya.
+Kode keluar hanya memberi Anda cara untuk memblokir atau tetap diam. Untuk kontrol lebih, keluar 0 dan cetak objek JSON ke stdout sebagai gantinya.
 
 <Note>
   Gunakan exit 2 untuk memblokir dengan pesan stderr, atau exit 0 dengan JSON untuk kontrol terstruktur. Jangan campur: Claude Code mengabaikan JSON ketika Anda exit 2.

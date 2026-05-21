@@ -18,7 +18,7 @@ Gli hook si attivano in punti specifici durante una sessione di Claude Code. Qua
 
 <div style={{maxWidth: "500px", margin: "0 auto"}}>
   <Frame>
-    <img src="https://mintcdn.com/claude-code/ZIW26Z9pnpsXLhbS/images/hooks-lifecycle.svg?fit=max&auto=format&n=ZIW26Z9pnpsXLhbS&q=85&s=ee23691324deb6501df09bfdae560b64" alt="Diagramma del ciclo di vita dei hook che mostra Setup facoltativo che alimenta SessionStart, quindi un ciclo per turno contenente UserPromptSubmit, UserPromptExpansion per slash commands, il ciclo agentico annidato (PreToolUse, PermissionRequest, PostToolUse, PostToolUseFailure, PostToolBatch, SubagentStart/Stop, TaskCreated, TaskCompleted) e Stop o StopFailure, seguito da TeammateIdle, PreCompact, PostCompact e SessionEnd, con Elicitation e ElicitationResult annidati all'interno dell'esecuzione dello strumento MCP, PermissionDenied come ramo laterale di PermissionRequest per i rifiuti in modalità automatica, e WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged e FileChanged come eventi asincroni autonomi" width="520" height="1228" data-path="images/hooks-lifecycle.svg" />
+    <img src="https://mintcdn.com/claude-code/ZIW26Z9pnpsXLhbS/images/hooks-lifecycle.svg?fit=max&auto=format&n=ZIW26Z9pnpsXLhbS&q=85&s=ee23691324deb6501df09bfdae560b64" alt="Diagramma del ciclo di vita dei hook che mostra Setup facoltativo che alimenta SessionStart, quindi un ciclo per turno contenente UserPromptSubmit, UserPromptExpansion per slash commands, il ciclo agentico annidato (PreToolUse, PermissionRequest, PostToolUse, PostToolUseFailure, PostToolBatch, SubagentStart/Stop, TaskCreated, TaskCompleted), e Stop o StopFailure, seguito da TeammateIdle, PreCompact, PostCompact e SessionEnd, con Elicitation e ElicitationResult annidati all'interno dell'esecuzione dello strumento MCP, PermissionDenied come ramo laterale di PermissionRequest per i rifiuti in modalità automatica, e WorktreeCreate, WorktreeRemove, Notification, ConfigChange, InstructionsLoaded, CwdChanged e FileChanged come eventi asincroni autonomi" width="520" height="1228" data-path="images/hooks-lifecycle.svg" />
   </Frame>
 </div>
 
@@ -96,7 +96,7 @@ if echo "$COMMAND" | grep -q 'rm -rf'; then
     }
   }'
 else
-  exit 0  # allow the command
+  exit 0  # nessuna decisione; il flusso di autorizzazione normale si applica
 fi
 ```
 
@@ -136,7 +136,7 @@ Supponiamo che Claude Code decida di eseguire `Bash "rm -rf /tmp/build"`. Ecco c
     }
     ```
 
-    Se il comando fosse stato una variante più sicura di `rm` come `rm file.txt`, lo script avrebbe raggiunto `exit 0` invece, che dice a Claude Code di consentire la chiamata dello strumento senza ulteriori azioni.
+    Se il comando fosse stato una variante più sicura di `rm` come `rm file.txt`, lo script avrebbe raggiunto `exit 0` invece. Il codice di uscita 0 senza output significa che l'hook non ha alcuna decisione da segnalare, quindi la chiamata dello strumento continua attraverso il normale [flusso di autorizzazione](/it/permissions). L'hook può negare la chiamata, ma rimanere in silenzio non la approva.
   </Step>
 
   <Step title="Claude Code agisce sul risultato">
@@ -622,7 +622,7 @@ if [[ "$command" == rm* ]]; then
   exit 2  # Errore bloccante: la chiamata dello strumento viene impedita
 fi
 
-exit 0  # Successo: la chiamata dello strumento procede
+exit 0  # Nessuna decisione: il flusso di autorizzazione normale si applica
 ```
 
 <Warning>
@@ -679,7 +679,7 @@ A differenza dei command hook, gli HTTP hook non possono segnalare un errore blo
 
 ### Output JSON
 
-I codici di uscita consentono di consentire o bloccare, ma l'output JSON offre un controllo più granulare. Invece di uscire con il codice 2 per bloccare, uscire 0 e stampare un oggetto JSON su stdout. Claude Code legge campi specifici da quel JSON per controllare il comportamento, incluso il [decision control](#decision-control) per bloccare, consentire o escalare all'utente.
+I codici di uscita consentono di bloccare o stare in silenzio, ma l'output JSON offre un controllo più granulare. Invece di uscire con il codice 2 per bloccare, uscire 0 e stampare un oggetto JSON su stdout. Claude Code legge campi specifici da quel JSON per controllare il comportamento, incluso il [decision control](#decision-control) per bloccare, consentire o escalare all'utente.
 
 <Note>
   È necessario scegliere un approccio per hook, non entrambi: utilizzare i codici di uscita da soli per la segnalazione oppure uscire 0 e stampare JSON per il controllo strutturato. Claude Code elabora JSON solo su exit 0. Se si esce con 2, qualsiasi JSON viene ignorato.
@@ -699,7 +699,7 @@ L'oggetto JSON supporta tre tipi di campi:
 | :----------------- | :----------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `continue`         | `true`                   | Se `false`, Claude interrompe completamente l'elaborazione dopo l'esecuzione del hook. Ha la precedenza su qualsiasi campo di decisione specifico dell'evento                                                                                                                                                                                                                                      |
 | `stopReason`       | nessuno                  | Messaggio mostrato all'utente quando `continue` è `false`. Non mostrato a Claude                                                                                                                                                                                                                                                                                                                   |
-| `suppressOutput`   | `false`                  | Se `true`, omette stdout dal log di debug                                                                                                                                                                                                                                                                                                                                                          |
+| `suppressOutput`   | `false`                  | Se `true`, omette stdout dalla trascrizione. Stdout appare ancora nel log di debug                                                                                                                                                                                                                                                                                                                 |
 | `systemMessage`    | nessuno                  | Messaggio di avviso mostrato all'utente                                                                                                                                                                                                                                                                                                                                                            |
 | `terminalSequence` | nessuno                  | Una sequenza di escape del terminale per Claude Code da emettere per conto vostro, come una notifica desktop, un titolo della finestra o un campanello. Limitato a OSC `0`/`1`/`2`/`9`/`99`/`777` e BEL. Se il valore contiene qualcosa al di fuori della lista di autorizzazione, il campo viene ignorato. Utilizzare questo invece di scrivere su `/dev/tty`, che non è disponibile per gli hook |
 
@@ -732,7 +732,7 @@ L'esempio seguente attiva una notifica desktop da un hook `Notification`. La seq
 # Hook di notifica: avvisa il desktop quando Claude Code ha bisogno di attenzione.
 input=$(cat)
 title="Claude Code'
-body=$(jq -r '.message // 'Needs your attention'' <<<'$input')
+body=$(jq -r '.message // "Needs your attention"' <<<"$input")
 seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
 jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 ```
@@ -792,6 +792,7 @@ Non ogni evento supporta il blocco o il controllo del comportamento attraverso J
 | WorktreeCreate                                                                                                                      | percorso return                      | Il command hook stampa il percorso su stdout; l'HTTP hook restituisce `hookSpecificOutput.worktreePath`. Il fallimento del hook o il percorso mancante non riesce nella creazione                                  |
 | Elicitation                                                                                                                         | `hookSpecificOutput`                 | `action` (accept/decline/cancel), `content` (valori dei campi del modulo per accept)                                                                                                                               |
 | ElicitationResult                                                                                                                   | `hookSpecificOutput`                 | `action` (accept/decline/cancel), `content` (valori dei campi del modulo override)                                                                                                                                 |
+| SessionStart, Setup, SubagentStart                                                                                                  | Solo contesto                        | `hookSpecificOutput.additionalContext` aggiunge contesto per Claude. SessionStart accetta anche [`initialUserMessage` e `watchPaths`](#sessionstart-decision-control). Nessun blocco o controllo della decisione   |
 | WorktreeRemove, Notification, SessionEnd, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged                     | Nessuno                              | Nessun controllo della decisione. Utilizzato per effetti collaterali come la registrazione o la pulizia                                                                                                            |
 
 Ecco esempi di ogni modello in azione:
@@ -881,9 +882,11 @@ Oltre ai [campi di input comuni](#common-input-fields), gli hook SessionStart ri
 
 Qualsiasi testo che lo script del hook stampa su stdout viene aggiunto come contesto per Claude. Oltre ai [campi di output JSON](#json-output) disponibili per tutti gli hook, è possibile restituire questi campi specifici dell'evento:
 
-| Campo               | Descrizione                                                                                                                                                                                                             |
-| :------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `additionalContext` | Stringa aggiunta al contesto di Claude all'inizio della conversazione, prima del primo prompt. Consultare [Aggiungere contesto per Claude](#add-context-for-claude) per come il testo viene consegnato e cosa inserirvi |
+| Campo                | Descrizione                                                                                                                                                                                                                                                                                                                                                    |
+| :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `additionalContext`  | Stringa aggiunta al contesto di Claude all'inizio della conversazione, prima del primo prompt. Consultare [Aggiungere contesto per Claude](#add-context-for-claude) per come il testo viene consegnato e cosa inserirvi                                                                                                                                        |
+| `initialUserMessage` | Stringa utilizzata come primo messaggio dell'utente della sessione. Si applica in [modalità non interattiva](/it/headless) (`-p`), dove diventa il primo turno anche se non viene fornito alcun prompt. Se viene fornito un prompt, segue come turno successivo. A differenza di `additionalContext`, che si allega a un turno esistente, questo crea il turno |
+| `watchPaths`         | Array di percorsi assoluti da monitorare per gli eventi [FileChanged](#filechanged) durante questa sessione                                                                                                                                                                                                                                                    |
 
 ```json theme={null}
 {
@@ -1056,12 +1059,13 @@ Lo stdout semplice viene mostrato come output del hook nella trascrizione. Il ca
 
 Per bloccare un prompt, restituire un oggetto JSON con `decision` impostato su `"block"`:
 
-| Campo               | Descrizione                                                                                                                            |
-| :------------------ | :------------------------------------------------------------------------------------------------------------------------------------- |
-| `decision`          | `"block"` impedisce l'elaborazione del prompt e lo cancella dal contesto. Omettere per consentire al prompt di procedere               |
-| `reason`            | Mostrato all'utente quando `decision` è `"block"`. Non aggiunto al contesto                                                            |
-| `additionalContext` | Stringa aggiunta al contesto di Claude insieme al prompt inviato. Consultare [Aggiungere contesto per Claude](#add-context-for-claude) |
-| `sessionTitle`      | Imposta il titolo della sessione. Utilizzare per denominare automaticamente le sessioni in base al contenuto del prompt                |
+| Campo                    | Descrizione                                                                                                                            |
+| :----------------------- | :------------------------------------------------------------------------------------------------------------------------------------- |
+| `decision`               | `"block"` impedisce l'elaborazione del prompt e lo cancella dal contesto. Omettere per consentire al prompt di procedere               |
+| `reason`                 | Mostrato all'utente quando `decision` è `"block"`. Non aggiunto al contesto                                                            |
+| `additionalContext`      | Stringa aggiunta al contesto di Claude insieme al prompt inviato. Consultare [Aggiungere contesto per Claude](#add-context-for-claude) |
+| `sessionTitle`           | Imposta il titolo della sessione. Utilizzare per denominare automaticamente le sessioni in base al contenuto del prompt                |
+| `suppressOriginalPrompt` | Se `true` quando `decision` è `"block"`, omette il testo del prompt originale dal messaggio di blocco mostrato all'utente              |
 
 ```json theme={null}
 {
@@ -1411,7 +1415,7 @@ Il campo di output `updatedPermissions` e il campo di input [`permission_suggest
 | `addRules`          | `rules`, `behavior`, `destination` | Aggiunge regole di autorizzazione. `rules` è un array di oggetti `{toolName, ruleContent?}`. Omettere `ruleContent` per abbinare l'intero strumento. `behavior` è `"allow"`, `"deny"` o `"ask"` |
 | `replaceRules`      | `rules`, `behavior`, `destination` | Sostituisce tutte le regole del `behavior` dato alla `destination` con le `rules` fornite                                                                                                       |
 | `removeRules`       | `rules`, `behavior`, `destination` | Rimuove le regole corrispondenti del `behavior` dato                                                                                                                                            |
-| `setMode`           | `mode`, `destination`              | Modifica la modalità di autorizzazione. Le modalità valide sono `default`, `acceptEdits`, `dontAsk`, `bypassPermissions` e `plan`                                                               |
+| `setMode`           | `mode`, `destination`              | Modifica la modalità di autorizzazione. Le modalità valide sono `default`, `auto`, `acceptEdits`, `dontAsk`, `bypassPermissions` e `plan`                                                       |
 | `addDirectories`    | `directories`, `destination`       | Aggiunge directory di lavoro. `directories` è un array di stringhe di percorso                                                                                                                  |
 | `removeDirectories` | `directories`, `destination`       | Rimuove directory di lavoro                                                                                                                                                                     |
 
@@ -1698,7 +1702,7 @@ Oltre ai [campi di input comuni](#common-input-fields), gli hook Notification ri
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
   "hook_event_name": "Notification",
-  "message": "Claude needs your permission to use Bash",
+  "message": "Claude needs your permission",
   "title": "Permission needed",
   "notification_type": "permission_prompt"
 }
@@ -1908,7 +1912,7 @@ Ogni voce in `background_tasks` descrive un'attività in volo e utilizza questi 
 | `tool`        | Nome dello strumento MCP. Presente solo per le attività `monitor` e `MCP task`                                                                                                                                                                                                 |
 | `name`        | Nome del flusso di lavoro. Presente solo per le attività `workflow`                                                                                                                                                                                                            |
 
-Ogni voce in `session_crons` descrive un risveglio programmato con ambito di sessione, proveniente da `CronCreate` e `/loop`:
+Ogni voce in `session_crons` descrive un risveglio programmato con ambito di sessione, proveniente da `CronCreate`, `ScheduleWakeup` e `/loop`:
 
 | Campo       | Descrizione                                                                                                                                                  |
 | :---------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -2490,6 +2494,7 @@ Oltre agli hook di comando, HTTP e MCP tool, Claude Code supporta gli hook basat
 
 Gli eventi che supportano tutti e cinque i tipi di hook (`command`, `http`, `mcp_tool`, `prompt` e `agent`):
 
+* `PermissionDenied`
 * `PermissionRequest`
 * `PostToolBatch`
 * `PostToolUse`
@@ -2499,6 +2504,7 @@ Gli eventi che supportano tutti e cinque i tipi di hook (`command`, `http`, `mcp
 * `SubagentStop`
 * `TaskCompleted`
 * `TaskCreated`
+* `TeammateIdle`
 * `UserPromptExpansion`
 * `UserPromptSubmit`
 
@@ -2511,13 +2517,11 @@ Gli eventi che supportano gli hook `command`, `http` e `mcp_tool` ma non `prompt
 * `FileChanged`
 * `InstructionsLoaded`
 * `Notification`
-* `PermissionDenied`
 * `PostCompact`
 * `PreCompact`
 * `SessionEnd`
 * `StopFailure`
 * `SubagentStart`
-* `TeammateIdle`
 * `WorktreeCreate`
 * `WorktreeRemove`
 
@@ -2585,7 +2589,9 @@ Ciò che accade con `ok: false` dipende dall'evento:
 * `PostToolUse`: per impostazione predefinita il turno termina e il motivo appare nella chat come una riga di avviso. Impostare `continueOnBlock: true` per reinviare il motivo a Claude e continuare il turno invece
 * `PostToolBatch`, `UserPromptSubmit` e `UserPromptExpansion`: il turno termina e il motivo appare come una riga di avviso. Questi eventi terminano il turno su `decision: "block"` indipendentemente da `continue`
 * `PostToolUseFailure`, `TaskCreated` e `TaskCompleted`: il motivo viene restituito a Claude come errore dello strumento, simile a `PreToolUse`
+* `TeammateIdle`: per impostazione predefinita il compagno di squadra si ferma e il motivo appare come una riga di avviso. Impostare `continueOnBlock: true` per reinviare il motivo al compagno di squadra e mantenerlo al lavoro invece
 * `PermissionRequest`: `ok: false` non ha effetto. Per negare un'approvazione da un hook, utilizzare un [hook di comando](#command-hook-fields) che restituisce `hookSpecificOutput.decision.behavior: "deny"`
+* `PermissionDenied`: `ok: false` non ha effetto perché il rifiuto è già avvenuto. L'unico output che questo evento legge è `hookSpecificOutput.retry`, che gli hook di prompt e agenti non possono impostare — vengono eseguiti su questo evento, ma il loro output viene scartato. Utilizzare un [hook di comando](#command-hook-fields) per restituire `retry`
 
 Se hai bisogno di un controllo più fine su qualsiasi evento, utilizza un [hook di comando](#command-hook-fields) con i campi per evento descritti in [Controllo delle decisioni](#decision-control).
 

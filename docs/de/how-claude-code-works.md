@@ -174,7 +174,7 @@ Claude Code kann Ihnen beibringen, wie man ihn verwendet. Stellen Sie Fragen wie
 Integrierte Befehle führen Sie auch durch die Einrichtung:
 
 * `/init` führt Sie durch die Erstellung einer CLAUDE.md für Ihr Projekt
-* `/agents` hilft Ihnen, benutzerdefinierte subagents zu konfigurieren
+* `/agents` hilft Ihnen, benutzerdefinierte Subagents zu konfigurieren
 * `/doctor` diagnostiziert häufige Probleme mit Ihrer Installation
 
 ### Es ist eine Konversation
@@ -197,7 +197,10 @@ Wenn der erste Versuch nicht richtig ist, müssen Sie nicht von vorne anfangen. 
 
 #### Unterbrechen und lenken
 
-Sie können Claude jederzeit unterbrechen. Wenn er den falschen Weg geht, geben Sie einfach Ihre Korrektur ein und drücken Sie Enter. Claude wird stoppen, was er tut, und seinen Ansatz basierend auf Ihrer Eingabe anpassen. Sie müssen nicht warten, bis er fertig ist, oder von vorne anfangen.
+Sie können Claude jederzeit unterbrechen, ohne auf das Ende des Durchgangs zu warten oder von vorne anzufangen:
+
+* **Drücken Sie `Esc`**, um Claude sofort zu stoppen. Der laufende Toolaufruf wird abgebrochen und Claude wartet auf Ihre nächste Anweisung.
+* **Geben Sie eine Korrektur ein und drücken Sie `Enter`**, um sie zu senden, ohne das laufende Tool zu stoppen. Claude liest sie, sobald die aktuelle Aktion abgeschlossen ist, und passt sich an, bevor er seinen nächsten Schritt entscheidet.
 
 ### Seien Sie von Anfang an spezifisch
 

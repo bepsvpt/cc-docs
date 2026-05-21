@@ -96,7 +96,7 @@ if echo "$COMMAND" | grep -q 'rm -rf'; then
     }
   }'
 else
-  exit 0  # allow the command
+  exit 0  # no decision; normal permission flow applies
 fi
 ```
 
@@ -136,7 +136,7 @@ fi
     }
     ```
 
-    Если бы команда была более безопасным вариантом `rm`, таким как `rm file.txt`, скрипт выполнил бы `exit 0` вместо этого, что говорит Claude Code разрешить вызов инструмента без дополнительных действий.
+    Если бы команда была более безопасным вариантом `rm`, таким как `rm file.txt`, скрипт выполнил бы `exit 0` вместо этого. Код выхода 0 без вывода означает, что hook не имеет решения для отчёта, поэтому вызов инструмента продолжается через нормальный [поток разрешений](/ru/permissions). Hook может отклонить вызов, но молчание не одобряет его.
   </Step>
 
   <Step title="Claude Code действует на основе результата">
@@ -622,7 +622,7 @@ if [[ "$command" == rm* ]]; then
   exit 2  # Blocking error: tool call is prevented
 fi
 
-exit 0  # Success: tool call proceeds
+exit 0  # No decision: the normal permission flow applies
 ```
 
 <Warning>
@@ -699,7 +699,7 @@ JSON объект поддерживает три вида полей:
 | :----------------- | :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `continue`         | `true`       | Если `false`, Claude полностью прекращает обработку после запуска hook. Имеет приоритет над любыми полями решения, специфичными для события                                                                                                                                                                                                                               |
 | `stopReason`       | нет          | Сообщение, показываемое пользователю при `continue` равном `false`. Не показывается Claude                                                                                                                                                                                                                                                                                |
-| `suppressOutput`   | `false`      | Если `true`, скрывает stdout из журнала отладки                                                                                                                                                                                                                                                                                                                           |
+| `suppressOutput`   | `false`      | Если `true`, скрывает stdout hook из транскрипта. Stdout всё ещё появляется в журнале отладки                                                                                                                                                                                                                                                                             |
 | `systemMessage`    | нет          | Предупреждающее сообщение, показываемое пользователю                                                                                                                                                                                                                                                                                                                      |
 | `terminalSequence` | нет          | Escape последовательность терминала для Claude Code, которую нужно выдать от вашего имени, такая как уведомление рабочего стола, заголовок окна или звуковой сигнал. Ограничено OSC `0`/`1`/`2`/`9`/`99`/`777` и BEL. Если значение содержит что-либо вне списка разрешённых, поле игнорируется. Используйте это вместо записи в `/dev/tty`, которая недоступна для hooks |
 
@@ -732,7 +732,7 @@ Hooks запускаются без управляющего терминала,
 # Notification hook: ping the desktop when Claude Code needs attention.
 input=$(cat)
 title="Claude Code'
-body=$(jq -r '.message // 'Needs your attention'' <<<'$input')
+body=$(jq -r '.message // "Needs your attention"' <<<"$input")
 seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
 jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 ```
@@ -782,17 +782,18 @@ jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 
 Не каждое событие поддерживает блокировку или управление поведением через JSON. События, которые это делают, каждое использует другой набор полей для выражения этого решения. Используйте эту таблицу как быструю ссылку перед написанием hook:
 
-| События                                                                                                                             | Шаблон решения                  | Ключевые поля                                                                                                                                                                       |
-| :---------------------------------------------------------------------------------------------------------------------------------- | :------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| UserPromptSubmit, UserPromptExpansion, PostToolUse, PostToolUseFailure, PostToolBatch, Stop, SubagentStop, ConfigChange, PreCompact | Верхнеуровневое `decision`      | `decision: "block"`, `reason`                                                                                                                                                       |
-| TeammateIdle, TaskCreated, TaskCompleted                                                                                            | Exit code или `continue: false` | Exit code 2 блокирует действие с обратной связью stderr. JSON `{"continue": false, "stopReason": "..."}` также полностью останавливает товарища, соответствуя поведению hook `Stop` |
-| PreToolUse                                                                                                                          | `hookSpecificOutput`            | `permissionDecision` (allow/deny/ask/defer), `permissionDecisionReason`                                                                                                             |
-| PermissionRequest                                                                                                                   | `hookSpecificOutput`            | `decision.behavior` (allow/deny)                                                                                                                                                    |
-| PermissionDenied                                                                                                                    | `hookSpecificOutput`            | `retry: true` говорит модели, что она может повторить попытку отклонённого вызова инструмента                                                                                       |
-| WorktreeCreate                                                                                                                      | path return                     | Command hook выводит путь на stdout; HTTP hook возвращает `hookSpecificOutput.worktreePath`. Сбой hook или отсутствие пути вызывает сбой создания                                   |
-| Elicitation                                                                                                                         | `hookSpecificOutput`            | `action` (accept/decline/cancel), `content` (значения полей формы для accept)                                                                                                       |
-| ElicitationResult                                                                                                                   | `hookSpecificOutput`            | `action` (accept/decline/cancel), `content` (переопределение значений полей формы)                                                                                                  |
-| WorktreeRemove, Notification, SessionEnd, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged                     | Нет                             | Нет управления решением. Используется для побочных эффектов, таких как логирование или очистка                                                                                      |
+| События                                                                                                                             | Шаблон решения                  | Ключевые поля                                                                                                                                                                                                    |
+| :---------------------------------------------------------------------------------------------------------------------------------- | :------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| UserPromptSubmit, UserPromptExpansion, PostToolUse, PostToolUseFailure, PostToolBatch, Stop, SubagentStop, ConfigChange, PreCompact | Верхнеуровневое `decision`      | `decision: "block"`, `reason`                                                                                                                                                                                    |
+| TeammateIdle, TaskCreated, TaskCompleted                                                                                            | Exit code или `continue: false` | Exit code 2 блокирует действие с обратной связью stderr. JSON `{"continue": false, "stopReason": "..."}` также полностью останавливает товарища, соответствуя поведению hook `Stop`                              |
+| PreToolUse                                                                                                                          | `hookSpecificOutput`            | `permissionDecision` (allow/deny/ask/defer), `permissionDecisionReason`                                                                                                                                          |
+| PermissionRequest                                                                                                                   | `hookSpecificOutput`            | `decision.behavior` (allow/deny)                                                                                                                                                                                 |
+| PermissionDenied                                                                                                                    | `hookSpecificOutput`            | `retry: true` говорит модели, что она может повторить попытку отклонённого вызова инструмента                                                                                                                    |
+| WorktreeCreate                                                                                                                      | path return                     | Command hook выводит путь на stdout; HTTP hook возвращает `hookSpecificOutput.worktreePath`. Сбой hook или отсутствие пути вызывает сбой создания                                                                |
+| Elicitation                                                                                                                         | `hookSpecificOutput`            | `action` (accept/decline/cancel), `content` (значения полей формы для accept)                                                                                                                                    |
+| ElicitationResult                                                                                                                   | `hookSpecificOutput`            | `action` (accept/decline/cancel), `content` (переопределение значений полей формы)                                                                                                                               |
+| SessionStart, Setup, SubagentStart                                                                                                  | Только контекст                 | `hookSpecificOutput.additionalContext` добавляет контекст для Claude. SessionStart также принимает [`initialUserMessage` и `watchPaths`](#sessionstart-decision-control). Нет блокировки или управления решением |
+| WorktreeRemove, Notification, SessionEnd, PostCompact, InstructionsLoaded, StopFailure, CwdChanged, FileChanged                     | Нет                             | Нет управления решением. Используется для побочных эффектов, таких как логирование или очистка                                                                                                                   |
 
 Вот примеры каждого шаблона в действии:
 
@@ -881,9 +882,11 @@ SessionStart запускается при каждом сеансе, поэто
 
 Любой текст, который ваш скрипт hook выводит на stdout, добавляется как контекст для Claude. В дополнение к [JSON полям выхода](#json-output), доступным для всех hooks, вы можете вернуть эти поля, специфичные для события:
 
-| Поле                | Описание                                                                                                                                                                                         |
-| :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `additionalContext` | Строка, добавленная в контекст Claude в начале разговора, перед первой подсказкой. См. [Add context for Claude](#add-context-for-claude) для того, как текст доставляется и что в него поместить |
+| Поле                 | Описание                                                                                                                                                                                                                                                                                                                                                       |
+| :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `additionalContext`  | Строка, добавленная в контекст Claude в начале разговора, перед первой подсказкой. См. [Add context for Claude](#add-context-for-claude) для того, как текст доставляется и что в него поместить                                                                                                                                                               |
+| `initialUserMessage` | Строка, используемая как первое сообщение пользователя сеанса. Применяется в [неинтерактивном режиме](/ru/headless) (`-p`), где оно становится первым ходом, даже если подсказка не предоставлена. Если подсказка предоставлена, она следует как следующий ход. В отличие от `additionalContext`, который присоединяется к существующему ходу, это создаёт ход |
+| `watchPaths`         | Массив абсолютных путей для отслеживания событий [FileChanged](#filechanged) во время этого сеанса                                                                                                                                                                                                                                                             |
 
 ```json theme={null}
 {
@@ -1056,12 +1059,13 @@ Hooks `UserPromptSubmit` могут управлять тем, обрабаты�
 
 Чтобы заблокировать подсказку, верните JSON объект с `decision`, установленным на `"block"`:
 
-| Поле                | Описание                                                                                                                      |
-| :------------------ | :---------------------------------------------------------------------------------------------------------------------------- |
-| `decision`          | `"block"` предотвращает обработку подсказки и стирает её из контекста. Опустите, чтобы разрешить подсказке продолжаться       |
-| `reason`            | Показывается пользователю при `decision` равном `"block"`. Не добавляется в контекст                                          |
-| `additionalContext` | Строка, добавленная в контекст Claude наряду с отправленной подсказкой. См. [Add context for Claude](#add-context-for-claude) |
-| `sessionTitle`      | Устанавливает название сеанса. Используйте для автоматического именования сеансов на основе содержимого подсказки             |
+| Поле                     | Описание                                                                                                                           |
+| :----------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
+| `decision`               | `"block"` предотвращает обработку подсказки и стирает её из контекста. Опустите, чтобы разрешить подсказке продолжаться            |
+| `reason`                 | Показывается пользователю при `decision` равном `"block"`. Не добавляется в контекст                                               |
+| `additionalContext`      | Строка, добавленная в контекст Claude наряду с отправленной подсказкой. См. [Add context for Claude](#add-context-for-claude)      |
+| `sessionTitle`           | Устанавливает название сеанса. Используйте для автоматического именования сеансов на основе содержимого подсказки                  |
+| `suppressOriginalPrompt` | Если `true` при `decision` равном `"block"`, опускает исходный текст подсказки из сообщения блокировки, показываемого пользователю |
 
 ```json theme={null}
 {
@@ -1411,7 +1415,7 @@ Hooks `PermissionRequest` могут разрешить или отклонит�
 | `addRules`          | `rules`, `behavior`, `destination` | Добавляет правила разрешения. `rules` — это массив объектов `{toolName, ruleContent?}`. Опустите `ruleContent` для совпадения со всем инструментом. `behavior` — это `"allow"`, `"deny"` или `"ask"` |
 | `replaceRules`      | `rules`, `behavior`, `destination` | Заменяет все правила данного `behavior` в `destination` предоставленными `rules`                                                                                                                     |
 | `removeRules`       | `rules`, `behavior`, `destination` | Удаляет совпадающие правила данного `behavior`                                                                                                                                                       |
-| `setMode`           | `mode`, `destination`              | Изменяет режим разрешения. Допустимые режимы — `default`, `acceptEdits`, `dontAsk`, `bypassPermissions` и `plan`                                                                                     |
+| `setMode`           | `mode`, `destination`              | Изменяет режим разрешения. Допустимые режимы — `default`, `auto`, `acceptEdits`, `dontAsk`, `bypassPermissions` и `plan`                                                                             |
 | `addDirectories`    | `directories`, `destination`       | Добавляет рабочие каталоги. `directories` — это массив строк пути                                                                                                                                    |
 | `removeDirectories` | `directories`, `destination`       | Удаляет рабочие каталоги                                                                                                                                                                             |
 
@@ -1698,7 +1702,7 @@ PermissionDenied hooks могут сообщить модели, что она �
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
   "hook_event_name": "Notification",
-  "message": "Claude needs your permission to use Bash",
+  "message": "Claude needs your permission",
   "title": "Permission needed",
   "notification_type": "permission_prompt"
 }
@@ -1890,7 +1894,9 @@ exit 0
 
 #### Stop input
 
-В дополнение к [общим полям входа](#common-input-fields), Stop hooks получают `stop_hook_active`, `last_assistant_message`, `background_tasks` и `session_crons`. Поле `stop_hook_active` равно `true`, когда Claude Code уже продолжает в результате stop hook. Проверьте это значение или обработайте транскрипт, чтобы предотвратить бесконечное выполнение Claude Code. Поле `last_assistant_message` содержит текстовое содержимое финального ответа Claude, поэтому hooks могут получить к нему доступ без анализа файла транскрипта.
+В дополнение к [общим полям входа](#common-input-fields), Stop hooks получают `stop_hook_active`, `last_assistant_message`, `background_tasks` и `session_crons`. Поле `stop_hook_active` равно `true`, когда Claude Code уже продолжает в результате stop hook. Проверьте это значение или обработайте транскрипт, чтобы предотвратить блокировку на условии, которое никогда не разрешится. Claude Code переопределяет hook и заканчивает ход после 8 последовательных блокировок.
+
+Поле `last_assistant_message` содержит текстовое содержимое финального ответа Claude, поэтому hooks могут получить к нему доступ без анализа файла транскрипта.
 
 Массивы `background_tasks` и `session_crons`, доступные в Claude Code v2.1.145 или позже, позволяют hooks различать "сеанс завершён" от "сеанс приостановлен в ожидании фоновой работы для его пробуждения". Оба массива присутствуют, когда реестр задач доступен, и пусты, когда ничего не выполняется или не запланировано.
 
@@ -1908,7 +1914,7 @@ exit 0
 | `tool`        | Имя MCP инструмента. Присутствует только для задач `monitor` и `MCP task`                                                                                                                                                                                                |
 | `name`        | Имя workflow. Присутствует только для задач `workflow`                                                                                                                                                                                                                   |
 
-Каждая запись в `session_crons` описывает одно запланированное пробуждение, ограниченное сеансом, полученное из `CronCreate` и `/loop`:
+Каждая запись в `session_crons` описывает одно запланированное пробуждение, ограниченное сеансом, полученное из `CronCreate`, `ScheduleWakeup` и `/loop`:
 
 | Поле        | Описание                                                                                                                                                   |
 | :---------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -2490,6 +2496,7 @@ Exit code 2 блокирует ответ, изменяя эффективное
 
 События, которые поддерживают все пять типов hook (`command`, `http`, `mcp_tool`, `prompt` и `agent`):
 
+* `PermissionDenied`
 * `PermissionRequest`
 * `PostToolBatch`
 * `PostToolUse`
@@ -2499,6 +2506,7 @@ Exit code 2 блокирует ответ, изменяя эффективное
 * `SubagentStop`
 * `TaskCompleted`
 * `TaskCreated`
+* `TeammateIdle`
 * `UserPromptExpansion`
 * `UserPromptSubmit`
 
@@ -2511,13 +2519,11 @@ Exit code 2 блокирует ответ, изменяя эффективное
 * `FileChanged`
 * `InstructionsLoaded`
 * `Notification`
-* `PermissionDenied`
 * `PostCompact`
 * `PreCompact`
 * `SessionEnd`
 * `StopFailure`
 * `SubagentStart`
-* `TeammateIdle`
 * `WorktreeCreate`
 * `WorktreeRemove`
 
@@ -2585,7 +2591,9 @@ LLM должен ответить JSON, содержащим:
 * `PostToolUse`: по умолчанию ход заканчивается и причина появляется в чате как строка предупреждения. Установите `continueOnBlock: true` для передачи причины обратно Claude и продолжения хода вместо этого
 * `PostToolBatch`, `UserPromptSubmit` и `UserPromptExpansion`: ход заканчивается и причина появляется как строка предупреждения. Эти события заканчивают ход на `decision: "block"` независимо от `continue`
 * `PostToolUseFailure`, `TaskCreated` и `TaskCompleted`: причина возвращается Claude как ошибка инструмента, аналогично `PreToolUse`
+* `TeammateIdle`: по умолчанию товарищ по команде останавливается и причина появляется как строка предупреждения. Установите `continueOnBlock: true` для передачи причины обратно товарищу по команде и продолжения его работы вместо этого
 * `PermissionRequest`: `ok: false` не имеет эффекта. Чтобы отклонить одобрение из hook, используйте [command hook](#command-hook-fields), возвращающий `hookSpecificOutput.decision.behavior: "deny"`
+* `PermissionDenied`: `ok: false` не имеет эффекта, потому что отказ уже произошёл. Единственный результат, который это событие читает, это `hookSpecificOutput.retry`, который prompt и agent hooks не могут установить — они запускаются на этом событии, но их результат отбрасывается. Используйте [command hook](#command-hook-fields) для возврата `retry`
 
 Если вам нужен более точный контроль над любым событием, используйте [command hook](#command-hook-fields) с полями для каждого события, описанными в [Decision control](#decision-control).
 

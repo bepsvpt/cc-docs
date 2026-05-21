@@ -63,7 +63,7 @@ Dengan tab Code terbuka, pilih proyek dan beri Claude sesuatu untuk dikerjakan.
     Anda juga dapat memilih:
 
     * **Remote**: Jalankan sesi pada infrastruktur cloud Anthropic yang berlanjut bahkan jika Anda menutup aplikasi. Sesi remote menggunakan infrastruktur yang sama dengan [Claude Code di web](/id/claude-code-on-the-web).
-    * **SSH**: Terhubung ke mesin jarak jauh melalui SSH (server Anda sendiri, VM cloud, atau dev containers). Claude Code harus diinstal di mesin jarak jauh.
+    * **SSH**: Terhubung ke mesin jarak jauh melalui SSH, seperti server Anda sendiri, VM cloud, atau dev containers. Desktop menginstal Claude Code di mesin jarak jauh secara otomatis saat pertama kali Anda terhubung.
   </Step>
 
   <Step title="Pilih model">
@@ -77,14 +77,14 @@ Dengan tab Code terbuka, pilih proyek dan beri Claude sesuatu untuk dikerjakan.
     * `Add tests for the main function`
     * `Create a CLAUDE.md with instructions for this codebase`
 
-    [Sesi](/id/desktop#work-in-parallel-with-sessions) adalah percakapan dengan Claude tentang kode Anda. Setiap sesi melacak konteks dan perubahannya sendiri, sehingga Anda dapat bekerja pada beberapa tugas tanpa saling mengganggu.
+    Sebuah [session](/id/desktop#work-in-parallel-with-sessions) adalah percakapan dengan Claude tentang kode Anda. Setiap sesi melacak konteks dan perubahannya sendiri, sehingga Anda dapat bekerja pada beberapa tugas tanpa saling mengganggu.
   </Step>
 
   <Step title="Tinjau dan terima perubahan">
-    Secara default, tab Code dimulai dalam [mode Minta izin](/id/desktop#choose-a-permission-mode), di mana Claude mengusulkan perubahan dan menunggu persetujuan Anda sebelum menerapkannya. Anda akan melihat:
+    Secara default, tab Code dimulai dalam [Ask permissions mode](/id/desktop#choose-a-permission-mode), di mana Claude mengusulkan perubahan dan menunggu persetujuan Anda sebelum menerapkannya. Anda akan melihat:
 
-    1. [Tampilan diff](/id/desktop#review-changes-with-diff-view) yang menunjukkan dengan tepat apa yang akan berubah di setiap file
-    2. Tombol Terima/Tolak untuk menyetujui atau menolak setiap perubahan
+    1. Sebuah [diff view](/id/desktop#review-changes-with-diff-view) yang menunjukkan dengan tepat apa yang akan berubah di setiap file
+    2. Tombol Accept/Reject untuk menyetujui atau menolak setiap perubahan
     3. Pembaruan real-time saat Claude menyelesaikan permintaan Anda
 
     Jika Anda menolak perubahan, Claude akan bertanya bagaimana Anda ingin melanjutkan dengan cara yang berbeda. File Anda tidak dimodifikasi sampai Anda menerima.
@@ -95,7 +95,7 @@ Dengan tab Code terbuka, pilih proyek dan beri Claude sesuatu untuk dikerjakan.
 
 Anda telah membuat edit pertama Anda. Untuk referensi lengkap tentang semua yang dapat dilakukan Desktop, lihat [Gunakan Claude Code Desktop](/id/desktop). Berikut adalah beberapa hal yang dapat dicoba selanjutnya.
 
-**Interupsi dan arahkan.** Anda dapat menghentikan Claude kapan saja. Jika itu menuju jalan yang salah, klik tombol stop atau ketik koreksi Anda dan tekan **Enter**. Claude berhenti melakukan apa yang sedang dilakukannya dan menyesuaikan berdasarkan input Anda. Anda tidak perlu menunggu sampai selesai atau memulai dari awal.
+**Interupsi dan arahkan.** Anda dapat mengarahkan kembali Claude kapan saja. Klik tombol stop untuk menghentikan segera, atau ketik koreksi dan tekan **Enter** untuk mengirimnya tanpa menghentikan tindakan yang sedang berjalan. Bagaimanapun, Anda tidak perlu menunggu sampai selesai atau memulai dari awal.
 
 **Beri Claude lebih banyak konteks.** Ketik `@filename` di kotak prompt untuk menarik file tertentu ke dalam percakapan, lampirkan gambar dan PDF menggunakan tombol lampiran, atau seret dan lepas file langsung ke prompt. Semakin banyak konteks yang dimiliki Claude, semakin baik hasilnya. Lihat [Tambahkan file dan konteks](/id/desktop#add-files-and-context-to-prompts).
 
@@ -106,6 +106,8 @@ Anda telah membuat edit pertama Anda. Untuk referensi lengkap tentang semua yang
 **Sesuaikan berapa banyak kontrol yang Anda miliki.** [Mode izin](/id/desktop#choose-a-permission-mode) Anda mengontrol keseimbangan. Minta izin (default) memerlukan persetujuan sebelum setiap edit. Auto accept edits secara otomatis menerima edit file untuk iterasi yang lebih cepat. Plan mode memungkinkan Claude memetakan pendekatan tanpa menyentuh file apa pun, yang berguna sebelum refactor besar.
 
 **Tambahkan plugins untuk kemampuan lebih.** Klik tombol **+** di sebelah kotak prompt dan pilih **Plugins** untuk menjelajahi dan menginstal [plugins](/id/desktop#install-plugins) yang menambahkan skills, agents, MCP servers, dan lainnya.
+
+**Atur ruang kerja Anda.** Seret pane chat, diff, terminal, file, dan preview ke dalam tata letak apa pun yang Anda inginkan. Buka terminal dengan **Ctrl+\`** untuk menjalankan perintah bersama sesi Anda, atau klik jalur file untuk membukanya di pane file. Lihat [Atur ruang kerja Anda](/id/desktop#arrange-your-workspace).
 
 **Pratinjau aplikasi Anda.** Klik dropdown **Preview** untuk menjalankan dev server Anda langsung di desktop. Claude dapat melihat aplikasi yang berjalan, menguji endpoint, memeriksa log, dan melakukan iterasi pada apa yang dilihatnya. Lihat [Pratinjau aplikasi Anda](/id/desktop#preview-your-app).
 

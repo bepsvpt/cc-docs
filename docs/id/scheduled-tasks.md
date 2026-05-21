@@ -93,7 +93,7 @@ Claude tidak memulai inisiatif baru di luar cakupan itu, dan tindakan yang tidak
 Bare `/loop` menjalankan prompt ini pada [interval yang dipilih secara dinamis](#let-claude-choose-the-interval). Tambahkan interval, misalnya `/loop 15m`, untuk menjalankannya pada jadwal tetap sebagai gantinya. Untuk mengganti prompt bawaan dengan prompt default Anda sendiri, lihat [Customize the default prompt with loop.md](#customize-the-default-prompt-with-loop-md).
 
 <Note>
-  Di Bedrock, Vertex AI, dan Microsoft Foundry, `/loop` tanpa prompt mencetak pesan penggunaan daripada memulai loop pemeliharaan.
+  Prompt pemeliharaan bawaan tidak tersedia untuk semua orang namun, dan tidak didukung di Bedrock, Vertex AI, atau Microsoft Foundry. Di mana tidak aktif, `/loop` tanpa prompt mencetak pesan penggunaan sebagai gantinya.
 </Note>
 
 ### Sesuaikan prompt default dengan loop.md
@@ -117,6 +117,10 @@ quiet, say so in one line.
 ```
 
 Edit ke `loop.md` berlaku pada iterasi berikutnya, jadi Anda dapat menyempurnakan instruksi saat loop berjalan. Ketika tidak ada `loop.md` yang ada di lokasi mana pun, loop kembali ke prompt pemeliharaan bawaan. Jaga file tetap ringkas: konten di luar 25.000 byte dipotong.
+
+<Note>
+  `loop.md` mengikuti ketersediaan yang sama dengan [prompt pemeliharaan bawaan](#run-the-built-in-maintenance-prompt). Di mana prompt pemeliharaan tidak aktif, `/loop` tanpa prompt mencetak pesan penggunaan dan file tidak dibaca.
+</Note>
 
 ### Hentikan loop
 

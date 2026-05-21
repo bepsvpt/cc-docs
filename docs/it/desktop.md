@@ -51,7 +51,7 @@ Dai a Claude il contesto giusto, controlla quanto fa da solo e rivedi cosa ha ca
 
 ### Usa la casella del prompt
 
-Digita quello che vuoi che Claude faccia e premi **Invio** per inviare. Claude legge i file del tuo progetto, apporta modifiche ed esegue comandi in base alla tua [modalità di autorizzazione](#choose-a-permission-mode). Puoi interrompere Claude in qualsiasi momento: fai clic sul pulsante di arresto o digita la tua correzione e premi **Invio**. Claude smette di fare quello che sta facendo e si adatta in base al tuo input.
+Digita quello che vuoi che Claude faccia e premi **Invio** per inviare. Claude legge i file del tuo progetto, apporta modifiche ed esegue comandi in base alla tua [modalità di autorizzazione](#choose-a-permission-mode). Puoi interrompere Claude in qualsiasi momento: fai clic sul pulsante di arresto per interrompere immediatamente, oppure digita una correzione e premi **Invio** per inviarla senza interrompere l'azione in corso. Claude legge la correzione non appena l'azione corrente si completa e si adatta prima del suo passo successivo.
 
 Il pulsante **+** accanto alla casella del prompt ti dà accesso agli allegati di file, [skills](#use-skills), [connettori](#connect-external-tools) e [plugin](#install-plugins).
 
@@ -90,7 +90,7 @@ Gli amministratori aziendali possono limitare quali modalità di autorizzazione 
 
 ### Anteprima della tua app
 
-Claude può avviare un server di sviluppo e aprire un browser incorporato per verificare le sue modifiche. Questo funziona per app web frontend così come per server backend: Claude può testare endpoint API, visualizzare log del server e iterare su problemi che trova. Nella maggior parte dei casi, Claude avvia il server automaticamente dopo aver modificato i file del progetto. Puoi anche chiedere a Claude di visualizzare un'anteprima in qualsiasi momento. Per impostazione predefinita, Claude [verifica automaticamente](#auto-verify-changes) le modifiche dopo ogni edit.
+Claude può avviare un server di sviluppo e aprire un browser incorporato per verificare le sue modifiche. Questo funziona per app web frontend così come per server backend: Claude può testare endpoint API, visualizzare log del server e iterare su problemi che trova. Nella maggior parte dei casi, Claude avvia il server automaticamente dopo aver modificato i file del progetto. Puoi anche chiedere a Claude di visualizzare un'anteprima in qualsiasi momento. Per impostazione predefinita, Claude [verifica automaticamente](#auto-verify-changes) le modifiche dopo ogni modifica.
 
 Il pannello di anteprima può anche aprire file HTML statici, PDF, immagini e video dal tuo progetto. Fai clic su un percorso HTML, PDF, immagine o video nella chat per aprirlo in anteprima.
 
@@ -642,10 +642,10 @@ Per il riferimento completo della configurazione aziendale, vedi la [guida alla 
 
 Se usi già la CLI di Claude Code, Desktop esegue lo stesso motore sottostante con un'interfaccia grafica. Puoi eseguire entrambi contemporaneamente sulla stessa macchina, anche sullo stesso progetto. Ognuno mantiene una storia di sessione separata, ma condividono configurazione e memoria del progetto tramite file CLAUDE.md.
 
-Per spostare una sessione CLI in Desktop, esegui `/desktop` nel terminale. Claude salva la tua sessione e l'apre nell'app desktop, quindi esce dalla CLI. Questo comando è disponibile solo su macOS e Windows.
+Per spostare una sessione CLI in Desktop, esegui `/desktop` nel terminale. Claude salva la tua sessione e l'apre nell'app desktop, quindi esce dalla CLI. Questo comando è disponibile su macOS e Windows quando sei connesso con un abbonamento Claude. Non è disponibile con autenticazione tramite chiave API o su Bedrock, Vertex o Foundry.
 
 <Tip>
-  Quando usare Desktop vs CLI: usa Desktop quando vuoi gestire sessioni parallele in una finestra, organizzare pannelli uno accanto all'altro, o rivedere le modifiche visivamente. Usa la CLI quando hai bisogno di scripting, automazione o preferisci un flusso di lavoro di terminale.
+  Quando usare Desktop vs CLI: usa Desktop quando vuoi gestire sessioni parallele in una finestra, organizzare pannelli uno accanto all'altro, o rivedere le modifiche visivamente. Usa la CLI quando hai bisogno di scripting, automazione, o preferisci un flusso di lavoro di terminale.
 </Tip>
 
 ### Equivalenti dei flag CLI

@@ -244,6 +244,7 @@ Claude Code 會監視您的設定檔案，並在它們變更時重新載入它�
 | `sshConfigs`                      | 要在[桌面](/zh-TW/desktop#pre-configure-ssh-connections-for-your-team)環境下拉式清單中顯示的 SSH 連線。每個項目需要 `id`、`name` 和 `sshHost`；`sshPort`、`sshIdentityFile` 和 `startDirectory` 是選用的。在 managed 設定中設定時，連線對使用者是唯讀的。僅從 managed 和使用者設定讀取                                                                                                                        | `[{"id": "dev-vm", "name": "Dev VM", "sshHost": "user@dev.example.com"}]`                                                     |
 | `statusLine`                      | 設定自訂狀態行以顯示內容。請參閱 [`statusLine` 文件](/zh-TW/statusline)                                                                                                                                                                                                                                                                                          | `{"type": "command", "command": "~/.claude/statusline.sh"}`                                                                   |
 | `strictKnownMarketplaces`         | （Managed 設定僅限）plugin marketplaces 白名單。未定義 = 無限制，空陣列 = 鎖定。在 marketplace 新增和 plugin 安裝、更新、重新整理和自動更新時強制執行，因此在設定政策之前新增的 marketplace 無法用於擷取 plugins。請參閱 [Managed marketplace 限制](/zh-TW/plugin-marketplaces#managed-marketplace-restrictions)                                                                                                       | `[{ "source": "github", "repo": "acme-corp/plugins" }]`                                                                       |
+| `strictPluginOnlyCustomization`   | （Managed 設定僅限）阻止 skills、agents、hooks 和 MCP servers 來自使用者和專案來源，因此它們只能來自 plugins 或 managed 設定。`true` 鎖定所有四個表面；陣列僅鎖定命名的表面。請參閱 [`strictPluginOnlyCustomization`](#strictpluginonlycustomization)                                                                                                                                                   | `["skills", "hooks"]`                                                                                                         |
 | `syntaxHighlightingDisabled`      | 停用 diffs、程式碼區塊和檔案預覽中的語法醒目提示                                                                                                                                                                                                                                                                                                                    | `true`                                                                                                                        |
 | `teammateMode`                    | [agent team](/zh-TW/agent-teams) 隊友的顯示方式：`auto`（在 tmux 或 iTerm2 中選擇分割窗格，否則為進程內）、`in-process` 或 `tmux`。`--teammate-mode` 會覆蓋此設定以進行一個工作階段。請參閱[選擇顯示模式](/zh-TW/agent-teams#choose-a-display-mode)                                                                                                                                                  | `"in-process"`                                                                                                                |
 | `terminalProgressBarEnabled`      | 在支援的終端機中顯示終端機進度條：ConEmu、Ghostty 1.2.0+ 和 iTerm2 3.6.6+。預設：`true`。在 `/config` 中顯示為**終端機進度條**                                                                                                                                                                                                                                                    | `false`                                                                                                                       |
@@ -959,6 +960,33 @@ Marketplace 來源必須**完全符合**才能允許使用者的新增。對於�
 * Managed 設定具有最高優先順序，無法被覆蓋
 
 請參閱 [Managed marketplace 限制](/zh-TW/plugin-marketplaces#managed-marketplace-restrictions)以了解面向使用者的文件。
+
+#### `strictPluginOnlyCustomization`
+
+**Managed 設定僅限**：阻止 skills、agents、hooks 和 MCP servers 來自使用者和專案來源，因此它們只能來自 plugins 或 managed 設定。將其與 `strictKnownMarketplaces` 結合以控制完整的自訂供應鏈：marketplace 白名單控制使用者可以安裝哪些 plugins，此設定阻止所有不來自 plugin 或 managed 設定的內容。
+
+<Note>
+  `strictPluginOnlyCustomization` 需要 Claude Code v2.1.82 或更新版本。較早的版本會忽略該鍵並繼續載入使用者和專案自訂，因此鎖定在用戶端更新之前不會強制執行。
+</Note>
+
+該值要麼是 `true` 以鎖定所有四個表面，要麼是命名要鎖定的表面的陣列：
+
+```json theme={null}
+{
+  "strictPluginOnlyCustomization": ["skills", "hooks"]
+}
+```
+
+對於每個鎖定的表面，Claude Code 會跳過使用者層級和專案層級的來源，並僅載入 plugin 提供的和 managed 來源：
+
+| 表面       | 鎖定時被阻止                                    | 仍然載入                                                                                  |
+| :------- | :---------------------------------------- | :------------------------------------------------------------------------------------ |
+| `skills` | `~/.claude/skills/`、`.claude/skills/`     | Plugin skills、bundled skills、managed 政策目錄中的 skills                                    |
+| `agents` | `~/.claude/agents/`、`.claude/agents/`     | Plugin agents、內建 agents、managed 政策目錄中的 agents                                         |
+| `hooks`  | 使用者、專案和本機 `settings.json` 中的 Hooks        | Plugin hooks、managed 設定中的 hooks                                                       |
+| `mcp`    | `~/.claude.json` 和 `.mcp.json` 中的 Servers | Plugin MCP servers、[`managed-mcp.json`](/zh-TW/mcp#managed-mcp-configuration) servers |
+
+Claude Code 版本不識別的表面名稱會被忽略而不是導致設定檔案失敗，因此您可以在所有用戶端更新之前新增新的表面名稱。
 
 ### 管理 plugins
 

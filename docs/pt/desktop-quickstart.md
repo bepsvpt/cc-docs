@@ -63,7 +63,7 @@ Com a aba Code aberta, escolha um projeto e dê a Claude algo para fazer.
     Você também pode selecionar:
 
     * **Remote**: Execute sessões na infraestrutura em nuvem da Anthropic que continuam mesmo se você fechar o aplicativo. As sessões remotas usam a mesma infraestrutura que [Claude Code na web](/pt/claude-code-on-the-web).
-    * **SSH**: Conecte-se a uma máquina remota via SSH (seus próprios servidores, VMs em nuvem ou dev containers). Claude Code deve estar instalado na máquina remota.
+    * **SSH**: Conecte-se a uma máquina remota via SSH, como seus próprios servidores, VMs em nuvem ou dev containers. O Desktop instala Claude Code na máquina remota automaticamente na primeira vez que você se conecta.
   </Step>
 
   <Step title="Escolha um modelo">
@@ -95,7 +95,7 @@ Com a aba Code aberta, escolha um projeto e dê a Claude algo para fazer.
 
 Você fez sua primeira edição. Para a referência completa sobre tudo que o Desktop pode fazer, consulte [Usar Claude Code Desktop](/pt/desktop). Aqui estão algumas coisas para tentar a seguir.
 
-**Interrompa e direcione.** Você pode interromper Claude a qualquer momento. Se estiver seguindo o caminho errado, clique no botão parar ou digite sua correção e pressione **Enter**. Claude para o que está fazendo e se ajusta com base em sua entrada. Você não precisa esperar que termine ou começar novamente.
+**Interrompa e direcione.** Você pode redirecionar Claude a qualquer momento. Clique no botão parar para interromper imediatamente, ou digite uma correção e pressione **Enter** para enviá-la sem parar a ação em execução. De qualquer forma, você não precisa esperar que termine ou começar novamente.
 
 **Dê a Claude mais contexto.** Digite `@filename` na caixa de prompt para puxar um arquivo específico para a conversa, anexe imagens e PDFs usando o botão de anexo, ou arraste e solte arquivos diretamente no prompt. Quanto mais contexto Claude tiver, melhores serão os resultados. Consulte [Adicionar arquivos e contexto](/pt/desktop#add-files-and-context-to-prompts).
 

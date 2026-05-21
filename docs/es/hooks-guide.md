@@ -541,22 +541,22 @@ INPUT=$(cat)
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
 
 if echo "$COMMAND" | grep -q "drop table"; then
-  echo "Blocked: dropping tables is not allowed" >&2  # stderr se convierte en retroalimentación de Claude
-  exit 2 # exit 2 = bloquea la acción
+  echo "Blocked: dropping tables is not allowed" >&2  // stderr se convierte en retroalimentación de Claude
+  exit 2 // exit 2 = bloquea la acción
 fi
 
-exit 0  # exit 0 = permite que proceda
+exit 0  // exit 0 = no hay objeción; el flujo de permiso normal se aplica
 ```
 
 El código de salida determina qué sucede a continuación:
 
-* **Exit 0**: la acción procede. Para hooks `UserPromptSubmit`, `UserPromptExpansion`, y `SessionStart`, cualquier cosa que escribas en stdout se añade al contexto de Claude.
+* **Exit 0**: el hook reporta sin objeción y la acción procede normalmente. Para un hook `PreToolUse` esto no aprueba la llamada a herramienta: el [flujo de permiso](/es/permissions) normal aún se aplica. Para hooks `UserPromptSubmit`, `UserPromptExpansion`, y `SessionStart`, cualquier cosa que escribas en stdout se añade al contexto de Claude.
 * **Exit 2**: la acción se bloquea. Escribe una razón en stderr, y Claude la recibe como retroalimentación para que pueda ajustar. Algunos eventos no pueden ser bloqueados: para `SessionStart`, `Setup`, `Notification`, y otros, exit 2 muestra stderr al usuario y la ejecución continúa. Consulta [comportamiento del código de salida 2 por evento](/es/hooks#exit-code-2-behavior-per-event) para la lista completa.
 * **Cualquier otro código de salida**: la acción procede. La transcripción muestra un aviso `<hook name> hook error` seguido de la primera línea de stderr; el stderr completo va al [registro de depuración](/es/hooks#debug-hooks).
 
 #### Salida JSON estructurada
 
-Los códigos de salida te dan dos opciones: permitir o bloquear. Para más control, sal con 0 e imprime un objeto JSON a stdout en su lugar.
+Los códigos de salida solo te permiten bloquear o permanecer en silencio. Para más control, sal con 0 e imprime un objeto JSON a stdout en su lugar.
 
 <Note>
   Usa exit 2 para bloquear con un mensaje de stderr, o exit 0 con JSON para control estructurado. No los mezcles: Claude Code ignora JSON cuando sales con 2.

@@ -51,7 +51,7 @@ For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/
 
 ### 使用提示框
 
-輸入您想讓 Claude 執行的操作，然後按 **Enter** 傳送。Claude 會讀取您的專案檔案、進行變更，並根據您的[權限模式](#choose-a-permission-mode)執行命令。您可以隨時中斷 Claude：點擊停止按鈕或輸入您的更正並按 **Enter**。Claude 會停止正在執行的操作並根據您的輸入進行調整。
+輸入您想讓 Claude 執行的操作，然後按 **Enter** 傳送。Claude 會讀取您的專案檔案、進行變更，並根據您的[權限模式](#choose-a-permission-mode)執行命令。您可以隨時中斷 Claude：點擊停止按鈕以立即中斷，或輸入更正並按 **Enter** 傳送，而不停止正在執行的操作。Claude 會在目前操作完成後立即讀取更正，並在下一步之前進行調整。
 
 提示框旁的 **+** 按鈕可讓您存取檔案附件、[skills](#use-skills)、[連接器](#connect-external-tools)和[plugins](#install-plugins)。
 
@@ -642,7 +642,7 @@ Desktop 可以透過企業部署工具分發：
 
 如果您已經使用 Claude Code CLI，Desktop 執行相同的基礎引擎，具有圖形介面。您可以在同一機器上同時執行兩者，甚至在同一專案上執行。每個都維護單獨的會話歷史記錄，但它們透過 CLAUDE.md 檔案共用配置和專案記憶。
 
-若要將 CLI 會話移至 Desktop，請在終端機中執行 `/desktop`。Claude 儲存您的會話並在桌面應用程式中開啟它，然後退出 CLI。此命令僅在 macOS 和 Windows 上可用。
+若要將 CLI 會話移至 Desktop，請在終端機中執行 `/desktop`。Claude 儲存您的會話並在桌面應用程式中開啟它，然後退出 CLI。此命令在 macOS 和 Windows 上可用，當您使用 Claude 訂閱登入時。它不適用於 API 金鑰驗證或 Bedrock、Vertex 或 Foundry。
 
 <Tip>
   何時使用 Desktop 與 CLI：當您想要在一個視窗中管理並行會話、並排排列窗格或視覺化檢查變更時，使用 Desktop。當您需要指令碼、自動化或偏好終端機工作流程時，使用 CLI。

@@ -197,7 +197,10 @@ Quando il primo tentativo non è giusto, non ricominciare da capo. Itera.
 
 #### Interrompi e indirizza
 
-Puoi interrompere Claude in qualsiasi momento. Se sta andando nella direzione sbagliata, digita semplicemente la tua correzione e premi Invio. Claude smetterà quello che sta facendo e adatterà il suo approccio in base al tuo input. Non devi aspettare che finisca o ricominciare da capo.
+Puoi reindirizzare Claude in qualsiasi momento senza aspettare che il turno finisca o ricominciare da capo:
+
+* **Premi `Esc`** per fermare Claude immediatamente. La chiamata dello strumento in esecuzione viene annullata e Claude attende la tua prossima istruzione.
+* **Digita una correzione e premi `Invio`** per inviarla senza fermare lo strumento in esecuzione. Claude la legge non appena l'azione corrente si completa e si adatta prima di decidere il suo prossimo passo.
 
 ### Sii specifico all'inizio
 

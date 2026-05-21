@@ -945,21 +945,23 @@ Sowohl `remove` als auch `update` schlagen fehl, wenn sie gegen einen Seed-verwa
 
 * Überprüfen Sie, dass die Marktplatz-URL erreichbar ist
 * Überprüfen Sie, dass `.claude-plugin/marketplace.json` im angegebenen Pfad vorhanden ist
-* Stellen Sie sicher, dass die JSON-Syntax gültig ist und das Frontmatter wohlgeformt ist, indem Sie `claude plugin validate` oder `/plugin validate` verwenden
+* Stellen Sie sicher, dass die JSON-Syntax gültig ist, indem Sie `claude plugin validate` oder `/plugin validate` verwenden. Um Skill-, Agent- und Befehl-Frontmatter zu überprüfen, führen Sie den Befehl für jedes Plugin-Verzeichnis aus
 * Bestätigen Sie für private Repositories, dass Sie Zugriffsberechtigung haben
 
 ### Marktplatz-Validierungsfehler
 
-Führen Sie `claude plugin validate .` oder `/plugin validate .` aus Ihrem Marktplatz-Verzeichnis aus, um auf Probleme zu überprüfen. Der Validator überprüft `plugin.json`, Skill/Agent/Befehl-Frontmatter und `hooks/hooks.json` auf Syntax- und Schema-Fehler. Häufige Fehler:
+Führen Sie `claude plugin validate .` oder `/plugin validate .` aus Ihrem Marktplatz-Verzeichnis aus, um auf Probleme zu überprüfen. Wenn der Validator auf ein Marktplatz-Verzeichnis verweist, überprüft er nur `marketplace.json`: Schema, doppelte Plugin-Namen, Quellpfad-Traversal und Versionskonflikte gegen jede referenzierte `plugin.json`.
 
-| Fehler                                            | Ursache                                                   | Lösung                                                                                                           |
-| :------------------------------------------------ | :-------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
-| `File not found: .claude-plugin/marketplace.json` | Fehlendes Manifest                                        | Erstellen Sie `.claude-plugin/marketplace.json` mit erforderlichen Feldern                                       |
-| `Invalid JSON syntax: Unexpected token...`        | JSON-Syntaxfehler in marketplace.json                     | Überprüfen Sie auf fehlende Kommas, zusätzliche Kommas oder nicht zitierte Strings                               |
-| `Duplicate plugin name "x" found in marketplace`  | Zwei Plugins teilen denselben Namen                       | Geben Sie jedem Plugin einen eindeutigen `name`-Wert                                                             |
-| `plugins[0].source: Path contains ".."`           | Quellpfad enthält `..`                                    | Verwenden Sie Pfade relativ zum Marktplatz-Root ohne `..`. Siehe [Relative Pfade](#relative-paths)               |
-| `YAML frontmatter failed to parse: ...`           | Ungültiges YAML in einer Skill-, Agent- oder Befehlsdatei | Beheben Sie die YAML-Syntax im Frontmatter-Block. Zur Laufzeit wird diese Datei ohne Metadaten geladen.          |
-| `Invalid JSON syntax: ...` (hooks.json)           | Malformed `hooks/hooks.json`                              | Beheben Sie die JSON-Syntax. Eine malformed `hooks/hooks.json` verhindert, dass das gesamte Plugin geladen wird. |
+Um die `plugin.json` eines einzelnen Plugins und seine Skill-, Agent-, Befehl- und Hook-Dateien zu validieren, führen Sie den Befehl für das Plugin-Verzeichnis selbst aus, zum Beispiel `claude plugin validate ./plugins/my-plugin`. Häufige Fehler:
+
+| Fehler                                            | Ursache                                                   | Lösung                                                                                                                                                                             |
+| :------------------------------------------------ | :-------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `File not found: .claude-plugin/marketplace.json` | Fehlendes Manifest                                        | Erstellen Sie `.claude-plugin/marketplace.json` mit erforderlichen Feldern                                                                                                         |
+| `Invalid JSON syntax: Unexpected token...`        | JSON-Syntaxfehler in marketplace.json                     | Überprüfen Sie auf fehlende Kommas, zusätzliche Kommas oder nicht zitierte Strings                                                                                                 |
+| `Duplicate plugin name "x" found in marketplace`  | Zwei Plugins teilen denselben Namen                       | Geben Sie jedem Plugin einen eindeutigen `name`-Wert                                                                                                                               |
+| `plugins[0].source: Path contains ".."`           | Quellpfad enthält `..`                                    | Verwenden Sie Pfade relativ zum Marktplatz-Root ohne `..`. Siehe [Relative Pfade](#relative-paths)                                                                                 |
+| `YAML frontmatter failed to parse: ...`           | Ungültiges YAML in einer Skill-, Agent- oder Befehlsdatei | Beheben Sie die YAML-Syntax im Frontmatter-Block. Zur Laufzeit wird diese Datei ohne Metadaten geladen. Wird nur bei der Validierung eines Plugin-Verzeichnisses gemeldet          |
+| `Invalid JSON syntax: ...` (hooks.json)           | Malformed `hooks/hooks.json`                              | Beheben Sie die JSON-Syntax. Eine malformed `hooks/hooks.json` verhindert, dass das gesamte Plugin geladen wird. Wird nur bei der Validierung eines Plugin-Verzeichnisses gemeldet |
 
 **Warnungen** (nicht blockierend):
 

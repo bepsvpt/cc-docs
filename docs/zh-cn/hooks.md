@@ -96,7 +96,7 @@ if echo "$COMMAND" | grep -q 'rm -rf'; then
     }
   }'
 else
-  exit 0  # allow the command
+  exit 0  # no decision; normal permission flow applies
 fi
 ```
 
@@ -136,7 +136,7 @@ fi
     }
     ```
 
-    如果命令是更安全的 `rm` 变体，如 `rm file.txt`，脚本会改为执行 `exit 0`，这告诉 Claude Code 允许工具调用而无需进一步操作。
+    如果命令是更安全的 `rm` 变体，如 `rm file.txt`，脚本会改为执行 `exit 0`。退出代码 0 且无输出意味着 hook 没有决定要报告，因此工具调用继续通过正常的[权限流程](/zh-CN/permissions)。hook 可以拒绝调用，但保持沉默不会批准它。
   </Step>
 
   <Step title="Claude Code 对结果采取行动">
@@ -622,7 +622,7 @@ if [[ "$command" == rm* ]]; then
   exit 2  # 阻止错误：工具调用被阻止
 fi
 
-exit 0  # 成功：工具调用继续
+exit 0  # 无决定：正常权限流程适用
 ```
 
 <Warning>
@@ -699,7 +699,7 @@ JSON 对象支持三种字段：
 | :----------------- | :------ | :----------------------------------------------------------------------------------------------------------------------------------------- |
 | `continue`         | `true`  | 如果为 `false`，Claude 在 hook 运行后完全停止处理。优先于任何事件特定的决定字段                                                                                         |
 | `stopReason`       | 无       | 当 `continue` 为 `false` 时向用户显示的消息。不向 Claude 显示                                                                                              |
-| `suppressOutput`   | `false` | 如果为 `true`，从调试日志中隐藏 stdout                                                                                                                 |
+| `suppressOutput`   | `false` | 如果为 `true`，从成绩单中隐藏 hook 的 stdout。Stdout 仍然出现在调试日志中                                                                                         |
 | `systemMessage`    | 无       | 向用户显示的警告消息                                                                                                                                 |
 | `terminalSequence` | 无       | Claude Code 代表您发出的终端转义序列，例如桌面通知、窗口标题或响铃。限制为 OSC `0`/`1`/`2`/`9`/`99`/`777` 和 BEL。如果值包含允许列表之外的任何内容，该字段将被忽略。使用此而不是写入 `/dev/tty`，这对 hooks 不可用 |
 
@@ -732,7 +732,7 @@ Hooks 运行时没有控制终端，因此直接向 `/dev/tty` 写入转义序�
 # Notification hook：当 Claude Code 需要注意时 ping 桌面。
 input=$(cat)
 title="Claude Code'
-body=$(jq -r '.message // 'Needs your attention'' <<<'$input')
+body=$(jq -r '.message // "Needs your attention"' <<<"$input")
 seq=$(printf '\033]777;notify;%s;%s\007' "$title" "$body")
 jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 ```
@@ -782,17 +782,18 @@ jq -nc --arg seq "$seq" '{terminalSequence: $seq}'
 
 并非每个事件都支持通过 JSON 阻止或控制行为。支持的事件各自使用不同的字段集来表达该决定。在编写 hook 之前，使用此表作为快速参考：
 
-| 事件                                                                                                                          | 决定模式                    | 关键字段                                                                                               |
-| :-------------------------------------------------------------------------------------------------------------------------- | :---------------------- | :------------------------------------------------------------------------------------------------- |
-| UserPromptSubmit、UserPromptExpansion、PostToolUse、PostToolUseFailure、PostToolBatch、Stop、SubagentStop、ConfigChange、PreCompact | 顶级 `decision`           | `decision: "block"`、`reason`                                                                       |
-| TeammateIdle、TaskCreated、TaskCompleted                                                                                      | 退出代码或 `continue: false` | 退出代码 2 使用 stderr 反馈阻止操作。JSON `{"continue": false, "stopReason": "..."}` 也会完全停止队友，匹配 `Stop` hook 行为 |
-| PreToolUse                                                                                                                  | `hookSpecificOutput`    | `permissionDecision`（allow/deny/ask/defer）、`permissionDecisionReason`                              |
-| PermissionRequest                                                                                                           | `hookSpecificOutput`    | `decision.behavior`（allow/deny）                                                                    |
-| PermissionDenied                                                                                                            | `hookSpecificOutput`    | `retry: true` 告诉模型它可能重试被拒绝的工具调用                                                                    |
-| WorktreeCreate                                                                                                              | 路径返回                    | 命令 hook 在 stdout 上打印路径；HTTP hook 通过 `hookSpecificOutput.worktreePath` 返回。Hook 失败或缺少路径会导致创建失败       |
-| Elicitation                                                                                                                 | `hookSpecificOutput`    | `action`（accept/decline/cancel）、`content`（form 字段值用于 accept）                                       |
-| ElicitationResult                                                                                                           | `hookSpecificOutput`    | `action`（accept/decline/cancel）、`content`（form 字段值覆盖）                                              |
-| WorktreeRemove、Notification、SessionEnd、PostCompact、InstructionsLoaded、StopFailure、CwdChanged、FileChanged                    | 无                       | 无决定控制。用于日志记录或清理等副作用                                                                                |
+| 事件                                                                                                                          | 决定模式                    | 关键字段                                                                                                                                                 |
+| :-------------------------------------------------------------------------------------------------------------------------- | :---------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
+| UserPromptSubmit、UserPromptExpansion、PostToolUse、PostToolUseFailure、PostToolBatch、Stop、SubagentStop、ConfigChange、PreCompact | 顶级 `decision`           | `decision: "block"`、`reason`                                                                                                                         |
+| TeammateIdle、TaskCreated、TaskCompleted                                                                                      | 退出代码或 `continue: false` | 退出代码 2 使用 stderr 反馈阻止操作。JSON `{"continue": false, "stopReason": "..."}` 也会完全停止队友，匹配 `Stop` hook 行为                                                   |
+| PreToolUse                                                                                                                  | `hookSpecificOutput`    | `permissionDecision`（allow/deny/ask/defer）、`permissionDecisionReason`                                                                                |
+| PermissionRequest                                                                                                           | `hookSpecificOutput`    | `decision.behavior`（allow/deny）                                                                                                                      |
+| PermissionDenied                                                                                                            | `hookSpecificOutput`    | `retry: true` 告诉模型它可能重试被拒绝的工具调用                                                                                                                      |
+| WorktreeCreate                                                                                                              | 路径返回                    | 命令 hook 在 stdout 上打印路径；HTTP hook 通过 `hookSpecificOutput.worktreePath` 返回。Hook 失败或缺少路径会导致创建失败                                                         |
+| Elicitation                                                                                                                 | `hookSpecificOutput`    | `action`（accept/decline/cancel）、`content`（form 字段值用于 accept）                                                                                         |
+| ElicitationResult                                                                                                           | `hookSpecificOutput`    | `action`（accept/decline/cancel）、`content`（form 字段值覆盖）                                                                                                |
+| SessionStart、Setup、SubagentStart                                                                                            | 仅上下文                    | `hookSpecificOutput.additionalContext` 为 Claude 添加上下文。SessionStart 也接受[`initialUserMessage` 和 `watchPaths`](#sessionstart-decision-control)。无阻止或决定控制 |
+| WorktreeRemove、Notification、SessionEnd、PostCompact、InstructionsLoaded、StopFailure、CwdChanged、FileChanged                    | 无                       | 无决定控制。用于日志记录或清理等副作用                                                                                                                                  |
 
 以下是每种模式的实际示例：
 
@@ -881,9 +882,11 @@ SessionStart 在每个会话上运行，因此保持这些 hooks 快速。仅支
 
 您的 hook 脚本打印到 stdout 的任何文本都作为 Claude 的上下文添加。除了所有 hooks 可用的[JSON 输出字段](#json-output)外，您还可以返回这些事件特定字段：
 
-| 字段                  | 描述                                                                                                        |
-| :------------------ | :-------------------------------------------------------------------------------------------------------- |
-| `additionalContext` | 添加到 Claude 上下文开始处的字符串，在第一个提示之前。请参阅[为 Claude 添加上下文](#add-context-for-claude)了解文本如何传递、放入什么内容以及恢复的会话如何处理过去的值 |
+| 字段                   | 描述                                                                                                                                |
+| :------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
+| `additionalContext`  | 添加到 Claude 上下文开始处的字符串，在第一个提示之前。请参阅[为 Claude 添加上下文](#add-context-for-claude)了解文本如何传递、放入什么内容以及恢复的会话如何处理过去的值                         |
+| `initialUserMessage` | 用作会话第一个用户消息的字符串。适用于[非交互模式](/zh-CN/headless)（`-p`），其中即使未提供提示，它也成为第一个轮次。如果提供了提示，它作为下一个轮次跟随。与 `additionalContext` 不同，后者附加到现有轮次，这创建轮次 |
+| `watchPaths`         | 绝对路径数组，用于在此会话期间监视[FileChanged](#filechanged)事件                                                                                    |
 
 ```json theme={null}
 {
@@ -1056,12 +1059,13 @@ InstructionsLoaded hooks 没有决定控制。它们无法阻止或修改指令�
 
 要阻止提示，返回一个 JSON 对象，其中 `decision` 设置为 `"block"`：
 
-| 字段                  | 描述                                                                       |
-| :------------------ | :----------------------------------------------------------------------- |
-| `decision`          | `"block"` 防止提示被处理并从上下文中删除。省略以允许提示继续                                      |
-| `reason`            | 当 `decision` 为 `"block"` 时向用户显示。不添加到上下文                                  |
-| `additionalContext` | 添加到 Claude 上下文的字符串，与提交的提示一起。请参阅[为 Claude 添加上下文](#add-context-for-claude) |
-| `sessionTitle`      | 设置会话标题。使用此根据提示内容自动命名会话                                                   |
+| 字段                       | 描述                                                                       |
+| :----------------------- | :----------------------------------------------------------------------- |
+| `decision`               | `"block"` 防止提示被处理并从上下文中删除。省略以允许提示继续                                      |
+| `reason`                 | 当 `decision` 为 `"block"` 时向用户显示。不添加到上下文                                  |
+| `additionalContext`      | 添加到 Claude 上下文的字符串，与提交的提示一起。请参阅[为 Claude 添加上下文](#add-context-for-claude) |
+| `sessionTitle`           | 设置会话标题。使用此根据提示内容自动命名会话                                                   |
+| `suppressOriginalPrompt` | 如果 `true` 当 `decision` 为 `"block"` 时，从向用户显示的阻止消息中省略原始提示文本                |
 
 ```json theme={null}
 {
@@ -1410,7 +1414,7 @@ PermissionRequest hooks 接收 `tool_name` 和 `tool_input` 字段，如 PreTool
 | `addRules`          | `rules`、`behavior`、`destination` | 添加权限规则。`rules` 是 `{toolName, ruleContent?}` 对象的数组。省略 `ruleContent` 以匹配整个工具。`behavior` 是 `"allow"`、`"deny"` 或 `"ask"` |
 | `replaceRules`      | `rules`、`behavior`、`destination` | 用提供的 `rules` 替换 `destination` 处给定 `behavior` 的所有规则                                                                   |
 | `removeRules`       | `rules`、`behavior`、`destination` | 移除给定 `behavior` 的匹配规则                                                                                                |
-| `setMode`           | `mode`、`destination`             | 更改权限模式。有效模式为 `default`、`acceptEdits`、`dontAsk`、`bypassPermissions` 和 `plan`                                          |
+| `setMode`           | `mode`、`destination`             | 更改权限模式。有效模式为 `default`、`auto`、`acceptEdits`、`dontAsk`、`bypassPermissions` 和 `plan`                                   |
 | `addDirectories`    | `directories`、`destination`      | 添加工作目录。`directories` 是路径字符串的数组                                                                                       |
 | `removeDirectories` | `directories`、`destination`      | 移除工作目录                                                                                                               |
 
@@ -1697,7 +1701,7 @@ PermissionDenied hooks 可以告诉模型它可能重试被拒绝的工具调用
   "transcript_path": "/Users/.../.claude/projects/.../00893aaf-19fa-41d2-8238-13269b9b3ca0.jsonl",
   "cwd": "/Users/...",
   "hook_event_name": "Notification",
-  "message": "Claude needs your permission to use Bash",
+  "message": "Claude needs your permission",
   "title": "Permission needed",
   "notification_type": "permission_prompt"
 }
@@ -1907,7 +1911,7 @@ exit 0
 | `tool`        | MCP 工具名称。仅对 `monitor` 和 `MCP task` 任务存在                                                                                                    |
 | `name`        | 工作流名称。仅对 `workflow` 任务存在                                                                                                                   |
 
-`session_crons` 中的每个条目描述一个会话范围的计划唤醒，来自 `CronCreate` 和 `/loop`：
+`session_crons` 中的每个条目描述一个会话范围的计划唤醒，来自 `CronCreate`、`ScheduleWakeup` 和 `/loop`：
 
 | 字段          | 描述                                                   |
 | :---------- | :--------------------------------------------------- |
@@ -2064,7 +2068,8 @@ ConfigChange hooks 对设置文件、托管策略设置和 skill 文件的更改
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/audit-config-change.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/audit-config-change.sh",
+            "args": []
           }
         ]
       }
@@ -2488,6 +2493,7 @@ CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
 
 支持所有五种 hook 类型（`command`、`http`、`mcp_tool`、`prompt` 和 `agent`）的事件：
 
+* `PermissionDenied`
 * `PermissionRequest`
 * `PostToolBatch`
 * `PostToolUse`
@@ -2497,6 +2503,7 @@ CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
 * `SubagentStop`
 * `TaskCompleted`
 * `TaskCreated`
+* `TeammateIdle`
 * `UserPromptExpansion`
 * `UserPromptSubmit`
 
@@ -2509,13 +2516,11 @@ CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000 claude
 * `FileChanged`
 * `InstructionsLoaded`
 * `Notification`
-* `PermissionDenied`
 * `PostCompact`
 * `PreCompact`
 * `SessionEnd`
 * `StopFailure`
 * `SubagentStart`
-* `TeammateIdle`
 * `WorktreeCreate`
 * `WorktreeRemove`
 
@@ -2583,7 +2588,9 @@ LLM 必须使用包含以下内容的 JSON 响应：
 * `PostToolUse`：默认情况下转轮结束，原因在聊天中显示为警告行。设置 `continueOnBlock: true` 以将原因反馈给 Claude 并继续转轮
 * `PostToolBatch`、`UserPromptSubmit` 和 `UserPromptExpansion`：转轮结束，原因显示为警告行。这些事件在 `decision: "block"` 上结束转轮，无论 `continue` 如何
 * `PostToolUseFailure`、`TaskCreated` 和 `TaskCompleted`：原因作为工具错误返回给 Claude，类似于 `PreToolUse`
+* `TeammateIdle`：默认情况下队友停止，原因显示为警告行。设置 `continueOnBlock: true` 以将原因反馈给队友并保持其继续工作
 * `PermissionRequest`：`ok: false` 无效。要从 hook 拒绝批准，请使用[命令 hook](#command-hook-fields)，返回 `hookSpecificOutput.decision.behavior: "deny"`
+* `PermissionDenied`：`ok: false` 无效，因为拒绝已经发生。此事件读取的唯一输出是 `hookSpecificOutput.retry`，提示和代理 hooks 无法设置 — 它们在此事件上运行，但其输出被丢弃。使用[命令 hook](#command-hook-fields)返回 `retry`
 
 如果您需要对任何事件进行更精细的控制，请使用[命令 hook](#command-hook-fields)，其中包含[决定控制](#decision-control)中描述的每个事件字段。
 
