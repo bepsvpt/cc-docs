@@ -243,7 +243,7 @@ Claude Code 結合了一個能夠推理您程式碼的模型與[內建工具](/z
   </Tab>
 
   <Tab title="Skills">
-    Skills 是 Claude 工具包中的額外功能。它們可以是參考資料（如 API 風格指南）或可調用的工作流程，您可以使用 `/<name>` 觸發（如 `/deploy`）。Claude Code 附帶[捆綁的 skills](/zh-TW/commands)，如 `/simplify`、`/batch` 和 `/debug`，開箱即用。您也可以創建自己的。Claude 在適當時使用 skills，或者您可以直接調用一個。
+    Skills 是 Claude 工具包中的額外功能。它們可以是參考資料（如 API 風格指南）或可調用的工作流程，您可以使用 `/<name>` 觸發（如 `/deploy`）。Claude Code 附帶[捆綁的 skills](/zh-TW/commands)，如 `/code-review`、`/batch` 和 `/debug`，開箱即用。您也可以創建自己的。Claude 在適當時使用 skills，或者您可以直接調用一個。
 
     **何時：** 取決於 skill 的配置。預設情況下，描述在會話開始時載入，完整內容在使用時載入。對於僅使用者 skills（`disable-model-invocation: true`），在您調用它們之前不會載入任何內容。
 

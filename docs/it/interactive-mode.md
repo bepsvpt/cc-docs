@@ -214,6 +214,7 @@ Claude Code mantiene la cronologia dei comandi per la sessione corrente:
 
 * La cronologia dell'input viene memorizzata per directory di lavoro
 * La cronologia dell'input si ripristina quando eseguite `/clear` per avviare una nuova sessione. La conversazione della sessione precedente viene preservata e può essere ripresa.
+* Inviare lo stesso prompt due volte di seguito registra una voce di cronologia, quindi premere Su passa al prompt distinto precedente
 * Utilizzate i tasti freccia su/giù per navigare (vedere le scorciatoie da tastiera sopra)
 * **Nota**: l'espansione della cronologia (`!`) è disabilitata per impostazione predefinita
 

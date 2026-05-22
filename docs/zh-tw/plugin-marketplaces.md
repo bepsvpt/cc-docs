@@ -161,7 +161,7 @@
 | `plugins` | array  | 可用 plugin 的清單                                                                                             | 請參閱下面          |
 
 <Note>
-  **保留名稱**：以下 marketplace 名稱保留供 Anthropic 官方使用，第三方 marketplace 無法使用：`claude-code-marketplace`、`claude-code-plugins`、`claude-plugins-official`、`anthropic-marketplace`、`anthropic-plugins`、`agent-skills`、`anthropic-agent-skills`、`knowledge-work-plugins`、`life-sciences`。模仿官方 marketplace 的名稱（如 `official-claude-plugins` 或 `anthropic-tools-v2`）也被阻止。
+  **保留名稱**：以下 marketplace 名稱保留供 Anthropic 官方使用，第三方 marketplace 無法使用：`claude-code-marketplace`、`claude-code-plugins`、`claude-plugins-official`、`anthropic-marketplace`、`anthropic-plugins`、`agent-skills`、`anthropic-agent-skills`、`knowledge-work-plugins`、`life-sciences`、`claude-for-legal`、`claude-for-financial-services`、`financial-services-plugins`。模仿官方 marketplace 的名稱（如 `official-claude-plugins` 或 `anthropic-tools-v2`）也被阻止。
 </Note>
 
 ### 擁有者欄位

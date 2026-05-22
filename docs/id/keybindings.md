@@ -149,9 +149,9 @@ Tindakan yang tersedia dalam konteks `Confirmation`:
 
 Tindakan yang tersedia dalam konteks `Confirmation` untuk dialog izin:
 
-| Tindakan                 | Default | Deskripsi               |
-| :----------------------- | :------ | :---------------------- |
-| `permission:toggleDebug` | Ctrl+D  | Alihkan info debug izin |
+| Tindakan                 | Default   | Deskripsi                                                                                                    |
+| :----------------------- | :-------- | :----------------------------------------------------------------------------------------------------------- |
+| `permission:toggleDebug` | (unbound) | Alihkan info debug izin. Default sebelumnya dari Ctrl+D dihapus dalam v2.1.146 karena mengaburkan `app:exit` |
 
 ### Tindakan transkrip
 

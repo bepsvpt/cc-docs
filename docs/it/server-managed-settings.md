@@ -123,7 +123,7 @@ La maggior parte delle [chiavi di impostazioni](/it/settings#available-settings)
 Le impostazioni gestite dal server hanno le seguenti limitazioni:
 
 * Le impostazioni si applicano uniformemente a tutti gli utenti dell'organizzazione. Le configurazioni per gruppo non sono ancora supportate.
-* Le [configurazioni del server MCP](/it/mcp#managed-mcp-configuration) non possono essere distribuite tramite impostazioni gestite dal server.
+* Un file [`managed-mcp.json`](/it/managed-mcp) non può essere distribuito tramite impostazioni gestite dal server. Distribuire invece le chiavi di politica `allowedMcpServers` e `deniedMcpServers` lì.
 * Le impostazioni limitate alle fonti delle politiche a livello del sistema operativo, come `policyHelper` e `wslInheritsWindowsSettings`, non vengono rispettate. Distribuirle invece tramite MDM o un file `managed-settings.json` di sistema.
 
 ## Consegna delle impostazioni

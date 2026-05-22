@@ -243,7 +243,7 @@ Cada característica se carga en diferentes puntos de su sesión. Las pestañas 
   </Tab>
 
   <Tab title="Skills">
-    Las skills son capacidades adicionales en el kit de herramientas de Claude. Pueden ser material de referencia (como una guía de estilo de API) o flujos de trabajo invocables que desencadena con `/<name>` (como `/deploy`). Claude Code incluye [skills incluidas](/es/commands) como `/simplify`, `/batch` y `/debug` que funcionan de inmediato. También puede crear las suyas propias. Claude usa skills cuando es apropiado, o puede invocar una directamente.
+    Las skills son capacidades adicionales en el kit de herramientas de Claude. Pueden ser material de referencia (como una guía de estilo de API) o flujos de trabajo invocables que desencadena con `/<name>` (como `/deploy`). Claude Code incluye [skills incluidas](/es/commands) como `/code-review`, `/batch` y `/debug` que funcionan de inmediato. También puede crear las suyas propias. Claude usa skills cuando es apropiado, o puede invocar una directamente.
 
     **Cuándo:** Depende de la configuración de la skill. Por defecto, las descripciones se cargan al inicio de sesión y el contenido completo se carga cuando se usa. Para skills solo de usuario (`disable-model-invocation: true`), nada se carga hasta que las invoque.
 
@@ -253,7 +253,7 @@ Cada característica se carga en diferentes puntos de su sesión. Las pestañas 
 
     **Costo de contexto:** Bajo hasta que se use. Las skills solo de usuario tienen costo cero hasta que se invoquen.
 
-    **En subagents:** Las skills funcionan de manera diferente en subagents. En lugar de carga bajo demanda, las skills listadas en el campo `skills:` del subagent se precarga completamente en su contexto al iniciar. Los subagents aún pueden descubrir e invocar skills de proyecto, usuario y plugin no listadas a través de la herramienta Skill.
+    **En subagents:** Las skills funcionan de manera diferente en subagents. En lugar de carga bajo demanda, las skills listadas en el campo `skills` del subagent se precarga completamente en su contexto al iniciar. Los subagents aún pueden descubrir e invocar skills de proyecto, usuario y plugin no listadas a través de la herramienta Skill.
 
     <Tip>Use `disable-model-invocation: true` para skills con efectos secundarios. Esto ahorra contexto y asegura que solo usted las desencadene.</Tip>
   </Tab>
@@ -286,7 +286,7 @@ Cada característica se carga en diferentes puntos de su sesión. Las pestañas 
     **Qué se carga:** Contexto fresco y aislado que contiene:
 
     * El prompt del sistema del agente, no el prompt del sistema completo de Claude Code
-    * Contenido completo de skills listadas en el campo `skills:` del agente
+    * Contenido completo de skills listadas en el campo `skills` del agente
     * CLAUDE.md y estado de git, excepto los agentes Explore y Plan integrados [omiten ambos](/es/sub-agents#what-loads-at-startup)
     * Cualquier contexto que el agente principal pase en el prompt
 

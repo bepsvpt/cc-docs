@@ -2,76 +2,71 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Sandboxing
+# Configurar a ferramenta Bash em sandbox
 
-> Aprenda como a ferramenta bash em sandbox do Claude Code fornece isolamento de sistema de arquivos e rede para execução de agentes mais segura e autônoma.
+> Aprenda como a ferramenta Bash em sandbox do Claude Code fornece isolamento de sistema de arquivos e rede para execução de agentes mais segura e autônoma.
 
-## Visão geral
+O sandbox Bash permite que Claude execute a maioria dos comandos shell sem parar para pedir permissão. Em vez de aprovar cada comando, você define quais arquivos e domínios de rede os comandos podem acessar, e o sistema operacional impõe esse limite para cada comando Bash e seus processos filhos.
 
-Claude Code apresenta sandboxing nativo para fornecer um ambiente mais seguro para execução de agentes, reduzindo a necessidade de prompts de permissão constantes. Em vez de pedir permissão para cada comando bash, o sandboxing cria limites definidos antecipadamente onde Claude Code pode trabalhar com mais liberdade e risco reduzido.
+Esta página aborda como:
 
-A ferramenta bash em sandbox usa primitivos de nível do SO para impor isolamento tanto de sistema de arquivos quanto de rede.
+* [Habilitar o sandbox](#get-started) e escolher como os comandos em sandbox são aprovados
+* [Configurar](#configure-sandboxing) quais caminhos e domínios de rede os comandos podem alcançar
+* [Combinar sandboxing com regras de permissão e modos de permissão](#how-sandboxing-relates-to-permissions-and-permission-modes)
+* [Impor sandboxing em toda uma organização](#configure-the-sandbox-for-your-organization) com configurações gerenciadas
 
-## Por que o sandboxing é importante
+<Note>
+  Para comparar outras abordagens de isolamento, como dev containers, containers personalizados e máquinas virtuais, consulte [Sandbox environments](/pt/sandbox-environments). Para reduzir prompts de permissão para ferramentas diferentes de Bash, consulte [permission modes](/pt/permission-modes).
+</Note>
 
-A segurança tradicional baseada em permissões requer aprovação constante do usuário para comandos bash. Embora isso forneça controle, pode levar a:
+## Get started
 
-* **Fadiga de aprovação**: Clicar repetidamente em "aprovar" pode fazer com que os usuários prestem menos atenção ao que estão aprovando
-* **Produtividade reduzida**: Interrupções constantes desaceleram fluxos de trabalho de desenvolvimento
-* **Autonomia limitada**: Claude Code não pode trabalhar com eficiência quando aguarda aprovações
+O sandbox é integrado ao Claude Code e é executado em macOS, Linux e WSL2. Windows nativo não é suportado. No Windows, execute Claude Code dentro de uma distribuição WSL2.
 
-O sandboxing aborda esses desafios ao:
+No macOS, não há nada para instalar: o sandboxing usa o framework Seatbelt integrado. No Linux e WSL2, o sandbox depende de dois pacotes, abordados em [Set up Linux and WSL2](#set-up-linux-and-wsl2). Mesmo que você ainda não os tenha instalado, você pode começar com `/sandbox`, porque seu painel mostra se algo está faltando.
 
-1. **Definir limites claros**: Especificar exatamente quais diretórios e hosts de rede Claude Code pode acessar
-2. **Reduzir prompts de permissão**: Comandos seguros dentro do sandbox não requerem aprovação
-3. **Manter a segurança**: Tentativas de acessar recursos fora do sandbox acionam notificações imediatas
-4. **Habilitar autonomia**: Claude Code pode ser executado de forma mais independente dentro de limites definidos
+<Steps>
+  <Step title="Run /sandbox">
+    Inicie uma sessão do Claude Code e execute o comando `/sandbox`:
+
+    ```text theme={null}
+    /sandbox
+    ```
+
+    Isso abre o painel de sandbox com três abas:
+
+    * **Mode**: escolha como os comandos em sandbox são aprovados, abordado na próxima etapa
+    * **Overrides**: escolha se os comandos que falham sob o sandbox podem voltar a ser executados sem sandbox. Esta é a configuração [`allowUnsandboxedCommands`](/pt/settings#sandbox-settings)
+    * **Config**: visualize as configurações de sandbox resolvidas
+
+    Se o painel mostrar apenas uma aba Dependencies, um pacote necessário está faltando. Instale-o conforme descrito em [Set up Linux and WSL2](#set-up-linux-and-wsl2), reinicie Claude Code e execute `/sandbox` novamente.
+  </Step>
+
+  <Step title="Choose a mode">
+    Na aba Mode, selecione auto-allow ou regular permissions. Auto-allow executa comandos em sandbox sem avisar, e regular permissions mantém os prompts de permissão regulares mesmo quando os comandos estão em sandbox. Consulte [Sandbox modes](#sandbox-modes) para saber quais comandos ainda solicitam no modo auto-allow.
+  </Step>
+
+  <Step title="Run a Bash command">
+    Peça ao Claude para executar um comando, como uma compilação ou um conjunto de testes. Por padrão, os comandos dentro do sandbox podem escrever apenas no diretório de trabalho. Na primeira vez que um comando precisa de um novo domínio de rede, Claude Code solicita aprovação.
+
+    Comandos que não podem ser executados em sandbox voltam ao fluxo de permissão regular. Para ampliar ou estreitar esses limites, consulte [Configure sandboxing](#configure-sandboxing).
+  </Step>
+</Steps>
+
+Selecionar um modo no painel escreve nas configurações locais do seu projeto em `.claude/settings.local.json`, que se aplicam ao projeto atual e não são verificadas no git. Para habilitar o sandbox em todos os seus projetos, defina [`sandbox.enabled`](/pt/settings#sandbox-settings) como `true` em suas configurações de usuário em `~/.claude/settings.json`. Para impor sandboxing para cada desenvolvedor em uma organização, use [managed settings](#enforce-sandboxing-with-managed-settings).
 
 <Warning>
-  O sandboxing eficaz requer isolamento **tanto** de sistema de arquivos quanto de rede. Sem isolamento de rede, um agente comprometido poderia exfiltrar arquivos sensíveis como chaves SSH. Sem isolamento de sistema de arquivos, um agente comprometido poderia fazer backdoor de recursos do sistema para obter acesso à rede. Ao configurar o sandboxing, é importante garantir que suas configurações não criem bypasses nesses sistemas.
+  Por padrão, se o sandbox não conseguir iniciar porque as dependências estão faltando ou a plataforma não é suportada, Claude Code mostra um aviso e executa comandos sem sandboxing. Para tornar isso uma falha difícil em vez disso, defina [`sandbox.failIfUnavailable`](/pt/settings#sandbox-settings) como `true`. Isso é destinado a implantações gerenciadas que exigem sandboxing como um portão de segurança.
 </Warning>
 
-## Como funciona
+### Set up Linux and WSL2
 
-### Isolamento de sistema de arquivos
+No Linux e WSL2, o sandbox depende de dois pacotes:
 
-A ferramenta bash em sandbox restringe o acesso ao sistema de arquivos a diretórios específicos:
+* [`bubblewrap`](https://github.com/containers/bubblewrap): a ferramenta de sandboxing sem privilégios que impõe isolamento de sistema de arquivos
+* [`socat`](http://www.dest-unreach.org/socat/): o relay usado para rotear tráfego de rede através do proxy de sandbox
 
-* **Comportamento padrão de escrita**: Acesso de leitura e escrita ao diretório de trabalho atual e seus subdiretórios
-* **Comportamento padrão de leitura**: Acesso de leitura a todo o computador, exceto certos diretórios negados
-* **Acesso bloqueado**: Não é possível modificar arquivos fora do diretório de trabalho atual sem permissão explícita
-* **Configurável**: Defina caminhos permitidos e negados personalizados através de configurações
-
-Você pode conceder acesso de escrita a caminhos adicionais usando `sandbox.filesystem.allowWrite` em suas configurações. Essas restrições são impostas no nível do SO (Seatbelt no macOS, bubblewrap no Linux), portanto se aplicam a todos os comandos de subprocesso, incluindo ferramentas como `kubectl`, `terraform` e `npm`, não apenas às ferramentas de arquivo do Claude.
-
-### Isolamento de rede
-
-O acesso à rede é controlado através de um servidor proxy executado fora do sandbox:
-
-* **Restrições de domínio**: Apenas domínios aprovados podem ser acessados
-* **Confirmação do usuário**: Novas solicitações de domínio acionam prompts de permissão (a menos que [`allowManagedDomainsOnly`](/pt/settings#sandbox-settings) esteja habilitado, que bloqueia domínios não permitidos automaticamente)
-* **Suporte a proxy personalizado**: Usuários avançados podem implementar regras personalizadas no tráfego de saída
-* **Cobertura abrangente**: As restrições se aplicam a todos os scripts, programas e subprocessos gerados por comandos
-
-### Imposição no nível do SO
-
-A ferramenta bash em sandbox aproveita primitivos de segurança do sistema operacional:
-
-* **macOS**: Usa Seatbelt para imposição de sandbox
-* **Linux**: Usa [bubblewrap](https://github.com/containers/bubblewrap) para isolamento
-* **WSL2**: Usa bubblewrap, igual ao Linux
-
-WSL1 não é suportado porque bubblewrap requer recursos de kernel disponíveis apenas no WSL2.
-
-Essas restrições no nível do SO garantem que todos os processos filhos gerados pelos comandos do Claude Code herdem os mesmos limites de segurança.
-
-## Começando
-
-### Pré-requisitos
-
-No **macOS**, o sandboxing funciona imediatamente usando o framework Seatbelt integrado.
-
-No **Linux e WSL2**, instale primeiro os pacotes necessários:
+Instale-os com o gerenciador de pacotes da sua distribuição:
 
 <Tabs>
   <Tab title="Ubuntu/Debian">
@@ -87,41 +82,69 @@ No **Linux e WSL2**, instale primeiro os pacotes necessários:
   </Tab>
 </Tabs>
 
-WSL1 não suporta sandboxing porque carece dos primitivos de namespace do Linux necessários. Se você vir `Sandboxing requires WSL2`, atualize sua distribuição para WSL2 ou execute Claude Code sem sandboxing.
+Após a instalação, a aba Dependencies em `/sandbox` mostra se `ripgrep`, `bubblewrap`, `socat` e o filtro seccomp estão disponíveis em sua plataforma. Ripgrep é incluído no binário nativo do Claude Code. O filtro seccomp é opcional e adiciona bloqueio de socket de domínio Unix. Instale-o com `npm install -g @anthropic-ai/sandbox-runtime` se estiver faltando.
 
-No WSL2, comandos em sandbox não podem iniciar binários do Windows como `cmd.exe`, `powershell.exe` ou qualquer coisa em `/mnt/c/`. WSL entrega esses para o host do Windows através de um socket Unix, que o sandbox bloqueia. Se um comando precisar invocar um binário do Windows, adicione-o a [`excludedCommands`](/pt/settings#sandbox-settings) para que seja executado fora do sandbox.
+Quando uma dependência necessária está faltando, a aba Dependencies é a única aba mostrada até que você a instale. A verificação de dependência é executada na inicialização, portanto reinicie Claude Code após instalar pacotes para que `/sandbox` os detecte.
 
-### Habilitar sandboxing
+<AccordionGroup>
+  <Accordion title="Ubuntu 24.04 e posterior: permitir que bubblewrap crie namespaces de usuário">
+    No Ubuntu 24.04 e posterior, a política padrão do AppArmor impede que bubblewrap crie os namespaces de usuário que precisa para isolamento.
 
-Você pode habilitar o sandboxing executando o comando `/sandbox`:
+    Para verificar se seu ambiente impõe essa restrição, incluindo dentro do WSL2, execute `sysctl kernel.apparmor_restrict_unprivileged_userns`. Se a chave não existir ou retornar `0`, pule esta etapa. Se retornar `1`, adicione um perfil AppArmor que conceda a `bwrap` essa capacidade:
 
-```text theme={null}
-/sandbox
-```
+    ```bash theme={null}
+    sudo tee /etc/apparmor.d/bwrap > /dev/null <<'EOF'
+    abi <abi/4.0>,
+    include <tunables/global>
 
-Isso abre um menu onde você pode escolher entre modos de sandbox. Se as dependências necessárias estiverem faltando (como `bubblewrap` ou `socat` no Linux), o menu exibe instruções de instalação para sua plataforma.
+    profile bwrap /usr/bin/bwrap flags=(unconfined) {
+      userns,
+      include if exists <local/bwrap>
+    }
+    EOF
+    ```
 
-Por padrão, se o sandbox não conseguir iniciar (dependências ausentes ou plataforma não suportada), Claude Code exibe um aviso e executa comandos sem sandboxing. Para tornar isso uma falha difícil em vez disso, defina [`sandbox.failIfUnavailable`](/pt/settings#sandbox-settings) como `true`. Isso é destinado a implantações gerenciadas que exigem sandboxing como um portão de segurança.
+    O perfil se aplica apenas a `bwrap` em si, não aos comandos executados dentro do sandbox. Recarregue AppArmor para aplicá-lo:
 
-### Modos de sandbox
+    ```bash theme={null}
+    sudo systemctl reload apparmor
+    ```
+  </Accordion>
+
+  <Accordion title="Notas do WSL2">
+    Verifique sua versão do WSL com `wsl -l -v` do PowerShell. Se você vir `Sandboxing requires WSL2`, sua distribuição está executando WSL1. Atualize-a para WSL2 ou execute Claude Code sem sandboxing.
+
+    No WSL2, comandos em sandbox não podem iniciar binários do Windows como `cmd.exe`, `powershell.exe` ou qualquer coisa em `/mnt/c/`. WSL entrega esses para o host do Windows através de um socket Unix, que o sandbox bloqueia. Se um comando precisar invocar um binário do Windows, adicione-o a [`excludedCommands`](/pt/settings#sandbox-settings) para que seja executado fora do sandbox.
+  </Accordion>
+</AccordionGroup>
+
+### Sandbox modes
 
 Claude Code oferece dois modos de sandbox:
 
-**Modo de permissão automática**: Comandos bash tentarão ser executados dentro do sandbox e são automaticamente permitidos sem exigir permissão. Comandos que não podem ser colocados em sandbox (como aqueles que precisam de acesso à rede para hosts não permitidos) voltam ao fluxo de permissão regular. Regras explícitas de negação são sempre respeitadas, e comandos `rm` ou `rmdir` que visam `/`, seu diretório home ou outros caminhos críticos do sistema ainda acionam um prompt de permissão. Regras de ask se aplicam apenas a comandos que voltam ao fluxo de permissão regular.
+**Modo auto-allow**: Comandos Bash tentarão ser executados dentro do sandbox e são automaticamente permitidos sem exigir permissão. Comandos que não podem ser colocados em sandbox, como aqueles que precisam de acesso à rede para hosts não permitidos, voltam ao fluxo de permissão regular, onde Claude Code verifica suas [permission rules](/pt/permissions) e solicita sua aprovação para qualquer comando que essas regras não permitam.
 
-**Modo de permissões regular**: Todos os comandos bash passam pelo fluxo de permissão padrão, mesmo quando em sandbox. Isso fornece mais controle, mas requer mais aprovações.
+Mesmo no modo auto-allow, o seguinte ainda se aplica:
+
+* [Deny rules](/pt/permissions) explícitas são sempre respeitadas
+* Comandos `rm` ou `rmdir` que visam `/`, seu diretório home ou outros caminhos críticos do sistema ainda acionam um prompt de permissão
+* [Ask rules](/pt/permissions) se aplicam a comandos que voltam ao fluxo de permissão regular
+
+**Modo regular permissions**: Todos os comandos Bash passam pelo fluxo de permissão regular, mesmo quando em sandbox. Isso fornece mais controle, mas requer mais aprovações.
 
 Em ambos os modos, o sandbox impõe as mesmas restrições de sistema de arquivos e rede. A diferença é apenas se os comandos em sandbox são aprovados automaticamente ou requerem permissão explícita.
 
+Alguns comandos não podem ser executados dentro do sandbox, como ferramentas que são incompatíveis com ele ou que precisam de um host que você não permitiu. Em vez de falhar na tarefa ou exigir que você desative o sandboxing, Claude Code inclui um escape hatch: quando um comando falha por causa de restrições de sandbox, Claude analisa a falha e pode tentar novamente o comando com o parâmetro `dangerouslyDisableSandbox`. O comando retentado é executado fora do sandbox, portanto passa pelo fluxo de permissão regular e requer sua aprovação.
+
+Você pode desabilitar esse escape hatch definindo `"allowUnsandboxedCommands": false` em suas [sandbox settings](/pt/settings#sandbox-settings). Quando desabilitado, que a aba Overrides do `/sandbox` mostra como **Strict sandbox mode**, o parâmetro `dangerouslyDisableSandbox` é completamente ignorado e todos os comandos devem ser executados em sandbox ou estar explicitamente listados em `excludedCommands`.
+
 <Info>
-  O modo de permissão automática funciona independentemente de sua configuração de modo de permissão. Mesmo que você não esteja no modo "aceitar edições", comandos bash em sandbox serão executados automaticamente quando a permissão automática estiver habilitada. Isso significa que comandos bash que modificam arquivos dentro dos limites do sandbox serão executados sem avisar, mesmo quando ferramentas de edição de arquivo normalmente exigiriam aprovação.
+  O modo auto-allow funciona independentemente de sua configuração de permission mode. Mesmo que você não esteja no modo "accept edits", comandos Bash em sandbox serão executados automaticamente quando auto-allow estiver habilitado. Isso significa que comandos Bash que modificam arquivos dentro dos limites do sandbox serão executados sem avisar, mesmo quando ferramentas de edição de arquivo normalmente exigiriam aprovação.
 </Info>
 
-### Configurar sandboxing
+## Configure sandboxing
 
-Personalize o comportamento do sandbox através de seu arquivo `settings.json`. Veja [Settings](/pt/settings#sandbox-settings) para referência de configuração completa.
-
-#### Concedendo acesso de escrita de subprocesso a caminhos específicos
+Personalize o comportamento do sandbox através de seu arquivo `settings.json`. Consulte [Settings](/pt/settings#sandbox-settings) para a referência de configuração completa.
 
 Por padrão, comandos em sandbox podem apenas escrever no diretório de trabalho atual. Se comandos de subprocesso como `kubectl`, `terraform` ou `npm` precisarem escrever fora do diretório do projeto, use `sandbox.filesystem.allowWrite` para conceder acesso a caminhos específicos:
 
@@ -138,7 +161,7 @@ Por padrão, comandos em sandbox podem apenas escrever no diretório de trabalho
 
 Esses caminhos são impostos no nível do SO, portanto todos os comandos executados dentro do sandbox, incluindo seus processos filhos, os respeitam. Esta é a abordagem recomendada quando uma ferramenta precisa de acesso de escrita a um local específico, em vez de excluir a ferramenta do sandbox inteiramente com `excludedCommands`.
 
-Quando `allowWrite` (ou `denyWrite`/`denyRead`/`allowRead`) é definido em múltiplos [escopos de configurações](/pt/settings#settings-precedence), os arrays são **mesclados**, significando que caminhos de cada escopo são combinados, não substituídos. Por exemplo, se as configurações gerenciadas permitem escritas em `/opt/company-tools` e um usuário adiciona `~/.kube` em suas configurações pessoais, ambos os caminhos são incluídos na configuração final do sandbox. Isso significa que usuários e projetos podem estender a lista sem duplicar ou sobrescrever caminhos definidos por escopos de prioridade mais alta.
+Quando o mesmo array de sistema de arquivos é definido em múltiplos [settings scopes](/pt/settings#settings-precedence), os arrays são mesclados: caminhos de cada escopo são combinados, não substituídos.
 
 Prefixos de caminho controlam como os caminhos são resolvidos:
 
@@ -148,11 +171,11 @@ Prefixos de caminho controlam como os caminhos são resolvidos:
 | `~/`                | Relativo ao diretório home                                                                               | `~/.kube` torna-se `$HOME/.kube`                                           |
 | `./` ou sem prefixo | Relativo à raiz do projeto para configurações de projeto, ou a `~/.claude` para configurações de usuário | `./output` em `.claude/settings.json` resolve para `<project-root>/output` |
 
-O prefixo anterior `//path` para caminhos absolutos ainda funciona. Se você usou anteriormente `/path` esperando resolução relativa ao projeto, mude para `./path`. Esta sintaxe difere das [regras de permissão Read e Edit](/pt/permissions#read-and-edit), que usam `//path` para absoluto e `/path` para relativo ao projeto. Os caminhos do sistema de arquivos do sandbox usam convenções padrão: `/tmp/build` é um caminho absoluto.
+Esta sintaxe difere das [Read and Edit permission rules](/pt/permissions#read-and-edit), que usam `//path` para absoluto e `/path` para relativo ao projeto. Os caminhos do sistema de arquivos do sandbox usam convenções padrão: `/tmp/build` é absoluto.
 
-Você também pode negar acesso de escrita ou leitura usando `sandbox.filesystem.denyWrite` e `sandbox.filesystem.denyRead`. Estes são mesclados com quaisquer caminhos das regras de permissão `Edit(...)` e `Read(...)`. Para permitir novamente a leitura de caminhos específicos dentro de uma região negada, use `sandbox.filesystem.allowRead`, que tem precedência sobre `denyRead`. Quando `allowManagedReadPathsOnly` está habilitado em configurações gerenciadas, apenas entradas `allowRead` gerenciadas são respeitadas; entradas `allowRead` de usuário, projeto e local são ignoradas. `denyRead` ainda é mesclado de todas as fontes.
+Você também pode negar acesso de escrita ou leitura usando `sandbox.filesystem.denyWrite` e `sandbox.filesystem.denyRead`, e permitir novamente caminhos específicos dentro de uma região negada usando `sandbox.filesystem.allowRead`.
 
-Por exemplo, para bloquear a leitura de todo o diretório home enquanto ainda permite leituras do projeto atual, adicione isto ao `.claude/settings.json` do seu projeto:
+O exemplo abaixo bloqueia a leitura de todo o diretório home enquanto ainda permite leituras do projeto atual. Coloque-o no `.claude/settings.json` do seu projeto, porque o caminho relativo `.` resolve para a raiz do projeto apenas quando a configuração reside em configurações de projeto:
 
 ```json theme={null}
 {
@@ -168,101 +191,124 @@ Por exemplo, para bloquear a leitura de todo o diretório home enquanto ainda pe
 
 O `.` em `allowRead` resolve para a raiz do projeto porque esta configuração reside em configurações de projeto. Se você colocasse a mesma configuração em `~/.claude/settings.json`, `.` resolveria para `~/.claude` em vez disso, e arquivos do projeto permaneceriam bloqueados pela regra `denyRead`.
 
-<Tip>
-  Nem todos os comandos são compatíveis com sandboxing imediatamente. Algumas notas que podem ajudá-lo a aproveitar ao máximo o sandbox:
+## How sandboxing works
 
-  * Muitas ferramentas CLI requerem acesso a certos hosts. Conforme você usa essas ferramentas, elas solicitarão permissão para acessar certos hosts. Conceder permissão permitirá que elas acessem esses hosts agora e no futuro, permitindo que sejam executadas com segurança dentro do sandbox.
-  * `watchman` é incompatível com execução no sandbox. Se você estiver executando `jest`, considere usar `jest --no-watchman`
-  * `docker` é incompatível com execução no sandbox. Considere especificar `docker *` em `excludedCommands` para forçá-lo a ser executado fora do sandbox.
-</Tip>
+### Filesystem isolation
+
+A ferramenta Bash em sandbox restringe o acesso ao sistema de arquivos a diretórios específicos:
+
+* **Comportamento padrão de escrita**: acesso de leitura e escrita ao diretório de trabalho atual e seus subdiretórios
+* **Comportamento padrão de leitura**: acesso de leitura a todo o computador, exceto certos diretórios negados. Observe que esse padrão ainda permite ler arquivos de credenciais como `~/.aws/credentials` e `~/.ssh/`. Adicione-os a `denyRead` para bloqueá-los.
+* **Acesso bloqueado**: não é possível modificar arquivos fora do diretório de trabalho atual sem permissão explícita, incluindo arquivos de configuração de shell como `~/.bashrc` e binários do sistema em `/bin/`
+* **Configurável**: defina caminhos permitidos e negados personalizados através de configurações
+
+Você pode conceder acesso de escrita a caminhos adicionais usando `sandbox.filesystem.allowWrite` em suas configurações. Essas restrições são impostas no nível do SO, portanto se aplicam a todos os comandos de subprocesso, incluindo ferramentas como `kubectl`, `terraform` e `npm`, não apenas às ferramentas de arquivo do Claude.
+
+### Network isolation
+
+O acesso à rede é controlado através de um servidor proxy executado fora do sandbox:
+
+* **Restrições de domínio**: nenhum domínio é pré-permitido. Na primeira vez que um comando precisa de um novo domínio, Claude Code solicita aprovação. Pré-permita domínios com [`allowedDomains`](/pt/settings#sandbox-settings) para evitar o prompt.
+* **Managed lockdown**: se [`allowManagedDomainsOnly`](/pt/settings#sandbox-settings) estiver definido em configurações gerenciadas, domínios não permitidos são bloqueados automaticamente em vez de solicitar, e apenas `allowedDomains` de configurações gerenciadas são honrados.
+* **Suporte a proxy personalizado**: usuários avançados podem implementar regras personalizadas no tráfego de saída
+* **Cobertura abrangente**: as restrições se aplicam a todos os scripts, programas e subprocessos gerados por comandos
 
 <Note>
-  Claude Code inclui um mecanismo de escape intencional que permite que comandos sejam executados fora do sandbox quando necessário. Quando um comando falha devido a restrições de sandbox (como problemas de conectividade de rede ou ferramentas incompatíveis), Claude é solicitado a analisar a falha e pode tentar novamente o comando com o parâmetro `dangerouslyDisableSandbox`. Comandos que usam este parâmetro passam pelo fluxo de permissões normal do Claude Code, exigindo permissão do usuário para executar. Isso permite que Claude Code lide com casos extremos onde certas ferramentas ou operações de rede não podem funcionar dentro das restrições do sandbox.
-
-  Você pode desabilitar este escape hatch definindo `"allowUnsandboxedCommands": false` em suas [configurações de sandbox](/pt/settings#sandbox-settings). Quando desabilitado, o parâmetro `dangerouslyDisableSandbox` é completamente ignorado e todos os comandos devem ser executados em sandbox ou estar explicitamente listados em `excludedCommands`.
+  O proxy integrado impõe a allowlist com base no nome de host solicitado e não termina ou inspeciona tráfego TLS. Consulte [Security limitations](#security-limitations) para as implicações deste design, e [Custom proxy configuration](#custom-proxy-configuration) se seu modelo de ameaça exigir inspeção TLS.
 </Note>
 
-## Benefícios de segurança
+### OS-level enforcement
 
-### Proteção contra injeção de prompt
+A ferramenta Bash em sandbox aproveita primitivos de segurança do sistema operacional:
 
-Mesmo que um atacante manipule com sucesso o comportamento do Claude Code através de injeção de prompt, o sandbox garante que seu sistema permaneça seguro:
+* **macOS**: usa Seatbelt para imposição de sandbox
+* **Linux**: usa [bubblewrap](https://github.com/containers/bubblewrap) para isolamento
+* **WSL2**: usa bubblewrap, igual ao Linux
 
-**Proteção de sistema de arquivos:**
+WSL1 não é suportado porque bubblewrap requer recursos de kernel disponíveis apenas no WSL2. Essas restrições no nível do SO garantem que todos os processos filhos gerados pelos comandos do Claude Code herdem os mesmos limites de segurança.
 
-* Não é possível modificar arquivos de configuração críticos como `~/.bashrc`
-* Não é possível modificar arquivos no nível do sistema em `/bin/`
-* Não é possível ler arquivos que são negados em suas [configurações de permissão do Claude](/pt/permissions#manage-permissions)
+Esses mesmos primitivos estão disponíveis como o pacote autônomo [`@anthropic-ai/sandbox-runtime`](https://github.com/anthropic-experimental/sandbox-runtime), que a página [Sandbox environments](/pt/sandbox-environments#sandbox-runtime) aborda como uma abordagem separada para envolver todo o processo do Claude Code.
 
-**Proteção de rede:**
+## How sandboxing relates to permissions and permission modes
 
-* Não é possível exfiltrar dados para servidores controlados por atacantes
-* Não é possível baixar scripts maliciosos de domínios não autorizados
-* Não é possível fazer chamadas de API inesperadas para serviços não aprovados
-* Não é possível contatar nenhum domínio não explicitamente permitido
+Sandboxing, [permission rules](/pt/permissions) e [permission modes](/pt/permission-modes) são camadas complementares. As seções abaixo abrangem como o sandbox interage com cada uma.
 
-**Monitoramento e controle:**
+### Permission rules
 
-* Todas as tentativas de acesso fora do sandbox são bloqueadas no nível do SO
-* Você recebe notificações imediatas quando os limites são testados
-* Você pode escolher negar, permitir uma vez ou atualizar permanentemente sua configuração
+Regras de permissão e sandboxing controlam coisas diferentes:
 
-### Superfície de ataque reduzida
-
-O sandboxing limita o dano potencial de:
-
-* **Dependências maliciosas**: Pacotes NPM ou outras dependências com código prejudicial
-* **Scripts comprometidos**: Scripts de compilação ou ferramentas com vulnerabilidades de segurança
-* **Engenharia social**: Ataques que enganam usuários para executar comandos perigosos
-* **Injeção de prompt**: Ataques que enganam Claude para executar comandos perigosos
-
-### Operação transparente
-
-Quando Claude Code tenta acessar recursos de rede fora do sandbox:
-
-1. A operação é bloqueada no nível do SO
-2. Você recebe uma notificação imediata
-3. Você pode escolher:
-   * Negar a solicitação
-   * Permitir uma vez
-   * Atualizar sua configuração de sandbox para permitir permanentemente
-
-## Limitações de segurança
-
-* Limitações de Sandboxing de rede: O sistema de filtragem de rede funciona restringindo os domínios aos quais os processos podem se conectar. Ele não inspeciona de outra forma o tráfego passando pelo proxy e os usuários são responsáveis por garantir que apenas permitam domínios confiáveis em sua política.
-
-<Warning>
-  Os usuários devem estar cientes dos riscos potenciais que vêm de permitir domínios amplos como `github.com` que podem permitir exfiltração de dados. Além disso, em alguns casos pode ser possível contornar a filtragem de rede através de [domain fronting](https://en.wikipedia.org/wiki/Domain_fronting).
-</Warning>
-
-* Escalação de privilégio via Unix Sockets: A configuração `allowUnixSockets` pode inadvertidamente conceder acesso a serviços poderosos do sistema que poderiam levar a bypasses de sandbox. Por exemplo, se for usada para permitir acesso a `/var/run/docker.sock`, isso efetivamente concederia acesso ao sistema host através da exploração do socket docker. Os usuários são encorajados a considerar cuidadosamente quaisquer unix sockets que permitam através do sandbox.
-* Escalação de permissão de sistema de arquivos: Permissões de escrita de sistema de arquivos excessivamente amplas podem habilitar ataques de escalação de privilégio. Permitir escritas em diretórios contendo executáveis em `$PATH`, diretórios de configuração do sistema ou arquivos de configuração de shell do usuário (`.bashrc`, `.zshrc`) pode levar a execução de código em diferentes contextos de segurança quando outros usuários ou processos do sistema acessam esses arquivos.
-* Força do Sandbox Linux: A implementação Linux fornece isolamento forte de sistema de arquivos e rede, mas inclui um modo `enableWeakerNestedSandbox` que permite que funcione dentro de ambientes Docker sem namespaces privilegiados. Esta opção enfraquece consideravelmente a segurança e deve ser usada apenas em casos onde isolamento adicional é de outra forma imposto.
-
-## Como o sandboxing se relaciona com permissões
-
-Sandboxing e [permissões](/pt/permissions) são camadas de segurança complementares que funcionam juntas:
-
-* **Permissões** controlam quais ferramentas Claude Code pode usar e são avaliadas antes de qualquer ferramenta ser executada. Elas se aplicam a todas as ferramentas: Bash, Read, Edit, WebFetch, MCP e outras.
+* **Regras de permissão** controlam quais ferramentas Claude Code pode usar e são avaliadas antes de qualquer ferramenta ser executada. Elas se aplicam a todas as ferramentas: Bash, Read, Edit, WebFetch, MCP e outras.
 * **Sandboxing** fornece imposição no nível do SO que restringe o que comandos Bash podem acessar no nível de sistema de arquivos e rede. Aplica-se apenas a comandos Bash e seus processos filhos.
+
+As duas camadas também diferem em como são impostas. Claude Code avalia decisões de permissão antes de um comando ser executado, com base na string do comando e, no modo auto, no julgamento de um classificador separado sobre se o comando é seguro. O sistema operacional impõe o limite do sandbox no processo em execução, portanto se mantém independentemente do que o modelo escolheu executar e mesmo se um comando permitido faz mais do que seu nome sugere.
 
 Restrições de sistema de arquivos e rede são configuradas através de configurações de sandbox e regras de permissão:
 
-* Use `sandbox.filesystem.allowWrite` para conceder acesso de escrita de subprocesso a caminhos fora do diretório de trabalho
-* Use `sandbox.filesystem.denyWrite` e `sandbox.filesystem.denyRead` para bloquear acesso de subprocesso a caminhos específicos
-* Use `sandbox.filesystem.allowRead` para permitir novamente a leitura de caminhos específicos dentro de uma região `denyRead`
-* Use regras de negação `Read` e `Edit` para bloquear acesso a arquivos ou diretórios específicos
-* Use regras de permissão/negação `WebFetch` para controlar acesso a domínios
-* Use `allowedDomains` de sandbox para controlar quais domínios comandos Bash podem alcançar
-* Use `deniedDomains` de sandbox para bloquear domínios específicos mesmo quando um wildcard `allowedDomains` mais amplo permitiria de outra forma
+| Configuração ou regra                                          | O que faz                                                                                                    |
+| :------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------- |
+| `sandbox.filesystem.allowWrite`                                | Concede acesso de escrita de subprocesso a caminhos fora do diretório de trabalho                            |
+| `sandbox.filesystem.denyWrite` e `sandbox.filesystem.denyRead` | Bloqueiam acesso de subprocesso a caminhos específicos                                                       |
+| `sandbox.filesystem.allowRead`                                 | Permite novamente a leitura de caminhos específicos dentro de uma região `denyRead`                          |
+| Regras de permissão `Edit`                                     | Concedem acesso de escrita a caminhos específicos, da mesma forma que `sandbox.filesystem.allowWrite` faz    |
+| Regras de negação `Read` e `Edit`                              | Bloqueiam acesso a arquivos ou diretórios específicos                                                        |
+| Regras de permissão e negação `WebFetch`                       | Controlam acesso a domínios                                                                                  |
+| `allowedDomains` de sandbox                                    | Controla quais domínios comandos Bash podem alcançar                                                         |
+| `deniedDomains` de sandbox                                     | Bloqueia domínios específicos mesmo quando um wildcard `allowedDomains` mais amplo permitiria de outra forma |
 
 Caminhos de ambas as configurações `sandbox.filesystem` e regras de permissão são mesclados juntos na configuração final do sandbox.
 
-Este [repositório](https://github.com/anthropics/claude-code/tree/main/examples/settings) inclui configurações de configurações iniciais para cenários de implantação comuns, incluindo exemplos específicos de sandbox. Use-os como pontos de partida e ajuste-os para suas necessidades.
+O [diretório de exemplos do repositório claude-code](https://github.com/anthropics/claude-code/tree/main/examples/settings) inclui configurações de configurações iniciais para cenários de implantação comuns, incluindo exemplos específicos de sandbox. Use-os como pontos de partida e ajuste-os para suas necessidades.
 
-## Uso avançado
+### Permission modes
 
-### Configuração de proxy personalizado
+`/sandbox` não é um [permission mode](/pt/permission-modes). Modos de permissão decidem se uma chamada de ferramenta é executada e se você é solicitado primeiro, enquanto o sandbox restringe o que um comando Bash pode acessar uma vez que é executado. Eles diferem no que controlam e o que substitui o prompt por ação:
+
+|                                                                    | O que controla                                             | O que substitui o prompt                                                                                                                                   |
+| :----------------------------------------------------------------- | :--------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/sandbox`                                                         | O que um comando Bash pode acessar uma vez que é executado | O limite do sandbox em si, no [modo auto-allow](#sandbox-modes)                                                                                            |
+| [Auto mode](/pt/permission-modes#eliminate-prompts-with-auto-mode) | Se cada chamada de ferramenta é executada                  | Um classificador que revisa ações                                                                                                                          |
+| `--dangerously-skip-permissions`                                   | Se cada chamada de ferramenta é executada                  | Nada. Verificações de [protected path](/pt/permission-modes#protected-paths) também são ignoradas; apenas remover `/` ou seu diretório home ainda solicita |
+
+O [modo auto-allow](#sandbox-modes) do sandbox é separado do [auto mode](/pt/permission-modes#eliminate-prompts-with-auto-mode): auto-allow aprova comandos Bash porque o limite do sandbox os contém, enquanto auto mode usa um classificador para revisar ações. Os dois funcionam independentemente e podem ser combinados. Para escolher um limite de isolamento para execuções autônomas, consulte [Sandbox environments](/pt/sandbox-environments#how-isolation-relates-to-permission-modes).
+
+## Configure the sandbox for your organization
+
+Administradores podem exigir sandboxing para cada usuário, impedir que desenvolvedores ampliem a política e rotear tráfego de sandbox através de um proxy corporativo.
+
+### Enforce sandboxing with managed settings
+
+Para exigir o sandbox para cada desenvolvedor, entregue as chaves `sandbox` através de [managed settings](/pt/settings#settings-files), seja como um arquivo gerenciado pelo seu MDM ou através de [server-managed settings](/pt/server-managed-settings) no Claude.ai.
+
+A seguinte configuração de managed settings habilita o sandbox, recusa iniciar Claude Code se o sandbox não conseguir inicializar e impede que o modelo tente novamente comandos fora do sandbox:
+
+```json theme={null}
+{
+  "sandbox": {
+    "enabled": true,
+    "failIfUnavailable": true,
+    "allowUnsandboxedCommands": false
+  }
+}
+```
+
+As duas chaves além de `enabled` controlam o que acontece quando o sandbox não consegue executar um comando:
+
+* **`failIfUnavailable`**: uma dependência faltante como bubblewrap no Linux bloqueia Claude Code de iniciar em vez de mostrar um aviso e voltar a execução sem sandbox
+* **`allowUnsandboxedCommands: false`**: o escape hatch `dangerouslyDisableSandbox` é ignorado, portanto comandos que falham sob o sandbox não podem ser retentados fora dele
+
+Duas adições valem a pena considerar junto com elas. Adicione `excludedCommands` para qualquer ferramenta aprovada pela organização que deve ser executada sem isolamento. Adicione entradas [`denyRead`](#filesystem-isolation) para diretórios de credenciais como `~/.aws` e `~/.ssh`, que a política de leitura padrão ainda permite.
+
+O sandbox não é executado no Windows nativo, portanto se sua frota inclui hosts Windows, escope esta configuração para macOS e Linux ou tenha esses usuários executarem Claude Code dentro do WSL2 ou um container.
+
+### Keep developers from widening the policy
+
+Para chaves booleanas como `enabled` e `failIfUnavailable`, Claude Code usa o valor gerenciado e ignora qualquer coisa que um desenvolvedor defina localmente. Para chaves de array como `excludedCommands` e `allowRead`, Claude Code mescla entradas de cada escopo, portanto um desenvolvedor pode anexar entradas que ampliem a política.
+
+Defina `allowManagedReadPathsOnly` como `true` em configurações gerenciadas para que apenas entradas `allowRead` de configurações gerenciadas sejam honradas. Entradas `allowRead` de usuário, projeto e local são ignoradas. Isso impede que desenvolvedores ampliem o acesso de leitura além dos caminhos aprovados pela organização. Para bloquear domínios de rede para os valores gerenciados da mesma forma, defina [`allowManagedDomainsOnly`](/pt/settings#sandbox-settings).
+
+`excludedCommands` não tem um equivalente de lockdown apenas gerenciado, portanto um desenvolvedor sempre pode anexar entradas que executem comandos adicionais fora do sandbox. Mantenha a lista gerenciada estreita.
+
+### Custom proxy configuration
 
 Para organizações que exigem segurança de rede avançada, você pode implementar um proxy personalizado para:
 
@@ -270,6 +316,8 @@ Para organizações que exigem segurança de rede avançada, você pode implemen
 * Aplicar regras de filtragem personalizadas
 * Registrar todas as solicitações de rede
 * Integrar com infraestrutura de segurança existente
+
+Para apontar Claude Code para seu proxy, defina as portas de proxy em [sandbox settings](/pt/settings#sandbox-settings):
 
 ```json theme={null}
 {
@@ -282,48 +330,58 @@ Para organizações que exigem segurança de rede avançada, você pode implemen
 }
 ```
 
-### Integração com ferramentas de segurança existentes
+## Troubleshooting
 
-A ferramenta bash em sandbox funciona junto com:
+Alguns comandos falham dentro do sandbox mesmo que funcionem fora dele. As correções abaixo abrangem os casos mais comuns.
 
-* **Regras de permissão**: Combine com [configurações de permissão](/pt/permissions) para defesa em profundidade
-* **Contêineres de desenvolvimento**: Use com [devcontainers](/pt/devcontainer) para isolamento adicional
-* **Políticas empresariais**: Imponha configurações de sandbox através de [configurações gerenciadas](/pt/settings#settings-precedence)
+* **Comandos falham com um erro host-not-allowed**: muitas ferramentas CLI precisam alcançar hosts específicos. Conceder permissão quando solicitado adiciona o host à sua lista de permitidos para que a ferramenta seja executada dentro do sandbox no futuro.
+* **`jest` trava ou falha**: `watchman` é incompatível com o sandbox. Execute `jest --no-watchman` em vez disso.
+* **CLIs baseadas em Go falham na verificação TLS no macOS**: ferramentas como `gh`, `gcloud` e `terraform` podem falhar na verificação TLS sob Seatbelt. Liste essas ferramentas em `excludedCommands` para executá-las fora do sandbox. Se você estiver usando `httpProxyPort` com um proxy MITM e CA personalizado, defina [`enableWeakerNetworkIsolation`](/pt/settings#sandbox-settings) como `true` em vez disso.
+* **Comandos `docker` falham**: `docker` é incompatível com o sandbox. Adicione `docker *` a `excludedCommands` para executá-lo fora do sandbox.
+* **Bubblewrap falha ao iniciar dentro de um container**: em um container sem privilégios, bubblewrap não consegue montar um sistema de arquivos `/proc` fresco. Defina [`enableWeakerNestedSandbox`](/pt/settings#sandbox-settings) como `true` para que o sandbox interno faça bind-mount do `/proc` existente do container em vez disso. Use esta configuração apenas quando o container externo já fornece o limite de isolamento que você precisa, pois expõe informações de processo a comandos em sandbox que uma montagem `/proc` fresca ocultaria.
+* **Filtro seccomp no Linux**: o filtro seccomp é necessário para bloquear sockets de domínio Unix. A aba Dependencies em `/sandbox` mostra se está disponível. Se estiver faltando, execute `npm install -g @anthropic-ai/sandbox-runtime` para instalar o helper.
+* **`--dangerously-skip-permissions` falha como root**: este sinalizador é bloqueado ao executar como root ou via sudo no Linux e macOS, porque acesso root combinado com nenhum prompt de permissão pode modificar qualquer arquivo ou serviço no sistema. A verificação é ignorada automaticamente dentro de um sandbox reconhecido. Para executar autonomamente em um container, use a configuração [dev container](/pt/devcontainer), que executa Claude Code como um usuário não-root.
 
-## Melhores práticas
+## Limitations
 
-1. **Comece restritivo**: Comece com permissões mínimas e expanda conforme necessário
-2. **Monitore logs**: Revise tentativas de violação de sandbox para entender as necessidades do Claude Code
-3. **Use configurações específicas do ambiente**: Diferentes regras de sandbox para contextos de desenvolvimento vs. produção
-4. **Combine com permissões**: Use sandboxing junto com políticas IAM para segurança abrangente
-5. **Teste configurações**: Verifique se suas configurações de sandbox não bloqueiam fluxos de trabalho legítimos
+Sandboxing reduz risco, mas não é um limite de isolamento completo. Revise as limitações abaixo antes de confiar nele como um controle de segurança difícil.
 
-## Código aberto
+### Security limitations
 
-O runtime do sandbox está disponível como um pacote npm de código aberto para uso em seus próprios projetos de agentes. Isso permite que a comunidade mais ampla de agentes de IA construa sistemas autônomos mais seguros e protegidos. Isso também pode ser usado para colocar em sandbox outros programas que você possa desejar executar. Por exemplo, para colocar um servidor MCP em sandbox, você poderia executar:
+* **Filtragem de rede**: o sistema de filtragem de rede funciona restringindo os domínios aos quais os processos podem se conectar. O proxy integrado não termina ou realiza inspeção TLS no tráfego de saída, portanto o conteúdo de conexões criptografadas não é examinado. Você é responsável por garantir que apenas domínios confiáveis sejam permitidos em sua política.
 
-```bash theme={null}
-npx @anthropic-ai/sandbox-runtime <command-to-sandbox>
-```
+<Warning>
+  Permitir domínios amplos como `github.com` pode criar caminhos para exfiltração de dados. Como o proxy toma sua decisão de permissão do nome de host fornecido pelo cliente sem inspecionar TLS, código executado dentro do sandbox pode potencialmente usar [domain fronting](https://en.wikipedia.org/wiki/Domain_fronting) ou técnicas similares para alcançar hosts fora da allowlist. Se seu modelo de ameaça exigir garantias mais fortes, configure um [custom proxy](#custom-proxy-configuration) que termine TLS e inspecione tráfego, e instale seu certificado CA dentro do sandbox. Isolamento de rede mais forte e consciente de TLS é uma área ativa de desenvolvimento.
+</Warning>
 
-Para detalhes de implementação e código-fonte, visite o [repositório GitHub](https://github.com/anthropic-experimental/sandbox-runtime).
+* **Escalação de privilégio via Unix sockets**: a configuração `allowUnixSockets` pode inadvertidamente conceder acesso a serviços poderosos do sistema que poderiam levar a bypasses de sandbox. Por exemplo, permitir acesso a `/var/run/docker.sock` efetivamente concede acesso ao sistema host através do socket Docker. Considere cuidadosamente quaisquer Unix sockets que você permita através do sandbox.
+* **Escalação de permissão de sistema de arquivos**: permissões de escrita de sistema de arquivos excessivamente amplas podem habilitar ataques de escalação de privilégio. Permitir escritas em diretórios contendo executáveis em `$PATH`, diretórios de configuração do sistema ou arquivos de configuração de shell do usuário como `.bashrc` ou `.zshrc` pode levar a execução de código em diferentes contextos de segurança quando outros usuários ou processos do sistema acessam esses arquivos.
+* **Força do sandbox Linux**: a implementação Linux fornece isolamento forte de sistema de arquivos e rede, mas inclui um modo `enableWeakerNestedSandbox` que o habilita a funcionar dentro de ambientes Docker sem namespaces privilegiados, ou em hosts Linux onde namespaces de usuário sem privilégios são desabilitados por sysctl. Esta opção enfraquece consideravelmente a segurança e deve ser usada apenas quando isolamento adicional é de outra forma imposto.
+* **Arquivos de configurações protegidos**: o sandbox automaticamente nega acesso de escrita aos arquivos `settings.json` do Claude Code em cada escopo e ao diretório de configurações gerenciadas, portanto um comando em sandbox não pode modificar sua própria política.
 
-## Limitações
+### Platform and tool compatibility
 
-* **Overhead de desempenho**: Mínimo, mas algumas operações de sistema de arquivos podem ser ligeiramente mais lentas
-* **Compatibilidade**: Algumas ferramentas que requerem padrões de acesso específicos do sistema podem precisar de ajustes de configuração, ou podem até precisar ser executadas fora do sandbox
-* **Suporte de plataforma**: Suporta macOS, Linux e WSL2. WSL1 não é suportado. Suporte nativo do Windows está planejado.
+* **Suporte de plataforma**: suporta macOS, Linux e WSL2. WSL1 e Windows nativo não são suportados.
+* **Overhead de desempenho**: mínimo, mas algumas operações de sistema de arquivos podem ser ligeiramente mais lentas.
+* **Compatibilidade de ferramentas**: algumas ferramentas que exigem padrões de acesso específicos do sistema podem precisar de ajustes de configuração, ou podem precisar ser executadas fora do sandbox.
 
-## O que o sandboxing não cobre
+### Scope
 
 O sandbox isola subprocessos Bash. Outras ferramentas operam sob limites diferentes:
 
-* **Ferramentas de arquivo integradas**: Read, Edit e Write usam o sistema de permissão diretamente em vez de serem executadas através do sandbox. Veja [permissões](/pt/permissions).
-* **Uso de computador**: quando Claude abre aplicativos e controla sua tela, ele é executado em seu desktop real em vez de em um ambiente isolado. Prompts de permissão por aplicativo controlam cada aplicativo. Veja [uso de computador no CLI](/pt/computer-use) ou [uso de computador no Desktop](/pt/desktop#let-claude-use-your-computer).
+* **Ferramentas de arquivo integradas**: Read, Edit e Write usam o sistema de permissão diretamente em vez de serem executadas através do sandbox. Consulte [permissions](/pt/permissions).
+* **Computer use**: quando Claude abre aplicativos e controla sua tela, ele é executado em seu desktop real em vez de em um ambiente isolado. Prompts de permissão por aplicativo controlam cada aplicativo. Consulte [computer use in the CLI](/pt/computer-use) ou [computer use in Desktop](/pt/desktop#let-claude-use-your-computer).
+* **Variáveis de ambiente**: comandos Bash em sandbox herdam o ambiente do processo pai por padrão, incluindo quaisquer credenciais definidas lá. Para remover credenciais do Anthropic e do provedor de nuvem de subprocessos, defina [`CLAUDE_CODE_SUBPROCESS_ENV_SCRUB`](/pt/env-vars).
+* **Subagents**: [subagents](/pt/sub-agents) são executados no mesmo processo que a sessão pai e usam a mesma configuração de sandbox. Comandos Bash dentro de um subagent são colocados em sandbox quando sandboxing está habilitado na sessão pai.
 
-## Veja também
+<Warning>
+  Sandboxing eficaz requer isolamento **tanto** de sistema de arquivos quanto de rede. Sem isolamento de rede, um agente comprometido poderia exfiltrar arquivos sensíveis como chaves SSH. Sem isolamento de sistema de arquivos, um agente comprometido poderia fazer backdoor de recursos do sistema para obter acesso à rede. Quando você amplia os padrões, verifique que um caminho `allowWrite`, uma entrada `allowedDomains` ampla ou uma exceção `excludedCommands` não desfaz uma restrição no outro lado.
+</Warning>
 
-* [Security](/pt/security) - Recursos de segurança abrangentes e melhores práticas
-* [Permissions](/pt/permissions) - Configuração de permissão e controle de acesso
-* [Settings](/pt/settings) - Referência de configuração completa
-* [CLI reference](/pt/cli-reference) - Opções de linha de comando
+## See also
+
+* [Sandbox environments](/pt/sandbox-environments): compare o sandbox integrado com dev containers, containers e VMs
+* [Security](/pt/security): recursos de segurança abrangentes e melhores práticas
+* [Permissions](/pt/permissions): configuração de permissão e controle de acesso
+* [Settings](/pt/settings): referência de configuração completa
+* [CLI reference](/pt/cli-reference): opções de linha de comando

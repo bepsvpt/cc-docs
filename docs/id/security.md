@@ -137,8 +137,9 @@ Jika Anda menemukan kerentanan keamanan di Claude Code:
 
 ## Sumber daya terkait
 
-* [Sandboxing](/id/sandboxing) - Isolasi filesystem dan jaringan untuk perintah bash
-* [Permissions](/id/permissions) - Konfigurasi izin dan kontrol akses
-* [Monitoring usage](/id/monitoring-usage) - Lacak dan audit aktivitas Claude Code
-* [Development containers](/id/devcontainer) - Lingkungan yang aman dan terisolasi
-* [Anthropic Trust Center](https://trust.anthropic.com) - Sertifikasi keamanan dan kepatuhan
+* [Sandbox environments](/id/sandbox-environments): bandingkan pendekatan isolasi dan pilih satu untuk model ancaman Anda
+* [Sandboxing](/id/sandboxing): isolasi filesystem dan jaringan untuk perintah Bash
+* [Permissions](/id/permissions): konfigurasi izin dan kontrol akses
+* [Monitoring usage](/id/monitoring-usage): lacak dan audit aktivitas Claude Code
+* [Development containers](/id/devcontainer): lingkungan yang aman dan terisolasi
+* [Anthropic Trust Center](https://trust.anthropic.com): sertifikasi keamanan dan kepatuhan

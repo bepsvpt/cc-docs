@@ -149,9 +149,9 @@ Actions disponibles dans le contexte `Confirmation` :
 
 Actions disponibles dans le contexte `Confirmation` pour les dialogues de permission :
 
-| Action                   | Par défaut | Description                                         |
-| :----------------------- | :--------- | :-------------------------------------------------- |
-| `permission:toggleDebug` | Ctrl+D     | Basculer les informations de débogage de permission |
+| Action                   | Par défaut | Description                                                                                                                                                  |
+| :----------------------- | :--------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `permission:toggleDebug` | (non lié)  | Basculer les informations de débogage de permission. La valeur par défaut précédente de Ctrl+D a été supprimée dans la v2.1.146 car elle masquait `app:exit` |
 
 ### Actions de transcription
 

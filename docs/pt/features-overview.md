@@ -243,7 +243,7 @@ Cada recurso carrega em diferentes pontos em sua sessão. As abas abaixo explica
   </Tab>
 
   <Tab title="Skills">
-    Skills são capacidades extras no kit de ferramentas de Claude. Podem ser material de referência (como um guia de estilo de API) ou fluxos de trabalho invocáveis que você dispara com `/<name>` (como `/deploy`). Claude Code inclui [skills agrupadas](/pt/commands) como `/simplify`, `/batch` e `/debug` que funcionam imediatamente. Você também pode criar as suas próprias. Claude usa skills quando apropriado, ou você pode invocar uma diretamente.
+    Skills são capacidades extras no kit de ferramentas de Claude. Podem ser material de referência (como um guia de estilo de API) ou fluxos de trabalho invocáveis que você dispara com `/<name>` (como `/deploy`). Claude Code inclui [skills agrupadas](/pt/commands) como `/code-review`, `/batch` e `/debug` que funcionam imediatamente. Você também pode criar as suas próprias. Claude usa skills quando apropriado, ou você pode invocar uma diretamente.
 
     **Quando:** Depende da configuração da skill. Por padrão, descrições carregam no início da sessão e conteúdo completo carrega quando usado. Para skills apenas de usuário (`disable-model-invocation: true`), nada carrega até que você as invoque.
 

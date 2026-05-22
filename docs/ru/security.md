@@ -137,8 +137,9 @@ Claude Code позволяет пользователям настраивать
 
 ## Связанные ресурсы
 
-* [Sandboxing](/ru/sandboxing) - Изоляция файловой системы и сети для bash команд
-* [Разрешения](/ru/permissions) - Настройка разрешений и элементов управления доступом
-* [Мониторинг использования](/ru/monitoring-usage) - Отслеживание и аудит активности Claude Code
-* [Development containers](/ru/devcontainer) - Безопасные, изолированные среды
-* [Центр доверия Anthropic](https://trust.anthropic.com) - Сертификаты безопасности и соответствие
+* [Sandbox environments](/ru/sandbox-environments): сравнение подходов к изоляции и выбор подходящего для вашей модели угроз
+* [Sandboxing](/ru/sandboxing): изоляция файловой системы и сети для команд Bash
+* [Permissions](/ru/permissions): настройка разрешений и элементов управления доступом
+* [Monitoring usage](/ru/monitoring-usage): отслеживание и аудит активности Claude Code
+* [Development containers](/ru/devcontainer): безопасные, изолированные среды
+* [Anthropic Trust Center](https://trust.anthropic.com): сертификаты безопасности и соответствие

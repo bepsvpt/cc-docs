@@ -214,6 +214,7 @@ Claude Code verwaltet den Befehlsverlauf für die aktuelle Sitzung:
 
 * Der Eingabeverlauf wird pro Arbeitsverzeichnis gespeichert
 * Der Eingabeverlauf wird zurückgesetzt, wenn Sie `/clear` ausführen, um eine neue Sitzung zu starten. Das Gespräch der vorherigen Sitzung wird beibehalten und kann fortgesetzt werden.
+* Das zweimalige Absenden derselben Eingabeaufforderung hintereinander zeichnet einen Verlaufseintrag auf, sodass das Drücken der Nach-oben-Taste zum vorherigen unterschiedlichen Befehl springt
 * Verwenden Sie die Pfeiltasten nach oben/unten zum Navigieren (siehe Tastaturkürzel oben)
 * **Hinweis**: Verlaufserweiterung (`!`) ist standardmäßig deaktiviert
 

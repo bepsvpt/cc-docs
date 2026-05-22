@@ -11,7 +11,7 @@ Skills 擴展了 Claude 能做的事情。建立一個 `SKILL.md` 檔案，其�
 當您不斷將相同的劇本、檢查清單或多步驟程序貼到聊天中時，或當 CLAUDE.md 的某個部分已成長為程序而不是事實時，請建立一個 skill。與 CLAUDE.md 內容不同，skill 的主體僅在使用時載入，因此長參考資料在您需要之前幾乎不花費任何成本。
 
 <Note>
-  對於內建命令（如 `/help` 和 `/compact`）以及捆綁的 skills（如 `/debug` 和 `/simplify`），請參閱[命令參考](/zh-TW/commands)。
+  對於內建命令（如 `/help` 和 `/compact`）以及捆綁的 skills（如 `/debug` 和 `/code-review`），請參閱[命令參考](/zh-TW/commands)。
 
   **自訂命令已合併到 skills 中。** `.claude/commands/deploy.md` 中的檔案和 `.claude/skills/deploy/SKILL.md` 中的 skill 都會建立 `/deploy` 並以相同方式運作。您現有的 `.claude/commands/` 檔案會繼續運作。Skills 新增了可選功能：支援檔案的目錄、[控制您或 Claude 是否叫用它們](#control-who-invokes-a-skill)的 frontmatter，以及 Claude 在相關時自動載入它們的能力。
 </Note>
@@ -20,7 +20,7 @@ Claude Code skills 遵循 [Agent Skills](https://agentskills.io) 開放標準，
 
 ## 捆綁的 skills
 
-Claude Code 包含一組捆綁的 skills，在每個工作階段中都可用，包括 `/simplify`、`/batch`、`/debug`、`/loop` 和 `/claude-api`。與大多數內建命令不同，內建命令直接執行固定邏輯，捆綁的 skills 是基於提示的：它們為 Claude 提供詳細的劇本，並讓它使用其工具來協調工作。您叫用它們的方式與任何其他 skill 相同，輸入 `/` 後跟 skill 名稱。
+Claude Code 包含一組捆綁的 skills，在每個工作階段中都可用，包括 `/code-review`、`/batch`、`/debug`、`/loop` 和 `/claude-api`。與大多數內建命令不同，內建命令直接執行固定邏輯，捆綁的 skills 是基於提示的：它們為 Claude 提供詳細的劇本，並讓它使用其工具來協調工作。您叫用它們的方式與任何其他 skill 相同，輸入 `/` 後跟 skill 名稱。
 
 捆綁的 skills 在[命令參考](/zh-TW/commands)中與內建命令一起列出，在「目的」欄中標記為 **Skill**。
 

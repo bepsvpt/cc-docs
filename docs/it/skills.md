@@ -8,10 +8,10 @@
 
 Le skills estendono ciò che Claude può fare. Crea un file `SKILL.md` con istruzioni, e Claude lo aggiunge al suo toolkit. Claude utilizza le skills quando rilevante, oppure puoi invocare una direttamente con `/skill-name`.
 
-Crea una skill quando continui a incollare lo stesso playbook, checklist, o procedura multi-step nella chat, oppure quando una sezione di CLAUDE.md è cresciuta in una procedura piuttosto che in un fatto. A differenza del contenuto di CLAUDE.md, il corpo di una skill si carica solo quando viene utilizzato, quindi il materiale di riferimento lungo costa quasi nulla finché non ne hai bisogno.
+Crea una skill quando continui a incollare le stesse istruzioni, checklist, o procedura multi-step nella chat, oppure quando una sezione di CLAUDE.md è cresciuta in una procedura piuttosto che in un fatto. A differenza del contenuto di CLAUDE.md, il corpo di una skill si carica solo quando viene utilizzato, quindi il materiale di riferimento lungo costa quasi nulla finché non ne hai bisogno.
 
 <Note>
-  Per i comandi integrati come `/help` e `/compact`, e le skills raggruppate come `/debug` e `/simplify`, vedi il [riferimento dei comandi](/it/commands).
+  Per i comandi integrati come `/help` e `/compact`, e le skills raggruppate come `/debug` e `/code-review`, vedi il [riferimento dei comandi](/it/commands).
 
   **I comandi personalizzati sono stati uniti alle skills.** Un file in `.claude/commands/deploy.md` e una skill in `.claude/skills/deploy/SKILL.md` creano entrambi `/deploy` e funzionano allo stesso modo. I tuoi file `.claude/commands/` esistenti continuano a funzionare. Le skills aggiungono funzionalità opzionali: una directory per i file di supporto, frontmatter per [controllare se sei tu o Claude a invocarle](#control-who-invokes-a-skill), e la capacità per Claude di caricarle automaticamente quando rilevante.
 </Note>
@@ -20,7 +20,7 @@ Le skills di Claude Code seguono lo standard aperto [Agent Skills](https://agent
 
 ## Skills raggruppate
 
-Claude Code include un set di skills raggruppate che sono disponibili in ogni sessione, incluse `/simplify`, `/batch`, `/debug`, `/loop`, e `/claude-api`. A differenza della maggior parte dei comandi integrati, che eseguono logica fissa direttamente, le skills raggruppate sono basate su prompt: danno a Claude istruzioni dettagliate e gli permettono di orchestrare il lavoro utilizzando i suoi strumenti. Le invochi allo stesso modo di qualsiasi altra skill, digitando `/` seguito dal nome della skill.
+Claude Code include un set di skills raggruppate che sono disponibili in ogni sessione, incluse `/code-review`, `/batch`, `/debug`, `/loop`, e `/claude-api`. A differenza della maggior parte dei comandi integrati, che eseguono logica fissa direttamente, le skills raggruppate sono basate su prompt: danno a Claude istruzioni dettagliate e gli permettono di orchestrare il lavoro utilizzando i suoi strumenti. Le invochi allo stesso modo di qualsiasi altra skill, digitando `/` seguito dal nome della skill.
 
 Le skills raggruppate sono elencate insieme ai comandi integrati nel [riferimento dei comandi](/it/commands), contrassegnate come **Skill** nella colonna Scopo.
 

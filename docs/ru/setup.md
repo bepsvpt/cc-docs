@@ -20,7 +20,7 @@ Claude Code работает на следующих платформах и к�
   * Alpine Linux 3.19+
 * **Оборудование**: 4 ГБ+ ОЗУ, процессор x64 или ARM64
 * **Сеть**: требуется подключение в Интернет. См. [конфигурация сети](/ru/network-config#network-access-requirements).
-* **Shell**: Bash, Zsh, PowerShell или CMD. На встроенной Windows рекомендуется [Git for Windows](https://git-scm.com/downloads/win); Claude Code переходит на PowerShell при отсутствии Git Bash. Установки WSL не требуют Git for Windows.
+* **Shell**: Bash, Zsh, PowerShell или CMD.
 * **Местоположение**: [поддерживаемые Anthropic страны](https://www.anthropic.com/supported-countries)
 
 ### Дополнительные зависимости
@@ -103,29 +103,32 @@ claude
 
 Вы можете запустить Claude Code изначально в Windows или внутри WSL. Выберите в зависимости от того, где находятся ваши проекты и какие функции вам нужны:
 
-| Опция          | Требует                                                                                                    | [Sandboxing](/ru/sandboxing) | Когда использовать                                             |
-| -------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------- | -------------------------------------------------------------- |
-| Native Windows | [Git for Windows](https://git-scm.com/downloads/win) рекомендуется; PowerShell используется при отсутствии | Не поддерживается            | Встроенные проекты и инструменты Windows                       |
-| WSL 2          | WSL 2 включен                                                                                              | Поддерживается               | Цепочки инструментов Linux или изолированное выполнение команд |
-| WSL 1          | WSL 1 включен                                                                                              | Не поддерживается            | Если WSL 2 недоступен                                          |
+| Опция          | Требует                                                               | [Sandboxing](/ru/sandboxing) | Когда использовать                                             |
+| -------------- | --------------------------------------------------------------------- | ---------------------------- | -------------------------------------------------------------- |
+| Native Windows | Нет; [Git for Windows](https://git-scm.com/downloads/win) опционально | Не поддерживается            | Встроенные проекты и инструменты Windows                       |
+| WSL 2          | WSL 2 включен                                                         | Поддерживается               | Цепочки инструментов Linux или изолированное выполнение команд |
+| WSL 1          | WSL 1 включен                                                         | Не поддерживается            | Если WSL 2 недоступен                                          |
 
-**Вариант 1: Native Windows с Git Bash**
+**Вариант 1: Native Windows**
 
-Установите [Git for Windows](https://git-scm.com/downloads/win), затем выполните команду установки из PowerShell или CMD. Вам не нужно запускать от имени администратора.
+Выполните команду установки из PowerShell или CMD. Вам не нужно запускать от имени администратора. Установка [Git for Windows](https://git-scm.com/downloads/win) опциональна. Она включает [инструмент Bash](/ru/tools-reference#bash-tool-behavior), предоставляя Git Bash.
 
 Независимо от того, устанавливаете ли вы из PowerShell или CMD, это влияет только на то, какую команду установки вы выполняете. Ваша подсказка показывает `PS C:\Users\YourName>` в PowerShell и `C:\Users\YourName>` без `PS` в CMD. Если вы новичок в терминале, [руководство по терминалу](/ru/terminal-guide#windows) проходит через каждый шаг.
 
-После установки запустите `claude` из PowerShell, CMD или Git Bash. Когда установлен Git Bash, Claude Code использует его внутри для выполнения команд независимо от того, откуда вы его запустили. Если Claude Code не может найти вашу установку Git Bash, установите путь в [файле settings.json](/ru/settings):
+После установки запустите `claude` из любого терминала.
 
-```json theme={null}
-{
-  "env": {
-    "CLAUDE_CODE_GIT_BASH_PATH": "C:\\Program Files\\Git\\bin\\bash.exe"
+* **Без Git for Windows**, Claude Code запускает команды оболочки через [инструмент PowerShell](/ru/tools-reference#powershell-tool).
+* **С Git for Windows**, Claude Code использует Git Bash для [инструмента Bash](/ru/tools-reference#bash-tool-behavior). Если Claude Code не может найти Git Bash, установите путь в вашем [файле settings.json](/ru/settings):
+
+  ```json theme={null}
+  {
+    "env": {
+      "CLAUDE_CODE_GIT_BASH_PATH": "C:\\Program Files\\Git\\bin\\bash.exe"
+    }
   }
-}
-```
+  ```
 
-Claude Code также может запускать PowerShell изначально в Windows. Когда установлен Git Bash, инструмент PowerShell развертывается постепенно как дополнительный вариант: установите `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` для включения или `0` для отключения. См. [инструмент PowerShell](/ru/tools-reference#powershell-tool) для настройки и ограничений.
+Когда установлен Git for Windows, инструмент PowerShell развертывается постепенно как дополнительный вариант наряду с Bash. Установите `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` для включения или `0` для отключения. См. [инструмент PowerShell](/ru/tools-reference#powershell-tool) для настройки и ограничений.
 
 **Вариант 2: WSL**
 

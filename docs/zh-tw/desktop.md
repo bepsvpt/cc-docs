@@ -78,7 +78,7 @@ For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/
 
 <span id="auto-mode-availability" />
 
-Auto Mode 是在 Max、Team、Enterprise 和 API 計畫上提供的研究預覽版。在 Pro 計畫或第三方提供者上不可用。在 Team、Enterprise 和 API 計畫上，它需要 Claude Sonnet 4.6、Opus 4.6 或 Opus 4.7。在 Max 計畫上，它需要 Claude Opus 4.7。
+Auto Mode 是在 Anthropic API 上提供給所有使用者的研究預覽版。在第三方提供者上不可用。它需要 Claude Sonnet 4.6、Opus 4.6 或 Opus 4.7。
 
 <Tip title="最佳實踐">
   在 Plan Mode 中開始複雜任務，以便 Claude 在進行變更之前規劃方法。一旦您批准計畫，切換到'自動接受編輯'或'詢問權限'以執行它。有關此工作流程的更多資訊，請參閱[先探索，然後計畫，然後編碼](/zh-TW/best-practices#explore-first-then-plan-then-code)。

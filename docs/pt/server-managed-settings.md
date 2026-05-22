@@ -123,7 +123,7 @@ A maioria das [chaves de configurações](/pt/settings#available-settings) funci
 As configurações gerenciadas pelo servidor têm as seguintes limitações:
 
 * As configurações se aplicam uniformemente a todos os usuários da organização. Configurações por grupo ainda não são suportadas.
-* [Configurações de servidor MCP](/pt/mcp#managed-mcp-configuration) não podem ser distribuídas através de configurações gerenciadas pelo servidor.
+* Um arquivo [`managed-mcp.json`](/pt/managed-mcp) não pode ser distribuído através de configurações gerenciadas pelo servidor. Entregue as chaves de política `allowedMcpServers` e `deniedMcpServers` lá em vez disso.
 * Configurações restritas a fontes de política em nível do SO, como `policyHelper` e `wslInheritsWindowsSettings`, não são honradas. Implante-as através de MDM ou um arquivo `managed-settings.json` do sistema.
 
 ## Entrega de configurações

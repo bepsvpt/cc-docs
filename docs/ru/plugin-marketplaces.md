@@ -161,7 +161,7 @@
 | `plugins` | array  | Список доступных плагинов                                                                                                                                                           | См. ниже       |
 
 <Note>
-  **Зарезервированные имена**: Следующие имена marketplace зарезервированы для официального использования Anthropic и не могут использоваться сторонними marketplace: `claude-code-marketplace`, `claude-code-plugins`, `claude-plugins-official`, `anthropic-marketplace`, `anthropic-plugins`, `agent-skills`, `anthropic-agent-skills`, `knowledge-work-plugins`, `life-sciences`. Имена, которые выдают себя за официальные marketplace, такие как `official-claude-plugins` или `anthropic-tools-v2`, также заблокированы.
+  **Зарезервированные имена**: Следующие имена marketplace зарезервированы для официального использования Anthropic и не могут использоваться сторонними marketplace: `claude-code-marketplace`, `claude-code-plugins`, `claude-plugins-official`, `anthropic-marketplace`, `anthropic-plugins`, `agent-skills`, `anthropic-agent-skills`, `knowledge-work-plugins`, `life-sciences`, `claude-for-legal`, `claude-for-financial-services`, `financial-services-plugins`. Имена, которые выдают себя за официальные marketplace, такие как `official-claude-plugins` или `anthropic-tools-v2`, также заблокированы.
 </Note>
 
 ### Поля владельца

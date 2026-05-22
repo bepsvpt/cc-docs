@@ -214,6 +214,7 @@ Claude Code maintient l'historique des commandes pour la session actuelle :
 
 * L'historique des entrées est stocké par répertoire de travail
 * L'historique des entrées se réinitialise lorsque vous exécutez `/clear` pour démarrer une nouvelle session. La conversation de la session précédente est conservée et peut être reprise.
+* Soumettre la même invite deux fois de suite enregistre une seule entrée d'historique, donc appuyer sur Haut accède à l'invite distincte précédente
 * Utilisez les flèches Haut/Bas pour naviguer (voir les raccourcis clavier ci-dessus)
 * **Remarque** : l'expansion de l'historique (`!`) est désactivée par défaut
 

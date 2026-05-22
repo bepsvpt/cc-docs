@@ -93,7 +93,7 @@ Claude ne lance pas de nouvelles initiatives en dehors de cette portée, et les 
 Un `/loop` nu exécute ce prompt à un [intervalle choisi dynamiquement](#let-claude-choose-the-interval). Ajoutez un intervalle, par exemple `/loop 15m`, pour l'exécuter selon un calendrier fixe à la place. Pour remplacer le prompt intégré par le vôtre, consultez [Personnaliser le prompt par défaut avec loop.md](#customize-the-default-prompt-with-loop-md).
 
 <Note>
-  Le prompt de maintenance intégré n'est pas encore disponible pour tout le monde, et n'est pas pris en charge sur Bedrock, Vertex AI ou Microsoft Foundry. Là où il n'est pas actif, `/loop` sans prompt imprime le message d'utilisation à la place.
+  Sur Bedrock, Vertex AI et Microsoft Foundry, `/loop` sans prompt imprime le message d'utilisation à la place de l'exécution du prompt de maintenance.
 </Note>
 
 ### Personnaliser le prompt par défaut avec loop.md
@@ -119,7 +119,7 @@ quiet, say so in one line.
 Les modifications apportées à `loop.md` prennent effet à la prochaine itération, vous pouvez donc affiner les instructions pendant qu'une boucle s'exécute. Quand aucun `loop.md` n'existe dans l'un ou l'autre emplacement, la boucle revient au prompt de maintenance intégré. Gardez le fichier concis : le contenu au-delà de 25 000 octets est tronqué.
 
 <Note>
-  `loop.md` suit la même disponibilité que le [prompt de maintenance intégré](#run-the-built-in-maintenance-prompt). Là où le prompt de maintenance n'est pas actif, `/loop` sans prompt imprime le message d'utilisation et le fichier n'est pas lu.
+  Sur Bedrock, Vertex AI et Microsoft Foundry, `loop.md` n'est pas lu et `/loop` sans prompt imprime le message d'utilisation à la place.
 </Note>
 
 ### Arrêter une boucle

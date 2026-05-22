@@ -123,7 +123,7 @@ Die meisten [Einstellungsschlüssel](/de/settings#available-settings) funktionie
 Serververwaltete Einstellungen haben die folgenden Einschränkungen:
 
 * Einstellungen gelten einheitlich für alle Benutzer in der Organisation. Konfigurationen pro Gruppe werden noch nicht unterstützt.
-* [MCP-Serverkonfigurationen](/de/mcp#managed-mcp-configuration) können nicht über serververwaltete Einstellungen verteilt werden.
+* Eine [`managed-mcp.json`](/de/managed-mcp) Datei kann nicht über serververwaltete Einstellungen verteilt werden. Stellen Sie stattdessen die Richtlinienschlüssel `allowedMcpServers` und `deniedMcpServers` dort bereit.
 * Einstellungen, die auf OS-Ebene-Richtlinienquellen beschränkt sind, wie `policyHelper` und `wslInheritsWindowsSettings`, werden nicht berücksichtigt. Stellen Sie sie stattdessen über MDM oder eine System-Datei `managed-settings.json` bereit.
 
 ## Einstellungsbereitstellung

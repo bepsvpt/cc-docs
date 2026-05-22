@@ -2,76 +2,71 @@
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# Sandboxing
+# Konfigurasi alat Bash sandboxed
 
-> Pelajari bagaimana alat bash sandboxed Claude Code menyediakan isolasi filesystem dan jaringan untuk eksekusi agen yang lebih aman dan mandiri.
+> Pelajari bagaimana alat Bash sandboxed Claude Code menyediakan isolasi filesystem dan jaringan untuk eksekusi agen yang lebih aman dan mandiri.
 
-## Ikhtisar
+Sandbox Bash memungkinkan Claude menjalankan sebagian besar perintah shell tanpa berhenti untuk meminta izin. Alih-alih menyetujui setiap perintah, Anda menentukan file dan domain jaringan mana yang dapat diakses perintah, dan sistem operasi memberlakukan batas itu untuk setiap perintah Bash dan proses anak-anaknya.
 
-Claude Code menampilkan sandboxing asli untuk menyediakan lingkungan yang lebih aman untuk eksekusi agen sambil mengurangi kebutuhan akan prompt izin yang konstan. Alih-alih meminta izin untuk setiap perintah bash, sandboxing menciptakan batas yang ditentukan di awal di mana Claude Code dapat bekerja lebih bebas dengan risiko yang berkurang.
+Halaman ini mencakup cara untuk:
 
-Alat bash sandboxed menggunakan primitif tingkat OS untuk memberlakukan isolasi filesystem dan jaringan.
+* [Mengaktifkan sandbox](#get-started) dan memilih bagaimana perintah sandboxed disetujui
+* [Mengonfigurasi](#configure-sandboxing) jalur dan domain jaringan mana yang dapat dijangkau perintah
+* [Menggabungkan sandboxing dengan aturan izin dan mode izin](#how-sandboxing-relates-to-permissions-and-permission-modes)
+* [Memberlakukan sandboxing di seluruh organisasi](#configure-the-sandbox-for-your-organization) dengan pengaturan terkelola
 
-## Mengapa sandboxing penting
-
-Keamanan berbasis izin tradisional memerlukan persetujuan pengguna yang konstan untuk perintah bash. Meskipun ini memberikan kontrol, hal ini dapat menyebabkan:
-
-* **Kelelahan persetujuan**: Berulang kali mengklik "setujui" dapat menyebabkan pengguna kurang memperhatikan apa yang mereka setujui
-* **Produktivitas berkurang**: Gangguan konstan memperlambat alur kerja pengembangan
-* **Otonomi terbatas**: Claude Code tidak dapat bekerja seefisien mungkin saat menunggu persetujuan
-
-Sandboxing mengatasi tantangan ini dengan:
-
-1. **Mendefinisikan batas yang jelas**: Tentukan dengan tepat direktori dan host jaringan mana yang dapat diakses Claude Code
-2. **Mengurangi prompt izin**: Perintah aman dalam sandbox tidak memerlukan persetujuan
-3. **Mempertahankan keamanan**: Upaya untuk mengakses sumber daya di luar sandbox memicu notifikasi segera
-4. **Memungkinkan otonomi**: Claude Code dapat berjalan lebih independen dalam batas yang ditentukan
-
-<Warning>
-  Sandboxing yang efektif memerlukan **baik** isolasi filesystem maupun jaringan. Tanpa isolasi jaringan, agen yang dikompromikan dapat mengeksfiltrasikan file sensitif seperti kunci SSH. Tanpa isolasi filesystem, agen yang dikompromikan dapat memasang pintu belakang pada sumber daya sistem untuk mendapatkan akses jaringan. Saat mengonfigurasi sandboxing, penting untuk memastikan bahwa pengaturan yang dikonfigurasi tidak menciptakan bypass dalam sistem ini.
-</Warning>
-
-## Cara kerjanya
-
-### Isolasi filesystem
-
-Alat bash sandboxed membatasi akses sistem file ke direktori tertentu:
-
-* **Perilaku penulisan default**: Akses baca dan tulis ke direktori kerja saat ini dan subdirektorinya
-* **Perilaku pembacaan default**: Akses baca ke seluruh komputer, kecuali direktori tertentu yang ditolak
-* **Akses terblokir**: Tidak dapat memodifikasi file di luar direktori kerja saat ini tanpa izin eksplisit
-* **Dapat dikonfigurasi**: Tentukan jalur yang diizinkan dan ditolak khusus melalui pengaturan
-
-Anda dapat memberikan akses tulis ke jalur tambahan menggunakan `sandbox.filesystem.allowWrite` dalam pengaturan Anda. Pembatasan ini diberlakukan pada tingkat OS (Seatbelt di macOS, bubblewrap di Linux), sehingga berlaku untuk semua perintah subprocess, termasuk alat seperti `kubectl`, `terraform`, dan `npm`, bukan hanya alat file Claude.
-
-### Isolasi jaringan
-
-Akses jaringan dikendalikan melalui server proxy yang berjalan di luar sandbox:
-
-* **Pembatasan domain**: Hanya domain yang disetujui yang dapat diakses
-* **Konfirmasi pengguna**: Permintaan domain baru memicu prompt izin (kecuali [`allowManagedDomainsOnly`](/id/settings#sandbox-settings) diaktifkan, yang secara otomatis memblokir domain yang tidak diizinkan)
-* **Dukungan proxy khusus**: Pengguna tingkat lanjut dapat menerapkan aturan khusus pada lalu lintas keluar
-* **Cakupan komprehensif**: Pembatasan berlaku untuk semua skrip, program, dan subprocess yang dihasilkan oleh perintah
-
-### Penegakan tingkat OS
-
-Alat bash sandboxed memanfaatkan primitif keamanan sistem operasi:
-
-* **macOS**: Menggunakan Seatbelt untuk penegakan sandbox
-* **Linux**: Menggunakan [bubblewrap](https://github.com/containers/bubblewrap) untuk isolasi
-* **WSL2**: Menggunakan bubblewrap, sama seperti Linux
-
-WSL1 tidak didukung karena bubblewrap memerlukan fitur kernel yang hanya tersedia di WSL2.
-
-Pembatasan tingkat OS ini memastikan bahwa semua proses anak yang dihasilkan oleh perintah Claude Code mewarisi batas keamanan yang sama.
+<Note>
+  Untuk membandingkan pendekatan isolasi lain seperti dev containers, container khusus, dan mesin virtual, lihat [Sandbox environments](/id/sandbox-environments). Untuk mengurangi prompt izin untuk alat selain Bash, lihat [permission modes](/id/permission-modes).
+</Note>
 
 ## Memulai
 
-### Prasyarat
+Sandbox dibangun ke dalam Claude Code dan berjalan di macOS, Linux, dan WSL2. Windows asli tidak didukung. Di Windows, jalankan Claude Code di dalam distribusi WSL2.
 
-Di **macOS**, sandboxing bekerja langsung menggunakan kerangka Seatbelt bawaan.
+Di macOS, tidak ada yang perlu diinstal: sandboxing menggunakan kerangka Seatbelt bawaan. Di Linux dan WSL2, sandbox bergantung pada dua paket, yang dibahas dalam [Set up Linux and WSL2](#set-up-linux-and-wsl2). Bahkan jika Anda belum menginstalnya, Anda dapat memulai dengan `/sandbox`, karena panelnya menunjukkan apakah ada yang hilang.
 
-Di **Linux dan WSL2**, instal paket yang diperlukan terlebih dahulu:
+<Steps>
+  <Step title="Jalankan /sandbox">
+    Mulai sesi Claude Code dan jalankan perintah `/sandbox`:
+
+    ```text theme={null}
+    /sandbox
+    ```
+
+    Ini membuka panel sandbox dengan tiga tab:
+
+    * **Mode**: pilih bagaimana perintah sandboxed disetujui, dibahas dalam langkah berikutnya
+    * **Overrides**: pilih apakah perintah yang gagal di bawah sandbox dapat kembali ke menjalankan unsandboxed. Ini adalah pengaturan [`allowUnsandboxedCommands`](/id/settings#sandbox-settings)
+    * **Config**: lihat pengaturan sandbox yang diselesaikan
+
+    Jika panel hanya menampilkan tab Dependencies, paket yang diperlukan hilang. Instal seperti yang dijelaskan dalam [Set up Linux and WSL2](#set-up-linux-and-wsl2), restart Claude Code, dan jalankan `/sandbox` lagi.
+  </Step>
+
+  <Step title="Pilih mode">
+    Di tab Mode, pilih auto-allow atau regular permissions. Auto-allow menjalankan perintah sandboxed tanpa prompt, dan regular permissions menjaga prompt izin reguler bahkan ketika perintah sandboxed. Lihat [Sandbox modes](#sandbox-modes) untuk perintah mana yang masih prompt dalam mode auto-allow.
+  </Step>
+
+  <Step title="Jalankan perintah Bash">
+    Minta Claude untuk menjalankan perintah, seperti build atau test suite. Secara default, perintah di dalam sandbox hanya dapat menulis ke direktori kerja. Pertama kali perintah memerlukan domain jaringan baru, Claude Code meminta persetujuan.
+
+    Perintah yang tidak dapat berjalan sandboxed kembali ke alur izin reguler. Untuk memperluas atau mempersempit batas ini, lihat [Configure sandboxing](#configure-sandboxing).
+  </Step>
+</Steps>
+
+Memilih mode dalam panel menulis ke pengaturan lokal proyek Anda di `.claude/settings.local.json`, yang berlaku untuk proyek saat ini dan tidak diperiksa ke git. Untuk mengaktifkan sandbox di semua proyek Anda, atur [`sandbox.enabled`](/id/settings#sandbox-settings) ke `true` dalam pengaturan pengguna Anda di `~/.claude/settings.json`. Untuk memberlakukan sandboxing untuk setiap pengembang dalam organisasi, gunakan [managed settings](#enforce-sandboxing-with-managed-settings).
+
+<Warning>
+  Secara default, jika sandbox tidak dapat dimulai karena dependensi hilang atau platform tidak didukung, Claude Code menampilkan peringatan dan menjalankan perintah tanpa sandboxing. Untuk menjadikan ini kegagalan keras sebagai gantinya, atur [`sandbox.failIfUnavailable`](/id/settings#sandbox-settings) ke `true`. Ini dimaksudkan untuk penyebaran terkelola yang memerlukan sandboxing sebagai gerbang keamanan.
+</Warning>
+
+### Set up Linux dan WSL2
+
+Di Linux dan WSL2, sandbox bergantung pada dua paket:
+
+* [`bubblewrap`](https://github.com/containers/bubblewrap): alat sandboxing tanpa privilege yang memberlakukan isolasi filesystem
+* [`socat`](http://www.dest-unreach.org/socat/): relay yang digunakan untuk merutekan lalu lintas jaringan melalui proxy sandbox
+
+Instal dengan manajer paket distribusi Anda:
 
 <Tabs>
   <Tab title="Ubuntu/Debian">
@@ -87,41 +82,69 @@ Di **Linux dan WSL2**, instal paket yang diperlukan terlebih dahulu:
   </Tab>
 </Tabs>
 
-WSL1 tidak mendukung sandboxing karena kurangnya primitif namespace Linux yang diperlukan. Jika Anda melihat `Sandboxing requires WSL2`, tingkatkan distribusi Anda ke WSL2 atau jalankan Claude Code tanpa sandboxing.
+Setelah menginstal, tab Dependencies dalam `/sandbox` menunjukkan apakah `ripgrep`, `bubblewrap`, `socat`, dan filter seccomp tersedia di platform Anda. Ripgrep disertakan dengan binari Claude Code asli. Filter seccomp bersifat opsional dan menambahkan pemblokiran soket domain Unix. Instal dengan `npm install -g @anthropic-ai/sandbox-runtime` jika hilang.
 
-Di WSL2, perintah sandboxed tidak dapat meluncurkan binari Windows seperti `cmd.exe`, `powershell.exe`, atau apa pun di bawah `/mnt/c/`. WSL menyerahkan ini ke host Windows melalui soket Unix, yang sandbox blokir. Jika perintah perlu memanggil binari Windows, tambahkan ke [`excludedCommands`](/id/settings#sandbox-settings) sehingga berjalan di luar sandbox.
+Ketika dependensi yang diperlukan hilang, tab Dependencies adalah satu-satunya tab yang ditampilkan sampai Anda menginstalnya. Pemeriksaan dependensi berjalan saat startup, jadi restart Claude Code setelah menginstal paket untuk `/sandbox` mendeteksinya.
 
-### Aktifkan sandboxing
+<AccordionGroup>
+  <Accordion title="Ubuntu 24.04 dan yang lebih baru: izinkan bubblewrap untuk membuat user namespaces">
+    Di Ubuntu 24.04 dan yang lebih baru, kebijakan AppArmor default mencegah bubblewrap dari membuat user namespaces yang dibutuhkannya untuk isolasi.
 
-Anda dapat mengaktifkan sandboxing dengan menjalankan perintah `/sandbox`:
+    Untuk memeriksa apakah lingkungan Anda memberlakukan pembatasan ini, termasuk di dalam WSL2, jalankan `sysctl kernel.apparmor_restrict_unprivileged_userns`. Jika kunci tidak ada atau mengembalikan `0`, lewati langkah ini. Jika mengembalikan `1`, tambahkan profil AppArmor yang memberikan `bwrap` kemampuan ini:
 
-```text theme={null}
-/sandbox
-```
+    ```bash theme={null}
+    sudo tee /etc/apparmor.d/bwrap > /dev/null <<'EOF'
+    abi <abi/4.0>,
+    include <tunables/global>
 
-Ini membuka menu di mana Anda dapat memilih antara mode sandbox. Jika dependensi yang diperlukan hilang (seperti `bubblewrap` atau `socat` di Linux), menu menampilkan instruksi instalasi untuk platform Anda.
+    profile bwrap /usr/bin/bwrap flags=(unconfined) {
+      userns,
+      include if exists <local/bwrap>
+    }
+    EOF
+    ```
 
-Secara default, jika sandbox tidak dapat dimulai (dependensi yang hilang atau platform yang tidak didukung), Claude Code menampilkan peringatan dan menjalankan perintah tanpa sandboxing. Untuk menjadikan ini kegagalan keras sebagai gantinya, atur [`sandbox.failIfUnavailable`](/id/settings#sandbox-settings) ke `true`. Ini dimaksudkan untuk penyebaran terkelola yang memerlukan sandboxing sebagai gerbang keamanan.
+    Profil hanya berlaku untuk `bwrap` itu sendiri, bukan untuk perintah yang berjalan di dalam sandbox. Muat ulang AppArmor untuk menerapkannya:
+
+    ```bash theme={null}
+    sudo systemctl reload apparmor
+    ```
+  </Accordion>
+
+  <Accordion title="Catatan WSL2">
+    Periksa versi WSL Anda dengan `wsl -l -v` dari PowerShell. Jika Anda melihat `Sandboxing requires WSL2`, distribusi Anda menjalankan WSL1. Tingkatkan ke WSL2 atau jalankan Claude Code tanpa sandboxing.
+
+    Di WSL2, perintah sandboxed tidak dapat meluncurkan binari Windows seperti `cmd.exe`, `powershell.exe`, atau apa pun di bawah `/mnt/c/`. WSL menyerahkan ini ke host Windows melalui soket Unix, yang sandbox blokir. Jika perintah perlu memanggil binari Windows, tambahkan ke [`excludedCommands`](/id/settings#sandbox-settings) sehingga berjalan di luar sandbox.
+  </Accordion>
+</AccordionGroup>
 
 ### Mode sandbox
 
 Claude Code menawarkan dua mode sandbox:
 
-**Mode izin otomatis**: Perintah Bash akan mencoba berjalan di dalam sandbox dan secara otomatis diizinkan tanpa memerlukan izin. Perintah yang tidak dapat di-sandbox (seperti yang memerlukan akses jaringan ke host yang tidak diizinkan) kembali ke alur izin reguler. Aturan penolakan eksplisit selalu dihormati, dan perintah `rm` atau `rmdir` yang menargetkan `/`, direktori home Anda, atau jalur sistem kritis lainnya masih memicu permintaan izin. Aturan Ask hanya berlaku untuk perintah yang kembali ke alur izin reguler.
+**Mode auto-allow**: Perintah Bash akan mencoba berjalan di dalam sandbox dan secara otomatis diizinkan tanpa memerlukan izin. Perintah yang tidak dapat di-sandbox, seperti yang memerlukan akses jaringan ke host yang tidak diizinkan, kembali ke alur izin reguler, di mana Claude Code memeriksa [permission rules](/id/permissions) Anda dan meminta Anda untuk perintah apa pun yang tidak diizinkan oleh aturan tersebut.
 
-**Mode izin reguler**: Semua perintah bash melalui alur izin standar, bahkan saat di-sandbox. Ini memberikan lebih banyak kontrol tetapi memerlukan lebih banyak persetujuan.
+Bahkan dalam mode auto-allow, hal berikut masih berlaku:
+
+* [Deny rules](/id/permissions) eksplisit selalu dihormati
+* Perintah `rm` atau `rmdir` yang menargetkan `/`, direktori home Anda, atau jalur sistem kritis lainnya masih memicu prompt izin
+* [Ask rules](/id/permissions) berlaku untuk perintah yang kembali ke alur izin reguler
+
+**Mode regular permissions**: Semua perintah Bash melalui alur izin reguler, bahkan ketika sandboxed. Ini memberikan lebih banyak kontrol tetapi memerlukan lebih banyak persetujuan.
 
 Di kedua mode, sandbox memberlakukan pembatasan filesystem dan jaringan yang sama. Perbedaannya hanya dalam apakah perintah sandboxed disetujui secara otomatis atau memerlukan izin eksplisit.
 
+Beberapa perintah tidak dapat berjalan di dalam sandbox sama sekali, seperti alat yang tidak kompatibel dengannya atau yang memerlukan host yang belum Anda izinkan. Daripada gagal tugas atau memerlukan Anda untuk mematikan sandboxing, Claude Code menyertakan pintu keluar: ketika perintah gagal karena pembatasan sandbox, Claude menganalisis kegagalan dan dapat mencoba kembali perintah dengan parameter `dangerouslyDisableSandbox`. Perintah yang dicoba kembali berjalan di luar sandbox, sehingga melalui alur izin reguler dan memerlukan persetujuan Anda.
+
+Anda dapat menonaktifkan pintu keluar ini dengan mengatur `"allowUnsandboxedCommands": false` dalam [sandbox settings](/id/settings#sandbox-settings) Anda. Ketika dinonaktifkan, yang ditampilkan tab Overrides `/sandbox` sebagai **Strict sandbox mode**, parameter `dangerouslyDisableSandbox` sepenuhnya diabaikan dan semua perintah harus berjalan sandboxed atau secara eksplisit terdaftar dalam `excludedCommands`.
+
 <Info>
-  Mode izin otomatis bekerja secara independen dari pengaturan mode izin Anda. Bahkan jika Anda tidak dalam mode "terima edit", perintah bash sandboxed akan berjalan secara otomatis saat izin otomatis diaktifkan. Ini berarti perintah bash yang memodifikasi file dalam batas sandbox akan dieksekusi tanpa meminta, bahkan ketika alat edit file biasanya memerlukan persetujuan.
+  Mode auto-allow bekerja secara independen dari pengaturan mode izin Anda. Bahkan jika Anda tidak dalam mode "accept edits", perintah Bash sandboxed akan berjalan secara otomatis ketika auto-allow diaktifkan. Ini berarti perintah Bash yang memodifikasi file dalam batas sandbox akan dieksekusi tanpa prompt, bahkan ketika alat edit file biasanya memerlukan persetujuan.
 </Info>
 
-### Konfigurasi sandboxing
+## Konfigurasi sandboxing
 
 Sesuaikan perilaku sandbox melalui file `settings.json` Anda. Lihat [Settings](/id/settings#sandbox-settings) untuk referensi konfigurasi lengkap.
-
-#### Memberikan akses tulis subprocess ke jalur tertentu
 
 Secara default, perintah sandboxed hanya dapat menulis ke direktori kerja saat ini. Jika perintah subprocess seperti `kubectl`, `terraform`, atau `npm` perlu menulis di luar direktori proyek, gunakan `sandbox.filesystem.allowWrite` untuk memberikan akses ke jalur tertentu:
 
@@ -138,7 +161,7 @@ Secara default, perintah sandboxed hanya dapat menulis ke direktori kerja saat i
 
 Jalur ini diberlakukan pada tingkat OS, sehingga semua perintah yang berjalan di dalam sandbox, termasuk proses anak mereka, menghormatinya. Ini adalah pendekatan yang direkomendasikan ketika alat memerlukan akses tulis ke lokasi tertentu, daripada mengecualikan alat dari sandbox sepenuhnya dengan `excludedCommands`.
 
-Ketika `allowWrite` (atau `denyWrite`/`denyRead`/`allowRead`) didefinisikan dalam beberapa [cakupan pengaturan](/id/settings#settings-precedence), array **digabungkan**, artinya jalur dari setiap cakupan digabungkan, bukan diganti. Misalnya, jika pengaturan terkelola memungkinkan penulisan ke `/opt/company-tools` dan pengguna menambahkan `~/.kube` dalam pengaturan pribadi mereka, kedua jalur disertakan dalam konfigurasi sandbox akhir. Ini berarti pengguna dan proyek dapat memperluas daftar tanpa menduplikasi atau menimpa jalur yang ditetapkan oleh cakupan prioritas lebih tinggi.
+Ketika array filesystem yang sama didefinisikan dalam beberapa [settings scopes](/id/settings#settings-precedence), array digabungkan: jalur dari setiap scope dikombinasikan, bukan diganti.
 
 Awalan jalur mengontrol bagaimana jalur diselesaikan:
 
@@ -148,11 +171,11 @@ Awalan jalur mengontrol bagaimana jalur diselesaikan:
 | `~/`                   | Relatif terhadap direktori home                                                                     | `~/.kube` menjadi `$HOME/.kube`                                                  |
 | `./` atau tanpa awalan | Relatif terhadap akar proyek untuk pengaturan proyek, atau ke `~/.claude` untuk pengaturan pengguna | `./output` dalam `.claude/settings.json` diselesaikan ke `<project-root>/output` |
 
-Awalan `//path` yang lebih lama untuk jalur absolut masih berfungsi. Jika Anda sebelumnya menggunakan `/path` tunggal mengharapkan resolusi relatif proyek, beralih ke `./path`. Sintaks ini berbeda dari [aturan izin Read dan Edit](/id/permissions#read-and-edit), yang menggunakan `//path` untuk absolut dan `/path` untuk relatif proyek. Jalur filesystem sandbox menggunakan konvensi standar: `/tmp/build` adalah jalur absolut.
+Sintaks ini berbeda dari [Read and Edit permission rules](/id/permissions#read-and-edit), yang menggunakan `//path` untuk absolut dan `/path` untuk relatif proyek. Jalur filesystem sandbox menggunakan konvensi standar: `/tmp/build` adalah absolut.
 
-Anda juga dapat menolak akses tulis atau baca menggunakan `sandbox.filesystem.denyWrite` dan `sandbox.filesystem.denyRead`. Ini digabungkan dengan jalur apa pun dari aturan izin `Edit(...)` dan `Read(...)`. Untuk mengizinkan kembali pembacaan jalur tertentu dalam wilayah yang ditolak, gunakan `sandbox.filesystem.allowRead`, yang mengambil alih `denyRead`. Ketika `allowManagedReadPathsOnly` diaktifkan dalam pengaturan terkelola, hanya entri `allowRead` terkelola yang dihormati; entri `allowRead` pengguna, proyek, dan lokal diabaikan. `denyRead` masih digabungkan dari semua sumber.
+Anda juga dapat menolak akses tulis atau baca menggunakan `sandbox.filesystem.denyWrite` dan `sandbox.filesystem.denyRead`, dan mengizinkan kembali jalur tertentu dalam wilayah yang ditolak menggunakan `sandbox.filesystem.allowRead`.
 
-Misalnya, untuk memblokir pembacaan dari seluruh direktori home sambil tetap memungkinkan pembacaan dari proyek saat ini, tambahkan ini ke `.claude/settings.json` proyek Anda:
+Contoh di bawah memblokir pembacaan dari seluruh direktori home sambil tetap memungkinkan pembacaan dari proyek saat ini. Tempatkan di `.claude/settings.json` proyek Anda, karena jalur relatif `.` diselesaikan ke akar proyek hanya ketika konfigurasi berada dalam pengaturan proyek:
 
 ```json theme={null}
 {
@@ -168,99 +191,122 @@ Misalnya, untuk memblokir pembacaan dari seluruh direktori home sambil tetap mem
 
 `.` dalam `allowRead` diselesaikan ke akar proyek karena konfigurasi ini berada dalam pengaturan proyek. Jika Anda menempatkan konfigurasi yang sama dalam `~/.claude/settings.json`, `.` akan diselesaikan ke `~/.claude` sebagai gantinya, dan file proyek akan tetap diblokir oleh aturan `denyRead`.
 
-<Tip>
-  Tidak semua perintah kompatibel dengan sandboxing langsung. Beberapa catatan yang mungkin membantu Anda memanfaatkan sandbox sebaik-baiknya:
+## Cara sandboxing bekerja
 
-  * Banyak alat CLI memerlukan akses ke host tertentu. Saat Anda menggunakan alat ini, mereka akan meminta izin untuk mengakses host tertentu. Memberikan izin akan memungkinkan mereka mengakses host ini sekarang dan di masa depan, memungkinkan mereka untuk dieksekusi dengan aman di dalam sandbox.
-  * `watchman` tidak kompatibel dengan berjalan di sandbox. Jika Anda menjalankan `jest`, pertimbangkan menggunakan `jest --no-watchman`
-  * `docker` tidak kompatibel dengan berjalan di sandbox. Pertimbangkan untuk menentukan `docker *` dalam `excludedCommands` untuk memaksanya berjalan di luar sandbox.
-</Tip>
+### Isolasi filesystem
+
+Alat Bash sandboxed membatasi akses sistem file ke direktori tertentu:
+
+* **Perilaku penulisan default**: akses baca dan tulis ke direktori kerja saat ini dan subdirektorinya
+* **Perilaku pembacaan default**: akses baca ke seluruh komputer, kecuali direktori tertentu yang ditolak. Perhatikan bahwa default ini masih memungkinkan pembacaan file kredensial seperti `~/.aws/credentials` dan `~/.ssh/`. Tambahkan ke `denyRead` untuk memblokirnya.
+* **Akses terblokir**: tidak dapat memodifikasi file di luar direktori kerja saat ini tanpa izin eksplisit, termasuk file konfigurasi shell seperti `~/.bashrc` dan binari sistem di `/bin/`
+* **Dapat dikonfigurasi**: tentukan jalur yang diizinkan dan ditolak khusus melalui pengaturan
+
+Anda dapat memberikan akses tulis ke jalur tambahan menggunakan `sandbox.filesystem.allowWrite` dalam pengaturan Anda. Pembatasan ini diberlakukan pada tingkat OS, sehingga berlaku untuk semua perintah subprocess, termasuk alat seperti `kubectl`, `terraform`, dan `npm`, bukan hanya alat file Claude.
+
+### Isolasi jaringan
+
+Akses jaringan dikendalikan melalui server proxy yang berjalan di luar sandbox:
+
+* **Pembatasan domain**: tidak ada domain yang diizinkan sebelumnya. Pertama kali perintah memerlukan domain baru, Claude Code meminta persetujuan. Izinkan domain sebelumnya dengan [`allowedDomains`](/id/settings#sandbox-settings) untuk menghindari prompt.
+* **Lockdown terkelola**: jika [`allowManagedDomainsOnly`](/id/settings#sandbox-settings) diatur dalam pengaturan terkelola, domain yang tidak diizinkan diblokir secara otomatis alih-alih prompt, dan hanya `allowedDomains` dari pengaturan terkelola yang dihormati.
+* **Dukungan proxy khusus**: pengguna tingkat lanjut dapat menerapkan aturan khusus pada lalu lintas keluar
+* **Cakupan komprehensif**: pembatasan berlaku untuk semua skrip, program, dan subprocess yang dihasilkan oleh perintah
 
 <Note>
-  Claude Code mencakup mekanisme pintu keluar yang disengaja yang memungkinkan perintah berjalan di luar sandbox saat diperlukan. Ketika perintah gagal karena pembatasan sandbox (seperti masalah konektivitas jaringan atau alat yang tidak kompatibel), Claude diminta untuk menganalisis kegagalan dan dapat mencoba kembali perintah dengan parameter `dangerouslyDisableSandbox`. Perintah yang menggunakan parameter ini melalui alur izin Claude Code normal yang memerlukan izin pengguna untuk dieksekusi. Ini memungkinkan Claude Code menangani kasus tepi di mana alat tertentu atau operasi jaringan tidak dapat berfungsi dalam batasan sandbox.
-
-  Anda dapat menonaktifkan pintu keluar ini dengan mengatur `"allowUnsandboxedCommands": false` dalam [pengaturan sandbox](/id/settings#sandbox-settings) Anda. Saat dinonaktifkan, parameter `dangerouslyDisableSandbox` sepenuhnya diabaikan dan semua perintah harus berjalan sandboxed atau secara eksplisit terdaftar dalam `excludedCommands`.
+  Proxy bawaan memberlakukan allowlist berdasarkan hostname yang diminta dan tidak menghentikan atau memeriksa lalu lintas TLS. Lihat [Security limitations](#security-limitations) untuk implikasi desain ini, dan [Custom proxy configuration](#custom-proxy-configuration) jika model ancaman Anda memerlukan inspeksi TLS.
 </Note>
 
-## Manfaat keamanan
+### Penegakan tingkat OS
 
-### Perlindungan terhadap prompt injection
+Alat Bash sandboxed memanfaatkan primitif keamanan sistem operasi:
 
-Bahkan jika penyerang berhasil memanipulasi perilaku Claude Code melalui prompt injection, sandbox memastikan sistem Anda tetap aman:
+* **macOS**: menggunakan Seatbelt untuk penegakan sandbox
+* **Linux**: menggunakan [bubblewrap](https://github.com/containers/bubblewrap) untuk isolasi
+* **WSL2**: menggunakan bubblewrap, sama seperti Linux
 
-**Perlindungan filesystem:**
+WSL1 tidak didukung karena bubblewrap memerlukan fitur kernel yang hanya tersedia di WSL2. Pembatasan tingkat OS ini memastikan bahwa semua proses anak yang dihasilkan oleh perintah Claude Code mewarisi batas keamanan yang sama.
 
-* Tidak dapat memodifikasi file konfigurasi kritis seperti `~/.bashrc`
-* Tidak dapat memodifikasi file tingkat sistem di `/bin/`
-* Tidak dapat membaca file yang ditolak dalam [pengaturan izin Claude](/id/permissions#manage-permissions) Anda
+Primitif yang sama tersedia sebagai paket [`@anthropic-ai/sandbox-runtime`](https://github.com/anthropic-experimental/sandbox-runtime) mandiri, yang halaman [Sandbox environments](/id/sandbox-environments#sandbox-runtime) mencakup sebagai pendekatan terpisah untuk membungkus seluruh proses Claude Code.
 
-**Perlindungan jaringan:**
+## Bagaimana sandboxing berhubungan dengan izin dan mode izin
 
-* Tidak dapat mengeksfiltrasikan data ke server yang dikendalikan penyerang
-* Tidak dapat mengunduh skrip berbahaya dari domain yang tidak sah
-* Tidak dapat melakukan panggilan API yang tidak terduga ke layanan yang tidak disetujui
-* Tidak dapat menghubungi domain apa pun yang tidak secara eksplisit diizinkan
+Sandboxing, [permission rules](/id/permissions), dan [permission modes](/id/permission-modes) adalah lapisan komplementer. Bagian di bawah mencakup bagaimana sandbox berinteraksi dengan masing-masing.
 
-**Pemantauan dan kontrol:**
+### Aturan izin
 
-* Semua upaya akses di luar sandbox diblokir pada tingkat OS
-* Anda menerima notifikasi segera ketika batas diuji
-* Anda dapat memilih untuk menolak, mengizinkan sekali, atau secara permanen memperbarui konfigurasi Anda
+Aturan izin dan sandboxing mengontrol hal yang berbeda:
 
-### Permukaan serangan berkurang
-
-Sandboxing membatasi potensi kerusakan dari:
-
-* **Dependensi berbahaya**: Paket NPM atau dependensi lain dengan kode berbahaya
-* **Skrip yang dikompromikan**: Skrip build atau alat dengan kerentanan keamanan
-* **Rekayasa sosial**: Serangan yang menipu pengguna untuk menjalankan perintah berbahaya
-* **Prompt injection**: Serangan yang menipu Claude untuk menjalankan perintah berbahaya
-
-### Operasi transparan
-
-Ketika Claude Code mencoba mengakses sumber daya jaringan di luar sandbox:
-
-1. Operasi diblokir pada tingkat OS
-2. Anda menerima notifikasi segera
-3. Anda dapat memilih untuk:
-   * Menolak permintaan
-   * Mengizinkan sekali
-   * Memperbarui konfigurasi sandbox Anda untuk secara permanen mengizinkannya
-
-## Keterbatasan Keamanan
-
-* Keterbatasan Sandboxing Jaringan: Sistem penyaringan jaringan beroperasi dengan membatasi domain yang diizinkan untuk terhubung oleh proses. Ini tidak sebaliknya memeriksa lalu lintas yang melewati proxy dan pengguna bertanggung jawab untuk memastikan mereka hanya mengizinkan domain tepercaya dalam kebijakan mereka.
-
-<Warning>
-  Pengguna harus menyadari potensi risiko yang datang dari mengizinkan domain luas seperti `github.com` yang mungkin memungkinkan eksfiltrasi data. Juga, dalam beberapa kasus mungkin dapat membypass penyaringan jaringan melalui [domain fronting](https://en.wikipedia.org/wiki/Domain_fronting).
-</Warning>
-
-* Eskalasi Privilege melalui Unix Sockets: Konfigurasi `allowUnixSockets` dapat secara tidak sengaja memberikan akses ke layanan sistem yang kuat yang dapat menyebabkan bypass sandbox. Misalnya, jika digunakan untuk memungkinkan akses ke `/var/run/docker.sock` ini akan secara efektif memberikan akses ke sistem host melalui eksploitasi soket docker. Pengguna didorong untuk mempertimbangkan dengan hati-hati soket unix apa pun yang mereka izinkan melalui sandbox.
-* Eskalasi Izin Filesystem: Izin penulisan filesystem yang terlalu luas dapat memungkinkan serangan eskalasi privilege. Mengizinkan penulisan ke direktori yang berisi executable dalam `$PATH`, direktori konfigurasi sistem, atau file konfigurasi shell pengguna (`.bashrc`, `.zshrc`) dapat menyebabkan eksekusi kode dalam konteks keamanan yang berbeda ketika pengguna lain atau proses sistem mengakses file ini.
-* Kekuatan Sandbox Linux: Implementasi Linux menyediakan isolasi filesystem dan jaringan yang kuat tetapi mencakup mode `enableWeakerNestedSandbox` yang memungkinkannya bekerja di dalam lingkungan Docker tanpa namespace istimewa. Opsi ini secara konsiderabel melemahkan keamanan dan hanya boleh digunakan dalam kasus di mana isolasi tambahan sebaliknya diberlakukan.
-
-## Bagaimana sandboxing berhubungan dengan izin
-
-Sandboxing dan [izin](/id/permissions) adalah lapisan keamanan komplementer yang bekerja bersama:
-
-* **Izin** mengontrol alat mana yang dapat digunakan Claude Code dan dievaluasi sebelum alat apa pun berjalan. Mereka berlaku untuk semua alat: Bash, Read, Edit, WebFetch, MCP, dan lainnya.
+* **Aturan izin** mengontrol alat mana yang dapat digunakan Claude Code dan dievaluasi sebelum alat apa pun berjalan. Mereka berlaku untuk semua alat: Bash, Read, Edit, WebFetch, MCP, dan lainnya.
 * **Sandboxing** menyediakan penegakan tingkat OS yang membatasi apa yang dapat diakses perintah Bash pada tingkat filesystem dan jaringan. Ini hanya berlaku untuk perintah Bash dan proses anak mereka.
+
+Kedua lapisan juga berbeda dalam cara penegakan mereka. Claude Code mengevaluasi keputusan izin sebelum perintah berjalan, berdasarkan string perintah dan, dalam mode auto, penilaian classifier terpisah tentang apakah perintah aman. Sistem operasi memberlakukan batas sandbox pada proses yang berjalan, sehingga berlaku terlepas dari apa yang dipilih model untuk dijalankan dan bahkan jika perintah yang diizinkan melakukan lebih dari nama yang disarankan.
 
 Pembatasan filesystem dan jaringan dikonfigurasi melalui pengaturan sandbox dan aturan izin:
 
-* Gunakan `sandbox.filesystem.allowWrite` untuk memberikan akses tulis subprocess ke jalur di luar direktori kerja
-* Gunakan `sandbox.filesystem.denyWrite` dan `sandbox.filesystem.denyRead` untuk memblokir akses subprocess ke jalur tertentu
-* Gunakan `sandbox.filesystem.allowRead` untuk mengizinkan kembali pembacaan jalur tertentu dalam wilayah yang ditolak
-* Gunakan aturan tolak `Read` dan `Edit` untuk memblokir akses ke file atau direktori tertentu
-* Gunakan aturan izin/tolak `WebFetch` untuk mengontrol akses domain
-* Gunakan `allowedDomains` sandbox untuk mengontrol domain mana yang dapat dijangkau perintah Bash
-* Gunakan `deniedDomains` sandbox untuk memblokir domain tertentu bahkan ketika wildcard `allowedDomains` yang lebih luas akan sebaliknya mengizinkannya
+| Pengaturan atau aturan                                           | Apa yang dilakukannya                                                                                            |
+| :--------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
+| `sandbox.filesystem.allowWrite`                                  | Memberikan akses tulis subprocess ke jalur di luar direktori kerja                                               |
+| `sandbox.filesystem.denyWrite` dan `sandbox.filesystem.denyRead` | Memblokir akses subprocess ke jalur tertentu                                                                     |
+| `sandbox.filesystem.allowRead`                                   | Mengizinkan kembali pembacaan jalur tertentu dalam wilayah `denyRead`                                            |
+| Aturan izin `Edit`                                               | Memberikan akses tulis ke jalur tertentu, dengan cara yang sama seperti `sandbox.filesystem.allowWrite`          |
+| Aturan tolak `Read` dan `Edit`                                   | Memblokir akses ke file atau direktori tertentu                                                                  |
+| Aturan izin dan tolak `WebFetch`                                 | Mengontrol akses domain                                                                                          |
+| Sandbox `allowedDomains`                                         | Mengontrol domain mana yang dapat dijangkau perintah Bash                                                        |
+| Sandbox `deniedDomains`                                          | Memblokir domain tertentu bahkan ketika wildcard `allowedDomains` yang lebih luas akan sebaliknya mengizinkannya |
 
 Jalur dari pengaturan `sandbox.filesystem` dan aturan izin digabungkan bersama ke dalam konfigurasi sandbox akhir.
 
-[Repositori](https://github.com/anthropics/claude-code/tree/main/examples/settings) ini mencakup konfigurasi pengaturan pemula untuk skenario penyebaran umum, termasuk contoh khusus sandbox. Gunakan ini sebagai titik awal dan sesuaikan dengan kebutuhan Anda.
+[Direktori contoh repositori claude-code](https://github.com/anthropics/claude-code/tree/main/examples/settings) mencakup konfigurasi pengaturan pemula untuk skenario penyebaran umum, termasuk contoh khusus sandbox. Gunakan ini sebagai titik awal dan sesuaikan dengan kebutuhan Anda.
 
-## Penggunaan lanjutan
+### Mode izin
+
+`/sandbox` bukan [permission mode](/id/permission-modes). Mode izin memutuskan apakah panggilan alat berjalan dan apakah Anda diminta terlebih dahulu, sementara sandbox membatasi apa yang dapat diakses perintah Bash setelah berjalan. Mereka berbeda dalam apa yang mereka kontrol dan apa yang menggantikan prompt per-aksi:
+
+|                                                                    | Apa yang dikontrol                                    | Apa yang menggantikan prompt                                                                                                                           |
+| :----------------------------------------------------------------- | :---------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/sandbox`                                                         | Apa yang dapat diakses perintah Bash setelah berjalan | Batas sandbox itu sendiri, dalam [mode auto-allow](#sandbox-modes)                                                                                     |
+| [Auto mode](/id/permission-modes#eliminate-prompts-with-auto-mode) | Apakah setiap panggilan alat berjalan                 | Classifier yang meninjau tindakan                                                                                                                      |
+| `--dangerously-skip-permissions`                                   | Apakah setiap panggilan alat berjalan                 | Tidak ada. Pemeriksaan [Protected path](/id/permission-modes#protected-paths) juga dilewati; hanya menghapus `/` atau direktori home Anda masih prompt |
+
+Mode [auto-allow](#sandbox-modes) sandbox terpisah dari [auto mode](/id/permission-modes#eliminate-prompts-with-auto-mode): auto-allow menyetujui perintah Bash karena batas sandbox memuatnya, sementara auto mode menggunakan classifier untuk meninjau tindakan. Keduanya bekerja secara independen dan dapat dikombinasikan. Untuk memilih batas isolasi untuk run tanpa pengawasan, lihat [Sandbox environments](/id/sandbox-environments#how-isolation-relates-to-permission-modes).
+
+## Konfigurasi sandbox untuk organisasi Anda
+
+Administrator dapat memerlukan sandboxing untuk setiap pengguna, mencegah pengembang memperluas kebijakan, dan merutekan lalu lintas sandbox melalui proxy perusahaan.
+
+### Memberlakukan sandboxing dengan pengaturan terkelola
+
+Untuk memerlukan sandbox untuk setiap pengembang, berikan kunci `sandbox` melalui [managed settings](/id/settings#settings-files), baik sebagai file yang dikelola oleh MDM Anda atau melalui [server-managed settings](/id/server-managed-settings) di Claude.ai.
+
+Konfigurasi pengaturan terkelola berikut mengaktifkan sandbox, menolak untuk memulai Claude Code jika sandbox tidak dapat diinisialisasi, dan mencegah model dari mencoba kembali perintah di luar sandbox:
+
+```json theme={null}
+{
+  "sandbox": {
+    "enabled": true,
+    "failIfUnavailable": true,
+    "allowUnsandboxedCommands": false
+  }
+}
+```
+
+Dua kunci di luar `enabled` mengontrol apa yang terjadi ketika sandbox tidak dapat menjalankan perintah:
+
+* **`failIfUnavailable`**: dependensi yang hilang seperti bubblewrap di Linux memblokir Claude Code dari memulai daripada menampilkan peringatan dan kembali ke eksekusi unsandboxed
+* **`allowUnsandboxedCommands: false`**: pintu keluar `dangerouslyDisableSandbox` diabaikan, sehingga perintah yang gagal di bawah sandbox tidak dapat dicoba kembali di luar itu
+
+Dua penambahan layak dipertimbangkan bersama mereka. Tambahkan `excludedCommands` untuk alat yang disetujui organisasi apa pun yang harus berjalan tanpa isolasi. Tambahkan entri [`denyRead`](#filesystem-isolation) untuk direktori kredensial seperti `~/.aws` dan `~/.ssh`, yang kebijakan pembacaan default masih memungkinkan.
+
+Sandbox tidak berjalan di Windows asli, jadi jika armada Anda mencakup host Windows, batasi konfigurasi ini ke macOS dan Linux atau minta pengguna tersebut menjalankan Claude Code di dalam WSL2 atau container.
+
+### Cegah pengembang memperluas kebijakan
+
+Untuk kunci boolean seperti `enabled` dan `failIfUnavailable`, Claude Code menggunakan nilai terkelola dan mengabaikan apa pun yang ditetapkan pengembang secara lokal. Untuk kunci array seperti `excludedCommands` dan `allowRead`, Claude Code menggabungkan entri dari setiap scope, sehingga pengembang dapat menambahkan entri yang memperluas kebijakan.
+
+Atur `allowManagedReadPathsOnly` ke `true` dalam pengaturan terkelola sehingga hanya entri `allowRead` dari pengaturan terkelola yang dihormati. Entri `allowRead` pengguna, proyek, dan lokal diabaikan. Ini mencegah pengembang memperluas akses baca di luar jalur yang disetujui organisasi. Untuk mengunci domain jaringan ke nilai terkelola dengan cara yang sama, atur [`allowManagedDomainsOnly`](/id/settings#sandbox-settings).
+
+`excludedCommands` tidak memiliki lockdown hanya terkelola yang setara, sehingga pengembang selalu dapat menambahkan entri yang menjalankan perintah tambahan di luar sandbox. Jaga daftar terkelola tetap sempit.
 
 ### Konfigurasi proxy khusus
 
@@ -270,6 +316,8 @@ Untuk organisasi yang memerlukan keamanan jaringan lanjutan, Anda dapat menerapk
 * Menerapkan aturan penyaringan khusus
 * Mencatat semua permintaan jaringan
 * Mengintegrasikan dengan infrastruktur keamanan yang ada
+
+Untuk menunjukkan Claude Code ke proxy Anda, atur port proxy dalam [sandbox settings](/id/settings#sandbox-settings):
 
 ```json theme={null}
 {
@@ -282,48 +330,58 @@ Untuk organisasi yang memerlukan keamanan jaringan lanjutan, Anda dapat menerapk
 }
 ```
 
-### Integrasi dengan alat keamanan yang ada
+## Pemecahan masalah
 
-Alat bash sandboxed bekerja bersama dengan:
+Beberapa perintah gagal di dalam sandbox meskipun bekerja di luar itu. Perbaikan di bawah mencakup kasus paling umum.
 
-* **Aturan izin**: Gabungkan dengan [pengaturan izin](/id/permissions) untuk pertahanan berlapis
-* **Kontainer pengembangan**: Gunakan dengan [devcontainers](/id/devcontainer) untuk isolasi tambahan
-* **Kebijakan perusahaan**: Terapkan konfigurasi sandbox melalui [pengaturan terkelola](/id/settings#settings-precedence)
-
-## Praktik terbaik
-
-1. **Mulai ketat**: Mulai dengan izin minimal dan perluas sesuai kebutuhan
-2. **Pantau log**: Tinjau upaya pelanggaran sandbox untuk memahami kebutuhan Claude Code
-3. **Gunakan konfigurasi khusus lingkungan**: Aturan sandbox berbeda untuk konteks pengembangan vs. produksi
-4. **Gabungkan dengan izin**: Gunakan sandboxing bersama dengan kebijakan IAM untuk keamanan komprehensif
-5. **Konfigurasi uji**: Verifikasi pengaturan sandbox Anda tidak memblokir alur kerja yang sah
-
-## Sumber terbuka
-
-Runtime sandbox tersedia sebagai paket npm sumber terbuka untuk digunakan dalam proyek agen Anda sendiri. Ini memungkinkan komunitas agen AI yang lebih luas untuk membangun sistem otonom yang lebih aman dan lebih aman. Ini juga dapat digunakan untuk sandbox program lain yang mungkin ingin Anda jalankan. Misalnya, untuk sandbox server MCP Anda dapat menjalankan:
-
-```bash theme={null}
-npx @anthropic-ai/sandbox-runtime <command-to-sandbox>
-```
-
-Untuk detail implementasi dan kode sumber, kunjungi [repositori GitHub](https://github.com/anthropic-experimental/sandbox-runtime).
+* **Perintah gagal dengan kesalahan host-not-allowed**: banyak alat CLI perlu menjangkau host tertentu. Memberikan izin saat diminta menambahkan host ke daftar yang diizinkan sehingga alat berjalan di dalam sandbox di masa depan.
+* **`jest` hang atau gagal**: `watchman` tidak kompatibel dengan sandbox. Jalankan `jest --no-watchman` sebagai gantinya.
+* **Go-based CLIs gagal verifikasi TLS di macOS**: alat seperti `gh`, `gcloud`, dan `terraform` mungkin gagal verifikasi TLS di bawah Seatbelt. Daftar alat ini dalam `excludedCommands` untuk menjalankannya di luar sandbox. Jika Anda menggunakan `httpProxyPort` dengan proxy MITM dan CA khusus, atur [`enableWeakerNetworkIsolation`](/id/settings#sandbox-settings) ke `true` sebagai gantinya.
+* **Perintah `docker` gagal**: `docker` tidak kompatibel dengan sandbox. Tambahkan `docker *` ke `excludedCommands` untuk menjalankannya di luar sandbox.
+* **Bubblewrap gagal memulai di dalam container**: dalam container tanpa privilege, bubblewrap tidak dapat memasang filesystem `/proc` segar. Atur [`enableWeakerNestedSandbox`](/id/settings#sandbox-settings) ke `true` sehingga sandbox dalam bind-mount `/proc` yang ada dari container sebagai gantinya. Hanya gunakan pengaturan ini ketika container luar sudah menyediakan batas isolasi yang Anda butuhkan, karena mengekspos informasi proses ke perintah sandboxed yang mount `/proc` segar akan menyembunyikan.
+* **Filter seccomp di Linux**: filter seccomp diperlukan untuk memblokir soket domain Unix. Tab Dependencies dalam `/sandbox` menunjukkan apakah tersedia. Jika hilang, jalankan `npm install -g @anthropic-ai/sandbox-runtime` untuk menginstal helper.
+* **`--dangerously-skip-permissions` gagal sebagai root**: flag ini diblokir saat menjalankan sebagai root atau melalui sudo di Linux dan macOS, karena akses root dikombinasikan dengan tidak ada prompt izin dapat memodifikasi file atau layanan apa pun di sistem. Pemeriksaan dilewati secara otomatis di dalam sandbox yang dikenali. Untuk menjalankan secara otonom dalam container, gunakan konfigurasi [dev container](/id/devcontainer), yang menjalankan Claude Code sebagai pengguna non-root.
 
 ## Keterbatasan
 
-* **Overhead kinerja**: Minimal, tetapi beberapa operasi filesystem mungkin sedikit lebih lambat
-* **Kompatibilitas**: Beberapa alat yang memerlukan pola akses sistem tertentu mungkin memerlukan penyesuaian konfigurasi, atau bahkan mungkin perlu dijalankan di luar sandbox
-* **Dukungan platform**: Mendukung macOS, Linux, dan WSL2. WSL1 tidak didukung. Dukungan Windows asli sedang direncanakan.
+Sandboxing mengurangi risiko tetapi bukan batas isolasi lengkap. Tinjau keterbatasan di bawah sebelum mengandalkannya sebagai kontrol keamanan keras.
 
-## Apa yang sandboxing tidak mencakup
+### Keterbatasan keamanan
+
+* **Penyaringan jaringan**: sistem penyaringan jaringan beroperasi dengan membatasi domain yang diizinkan untuk terhubung oleh proses. Proxy bawaan tidak menghentikan atau melakukan inspeksi TLS pada lalu lintas keluar, sehingga isi koneksi terenkripsi tidak diperiksa. Anda bertanggung jawab untuk memastikan bahwa hanya domain tepercaya yang diizinkan dalam kebijakan Anda.
+
+<Warning>
+  Mengizinkan domain luas seperti `github.com` dapat membuat jalur untuk eksfiltrasi data. Karena proxy membuat keputusan izin dari hostname yang disediakan klien tanpa memeriksa TLS, kode yang berjalan di dalam sandbox berpotensi dapat menggunakan [domain fronting](https://en.wikipedia.org/wiki/Domain_fronting) atau teknik serupa untuk menjangkau host di luar allowlist. Jika model ancaman Anda memerlukan jaminan yang lebih kuat, konfigurasikan [custom proxy](#custom-proxy-configuration) yang menghentikan TLS dan memeriksa lalu lintas, dan instal sertifikat CA-nya di dalam sandbox. Isolasi jaringan yang lebih kuat dan sadar TLS adalah area pengembangan aktif.
+</Warning>
+
+* **Eskalasi privilege melalui soket Unix**: konfigurasi `allowUnixSockets` dapat secara tidak sengaja memberikan akses ke layanan sistem yang kuat yang dapat menyebabkan bypass sandbox. Misalnya, mengizinkan akses ke `/var/run/docker.sock` secara efektif memberikan akses ke sistem host melalui soket Docker. Pertimbangkan dengan hati-hati soket Unix apa pun yang Anda izinkan melalui sandbox.
+* **Eskalasi izin filesystem**: izin penulisan filesystem yang terlalu luas dapat memungkinkan serangan eskalasi privilege. Mengizinkan penulisan ke direktori yang berisi executable dalam `$PATH`, direktori konfigurasi sistem, atau file konfigurasi shell pengguna seperti `.bashrc` atau `.zshrc` dapat menyebabkan eksekusi kode dalam konteks keamanan yang berbeda ketika pengguna lain atau proses sistem mengakses file ini.
+* **Kekuatan sandbox Linux**: implementasi Linux menyediakan isolasi filesystem dan jaringan yang kuat tetapi mencakup mode `enableWeakerNestedSandbox` yang memungkinkannya bekerja di dalam lingkungan Docker tanpa namespace istimewa, atau pada host Linux di mana user namespaces tanpa privilege dinonaktifkan oleh sysctl. Opsi ini secara konsiderabel melemahkan keamanan dan hanya boleh digunakan ketika isolasi tambahan sebaliknya diberlakukan.
+* **File pengaturan dilindungi**: sandbox secara otomatis menolak akses tulis ke file `settings.json` Claude Code di setiap scope dan ke direktori pengaturan terkelola, sehingga perintah sandboxed tidak dapat memodifikasi kebijakan sendiri.
+
+### Kompatibilitas platform dan alat
+
+* **Dukungan platform**: mendukung macOS, Linux, dan WSL2. WSL1 dan Windows asli tidak didukung.
+* **Overhead kinerja**: minimal, tetapi beberapa operasi filesystem mungkin sedikit lebih lambat.
+* **Kompatibilitas alat**: beberapa alat yang memerlukan pola akses sistem tertentu mungkin memerlukan penyesuaian konfigurasi, atau mungkin perlu dijalankan di luar sandbox.
+
+### Cakupan
 
 Sandbox mengisolasi subprocess Bash. Alat lain beroperasi di bawah batas yang berbeda:
 
-* **Alat file bawaan**: Read, Edit, dan Write menggunakan sistem izin secara langsung daripada berjalan melalui sandbox. Lihat [izin](/id/permissions).
-* **Penggunaan komputer di Desktop**: ketika Claude membuka aplikasi dan mengontrol layar Anda di macOS, itu berjalan di desktop aktual Anda daripada di lingkungan terisolasi. Prompt izin per-aplikasi membatasi setiap aplikasi. Lihat [penggunaan komputer](/id/desktop#let-claude-use-your-computer).
+* **Alat file bawaan**: Read, Edit, dan Write menggunakan sistem izin secara langsung daripada berjalan melalui sandbox. Lihat [permissions](/id/permissions).
+* **Penggunaan komputer**: ketika Claude membuka aplikasi dan mengontrol layar Anda, itu berjalan di desktop aktual Anda daripada di lingkungan terisolasi. Prompt izin per-aplikasi membatasi setiap aplikasi. Lihat [computer use in the CLI](/id/computer-use) atau [computer use in Desktop](/id/desktop#let-claude-use-your-computer).
+* **Variabel lingkungan**: perintah Bash sandboxed mewarisi lingkungan proses induk secara default, termasuk kredensial apa pun yang ditetapkan di sana. Untuk menghapus kredensial Anthropic dan penyedia cloud dari subprocess, atur [`CLAUDE_CODE_SUBPROCESS_ENV_SCRUB`](/id/env-vars).
+* **Subagents**: [subagents](/id/sub-agents) berjalan dalam proses yang sama dengan sesi induk dan menggunakan konfigurasi sandbox yang sama. Perintah Bash di dalam subagent di-sandbox ketika sandboxing diaktifkan dalam sesi induk.
+
+<Warning>
+  Sandboxing yang efektif memerlukan **baik** isolasi filesystem maupun jaringan. Tanpa isolasi jaringan, agen yang dikompromikan dapat mengeksfiltrasikan file sensitif seperti kunci SSH. Tanpa isolasi filesystem, agen yang dikompromikan dapat memasang pintu belakang pada sumber daya sistem untuk mendapatkan akses jaringan. Ketika Anda memperluas default, periksa bahwa jalur `allowWrite`, entri `allowedDomains` yang luas, atau pengecualian `excludedCommands` tidak membatalkan pembatasan di sisi lain.
+</Warning>
 
 ## Lihat juga
 
-* [Security](/id/security) - Fitur keamanan komprehensif dan praktik terbaik
-* [Permissions](/id/permissions) - Konfigurasi izin dan kontrol akses
-* [Settings](/id/settings) - Referensi konfigurasi lengkap
-* [CLI reference](/id/cli-reference) - Opsi baris perintah
+* [Sandbox environments](/id/sandbox-environments): bandingkan sandbox bawaan dengan dev containers, containers, dan VM
+* [Security](/id/security): fitur keamanan komprehensif dan praktik terbaik
+* [Permissions](/id/permissions): konfigurasi izin dan kontrol akses
+* [Settings](/id/settings): referensi konfigurasi lengkap
+* [CLI reference](/id/cli-reference): opsi baris perintah

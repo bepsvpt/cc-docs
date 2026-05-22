@@ -123,7 +123,7 @@ Claude Code는 중앙 집중식 구성을 위한 두 가지 방식을 지원합�
 서버 관리 설정은 다음과 같은 제한사항이 있습니다.
 
 * 설정은 조직의 모든 사용자에게 균일하게 적용됩니다. 그룹별 구성은 아직 지원되지 않습니다.
-* [MCP 서버 구성](/ko/mcp#managed-mcp-configuration)은 서버 관리 설정을 통해 배포할 수 없습니다.
+* [`managed-mcp.json`](/ko/managed-mcp) 파일은 서버 관리 설정을 통해 배포할 수 없습니다. 대신 `allowedMcpServers` 및 `deniedMcpServers` 정책 키를 배포하십시오.
 * OS 수준 정책 소스로 제한된 설정(예: `policyHelper` 및 `wslInheritsWindowsSettings`)은 적용되지 않습니다. 대신 MDM 또는 시스템 `managed-settings.json` 파일을 통해 배포하십시오.
 
 ## 설정 전달

@@ -20,7 +20,7 @@ Claude Code 在以下平台和配置上运行：
   * Alpine Linux 3.19+
 * **硬件**：4 GB+ RAM、x64 或 ARM64 处理器
 * **网络**：需要互联网连接。请参阅[网络配置](/zh-CN/network-config#network-access-requirements)。
-* **Shell**：Bash、Zsh、PowerShell 或 CMD。在原生 Windows 上，建议使用 [Git for Windows](https://git-scm.com/downloads/win)；当 Git Bash 不存在时，Claude Code 会回退到 PowerShell。WSL 设置不需要 Git for Windows。
+* **Shell**：Bash、Zsh、PowerShell 或 CMD。
 * **位置**：[Anthropic 支持的国家/地区](https://www.anthropic.com/supported-countries)
 
 ### 其他依赖项
@@ -103,29 +103,32 @@ claude
 
 您可以在 Windows 上原生运行 Claude Code，也可以在 WSL 中运行。根据您的项目位置和所需的功能进行选择：
 
-| 选项         | 需要                                                                         | [沙箱](/zh-CN/sandboxing) | 何时使用             |
-| ---------- | -------------------------------------------------------------------------- | ----------------------- | ---------------- |
-| 原生 Windows | [Git for Windows](https://git-scm.com/downloads/win) 推荐；如果没有则使用 PowerShell | 不支持                     | Windows 原生项目和工具  |
-| WSL 2      | WSL 2 已启用                                                                  | 支持                      | Linux 工具链或沙箱命令执行 |
-| WSL 1      | WSL 1 已启用                                                                  | 不支持                     | 如果 WSL 2 不可用     |
+| 选项         | 需要                                                          | [沙箱](/zh-CN/sandboxing) | 何时使用             |
+| ---------- | ----------------------------------------------------------- | ----------------------- | ---------------- |
+| 原生 Windows | 无；[Git for Windows](https://git-scm.com/downloads/win) 是可选的 | 不支持                     | Windows 原生项目和工具  |
+| WSL 2      | WSL 2 已启用                                                   | 支持                      | Linux 工具链或沙箱命令执行 |
+| WSL 1      | WSL 1 已启用                                                   | 不支持                     | 如果 WSL 2 不可用     |
 
-**选项 1：使用 Git Bash 的原生 Windows**
+**选项 1：原生 Windows**
 
-安装 [Git for Windows](https://git-scm.com/downloads/win)，然后从 PowerShell 或 CMD 运行安装命令。您无需以管理员身份运行。
+从 PowerShell 或 CMD 运行安装命令。您无需以管理员身份运行。安装 [Git for Windows](https://git-scm.com/downloads/win) 是可选的。它通过提供 Git Bash 来启用 [Bash 工具](/zh-CN/tools-reference#bash-tool-behavior)。
 
 无论您从 PowerShell 还是 CMD 安装，只会影响您运行的安装命令。您的提示在 PowerShell 中显示为 `PS C:\Users\YourName>`，在 CMD 中显示为 `C:\Users\YourName>`（不带 `PS`）。如果您是终端新手，[终端指南](/zh-CN/terminal-guide#windows)会逐步讲解每个步骤。
 
-安装后，从 PowerShell、CMD 或 Git Bash 启动 `claude`。安装 Git Bash 后，Claude Code 在内部使用它来执行命令，无论您从哪里启动它。如果 Claude Code 找不到您的 Git Bash 安装，请在您的 [settings.json 文件](/zh-CN/settings)中设置路径：
+安装后，从任何终端启动 `claude`。
 
-```json theme={null}
-{
-  "env": {
-    "CLAUDE_CODE_GIT_BASH_PATH": "C:\\Program Files\\Git\\bin\\bash.exe"
+* **不使用 Git for Windows**，Claude Code 通过 [PowerShell 工具](/zh-CN/tools-reference#powershell-tool)运行 shell 命令。
+* **使用 Git for Windows**，Claude Code 为 [Bash 工具](/zh-CN/tools-reference#bash-tool-behavior)使用 Git Bash。如果 Claude Code 找不到 Git Bash，请在您的 [settings.json 文件](/zh-CN/settings)中设置路径：
+
+  ```json theme={null}
+  {
+    "env": {
+      "CLAUDE_CODE_GIT_BASH_PATH": "C:\\Program Files\\Git\\bin\\bash.exe"
+    }
   }
-}
-```
+  ```
 
-Claude Code 也可以在 Windows 上原生运行 PowerShell。安装 Git Bash 后，PowerShell 工具正在逐步推出作为额外选项：设置 `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` 以选择加入或 `0` 以选择退出。有关设置和限制，请参阅 [PowerShell 工具](/zh-CN/tools-reference#powershell-tool)。
+安装 Git for Windows 后，PowerShell 工具正在逐步推出作为 Bash 的额外选项。设置 `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` 以选择加入或 `0` 以选择退出。有关设置和限制，请参阅 [PowerShell 工具](/zh-CN/tools-reference#powershell-tool)。
 
 **选项 2：WSL**
 

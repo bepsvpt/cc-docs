@@ -11,7 +11,7 @@ Skills erweitern das, was Claude tun kann. Erstellen Sie eine `SKILL.md`-Datei m
 Erstellen Sie einen Skill, wenn Sie immer wieder die gleichen Anweisungen, eine Checkliste oder ein mehrstufiges Verfahren in den Chat einfügen, oder wenn ein Abschnitt von CLAUDE.md zu einem Verfahren statt zu einer Tatsache geworden ist. Im Gegensatz zu CLAUDE.md-Inhalten wird der Body eines Skills nur geladen, wenn er verwendet wird, sodass lange Referenzmaterialien fast nichts kosten, bis Sie sie benötigen.
 
 <Note>
-  Für integrierte Befehle wie `/help` und `/compact` sowie gebündelte Skills wie `/debug` und `/simplify` siehe die [Befehlsreferenz](/de/commands).
+  Für integrierte Befehle wie `/help` und `/compact` sowie gebündelte Skills wie `/debug` und `/code-review` siehe die [Befehlsreferenz](/de/commands).
 
   **Benutzerdefinierte Befehle wurden in Skills zusammengeführt.** Eine Datei unter `.claude/commands/deploy.md` und ein Skill unter `.claude/skills/deploy/SKILL.md` erstellen beide `/deploy` und funktionieren auf die gleiche Weise. Ihre vorhandenen `.claude/commands/`-Dateien funktionieren weiterhin. Skills fügen optionale Funktionen hinzu: ein Verzeichnis für unterstützende Dateien, Frontmatter zum [Steuern, wer einen Skill aufruft](#control-who-invokes-a-skill), und die Möglichkeit für Claude, sie automatisch zu laden, wenn sie relevant sind.
 </Note>
@@ -20,7 +20,7 @@ Claude Code Skills folgen dem [Agent Skills](https://agentskills.io) offenen Sta
 
 ## Gebündelte Skills
 
-Claude Code wird mit einer Reihe von gebündelten Skills ausgeliefert, die in jeder Sitzung verfügbar sind, einschließlich `/simplify`, `/batch`, `/debug`, `/loop` und `/claude-api`. Im Gegensatz zu den meisten integrierten Befehlen, die direkt feste Logik ausführen, sind gebündelte Skills prompt-basiert: Sie geben Claude detaillierte Anweisungen und lassen es die Arbeit mit seinen Tools orchestrieren. Sie rufen sie auf die gleiche Weise auf wie jeden anderen Skill, indem Sie `/` gefolgt vom Skill-Namen eingeben.
+Claude Code wird mit einer Reihe von gebündelten Skills ausgeliefert, die in jeder Sitzung verfügbar sind, einschließlich `/code-review`, `/batch`, `/debug`, `/loop` und `/claude-api`. Im Gegensatz zu den meisten integrierten Befehlen, die direkt feste Logik ausführen, sind gebündelte Skills prompt-basiert: Sie geben Claude detaillierte Anweisungen und lassen es die Arbeit mit seinen Tools orchestrieren. Sie rufen sie auf die gleiche Weise auf wie jeden anderen Skill, indem Sie `/` gefolgt vom Skill-Namen eingeben.
 
 Gebündelte Skills sind in der [Befehlsreferenz](/de/commands) neben integrierten Befehlen aufgelistet und mit **Skill** in der Spalte „Zweck" gekennzeichnet.
 

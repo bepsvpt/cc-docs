@@ -190,5 +190,6 @@ Une fois Claude Code en cours d'exécution dans votre dev container, les pages c
 * [Exigences d'accès réseau](/fr/network-config#network-access-requirements) : la liste complète des domaines pour les proxies et les pare-feu
 * [Services de télémétrie et désactivation](/fr/data-usage#telemetry-services) : ce que Claude Code envoie par défaut et les variables d'environnement qui le désactivent
 * [Explorer le répertoire `.claude`](/fr/claude-directory) : ce que le montage de volume contient, y compris les identifiants, les paramètres et l'historique de session
+* [Environnements sandbox](/fr/sandbox-environments) : comparer les dev containers avec le sandbox Bash intégré, les conteneurs personnalisés et les machines virtuelles
 * [Modèle de sécurité](/fr/security) : comment le système de permission de Claude Code, le sandboxing et les protections contre l'injection de prompt s'assemblent
 * [Modes de permission](/fr/permission-modes) : la gamme complète du mode plan au mode auto au contournement, et quand utiliser chacun

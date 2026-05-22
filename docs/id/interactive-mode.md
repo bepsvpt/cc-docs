@@ -214,6 +214,7 @@ Claude Code mempertahankan riwayat perintah untuk sesi saat ini:
 
 * Riwayat input disimpan per direktori kerja
 * Riwayat input direset ketika Anda menjalankan `/clear` untuk memulai sesi baru. Percakapan sesi sebelumnya disimpan dan dapat dilanjutkan.
+* Mengirimkan prompt yang sama dua kali berturut-turut mencatat satu entri riwayat, jadi menekan Atas melangkah ke prompt berbeda sebelumnya
 * Gunakan panah Atas/Bawah untuk menavigasi (lihat pintasan keyboard di atas)
 * **Catatan**: ekspansi riwayat (`!`) dinonaktifkan secara default
 
@@ -224,10 +225,11 @@ Tekan `Ctrl+R` untuk mencari secara interaktif melalui riwayat perintah Anda:
 1. **Mulai pencarian**: tekan `Ctrl+R` untuk mengaktifkan pencarian riwayat terbalik
 2. **Ketik kueri**: masukkan teks untuk dicari dalam perintah sebelumnya. Istilah pencarian disorot dalam hasil yang cocok
 3. **Navigasi kecocokan**: tekan `Ctrl+R` lagi untuk siklus melalui kecocokan yang lebih lama
-4. **Terima kecocokan**:
+4. **Ubah cakupan**: pencarian secara default mencakup prompt dari semua proyek. Tekan `Ctrl+S` untuk siklus cakupan melalui sesi ini, proyek ini, dan semua proyek
+5. **Terima kecocokan**:
    * Tekan `Tab` atau `Esc` untuk menerima kecocokan saat ini dan lanjutkan pengeditan
    * Tekan `Enter` untuk menerima dan menjalankan perintah segera
-5. **Batalkan pencarian**:
+6. **Batalkan pencarian**:
    * Tekan `Ctrl+C` untuk membatalkan dan mengembalikan input asli Anda
    * Tekan `Backspace` pada pencarian kosong untuk membatalkan
 

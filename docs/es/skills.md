@@ -11,7 +11,7 @@ Los skills amplían lo que Claude puede hacer. Cree un archivo `SKILL.md` con in
 Cree un skill cuando siga pegando el mismo manual, lista de verificación o procedimiento de varios pasos en el chat, o cuando una sección de CLAUDE.md se haya convertido en un procedimiento en lugar de un hecho. A diferencia del contenido de CLAUDE.md, el cuerpo de un skill se carga solo cuando se usa, por lo que el material de referencia largo cuesta casi nada hasta que lo necesita.
 
 <Note>
-  Para comandos integrados como `/help` y `/compact`, y skills agrupados como `/debug` y `/simplify`, consulte la [referencia de comandos](/es/commands).
+  Para comandos integrados como `/help` y `/compact`, y skills agrupados como `/debug` y `/code-review`, consulte la [referencia de comandos](/es/commands).
 
   **Los comandos personalizados se han fusionado con los skills.** Un archivo en `.claude/commands/deploy.md` y un skill en `.claude/skills/deploy/SKILL.md` crean ambos `/deploy` y funcionan de la misma manera. Sus archivos existentes en `.claude/commands/` siguen funcionando. Los skills añaden características opcionales: un directorio para archivos de apoyo, frontmatter para [controlar si usted o Claude los invoca](#control-who-invokes-a-skill), y la capacidad de que Claude los cargue automáticamente cuando sea relevante.
 </Note>
@@ -20,7 +20,7 @@ Los skills de Claude Code siguen el estándar abierto [Agent Skills](https://age
 
 ## Skills agrupados
 
-Claude Code incluye un conjunto de skills agrupados que están disponibles en cada sesión, incluyendo `/simplify`, `/batch`, `/debug`, `/loop` y `/claude-api`. A diferencia de la mayoría de comandos integrados, que ejecutan lógica fija directamente, los skills agrupados se basan en prompts: dan a Claude un manual detallado y le permiten orquestar el trabajo utilizando sus herramientas. Los invoca de la misma manera que cualquier otro skill, escribiendo `/` seguido del nombre del skill.
+Claude Code incluye un conjunto de skills agrupados que están disponibles en cada sesión, incluyendo `/code-review`, `/batch`, `/debug`, `/loop` y `/claude-api`. A diferencia de la mayoría de comandos integrados, que ejecutan lógica fija directamente, los skills agrupados se basan en prompts: dan a Claude instrucciones detalladas y le permiten orquestar el trabajo utilizando sus herramientas. Los invoca de la misma manera que cualquier otro skill, escribiendo `/` seguido del nombre del skill.
 
 Los skills agrupados se enumeran junto con los comandos integrados en la [referencia de comandos](/es/commands), marcados como **Skill** en la columna Propósito.
 

@@ -123,7 +123,7 @@ Sebagian besar [kunci pengaturan](/id/settings#available-settings) bekerja dalam
 Pengaturan yang dikelola server memiliki batasan berikut:
 
 * Pengaturan berlaku secara seragam untuk semua pengguna dalam organisasi. Konfigurasi per-grup belum didukung.
-* [Konfigurasi server MCP](/id/mcp#managed-mcp-configuration) tidak dapat didistribusikan melalui pengaturan yang dikelola server.
+* File [`managed-mcp.json`](/id/managed-mcp) tidak dapat didistribusikan melalui pengaturan yang dikelola server. Berikan kunci kebijakan `allowedMcpServers` dan `deniedMcpServers` di sana sebagai gantinya.
 * Pengaturan yang dibatasi untuk sumber kebijakan tingkat OS, seperti `policyHelper` dan `wslInheritsWindowsSettings`, tidak dihormati. Terapkan melalui MDM atau file `managed-settings.json` sistem sebagai gantinya.
 
 ## Pengiriman pengaturan

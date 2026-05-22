@@ -20,7 +20,7 @@ Claude Code berjalan pada platform dan konfigurasi berikut:
   * Alpine Linux 3.19+
 * **Perangkat keras**: RAM 4 GB+, prosesor x64 atau ARM64
 * **Jaringan**: koneksi internet diperlukan. Lihat [konfigurasi jaringan](/id/network-config#network-access-requirements).
-* **Shell**: Bash, Zsh, PowerShell, atau CMD. Pada Windows asli, [Git for Windows](https://git-scm.com/downloads/win) direkomendasikan; Claude Code kembali ke PowerShell ketika Git Bash tidak ada. Pengaturan WSL tidak memerlukan Git for Windows.
+* **Shell**: Bash, Zsh, PowerShell, atau CMD.
 * **Lokasi**: [negara yang didukung Anthropic](https://www.anthropic.com/supported-countries)
 
 ### Dependensi tambahan
@@ -103,29 +103,32 @@ Jika Anda mengalami masalah apa pun selama instalasi, lihat [Troubleshoot instal
 
 Anda dapat menjalankan Claude Code secara asli di Windows atau di dalam WSL. Pilih berdasarkan di mana proyek Anda berada dan fitur apa yang Anda butuhkan:
 
-| Opsi         | Memerlukan                                                                                                 | [Sandboxing](/id/sandboxing) | Kapan digunakan                                   |
-| ------------ | ---------------------------------------------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------- |
-| Windows Asli | [Git for Windows](https://git-scm.com/downloads/win) direkomendasikan; PowerShell digunakan jika tidak ada | Tidak didukung               | Proyek dan alat Windows asli                      |
-| WSL 2        | WSL 2 diaktifkan                                                                                           | Didukung                     | Toolchain Linux atau eksekusi perintah bersandbox |
-| WSL 1        | WSL 1 diaktifkan                                                                                           | Tidak didukung               | Jika WSL 2 tidak tersedia                         |
+| Opsi         | Memerlukan                                                                        | [Sandboxing](/id/sandboxing) | Kapan digunakan                                   |
+| ------------ | --------------------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------- |
+| Windows Asli | Tidak ada; [Git for Windows](https://git-scm.com/downloads/win) bersifat opsional | Tidak didukung               | Proyek dan alat Windows asli                      |
+| WSL 2        | WSL 2 diaktifkan                                                                  | Didukung                     | Toolchain Linux atau eksekusi perintah bersandbox |
+| WSL 1        | WSL 1 diaktifkan                                                                  | Tidak didukung               | Jika WSL 2 tidak tersedia                         |
 
-**Opsi 1: Windows Asli dengan Git Bash**
+**Opsi 1: Windows Asli**
 
-Instal [Git for Windows](https://git-scm.com/downloads/win), kemudian jalankan perintah instalasi dari PowerShell atau CMD. Anda tidak perlu menjalankan sebagai Administrator.
+Jalankan perintah instalasi dari PowerShell atau CMD. Anda tidak perlu menjalankan sebagai Administrator. Menginstal [Git for Windows](https://git-scm.com/downloads/win) bersifat opsional. Ini mengaktifkan [alat Bash](/id/tools-reference#bash-tool-behavior) dengan menyediakan Git Bash.
 
 Apakah Anda menginstal dari PowerShell atau CMD hanya mempengaruhi perintah instalasi mana yang Anda jalankan. Prompt Anda menampilkan `PS C:\Users\YourName>` di PowerShell dan `C:\Users\YourName>` tanpa `PS` di CMD. Jika Anda baru mengenal terminal, [panduan terminal](/id/terminal-guide#windows) memandu setiap langkah.
 
-Setelah instalasi, luncurkan `claude` dari PowerShell, CMD, atau Git Bash. Ketika Git Bash diinstal, Claude Code menggunakannya secara internal untuk menjalankan perintah terlepas dari tempat Anda meluncurkannya. Jika Claude Code tidak dapat menemukan instalasi Git Bash Anda, atur jalur di [file settings.json](/id/settings) Anda:
+Setelah instalasi, luncurkan `claude` dari terminal apa pun.
 
-```json theme={null}
-{
-  "env": {
-    "CLAUDE_CODE_GIT_BASH_PATH": "C:\\Program Files\\Git\\bin\\bash.exe"
+* **Tanpa Git for Windows**, Claude Code menjalankan perintah shell melalui [alat PowerShell](/id/tools-reference#powershell-tool).
+* **Dengan Git for Windows**, Claude Code menggunakan Git Bash untuk [alat Bash](/id/tools-reference#bash-tool-behavior). Jika Claude Code tidak dapat menemukan Git Bash, atur jalur di [file settings.json](/id/settings) Anda:
+
+  ```json theme={null}
+  {
+    "env": {
+      "CLAUDE_CODE_GIT_BASH_PATH": "C:\\Program Files\\Git\\bin\\bash.exe"
+    }
   }
-}
-```
+  ```
 
-Claude Code juga dapat menjalankan PowerShell secara asli di Windows. Ketika Git Bash diinstal, alat PowerShell sedang diluncurkan secara progresif sebagai opsi tambahan: atur `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` untuk memilih masuk atau `0` untuk memilih keluar. Lihat [PowerShell tool](/id/tools-reference#powershell-tool) untuk pengaturan dan batasan.
+Ketika Git for Windows diinstal, alat PowerShell sedang diluncurkan secara progresif sebagai opsi tambahan bersama Bash. Atur `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` untuk memilih masuk atau `0` untuk memilih keluar. Lihat [alat PowerShell](/id/tools-reference#powershell-tool) untuk pengaturan dan batasan.
 
 **Opsi 2: WSL**
 

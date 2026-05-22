@@ -93,7 +93,7 @@ Claude는 해당 범위 외의 새로운 이니셔티브를 시작하지 않으�
 단순한 `/loop`는 [동적으로 선택된 간격](#let-claude-choose-the-interval)에서 이 프롬프트를 실행합니다. 고정 스케줄에서 실행하려면 `/loop 15m`과 같이 간격을 추가하세요. 내장 프롬프트를 자신의 기본값으로 바꾸려면 [loop.md로 기본 프롬프트 사용자 정의하기](#customize-the-default-prompt-with-loop-md)를 참조하세요.
 
 <Note>
-  Bedrock, Vertex AI, Microsoft Foundry에서는 프롬프트가 없는 `/loop`가 유지보수 루프를 시작하는 대신 사용 메시지를 출력합니다.
+  Bedrock, Vertex AI, Microsoft Foundry에서는 프롬프트가 없는 `/loop`가 유지보수 프롬프트를 실행하는 대신 사용 메시지를 출력합니다.
 </Note>
 
 ### loop.md로 기본 프롬프트 사용자 정의하기
@@ -119,7 +119,7 @@ quiet, say so in one line.
 `loop.md`에 대한 편집은 다음 반복에서 적용되므로 루프가 실행 중인 동안 지침을 개선할 수 있습니다. 두 위치 중 어디에도 `loop.md`가 없으면 루프는 내장 유지보수 프롬프트로 폴백됩니다. 파일을 간결하게 유지하세요. 25,000바이트를 초과하는 내용은 잘립니다.
 
 <Note>
-  `loop.md`는 [내장 유지보수 프롬프트](#run-the-built-in-maintenance-prompt)와 동일한 가용성을 따릅니다. 유지보수 프롬프트가 활성화되지 않은 경우, 프롬프트가 없는 `/loop`는 사용 메시지를 출력하고 파일을 읽지 않습니다.
+  Bedrock, Vertex AI, Microsoft Foundry에서는 간격이 없는 프롬프트가 고정 10분 스케줄로 실행됩니다.
 </Note>
 
 ### 루프 중지하기

@@ -11,7 +11,7 @@ Skills는 Claude가 할 수 있는 작업을 확장합니다. `SKILL.md` 파일�
 같은 지침, 체크리스트 또는 다단계 절차를 계속 채팅에 붙여넣거나, CLAUDE.md의 섹션이 사실이 아닌 절차로 성장했을 때 skill을 생성합니다. CLAUDE.md 콘텐츠와 달리, skill의 본문은 사용할 때만 로드되므로 긴 참조 자료는 필요할 때까지 거의 비용이 들지 않습니다.
 
 <Note>
-  `/help` 및 `/compact`와 같은 기본 제공 명령어와 `/debug` 및 `/simplify`와 같은 번들 skills는 [명령어 참조](/ko/commands)를 참조하세요.
+  `/help` 및 `/compact`와 같은 기본 제공 명령어와 `/debug` 및 `/code-review`와 같은 번들 skills는 [명령어 참조](/ko/commands)를 참조하세요.
 
   **사용자 정의 명령어가 skills로 병합되었습니다.** `.claude/commands/deploy.md`의 파일과 `.claude/skills/deploy/SKILL.md`의 skill은 모두 `/deploy`를 생성하고 동일하게 작동합니다. 기존 `.claude/commands/` 파일은 계속 작동합니다. Skills는 선택적 기능을 추가합니다: 지원 파일을 위한 디렉토리, [skill을 누가 호출하는지 제어](#control-who-invokes-a-skill)하기 위한 frontmatter, 그리고 Claude가 관련이 있을 때 자동으로 로드할 수 있는 기능입니다.
 </Note>
@@ -20,7 +20,7 @@ Claude Code skills는 [Agent Skills](https://agentskills.io) 개방형 표준을
 
 ## 번들 skills
 
-Claude Code에는 모든 세션에서 사용 가능한 번들 skills 세트가 포함되어 있으며, `/simplify`, `/batch`, `/debug`, `/loop`, `/claude-api`를 포함합니다. 고정 로직을 직접 실행하는 대부분의 기본 제공 명령어와 달리, 번들 skills는 프롬프트 기반입니다: Claude에 상세한 지시사항을 제공하고 도구를 사용하여 작업을 조율하도록 합니다. 다른 skill과 동일한 방식으로 호출합니다: `/` 다음에 skill 이름을 입력합니다.
+Claude Code에는 모든 세션에서 사용 가능한 번들 skills 세트가 포함되어 있으며, `/code-review`, `/batch`, `/debug`, `/loop`, `/claude-api`를 포함합니다. 고정 로직을 직접 실행하는 대부분의 기본 제공 명령어와 달리, 번들 skills는 프롬프트 기반입니다: Claude에 상세한 지시사항을 제공하고 도구를 사용하여 작업을 조율하도록 합니다. 다른 skill과 동일한 방식으로 호출합니다: `/` 다음에 skill 이름을 입력합니다.
 
 번들 skills는 [명령어 참조](/ko/commands)에 나열되어 있으며, 목적 열에 **Skill**로 표시됩니다.
 

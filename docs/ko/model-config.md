@@ -287,12 +287,12 @@ Claude Code는 `ANTHROPIC_CUSTOM_MODEL_OPTION`에 설정된 모델 ID에 대한 
 
 다음 환경 변수를 사용할 수 있으며, 이는 별칭이 매핑되는 모델 이름을 제어하기 위해 전체 **모델 이름**(또는 API 제공자에 해당하는 이름)이어야 합니다.
 
-| 환경 변수                            | 설명                                                                                                                      |
-| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL`   | `opus`에 사용할 모델 또는 Plan Mode가 활성화되었을 때 `opusplan`에 사용할 모델                                                                |
-| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `sonnet`에 사용할 모델 또는 Plan Mode가 활성화되지 않았을 때 `opusplan`에 사용할 모델                                                           |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL`  | `haiku`에 사용할 모델 또는 [백그라운드 기능](/ko/costs#background-token-usage)                                                         |
-| `CLAUDE_CODE_SUBAGENT_MODEL`     | 모든 [subagents](/ko/sub-agents#choose-a-model)에 사용할 모델입니다. 호출별 `model` 매개변수와 subagent 정의의 `model` frontmatter를 모두 재정의합니다 |
+| 환경 변수                            | 설명                                                                                                                                                                                          |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL`   | `opus`에 사용할 모델 또는 Plan Mode가 활성화되었을 때 `opusplan`에 사용할 모델입니다.                                                                                                                                |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `sonnet`에 사용할 모델 또는 Plan Mode가 활성화되지 않았을 때 `opusplan`에 사용할 모델입니다.                                                                                                                           |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL`  | `haiku`에 사용할 모델 또는 [백그라운드 기능](/ko/costs#background-token-usage)입니다.                                                                                                                         |
+| `CLAUDE_CODE_SUBAGENT_MODEL`     | 모든 [subagents](/ko/sub-agents#choose-a-model) 및 [agent teams](/ko/agent-teams)에 사용할 모델입니다. 호출별 `model` 매개변수와 subagent 정의의 `model` frontmatter를 재정의합니다. 대신 일반 모델 해석을 사용하려면 `inherit`로 설정합니다. |
 
 참고: `ANTHROPIC_SMALL_FAST_MODEL`은 `ANTHROPIC_DEFAULT_HAIKU_MODEL`을 위해 더 이상 사용되지 않습니다.
 
@@ -338,11 +338,11 @@ export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7[1m]'
 
 이러한 변수는 Bedrock, Vertex AI 및 Foundry와 같은 타사 제공자에서 적용됩니다. `_NAME` 및 `_DESCRIPTION` 변수는 `ANTHROPIC_BASE_URL`이 [LLM gateway](/ko/llm-gateway)를 가리킬 때도 적용됩니다. `api.anthropic.com`에 직접 연결할 때는 영향을 주지 않습니다.
 
-| 환경 변수                                                 | 설명                                                                         |
-| ----------------------------------------------------- | -------------------------------------------------------------------------- |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL_NAME`                   | `/model` 선택기에서 고정된 Opus 모델의 표시 이름입니다. 설정되지 않으면 모델 ID로 기본값 설정               |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION`            | `/model` 선택기에서 고정된 Opus 모델의 표시 설명입니다. 설정되지 않으면 `Custom Opus model`로 기본값 설정 |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES` | 고정된 Opus 모델이 지원하는 기능의 쉼표로 구분된 목록                                           |
+| 환경 변수                                                 | 설명                                                                             |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_NAME`                   | `/model` 선택기에서 고정된 Opus 모델의 표시 이름입니다. 설정되지 않으면 모델 ID로 기본값 설정됩니다.               |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION`            | `/model` 선택기에서 고정된 Opus 모델의 표시 설명입니다. 설정되지 않으면 `Custom Opus model`로 기본값 설정됩니다. |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES` | 고정된 Opus 모델이 지원하는 기능의 쉼표로 구분된 목록입니다.                                           |
 
 동일한 `_NAME`, `_DESCRIPTION` 및 `_SUPPORTED_CAPABILITIES` 접미사는 `ANTHROPIC_DEFAULT_SONNET_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL` 및 `ANTHROPIC_CUSTOM_MODEL_OPTION`에 사용 가능합니다.
 
@@ -398,11 +398,11 @@ export ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES='effort,xhigh_effort,
 
 Claude Code는 성능을 최적화하고 비용을 절감하기 위해 [prompt caching](/ko/prompt-caching)을 자동으로 사용합니다. 전역적으로 또는 특정 모델 계층에 대해 prompt caching을 비활성화할 수 있습니다:
 
-| 환경 변수                           | 설명                                                           |
-| ------------------------------- | ------------------------------------------------------------ |
-| `DISABLE_PROMPT_CACHING`        | 모든 모델에 대해 prompt caching을 비활성화하려면 `1`로 설정합니다. 모델별 설정보다 우선합니다 |
-| `DISABLE_PROMPT_CACHING_HAIKU`  | Haiku 모델에 대해서만 prompt caching을 비활성화하려면 `1`로 설정합니다            |
-| `DISABLE_PROMPT_CACHING_SONNET` | Sonnet 모델에 대해서만 prompt caching을 비활성화하려면 `1`로 설정합니다           |
-| `DISABLE_PROMPT_CACHING_OPUS`   | Opus 모델에 대해서만 prompt caching을 비활성화하려면 `1`로 설정합니다             |
+| 환경 변수                           | 설명                                                            |
+| ------------------------------- | ------------------------------------------------------------- |
+| `DISABLE_PROMPT_CACHING`        | 모든 모델에 대해 prompt caching을 비활성화하려면 `1`로 설정합니다. 모델별 설정보다 우선합니다. |
+| `DISABLE_PROMPT_CACHING_HAIKU`  | Haiku 모델에 대해서만 prompt caching을 비활성화하려면 `1`로 설정합니다.            |
+| `DISABLE_PROMPT_CACHING_SONNET` | Sonnet 모델에 대해서만 prompt caching을 비활성화하려면 `1`로 설정합니다.           |
+| `DISABLE_PROMPT_CACHING_OPUS`   | Opus 모델에 대해서만 prompt caching을 비활성화하려면 `1`로 설정합니다.             |
 
 캐시 TTL을 변경하거나 캐시 미스를 트리거하는 것이 무엇인지 알아보려면 [Claude Code가 prompt caching을 사용하는 방법](/ko/prompt-caching)을 참조하세요.

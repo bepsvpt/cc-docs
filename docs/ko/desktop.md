@@ -78,7 +78,7 @@ Claude가 수행할 작업을 입력하고 **Enter**를 눌러 보냅니다. Cla
 
 <span id="auto-mode-availability" />
 
-Auto mode는 Max, Team, Enterprise, API 계획에서 사용 가능한 연구 미리보기입니다. Pro 계획 또는 타사 공급자에서는 사용할 수 없습니다. Team, Enterprise, API 계획에서는 Claude Sonnet 4.6, Opus 4.6, Opus 4.7이 필요합니다. Max 계획에서는 Claude Opus 4.7이 필요합니다.
+Auto mode는 Anthropic API의 모든 사용자에게 제공되는 연구 미리보기입니다. 타사 공급자에서는 사용할 수 없습니다. Claude Sonnet 4.6, Opus 4.6 또는 Opus 4.7이 필요합니다.
 
 <Tip title="모범 사례">
   복잡한 작업을 Plan mode에서 시작하여 Claude가 변경하기 전에 접근 방식을 매핑하도록 합니다. 계획을 승인한 후 자동 수락 편집 또는 권한 요청으로 전환하여 실행합니다. 이 워크플로우에 대한 자세한 내용은 [먼저 탐색, 그 다음 계획, 그 다음 코드](/ko/best-practices#explore-first-then-plan-then-code)를 참조하세요.

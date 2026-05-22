@@ -1,5 +1,339 @@
 # Documentation Changes
 
+## 2026-05-22
+
+195 pages modified
+
+
+### Deutsch
+
+
+**Modified**
+
+- **Desktop-Anwendung** (`desktop.md`): 1 lines added, 1 removed
+- **Entwicklungscontainer** (`devcontainer.md`): 2 lines added, 1 removed
+- **Claude Code erweitern** (`features-overview.md`): 1 lines added, 1 removed
+- **Interaktiver Modus** (`interactive-mode.md`): 1 lines added, 0 removed
+- **Tastaturkürzel anpassen** (`keybindings.md`): 3 lines added, 3 removed
+- **Claude Code mit Tools über MCP verbinden** (`mcp.md`): 4 lines added, 227 removed
+- **Modellkonfiguration** (`model-config.md`): 6 lines added, 6 removed
+- **Berechtigungen konfigurieren** (`permissions.md`): 2 lines added, 2 removed
+- **Erstellen und Verteilen eines Plugin-Marktplatzes** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **Konfigurieren Sie das Sandboxed-Bash-Tool** (`sandboxing.md`): 215 lines added, 157 removed
+  - New section: "# Konfigurieren Sie das Sandboxed-Bash-Tool"
+  - New section: "## Erste Schritte"
+  - New section: "### Linux und WSL2 einrichten"
+  - New section: "## Sandboxing konfigurieren"
+  - New section: "## Wie Sandboxing funktioniert"
+- **Prompts nach Zeitplan ausführen** (`scheduled-tasks.md`): 2 lines added, 2 removed
+- **Sicherheit** (`security.md`): 6 lines added, 5 removed
+- **Serververwaltete Einstellungen konfigurieren** (`server-managed-settings.md`): 1 lines added, 1 removed
+- **Claude Code-Einstellungen** (`settings.md`): 11 lines added, 11 removed
+- **Erweiterte Einrichtung** (`setup.md`): 19 lines added, 16 removed
+- **Claude mit Skills erweitern** (`skills.md`): 2 lines added, 2 removed
+
+### English
+
+
+**Modified**
+
+- **Changelog** (`changelog.md`): 34 lines added, 13 removed
+- **Commands** (`commands.md`): 94 lines added, 94 removed
+- **Desktop application** (`desktop.md`): 1 lines added, 1 removed
+- **Development containers** (`devcontainer.md`): 1 lines added, 0 removed
+- **Environment variables** (`env-vars.md`): 2 lines added, 2 removed
+- **Extend Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Interactive mode** (`interactive-mode.md`): 1 lines added, 0 removed
+- **Customize keyboard shortcuts** (`keybindings.md`): 3 lines added, 3 removed
+- **Connect Claude Code to tools via MCP** (`mcp.md`): 4 lines added, 227 removed
+- **Model configuration** (`model-config.md`): 6 lines added, 6 removed
+- **Configure permissions** (`permissions.md`): 2 lines added, 2 removed
+- **Create and distribute a plugin marketplace** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **Configure the sandboxed Bash tool** (`sandboxing.md`): 211 lines added, 177 removed
+  - New section: "# Configure the sandboxed Bash tool"
+  - New section: "## Get started"
+  - New section: "### Set up Linux and WSL2"
+  - New section: "## Configure sandboxing"
+  - New section: "## How sandboxing works"
+- **Run prompts on a schedule** (`scheduled-tasks.md`): 2 lines added, 2 removed
+- **Security** (`security.md`): 6 lines added, 5 removed
+- **Configure server-managed settings** (`server-managed-settings.md`): 1 lines added, 1 removed
+- **Claude Code settings** (`settings.md`): 97 lines added, 97 removed
+- **Advanced setup** (`setup.md`): 19 lines added, 16 removed
+- **Extend Claude with skills** (`skills.md`): 2 lines added, 2 removed
+- **Tools reference** (`tools-reference.md`): 2 lines added, 0 removed
+
+### Español
+
+
+**Modified**
+
+- **Aplicación de escritorio** (`desktop.md`): 1 lines added, 1 removed
+- **Contenedores de desarrollo** (`devcontainer.md`): 1 lines added, 0 removed
+- **Extender Claude Code** (`features-overview.md`): 3 lines added, 3 removed
+- **Modo interactivo** (`interactive-mode.md`): 2 lines added, 1 removed
+- **Personalizar atajos de teclado** (`keybindings.md`): 3 lines added, 3 removed
+- **Conectar Claude Code a herramientas mediante MCP** (`mcp.md`): 4 lines added, 227 removed
+- **Configuración del modelo** (`model-config.md`): 6 lines added, 6 removed
+- **Configurar permisos** (`permissions.md`): 2 lines added, 2 removed
+- **Crear y distribuir un marketplace de plugins** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **Configurar la herramienta Bash aislada** (`sandboxing.md`): 214 lines added, 156 removed
+  - New section: "# Configurar la herramienta Bash aislada"
+  - New section: "## Primeros pasos"
+  - New section: "### Configurar Linux y WSL2"
+  - New section: "## Configurar sandboxing"
+  - New section: "## Cómo funciona el sandboxing"
+- **Ejecutar prompts en un horario** (`scheduled-tasks.md`): 2 lines added, 2 removed
+- **Seguridad** (`security.md`): 6 lines added, 5 removed
+- **Configurar la configuración administrada por servidor** (`server-managed-settings.md`): 1 lines added, 1 removed
+- **Configuración de Claude Code** (`settings.md`): 12 lines added, 12 removed
+- **Configuración avanzada** (`setup.md`): 19 lines added, 16 removed
+- **Ampliar Claude con skills** (`skills.md`): 2 lines added, 2 removed
+
+### Français
+
+
+**Modified**
+
+- **Application de bureau** (`desktop.md`): 1 lines added, 1 removed
+- **Conteneurs de développement** (`devcontainer.md`): 1 lines added, 0 removed
+- **Étendre Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Mode interactif** (`interactive-mode.md`): 1 lines added, 0 removed
+- **Personnaliser les raccourcis clavier** (`keybindings.md`): 3 lines added, 3 removed
+- **Connecter Claude Code aux outils via MCP** (`mcp.md`): 4 lines added, 227 removed
+- **Configuration du modèle** (`model-config.md`): 6 lines added, 6 removed
+- **Configurer les autorisations** (`permissions.md`): 2 lines added, 2 removed
+- **Créer et distribuer une place de marché de plugins** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **Configurer l'outil Bash en sandbox** (`sandboxing.md`): 217 lines added, 159 removed
+  - New section: "# Configurer l'outil Bash en sandbox"
+  - New section: "## Démarrage"
+  - New section: "### Configurer Linux et WSL2"
+  - New section: "### Modes sandbox"
+  - New section: "## Configurer le sandboxing"
+- **Exécuter des prompts selon un calendrier** (`scheduled-tasks.md`): 2 lines added, 2 removed
+- **Sécurité** (`security.md`): 6 lines added, 5 removed
+- **Configurer les paramètres gérés par le serveur** (`server-managed-settings.md`): 1 lines added, 1 removed
+- **Paramètres Claude Code** (`settings.md`): 12 lines added, 12 removed
+- **Configuration avancée** (`setup.md`): 19 lines added, 16 removed
+- **Étendre Claude avec des skills** (`skills.md`): 2 lines added, 2 removed
+
+### Bahasa Indonesia
+
+
+**Modified**
+
+- **Aplikasi desktop** (`desktop.md`): 1 lines added, 1 removed
+- **Kontainer pengembangan** (`devcontainer.md`): 1 lines added, 0 removed
+- **Perluas Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Mode interaktif** (`interactive-mode.md`): 4 lines added, 2 removed
+- **Sesuaikan pintasan keyboard** (`keybindings.md`): 3 lines added, 3 removed
+- **Hubungkan Claude Code ke alat melalui MCP** (`mcp.md`): 4 lines added, 227 removed
+- **Konfigurasi model** (`model-config.md`): 6 lines added, 6 removed
+- **Konfigurasi izin** (`permissions.md`): 2 lines added, 2 removed
+- **Buat dan distribusikan marketplace plugin** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **Konfigurasi alat Bash sandboxed** (`sandboxing.md`): 215 lines added, 157 removed
+  - New section: "# Konfigurasi alat Bash sandboxed"
+  - New section: "## Memulai"
+  - New section: "### Set up Linux dan WSL2"
+  - New section: "## Konfigurasi sandboxing"
+  - New section: "## Cara sandboxing bekerja"
+- **Jalankan prompt sesuai jadwal** (`scheduled-tasks.md`): 2 lines added, 2 removed
+- **Keamanan** (`security.md`): 6 lines added, 5 removed
+- **Konfigurasi pengaturan yang dikelola server** (`server-managed-settings.md`): 1 lines added, 1 removed
+- **Pengaturan Claude Code** (`settings.md`): 12 lines added, 12 removed
+- **Pengaturan lanjutan** (`setup.md`): 19 lines added, 16 removed
+- **Perluas Claude dengan skills** (`skills.md`): 2 lines added, 2 removed
+
+### Italiano
+
+
+**Modified**
+
+- **Applicazione desktop** (`desktop.md`): 1 lines added, 1 removed
+- **Contenitori di sviluppo** (`devcontainer.md`): 1 lines added, 0 removed
+- **Estendi Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Modalità interattiva** (`interactive-mode.md`): 1 lines added, 0 removed
+- **Personalizzare le scorciatoie da tastiera** (`keybindings.md`): 3 lines added, 3 removed
+- **Connetti Claude Code ai tuoi strumenti tramite MCP** (`mcp.md`): 4 lines added, 227 removed
+- **Configurazione del modello** (`model-config.md`): 6 lines added, 6 removed
+- **Configurare le autorizzazioni** (`permissions.md`): 2 lines added, 2 removed
+- **Creare e distribuire un marketplace di plugin** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **Configura lo strumento Bash in sandbox** (`sandboxing.md`): 224 lines added, 166 removed
+  - New section: "# Configura lo strumento Bash in sandbox"
+  - New section: "## Get started"
+  - New section: "### Set up Linux and WSL2"
+  - New section: "### Sandbox modes"
+  - New section: "## Configure sandboxing"
+- **Eseguire prompt in base a una pianificazione** (`scheduled-tasks.md`): 2 lines added, 2 removed
+- **Sicurezza** (`security.md`): 6 lines added, 5 removed
+- **Configurare le impostazioni gestite dal server** (`server-managed-settings.md`): 1 lines added, 1 removed
+- **Impostazioni di Claude Code** (`settings.md`): 6 lines added, 6 removed
+- **Configurazione avanzata** (`setup.md`): 19 lines added, 16 removed
+- **Estendi Claude con skills** (`skills.md`): 3 lines added, 3 removed
+
+### 日本語
+
+
+**Modified**
+
+- **Desktop application** (`desktop.md`): 1 lines added, 1 removed
+- **開発コンテナ** (`devcontainer.md`): 1 lines added, 0 removed
+- **Claude Code を拡張する** (`features-overview.md`): 1 lines added, 1 removed
+- **インタラクティブモード** (`interactive-mode.md`): 1 lines added, 0 removed
+- **キーボードショートカットのカスタマイズ** (`keybindings.md`): 3 lines added, 3 removed
+- **MCP を使用して Claude Code をツールに接続する** (`mcp.md`): 4 lines added, 227 removed
+- **モデル設定** (`model-config.md`): 6 lines added, 6 removed
+- **権限を設定する** (`permissions.md`): 2 lines added, 2 removed
+- **プラグインマーケットプレイスの作成と配布** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **サンドボックス化された Bash ツールを設定する** (`sandboxing.md`): 217 lines added, 159 removed
+  - New section: "# サンドボックス化された Bash ツールを設定する"
+  - New section: "## 開始方法"
+  - New section: "### Linux と WSL2 をセットアップする"
+  - New section: "## サンドボックス化を設定する"
+  - New section: "## サンドボックス化の仕組み"
+- **スケジュールに従ってプロンプトを実行する** (`scheduled-tasks.md`): 2 lines added, 2 removed
+- **セキュリティ** (`security.md`): 6 lines added, 5 removed
+- **サーバー管理設定を構成する** (`server-managed-settings.md`): 1 lines added, 1 removed
+- **Claude Code の設定** (`settings.md`): 13 lines added, 12 removed
+- **高度なセットアップ** (`setup.md`): 19 lines added, 16 removed
+- **スキルで Claude を拡張する** (`skills.md`): 2 lines added, 2 removed
+
+### 한국어
+
+
+**Modified**
+
+- **Desktop 애플리케이션** (`desktop.md`): 1 lines added, 1 removed
+- **Claude Code 확장하기** (`features-overview.md`): 1 lines added, 1 removed
+- **대화형 모드** (`interactive-mode.md`): 2 lines added, 1 removed
+- **키보드 단축키 사용자 정의** (`keybindings.md`): 3 lines added, 3 removed
+- **MCP를 통해 Claude Code를 도구에 연결하기** (`mcp.md`): 4 lines added, 227 removed
+- **모델 구성** (`model-config.md`): 17 lines added, 17 removed
+- **권한 구성** (`permissions.md`): 2 lines added, 2 removed
+- **플러그인 마켓플레이스 생성 및 배포** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **샌드박싱된 Bash 도구 구성** (`sandboxing.md`): 216 lines added, 158 removed
+  - New section: "# 샌드박싱된 Bash 도구 구성"
+  - New section: "## 시작하기"
+  - New section: "### Linux 및 WSL2 설정"
+  - New section: "## 샌드박싱 구성"
+  - New section: "## 샌드박싱 작동 방식"
+- **일정에 따라 프롬프트 실행하기** (`scheduled-tasks.md`): 2 lines added, 2 removed
+- **보안** (`security.md`): 6 lines added, 5 removed
+- **서버 관리 설정 구성** (`server-managed-settings.md`): 1 lines added, 1 removed
+- **Claude Code 설정** (`settings.md`): 12 lines added, 12 removed
+- **고급 설정** (`setup.md`): 19 lines added, 16 removed
+- **Claude를 skills로 확장하기** (`skills.md`): 2 lines added, 2 removed
+
+### Português
+
+
+**Modified**
+
+- **Aplicativo Desktop** (`desktop.md`): 1 lines added, 1 removed
+- **Contêineres de desenvolvimento** (`devcontainer.md`): 1 lines added, 0 removed
+- **Estender Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Modo interativo** (`interactive-mode.md`): 1 lines added, 0 removed
+- **Personalizar atalhos de teclado** (`keybindings.md`): 3 lines added, 3 removed
+- **Conectar Claude Code a ferramentas via MCP** (`mcp.md`): 4 lines added, 227 removed
+- **Configuração de modelo** (`model-config.md`): 6 lines added, 6 removed
+- **Configurar permissões** (`permissions.md`): 2 lines added, 2 removed
+- **Criar e distribuir um marketplace de plugins** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **Configurar a ferramenta Bash em sandbox** (`sandboxing.md`): 219 lines added, 161 removed
+  - New section: "# Configurar a ferramenta Bash em sandbox"
+  - New section: "## Get started"
+  - New section: "### Set up Linux and WSL2"
+  - New section: "### Sandbox modes"
+  - New section: "## Configure sandboxing"
+- **Executar prompts em um cronograma** (`scheduled-tasks.md`): 2 lines added, 2 removed
+- **Segurança** (`security.md`): 6 lines added, 5 removed
+- **Configurar configurações gerenciadas pelo servidor** (`server-managed-settings.md`): 1 lines added, 1 removed
+- **Configurações do Claude Code** (`settings.md`): 6 lines added, 6 removed
+- **Configuração avançada** (`setup.md`): 19 lines added, 16 removed
+- **Estenda Claude com skills** (`skills.md`): 2 lines added, 2 removed
+
+### Русский
+
+
+**Modified**
+
+- **Настольное приложение** (`desktop.md`): 1 lines added, 1 removed
+- **Контейнеры разработки** (`devcontainer.md`): 2 lines added, 1 removed
+- **Расширение Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **Интерактивный режим** (`interactive-mode.md`): 1 lines added, 0 removed
+- **Настройка сочетаний клавиш** (`keybindings.md`): 3 lines added, 3 removed
+- **Подключите Claude Code к инструментам через MCP** (`mcp.md`): 4 lines added, 227 removed
+- **Конфигурация модели** (`model-config.md`): 6 lines added, 6 removed
+- **Настройка разрешений** (`permissions.md`): 2 lines added, 2 removed
+- **Создание и распространение marketplace плагинов** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **Настройка изолированного инструмента Bash** (`sandboxing.md`): 220 lines added, 162 removed
+  - New section: "# Настройка изолированного инструмента Bash"
+  - New section: "## Начало работы"
+  - New section: "### Настройка Linux и WSL2"
+  - New section: "### Sandbox modes"
+  - New section: "## Настройка sandboxing"
+- **Запуск подсказок по расписанию** (`scheduled-tasks.md`): 2 lines added, 2 removed
+- **Безопасность** (`security.md`): 6 lines added, 5 removed
+- **Настройка параметров, управляемых сервером** (`server-managed-settings.md`): 1 lines added, 1 removed
+- **Параметры Claude Code** (`settings.md`): 12 lines added, 12 removed
+- **Расширенная настройка** (`setup.md`): 19 lines added, 16 removed
+- **Расширьте Claude с помощью skills** (`skills.md`): 2 lines added, 2 removed
+
+### 简体中文
+
+
+**Modified**
+
+- **Desktop application** (`desktop.md`): 1 lines added, 1 removed
+- **开发容器** (`devcontainer.md`): 1 lines added, 0 removed
+- **扩展 Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **交互模式** (`interactive-mode.md`): 1 lines added, 0 removed
+- **自定义快捷键** (`keybindings.md`): 3 lines added, 3 removed
+- **通过 MCP 将 Claude Code 连接到工具** (`mcp.md`): 3 lines added, 227 removed
+- **模型配置** (`model-config.md`): 6 lines added, 6 removed
+- **配置权限** (`permissions.md`): 2 lines added, 2 removed
+- **创建和分发 plugin marketplace** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **配置沙箱化 Bash 工具** (`sandboxing.md`): 222 lines added, 164 removed
+  - New section: "# 配置沙箱化 Bash 工具"
+  - New section: "## 入门"
+  - New section: "### 设置 Linux 和 WSL2"
+  - New section: "## 配置沙箱"
+  - New section: "## 沙箱如何工作"
+- **按计划运行提示词** (`scheduled-tasks.md`): 2 lines added, 2 removed
+- **安全性** (`security.md`): 6 lines added, 5 removed
+- **配置服务器管理的设置** (`server-managed-settings.md`): 1 lines added, 1 removed
+- **Claude Code 设置** (`settings.md`): 6 lines added, 6 removed
+- **高级设置** (`setup.md`): 19 lines added, 16 removed
+- **使用 skills 扩展 Claude** (`skills.md`): 2 lines added, 2 removed
+
+### 繁體中文
+
+
+**Modified**
+
+- **Desktop 應用程式** (`desktop.md`): 1 lines added, 1 removed
+- **開發容器** (`devcontainer.md`): 2 lines added, 1 removed
+- **擴展 Claude Code** (`features-overview.md`): 1 lines added, 1 removed
+- **互動模式** (`interactive-mode.md`): 1 lines added, 0 removed
+- **自訂鍵盤快捷鍵** (`keybindings.md`): 3 lines added, 3 removed
+- **透過 MCP 將 Claude Code 連接到工具** (`mcp.md`): 5 lines added, 228 removed
+- **模型配置** (`model-config.md`): 6 lines added, 6 removed
+- **設定權限** (`permissions.md`): 2 lines added, 2 removed
+- **建立並分發 plugin marketplace** (`plugin-marketplaces.md`): 1 lines added, 1 removed
+- **設定沙箱化 Bash 工具** (`sandboxing.md`): 217 lines added, 159 removed
+  - New section: "# 設定沙箱化 Bash 工具"
+  - New section: "## 開始使用"
+  - New section: "### 設定 Linux 和 WSL2"
+  - New section: "## 設定沙箱化"
+  - New section: "## 沙箱化如何運作"
+- **按排程執行提示** (`scheduled-tasks.md`): 2 lines added, 2 removed
+- **安全性** (`security.md`): 6 lines added, 5 removed
+- **設定伺服器管理的設定** (`server-managed-settings.md`): 1 lines added, 1 removed
+- **Claude Code 設定** (`settings.md`): 13 lines added, 13 removed
+- **進階設定** (`setup.md`): 19 lines added, 16 removed
+- **使用 skills 擴展 Claude** (`skills.md`): 2 lines added, 2 removed
+
+---
+
 ## 2026-05-21
 
 138 pages modified

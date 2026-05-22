@@ -243,7 +243,7 @@ Jede Funktion wird an verschiedenen Punkten in Ihrer Sitzung geladen. Die Regist
   </Tab>
 
   <Tab title="Skills">
-    Skills sind zusätzliche Funktionen in Claudes Toolkit. Sie können Referenzmaterial sein (wie ein API-Stilhandbuch) oder aufrufbare Workflows, die Sie mit `/<name>` auslösen (wie `/deploy`). Claude Code wird mit [gebündelten Skills](/de/commands) wie `/simplify`, `/batch` und `/debug` ausgeliefert, die sofort funktionieren. Sie können auch Ihre eigenen erstellen. Claude verwendet Skills, wenn angemessen, oder Sie können einen direkt aufrufen.
+    Skills sind zusätzliche Funktionen in Claudes Toolkit. Sie können Referenzmaterial sein (wie ein API-Stilhandbuch) oder aufrufbare Workflows, die Sie mit `/<name>` auslösen (wie `/deploy`). Claude Code wird mit [gebündelten Skills](/de/commands) wie `/code-review`, `/batch` und `/debug` ausgeliefert, die sofort funktionieren. Sie können auch Ihre eigenen erstellen. Claude verwendet Skills, wenn angemessen, oder Sie können einen direkt aufrufen.
 
     **Wann:** Hängt von der Konfiguration des Skills ab. Standardmäßig werden Beschreibungen beim Sitzungsstart geladen und vollständiger Inhalt bei Verwendung. Für nur-Benutzer-Skills (`disable-model-invocation: true`) wird nichts geladen, bis Sie sie aufrufen.
 

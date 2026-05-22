@@ -11,7 +11,7 @@ Skills memperluas apa yang dapat dilakukan Claude. Buat file `SKILL.md` dengan i
 Buat skill ketika Anda terus menempel instruksi yang sama, checklist, atau prosedur multi-langkah ke dalam chat, atau ketika bagian dari CLAUDE.md telah berkembang menjadi prosedur daripada fakta. Tidak seperti konten CLAUDE.md, badan skill hanya dimuat saat digunakan, jadi materi referensi yang panjang hampir tidak ada biayanya sampai Anda membutuhkannya.
 
 <Note>
-  Untuk perintah bawaan seperti `/help` dan `/compact`, dan skills bundel seperti `/debug` dan `/simplify`, lihat [referensi perintah](/id/commands).
+  Untuk perintah bawaan seperti `/help` dan `/compact`, dan skills bundel seperti `/debug` dan `/code-review`, lihat [referensi perintah](/id/commands).
 
   **Perintah kustom telah digabungkan ke dalam skills.** File di `.claude/commands/deploy.md` dan skill di `.claude/skills/deploy/SKILL.md` keduanya membuat `/deploy` dan bekerja dengan cara yang sama. File `.claude/commands/` yang ada tetap berfungsi. Skills menambahkan fitur opsional: direktori untuk file pendukung, frontmatter untuk [mengontrol apakah Anda atau Claude menginvokasinya](#control-who-invokes-a-skill), dan kemampuan bagi Claude untuk memuatnya secara otomatis saat relevan.
 </Note>
@@ -20,7 +20,7 @@ Skills Claude Code mengikuti standar terbuka [Agent Skills](https://agentskills.
 
 ## Skills bundel
 
-Claude Code menyertakan serangkaian skills bundel yang tersedia di setiap sesi, termasuk `/simplify`, `/batch`, `/debug`, `/loop`, dan `/claude-api`. Tidak seperti sebagian besar perintah bawaan, yang menjalankan logika tetap secara langsung, skills bundel berbasis prompt: mereka memberikan Claude instruksi terperinci dan membiarkannya mengorkestrasi pekerjaan menggunakan tools-nya. Anda menginvokasinya dengan cara yang sama seperti skill lainnya, dengan mengetik `/` diikuti dengan nama skill.
+Claude Code menyertakan serangkaian skills bundel yang tersedia di setiap sesi, termasuk `/code-review`, `/batch`, `/debug`, `/loop`, dan `/claude-api`. Tidak seperti sebagian besar perintah bawaan, yang menjalankan logika tetap secara langsung, skills bundel berbasis prompt: mereka memberikan Claude instruksi terperinci dan membiarkannya mengorkestrasi pekerjaan menggunakan tools-nya. Anda menginvokasinya dengan cara yang sama seperti skill lainnya, dengan mengetik `/` diikuti dengan nama skill.
 
 Skills bundel terdaftar bersama perintah bawaan dalam [referensi perintah](/id/commands), ditandai **Skill** di kolom Tujuan.
 

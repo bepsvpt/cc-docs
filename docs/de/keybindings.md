@@ -149,9 +149,9 @@ Aktionen verfügbar im `Confirmation`-Kontext:
 
 Aktionen verfügbar im `Confirmation`-Kontext für Berechtigungsdialoge:
 
-| Aktion                   | Standard | Beschreibung                        |
-| :----------------------- | :------- | :---------------------------------- |
-| `permission:toggleDebug` | Ctrl+D   | Berechtigungs-Debug-Info umschalten |
+| Aktion                   | Standard         | Beschreibung                                                                                                                    |
+| :----------------------- | :--------------- | :------------------------------------------------------------------------------------------------------------------------------ |
+| `permission:toggleDebug` | (nicht gebunden) | Berechtigungs-Debug-Info umschalten. Der vorherige Standard von Ctrl+D wurde in v2.1.146 entfernt, da er `app:exit` überlagerte |
 
 ### Transkript-Aktionen
 

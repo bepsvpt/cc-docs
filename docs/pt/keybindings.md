@@ -149,9 +149,9 @@ Ações disponíveis no contexto `Confirmation`:
 
 Ações disponíveis no contexto `Confirmation` para diálogos de permissão:
 
-| Ação                     | Padrão | Descrição                                      |
-| :----------------------- | :----- | :--------------------------------------------- |
-| `permission:toggleDebug` | Ctrl+D | Alternar informações de depuração de permissão |
+| Ação                     | Padrão         | Descrição                                                                                                                        |
+| :----------------------- | :------------- | :------------------------------------------------------------------------------------------------------------------------------- |
+| `permission:toggleDebug` | (desvinculado) | Alternar informações de depuração de permissão. O padrão anterior de Ctrl+D foi removido na v2.1.146 porque sombreava `app:exit` |
 
 ### Ações de transcrição
 

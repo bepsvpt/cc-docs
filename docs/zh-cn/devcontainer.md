@@ -190,5 +190,6 @@ Claude Code 在您的开发容器中运行后，下面的页面涵盖了组织�
 * [网络访问要求](/zh-CN/network-config#network-access-requirements)：代理和防火墙的完整域允许列表
 * [遥测服务和选择退出](/zh-CN/data-usage#telemetry-services)：Claude Code 默认发送的内容以及禁用它的环境变量
 * [探索 `.claude` 目录](/zh-CN/claude-directory)：卷挂载包含的内容，包括凭证、设置和会话历史
+* [沙箱环境](/zh-CN/sandbox-environments)：比较开发容器与内置 Bash 沙箱、自定义容器和虚拟机
 * [安全模型](/zh-CN/security)：Claude Code 的权限系统、沙箱和提示注入保护如何组合在一起
 * [权限模式](/zh-CN/permission-modes)：从计划模式到自动模式再到绕过的完整范围，以及何时使用每种模式

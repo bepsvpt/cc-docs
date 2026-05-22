@@ -78,7 +78,7 @@ For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/
 
 <span id="auto-mode-availability" />
 
-Auto mode — это исследовательский предпросмотр, доступный на планах Max, Team, Enterprise и API. Он недоступен на планах Pro или у сторонних провайдеров. На планах Team, Enterprise и API требуется Claude Sonnet 4.6, Opus 4.6 или Opus 4.7. На планах Max требуется Claude Opus 4.7.
+Auto mode — это исследовательский предпросмотр, доступный всем пользователям на Anthropic API. Он недоступен у сторонних провайдеров. Требуется Claude Sonnet 4.6, Opus 4.6 или Opus 4.7.
 
 <Tip title="Best practice">
   Начните сложные задачи в Plan mode, чтобы Claude наметил подход перед внесением изменений. После одобрения плана переключитесь на Auto accept edits или Ask permissions для его выполнения. См. [explore first, then plan, then code](/ru/best-practices#explore-first-then-plan-then-code) для получения дополнительной информации об этом рабочем процессе.

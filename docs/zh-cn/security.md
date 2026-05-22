@@ -135,8 +135,9 @@ Claude Code 允许用户配置 Model Context Protocol (MCP) servers。允许的 
 
 ## 相关资源
 
-* [Sandboxing](/zh-CN/sandboxing) - bash 命令的文件系统和网络隔离
-* [Permissions](/zh-CN/permissions) - 配置权限和访问控制
-* [Monitoring usage](/zh-CN/monitoring-usage) - 跟踪和审计 Claude Code 活动
-* [Development containers](/zh-CN/devcontainer) - 安全、隔离的环境
-* [Anthropic Trust Center](https://trust.anthropic.com) - 安全认证和合规
+* [Sandbox environments](/zh-CN/sandbox-environments)：比较隔离方法并为您的威胁模型选择一个
+* [Sandboxing](/zh-CN/sandboxing)：Bash 命令的文件系统和网络隔离
+* [Permissions](/zh-CN/permissions)：配置权限和访问控制
+* [Monitoring usage](/zh-CN/monitoring-usage)：跟踪和审计 Claude Code 活动
+* [Development containers](/zh-CN/devcontainer)：安全、隔离的环境
+* [Anthropic Trust Center](https://trust.anthropic.com)：安全认证和合规

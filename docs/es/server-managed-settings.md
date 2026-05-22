@@ -123,7 +123,7 @@ La mayoría de las [claves de configuración](/es/settings#available-settings) f
 La configuración administrada por servidor tiene las siguientes limitaciones:
 
 * La configuración se aplica uniformemente a todos los usuarios de la organización. Las configuraciones por grupo aún no son compatibles.
-* Las [configuraciones de servidor MCP](/es/mcp#managed-mcp-configuration) no se pueden distribuir a través de la configuración administrada por servidor.
+* Un archivo [`managed-mcp.json`](/es/managed-mcp) no se puede distribuir a través de la configuración administrada por servidor. Entregue las claves de política `allowedMcpServers` y `deniedMcpServers` allí en su lugar.
 * Las configuraciones restringidas a fuentes de políticas a nivel del sistema operativo, como `policyHelper` y `wslInheritsWindowsSettings`, no se respetan. Impleméntelas a través de MDM o un archivo `managed-settings.json` del sistema en su lugar.
 
 ## Entrega de configuración

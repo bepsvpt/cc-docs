@@ -170,9 +170,12 @@ MCP server 也可以直接將訊息推送到您的 session 中，以便 Claude �
     * `user`：在所有專案中對您可用 (在較舊版本中稱為 `global`)
   * 使用 `--env` 旗標設定環境變數 (例如，`--env KEY=value`)
   * 使用 MCP\_TIMEOUT 環境變數配置 MCP server 啟動逾時 (例如，`MCP_TIMEOUT=10000 claude` 設定 10 秒逾時)
+  * 透過在該 server 的 `.mcp.json` 項目中新增 `timeout` 欄位（以毫秒為單位）來設定每個 server 的工具執行逾時，例如 `"timeout": 600000` 表示十分鐘。這只會覆寫該 server 的 `MCP_TOOL_TIMEOUT` 環境變數
   * 當 MCP 工具輸出超過 10,000 個 tokens 時，Claude Code 會顯示警告。若要增加此限制，請設定 `MAX_MCP_OUTPUT_TOKENS` 環境變數 (例如，`MAX_MCP_OUTPUT_TOKENS=50000`)
   * 使用 `/mcp` 向需要 OAuth 2.0 驗證的遠端 servers 進行驗證
 </Tip>
+
+每個 server 的 `timeout` 是每個工具呼叫的硬牆鐘限制，來自 server 的進度通知不會延長它。低於 1000 的值會被調整為一秒。對於 HTTP 和 SSE servers，每個請求的 fetch 首位元組預算無論此值如何都有 60 秒的最小值，因此只有工具呼叫看門狗會遵守較小的值。
 
 ### Plugin 提供的 MCP servers
 
@@ -220,7 +223,7 @@ MCP server 也可以直接將訊息推送到您的 session 中，以便 Claude �
 **Plugin MCP 功能**：
 
 * **自動生命週期**：在 session 啟動時，已啟用 plugins 的 servers 會自動連接。如果您在 session 期間啟用或停用 plugin，請執行 `/reload-plugins` 以連接或斷開其 MCP servers
-* **環境變數**：使用 `${CLAUDE_PLUGIN_ROOT}` 表示 plugin 根目錄中的捆綁 plugin 檔案，以及 `${CLAUDE_PLUGIN_DATA}` 表示 [persistent state](/zh-TW/plugins-reference#persistent-data-directory) 在 plugin 更新後仍然存在，以及 `${CLAUDE_PROJECT_DIR}` 表示穩定的專案根目錄
+* **環境變數**：使用 `${CLAUDE_PLUGIN_ROOT}` 表示 plugin 根目錄中的捆綁 plugin 檔案，`${CLAUDE_PLUGIN_DATA}` 表示 [persistent state](/zh-TW/plugins-reference#persistent-data-directory) 在 plugin 更新後仍然存在，以及 `${CLAUDE_PROJECT_DIR}` 表示穩定的專案根目錄
 * **使用者環境存取**：存取與手動配置的 servers 相同的環境變數
 * **多種傳輸類型**：支援 stdio、SSE 和 HTTP 傳輸 (傳輸支援可能因 server 而異)
 
@@ -1054,230 +1057,4 @@ MCP servers 可以公開提示，這些提示在 Claude Code 中變成可用的�
 
 ## 受管理的 MCP 配置
 
-對於需要對 MCP servers 進行集中控制的組織，Claude Code 支援兩個配置選項：
-
-1. **使用 `managed-mcp.json` 的獨佔控制**：部署一組固定的 MCP servers，使用者無法修改或擴展
-2. **使用允許清單/拒絕清單的基於原則的控制**：允許使用者新增自己的 servers，但限制允許的 servers
-
-這些選項允許 IT 管理員：
-
-* **控制員工可以存取的 MCP servers**：在整個組織中部署一組標準化的已批准 MCP servers
-* **防止未授權的 MCP servers**：限制使用者新增未批准的 MCP servers
-* **完全停用 MCP**：如果需要，完全移除 MCP 功能
-
-### 選項 1：使用 managed-mcp.json 的獨佔控制
-
-當您部署 `managed-mcp.json` 檔案時，它對所有 MCP servers 進行**獨佔控制**。使用者無法新增、修改或使用此檔案中定義的 MCP servers 以外的任何 MCP servers。這是希望完全控制的組織的最簡單方法。
-
-系統管理員將配置檔案部署到系統範圍的目錄：
-
-* macOS：`/Library/Application Support/ClaudeCode/managed-mcp.json`
-* Linux 和 WSL：`/etc/claude-code/managed-mcp.json`
-* Windows：`C:\Program Files\ClaudeCode\managed-mcp.json`
-
-<Note>
-  這些是系統範圍的路徑 (不是像 `~/Library/...` 這樣的使用者主目錄)，需要管理員權限。它們設計為由 IT 管理員部署。
-</Note>
-
-`managed-mcp.json` 檔案使用與標準 `.mcp.json` 檔案相同的格式：
-
-```json theme={null}
-{
-  "mcpServers": {
-    "github": {
-      "type": "http",
-      "url": "https://api.githubcopilot.com/mcp/"
-    },
-    "sentry": {
-      "type": "http",
-      "url": "https://mcp.sentry.dev/mcp"
-    },
-    "company-internal": {
-      "type": "stdio",
-      "command": "/usr/local/bin/company-mcp-server",
-      "args": ["--config", "/etc/company/mcp-config.json"],
-      "env": {
-        "COMPANY_API_URL": "https://internal.company.com"
-      }
-    }
-  }
-}
-```
-
-### 選項 2：使用允許清單和拒絕清單的基於原則的控制
-
-管理員可以允許使用者配置自己的 MCP servers，同時對允許的 servers 強制執行限制，而不是進行獨佔控制。此方法在 [受管理設定檔案](/zh-TW/settings#settings-files) 中使用 `allowedMcpServers` 和 `deniedMcpServers`。
-
-<Note>
-  **在選項之間選擇**：當您想要部署一組固定的 servers 而不進行使用者自訂時，使用選項 1 (`managed-mcp.json`)。當您想要允許使用者在原則約束內新增自己的 servers 時，使用選項 2 (允許清單/拒絕清單)。
-</Note>
-
-#### 限制選項
-
-允許清單或拒絕清單中的每個項目可以透過三種方式限制 servers：
-
-1. **按 server 名稱** (`serverName`)：符合 server 的已配置名稱
-2. **按命令** (`serverCommand`)：符合用於啟動 stdio servers 的確切命令和引數
-3. **按 URL 模式** (`serverUrl`)：符合遠端 server URLs，支援萬用字元
-
-**重要**：每個項目必須恰好有 `serverName`、`serverCommand` 或 `serverUrl` 之一。
-
-#### 配置範例
-
-```json theme={null}
-{
-  "allowedMcpServers": [
-    // 按 server 名稱允許
-    { "serverName": "github" },
-    { "serverName": "sentry" },
-
-    // 按確切命令允許 (對於 stdio servers)
-    { "serverCommand": ["npx", "-y", "@modelcontextprotocol/server-filesystem"] },
-    { "serverCommand": ["python", "/usr/local/bin/approved-server.py"] },
-
-    // 按 URL 模式允許 (對於遠端 servers)
-    { "serverUrl": "https://mcp.company.com/*" },
-    { "serverUrl": "https://*.internal.corp/*" }
-  ],
-  "deniedMcpServers": [
-    // 按 server 名稱阻止
-    { "serverName": "dangerous-server" },
-
-    // 按確切命令阻止 (對於 stdio servers)
-    { "serverCommand": ["npx", "-y", "unapproved-package"] },
-
-    // 按 URL 模式阻止 (對於遠端 servers)
-    { "serverUrl": "https://*.untrusted.com/*" }
-  ]
-}
-```
-
-#### 基於命令的限制如何工作
-
-**確切符合**：
-
-* 命令陣列必須**確切**符合 - 命令和所有引數的順序正確
-* 範例：`["npx", "-y", "server"]` 將**不**符合 `["npx", "server"]` 或 `["npx", "-y", "server", "--flag"]`
-
-**Stdio server 行為**：
-
-* 當允許清單包含**任何** `serverCommand` 項目時，stdio servers **必須**符合其中一個命令
-* Stdio servers 在存在命令限制時無法單獨按名稱通過
-* 這確保管理員可以強制執行允許執行的命令
-
-**非 stdio server 行為**：
-
-* 遠端 servers (HTTP、SSE、WebSocket) 在允許清單中存在 `serverUrl` 項目時使用基於 URL 的符合
-* 如果不存在 URL 項目，遠端 servers 會回退到基於名稱的符合
-* 命令限制不適用於遠端 servers
-
-#### 基於 URL 的限制如何工作
-
-URL 模式使用 `*` 支援萬用字元以符合任何字元序列。這對於允許整個網域或子網域很有用。
-
-**萬用字元範例**：
-
-* `https://mcp.company.com/*` - 允許特定網域上的所有路徑
-* `https://*.example.com/*` - 允許 example.com 的任何子網域
-* `http://localhost:*/*` - 允許 localhost 上的任何連接埠
-
-主機名稱符合不區分大小寫，並忽略尾部 FQDN 點，符合 DNS 語義。像 `*://Mcp.Example.com/*` 這樣的模式符合 `https://mcp.example.com/api`，而 `https://mcp.example.com.` 的處理方式與 `https://mcp.example.com` 相同。配置和路徑保持區分大小寫。
-
-**遠端 server 行為**：
-
-* 當允許清單包含**任何** `serverUrl` 項目時，遠端 servers **必須**符合其中一個 URL 模式
-* 遠端 servers 在存在 URL 限制時無法單獨按名稱通過
-* 這確保管理員可以強制執行允許的遠端端點
-
-<Accordion title="範例：僅 URL 允許清單">
-  ```json theme={null}
-  {
-    "allowedMcpServers": [
-      { "serverUrl": "https://mcp.company.com/*" },
-      { "serverUrl": "https://*.internal.corp/*" }
-    ]
-  }
-  ```
-
-  **結果**：
-
-  * `https://mcp.company.com/api` 上的 HTTP server：✅ 允許 (符合 URL 模式)
-  * `https://api.internal.corp/mcp` 上的 HTTP server：✅ 允許 (符合萬用字元子網域)
-  * `https://external.com/mcp` 上的 HTTP server：❌ 阻止 (不符合任何 URL 模式)
-  * 任何命令的 Stdio server：❌ 阻止 (沒有名稱或命令項目可符合)
-</Accordion>
-
-<Accordion title="範例：僅命令允許清單">
-  ```json theme={null}
-  {
-    "allowedMcpServers": [
-      { "serverCommand": ["npx", "-y", "approved-package"] }
-    ]
-  }
-  ```
-
-  **結果**：
-
-  * 使用 `["npx", "-y", "approved-package"]` 的 Stdio server：✅ 允許 (符合命令)
-  * 使用 `["node", "server.js"]` 的 Stdio server：❌ 阻止 (不符合命令)
-  * 名為「my-api」的 HTTP server：❌ 阻止 (沒有名稱項目可符合)
-</Accordion>
-
-<Accordion title="範例：混合名稱和命令允許清單">
-  ```json theme={null}
-  {
-    "allowedMcpServers": [
-      { "serverName": "github" },
-      { "serverCommand": ["npx", "-y", "approved-package"] }
-    ]
-  }
-  ```
-
-  **結果**：
-
-  * 名為「local-tool」、使用 `["npx", "-y", "approved-package"]` 的 Stdio server：✅ 允許 (符合命令)
-  * 名為「local-tool」、使用 `["node", "server.js"]` 的 Stdio server：❌ 阻止 (存在命令項目但不符合)
-  * 名為「github」、使用 `["node", "server.js"]` 的 Stdio server：❌ 阻止 (存在命令限制時 stdio servers 必須符合命令)
-  * 名為「github」的 HTTP server：✅ 允許 (符合名稱)
-  * 名為「other-api」的 HTTP server：❌ 阻止 (名稱不符合)
-</Accordion>
-
-<Accordion title="範例：僅名稱允許清單">
-  ```json theme={null}
-  {
-    "allowedMcpServers": [
-      { "serverName": "github" },
-      { "serverName": "internal-tool" }
-    ]
-  }
-  ```
-
-  **結果**：
-
-  * 名為「github」、任何命令的 Stdio server：✅ 允許 (沒有命令限制)
-  * 名為「internal-tool」、任何命令的 Stdio server：✅ 允許 (沒有命令限制)
-  * 名為「github」的 HTTP server：✅ 允許 (符合名稱)
-  * 任何名為「other」的 server：❌ 阻止 (名稱不符合)
-</Accordion>
-
-#### 允許清單行為 (`allowedMcpServers`)
-
-* `undefined` (預設)：無限制 - 使用者可以配置任何 MCP server
-* 空陣列 `[]`：完全鎖定 - 使用者無法配置任何 MCP servers
-* 項目清單：使用者只能配置符合名稱、命令或 URL 模式的 servers
-
-#### 拒絕清單行為 (`deniedMcpServers`)
-
-* `undefined` (預設)：沒有 servers 被阻止
-* 空陣列 `[]`：沒有 servers 被阻止
-* 項目清單：指定的 servers 在所有範圍中被明確阻止
-
-#### 重要注意事項
-
-* **選項 1 和選項 2 可以結合**：如果 `managed-mcp.json` 存在，它具有獨佔控制，使用者無法新增 servers。允許清單/拒絕清單仍然適用於受管理的 servers 本身。
-* **拒絕清單具有絕對優先順序**：如果 server 符合拒絕清單項目 (按名稱、命令或 URL)，即使它在允許清單上也會被阻止
-* 基於名稱、基於命令和基於 URL 的限制一起工作：如果 server 符合**任何**名稱項目、命令項目或 URL 模式，它就會通過 (除非被拒絕清單阻止)
-
-<Note>
-  **使用 `managed-mcp.json` 時**：使用者無法透過 `claude mcp add` 或配置檔案新增 MCP servers。`allowedMcpServers` 和 `deniedMcpServers` 設定仍然適用於篩選實際載入的受管理 servers。
-</Note>
+對於需要對使用者可以連接的 MCP servers 進行集中控制的組織，請參閱 [受管理的 MCP 配置](/zh-TW/managed-mcp)。它涵蓋使用 `managed-mcp.json` 部署固定的 server 集合、使用 `allowedMcpServers` 和 `deniedMcpServers` 限制 servers，以及當 server 被阻止時使用者看到的內容。

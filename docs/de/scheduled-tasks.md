@@ -93,7 +93,7 @@ Claude startet keine neuen Initiativen außerhalb dieses Umfangs, und irreversib
 Ein einfaches `/loop` führt diesen Prompt in einem [dynamisch gewählten Intervall](#let-claude-choose-the-interval) aus. Fügen Sie ein Intervall hinzu, zum Beispiel `/loop 15m`, um es stattdessen nach einem festen Zeitplan auszuführen. Um den integrierten Prompt durch Ihren eigenen Standard zu ersetzen, siehe [Passen Sie den Standard-Prompt mit loop.md an](#customize-the-default-prompt-with-loop-md).
 
 <Note>
-  Der integrierte Wartungs-Prompt ist noch nicht für alle verfügbar und wird auf Bedrock, Vertex AI und Microsoft Foundry nicht unterstützt. Wo er nicht aktiv ist, druckt `/loop` ohne Prompt die Nutzungsmeldung aus.
+  Bei Bedrock, Vertex AI und Microsoft Foundry läuft ein Prompt ohne Intervall stattdessen nach einem festen 10-Minuten-Zeitplan und druckt die Nutzungsmeldung nicht aus.
 </Note>
 
 ### Passen Sie den Standard-Prompt mit loop.md an
@@ -119,7 +119,7 @@ quiet, say so in one line.
 Änderungen an `loop.md` treten bei der nächsten Iteration in Kraft, sodass Sie die Anweisungen verfeinern können, während eine Schleife läuft. Wenn keine `loop.md` an einem der beiden Orte vorhanden ist, fällt die Schleife auf den integrierten Wartungs-Prompt zurück. Halten Sie die Datei prägnant: Inhalte über 25.000 Bytes werden gekürzt.
 
 <Note>
-  `loop.md` folgt der gleichen Verfügbarkeit wie der [integrierte Wartungs-Prompt](#run-the-built-in-maintenance-prompt). Wo der Wartungs-Prompt nicht aktiv ist, druckt `/loop` ohne Prompt die Nutzungsmeldung aus und die Datei wird nicht gelesen.
+  Bei Bedrock, Vertex AI und Microsoft Foundry wird `loop.md` nicht gelesen und `/loop` ohne Prompt druckt die Nutzungsmeldung aus.
 </Note>
 
 ### Stoppen Sie eine Schleife

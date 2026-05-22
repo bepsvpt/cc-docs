@@ -78,7 +78,7 @@ El modo de permisos `dontAsk` está disponible solo en la [CLI](/es/permission-m
 
 <span id="auto-mode-availability" />
 
-Auto mode es una vista previa de investigación disponible en planes Max, Team, Enterprise y API. No está disponible en planes Pro o proveedores de terceros. En planes Team, Enterprise y API requiere Claude Sonnet 4.6, Opus 4.6 u Opus 4.7. En planes Max requiere Claude Opus 4.7.
+Auto mode es una vista previa de investigación disponible para todos los usuarios en la API de Anthropic. No está disponible en proveedores de terceros. Requiere Claude Sonnet 4.6, Opus 4.6 u Opus 4.7.
 
 <Tip title="Mejor práctica">
   Comience tareas complejas en Plan mode para que Claude mapee un enfoque antes de realizar cambios. Una vez que apruebe el plan, cambie a Auto accept edits o Ask permissions para ejecutarlo. Consulte [explorar primero, luego planificar, luego codificar](/es/best-practices#explore-first-then-plan-then-code) para obtener más información sobre este flujo de trabajo.

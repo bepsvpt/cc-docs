@@ -137,8 +137,9 @@ Wenn Sie eine Sicherheitslücke in Claude Code entdecken:
 
 ## Verwandte Ressourcen
 
-* [Sandboxing](/de/sandboxing) - Dateisystem- und Netzwerkisolation für Bash-Befehle
-* [Berechtigungen](/de/permissions) - Konfigurieren Sie Berechtigungen und Zugriffskontrolle
-* [Nutzungsüberwachung](/de/monitoring-usage) - Verfolgen und überprüfen Sie Claude Code-Aktivität
-* [Entwicklungscontainer](/de/devcontainer) - Sichere, isolierte Umgebungen
-* [Anthropic Trust Center](https://trust.anthropic.com) - Sicherheitszertifizierungen und Compliance
+* [Sandbox-Umgebungen](/de/sandbox-environments): Vergleichen Sie Isolierungsansätze und wählen Sie einen für Ihr Bedrohungsmodell
+* [Sandboxing](/de/sandboxing): Dateisystem- und Netzwerkisolation für Bash-Befehle
+* [Berechtigungen](/de/permissions): Konfigurieren Sie Berechtigungen und Zugriffskontrolle
+* [Nutzungsüberwachung](/de/monitoring-usage): Verfolgen und überprüfen Sie Claude Code-Aktivität
+* [Entwicklungscontainer](/de/devcontainer): Sichere, isolierte Umgebungen
+* [Anthropic Trust Center](https://trust.anthropic.com): Sicherheitszertifizierungen und Compliance

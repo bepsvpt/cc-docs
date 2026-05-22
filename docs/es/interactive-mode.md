@@ -214,7 +214,8 @@ Claude Code mantiene el historial de comandos para la sesión actual:
 
 * El historial de entrada se almacena por directorio de trabajo
 * El historial de entrada se reinicia cuando ejecuta `/clear` para iniciar una nueva sesión. La conversación de la sesión anterior se conserva y se puede reanudar.
-* Use las flechas arriba/abajo para navegar (consulte los atajos de teclado anteriores)
+* Enviar el mismo indicador dos veces seguidas registra una entrada de historial, por lo que presionar Arriba va al indicador anterior distinto
+* Use las flechas Arriba/Abajo para navegar (consulte los atajos de teclado anteriores)
 * **Nota**: la expansión del historial (`!`) está deshabilitada de forma predeterminada
 
 ### Búsqueda inversa con Ctrl+R

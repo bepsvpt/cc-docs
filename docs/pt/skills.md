@@ -11,7 +11,7 @@ Skills estendem o que Claude pode fazer. Crie um arquivo `SKILL.md` com instruç
 Crie uma skill quando você fica colando o mesmo manual, checklist ou procedimento de múltiplas etapas no chat, ou quando uma seção de CLAUDE.md cresceu em um procedimento em vez de um fato. Diferentemente do conteúdo de CLAUDE.md, o corpo de uma skill carrega apenas quando é usado, então material de referência longo custa quase nada até você precisar dele.
 
 <Note>
-  Para comandos integrados como `/help` e `/compact`, e skills agrupadas como `/debug` e `/simplify`, consulte a [referência de comandos](/pt/commands).
+  Para comandos integrados como `/help` e `/compact`, e skills agrupadas como `/debug` e `/code-review`, consulte a [referência de comandos](/pt/commands).
 
   **Comandos personalizados foram mesclados em skills.** Um arquivo em `.claude/commands/deploy.md` e uma skill em `.claude/skills/deploy/SKILL.md` ambos criam `/deploy` e funcionam da mesma forma. Seus arquivos `.claude/commands/` existentes continuam funcionando. Skills adicionam recursos opcionais: um diretório para arquivos de suporte, frontmatter para [controlar se você ou Claude invoca eles](#control-who-invokes-a-skill), e a capacidade de Claude carregá-los automaticamente quando relevante.
 </Note>
@@ -20,7 +20,7 @@ Skills do Claude Code seguem o padrão aberto [Agent Skills](https://agentskills
 
 ## Skills agrupadas
 
-Claude Code inclui um conjunto de skills agrupadas que estão disponíveis em cada sessão, incluindo `/simplify`, `/batch`, `/debug`, `/loop`, e `/claude-api`. Diferentemente da maioria dos comandos integrados, que executam lógica fixa diretamente, skills agrupadas são baseadas em prompt: elas dão ao Claude instruções detalhadas e deixam que ele orquestre o trabalho usando suas ferramentas. Você invoca elas da mesma forma que qualquer outra skill, digitando `/` seguido do nome da skill.
+Claude Code inclui um conjunto de skills agrupadas que estão disponíveis em cada sessão, incluindo `/code-review`, `/batch`, `/debug`, `/loop`, e `/claude-api`. Diferentemente da maioria dos comandos integrados, que executam lógica fixa diretamente, skills agrupadas são baseadas em prompt: elas dão ao Claude instruções detalhadas e deixam que ele orquestre o trabalho usando suas ferramentas. Você invoca elas da mesma forma que qualquer outra skill, digitando `/` seguido do nome da skill.
 
 Skills agrupadas estão listadas junto com comandos integrados na [referência de comandos](/pt/commands), marcadas como **Skill** na coluna Propósito.
 

@@ -135,8 +135,9 @@ Claude Code에서 보안 취약점을 발견한 경우:
 
 ## 관련 리소스
 
-* [Sandboxing](/ko/sandboxing) - bash 명령에 대한 파일 시스템 및 네트워크 격리
-* [Permissions](/ko/permissions) - 권한 및 액세스 제어 구성
-* [Monitoring usage](/ko/monitoring-usage) - Claude Code 활동 추적 및 감사
-* [Development containers](/ko/devcontainer) - 보안, 격리된 환경
-* [Anthropic Trust Center](https://trust.anthropic.com) - 보안 인증 및 규정 준수
+* [Sandbox 환경](/ko/sandbox-environments): 격리 접근 방식을 비교하고 위협 모델에 맞는 방식을 선택합니다
+* [Sandboxing](/ko/sandboxing): Bash 명령에 대한 파일 시스템 및 네트워크 격리
+* [Permissions](/ko/permissions): 권한 및 액세스 제어를 구성합니다
+* [Monitoring usage](/ko/monitoring-usage): Claude Code 활동을 추적하고 감사합니다
+* [Development containers](/ko/devcontainer): 보안, 격리된 환경
+* [Anthropic Trust Center](https://trust.anthropic.com): 보안 인증 및 규정 준수

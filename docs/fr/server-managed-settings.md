@@ -123,7 +123,7 @@ La plupart des [clés de paramètres](/fr/settings#available-settings) fonctionn
 Les paramètres gérés par le serveur ont les limitations suivantes :
 
 * Les paramètres s'appliquent uniformément à tous les utilisateurs de l'organisation. Les configurations par groupe ne sont pas encore prises en charge.
-* Les [configurations de serveur MCP](/fr/mcp#managed-mcp-configuration) ne peuvent pas être distribuées via les paramètres gérés par le serveur.
+* Un fichier [`managed-mcp.json`](/fr/managed-mcp) ne peut pas être distribué via les paramètres gérés par le serveur. Livrez plutôt les clés de politique `allowedMcpServers` et `deniedMcpServers` à la place.
 * Les paramètres limités aux sources de politique au niveau du système d'exploitation, tels que `policyHelper` et `wslInheritsWindowsSettings`, ne sont pas respectés. Déployez-les plutôt via MDM ou un fichier `managed-settings.json` système.
 
 ## Livraison des paramètres

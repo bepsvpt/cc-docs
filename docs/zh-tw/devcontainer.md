@@ -190,5 +190,6 @@ Claude Code 在您的開發容器中執行後，下面的頁面涵蓋組織推�
 * [網路存取要求](/zh-TW/network-config#network-access-requirements)：代理和防火牆的完整網域允許清單
 * [遙測服務和選擇退出](/zh-TW/data-usage#telemetry-services)：Claude Code 預設傳送的內容以及停用它的環境變數
 * [探索 `.claude` 目錄](/zh-TW/claude-directory)：磁碟區掛載包含的內容，包括認證、設定和工作階段歷史記錄
+* [沙箱環境](/zh-TW/sandbox-environments)：比較開發容器與內建 Bash 沙箱、自訂容器和虛擬機器
 * [安全模型](/zh-TW/security)：Claude Code 的權限系統、沙箱和提示注入保護如何組合在一起
-* [權限模式](/zh-TW/permission-modes)：從計劃模式到自動模式到繞過的完整範圍，以及何時使用每種模式
+* [Permission modes](/zh-TW/permission-modes)：從 Plan Mode 到 auto mode 到 bypass 的完整範圍，以及何時使用每種模式

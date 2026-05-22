@@ -137,8 +137,9 @@ Se você descobrir uma vulnerabilidade de segurança no Claude Code:
 
 ## Recursos relacionados
 
-* [Sandboxing](/pt/sandboxing) - Isolamento de sistema de arquivos e rede para comandos bash
-* [Permissions](/pt/permissions) - Configure permissões e controles de acesso
-* [Monitoring usage](/pt/monitoring-usage) - Rastreie e audite a atividade do Claude Code
-* [Development containers](/pt/devcontainer) - Ambientes seguros e isolados
-* [Anthropic Trust Center](https://trust.anthropic.com) - Certificações de segurança e conformidade
+* [Ambientes sandbox](/pt/sandbox-environments): compare abordagens de isolamento e escolha uma para seu modelo de ameaça
+* [Sandboxing](/pt/sandboxing): isolamento de sistema de arquivos e rede para comandos Bash
+* [Permissions](/pt/permissions): configure permissões e controles de acesso
+* [Monitoramento de uso](/pt/monitoring-usage): rastreie e audite a atividade do Claude Code
+* [Development containers](/pt/devcontainer): ambientes seguros e isolados
+* [Anthropic Trust Center](https://trust.anthropic.com): certificações de segurança e conformidade

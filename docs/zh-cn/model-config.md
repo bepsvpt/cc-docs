@@ -287,12 +287,12 @@ Claude Code 跳过对 `ANTHROPIC_CUSTOM_MODEL_OPTION` 中设置的模型 ID 的�
 
 您可以使用以下环境变量，这些变量必须是完整的**模型名称**（或您的 API 提供商的等效项），以控制别名映射到的模型名称。
 
-| 环境变量                             | 描述                                                                                                          |
-| -------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL`   | 用于 `opus` 的模型，或在 Plan Mode 活跃时用于 `opusplan` 的模型。                                                            |
-| `ANTHROPIC_DEFAULT_SONNET_MODEL` | 用于 `sonnet` 的模型，或在 Plan Mode 不活跃时用于 `opusplan` 的模型。                                                         |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL`  | 用于 `haiku` 的模型，或[后台功能](/zh-CN/costs#background-token-usage)                                                 |
-| `CLAUDE_CODE_SUBAGENT_MODEL`     | 用于所有 [subagents](/zh-CN/sub-agents#choose-a-model) 的模型。覆盖每次调用的 `model` 参数和 subagent 定义的 `model` frontmatter |
+| 环境变量                             | 描述                                                                                                                                                                      |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL`   | 用于 `opus` 的模型，或在 Plan Mode 活跃时用于 `opusplan` 的模型。                                                                                                                        |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` | 用于 `sonnet` 的模型，或在 Plan Mode 不活跃时用于 `opusplan` 的模型。                                                                                                                     |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL`  | 用于 `haiku` 的模型，或[后台功能](/zh-CN/costs#background-token-usage)                                                                                                             |
+| `CLAUDE_CODE_SUBAGENT_MODEL`     | 用于所有 [subagents](/zh-CN/sub-agents#choose-a-model) 和 [agent teams](/zh-CN/agent-teams) 的模型。覆盖每次调用的 `model` 参数和 subagent 定义的 `model` frontmatter。设置为 `inherit` 以改用常规模型解析 |
 
 注意：`ANTHROPIC_SMALL_FAST_MODEL` 已弃用，改为使用 `ANTHROPIC_DEFAULT_HAIKU_MODEL`。
 

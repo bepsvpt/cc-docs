@@ -214,6 +214,7 @@ Claude Code mantém histórico de comandos para a sessão atual:
 
 * O histórico de entrada é armazenado por diretório de trabalho
 * O histórico de entrada é redefinido quando você executa `/clear` para iniciar uma nova sessão. A conversa da sessão anterior é preservada e pode ser retomada.
+* Enviar o mesmo prompt duas vezes seguidas registra uma entrada de histórico, então pressionar Seta para cima vai para o prompt anterior distinto
 * Use as setas Para cima/Para baixo para navegar (veja atalhos de teclado acima)
 * **Nota**: expansão de histórico (`!`) está desabilitada por padrão
 

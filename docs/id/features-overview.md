@@ -243,7 +243,7 @@ Setiap fitur dimuat pada titik berbeda dalam sesi Anda. Tab di bawah menjelaskan
   </Tab>
 
   <Tab title="Skills">
-    Skills adalah kemampuan tambahan dalam toolkit Claude. Mereka dapat berupa materi referensi (seperti panduan gaya API) atau alur kerja yang dapat dipanggil yang Anda picu dengan `/<name>` (seperti `/deploy`). Claude Code dilengkapi dengan [skills bundel](/id/commands) seperti `/simplify`, `/batch`, dan `/debug` yang bekerja langsung. Anda juga dapat membuat yang Anda sendiri. Claude menggunakan skills ketika sesuai, atau Anda dapat memanggil satu secara langsung.
+    Skills adalah kemampuan tambahan dalam toolkit Claude. Mereka dapat berupa materi referensi (seperti panduan gaya API) atau alur kerja yang dapat dipanggil yang Anda picu dengan `/<name>` (seperti `/deploy`). Claude Code dilengkapi dengan [skills bundel](/id/commands) seperti `/code-review`, `/batch`, dan `/debug` yang bekerja langsung. Anda juga dapat membuat yang Anda sendiri. Claude menggunakan skills ketika sesuai, atau Anda dapat memanggil satu secara langsung.
 
     **Kapan:** Tergantung pada konfigurasi skill. Secara default, deskripsi dimuat saat awal sesi dan konten penuh dimuat ketika digunakan. Untuk skills hanya pengguna (`disable-model-invocation: true`), tidak ada yang dimuat sampai Anda memanggilnya.
 

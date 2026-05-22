@@ -243,7 +243,7 @@ Chaque fonctionnalité se charge à différents points de votre session. Les ong
   </Tab>
 
   <Tab title="Skills">
-    Les skills sont des capacités supplémentaires dans la boîte à outils de Claude. Elles peuvent être du matériel de référence (comme un guide de style API) ou des flux de travail invocables que vous déclenchez avec `/<name>` (comme `/deploy`). Claude Code inclut des [skills groupées](/fr/commands) comme `/simplify`, `/batch` et `/debug` qui fonctionnent directement. Vous pouvez également créer les vôtres. Claude utilise les skills quand approprié, ou vous pouvez en invoquer une directement.
+    Les skills sont des capacités supplémentaires dans la boîte à outils de Claude. Elles peuvent être du matériel de référence (comme un guide de style API) ou des flux de travail invocables que vous déclenchez avec `/<name>` (comme `/deploy`). Claude Code inclut des [skills groupées](/fr/commands) comme `/code-review`, `/batch` et `/debug` qui fonctionnent directement. Vous pouvez également créer les vôtres. Claude utilise les skills quand approprié, ou vous pouvez en invoquer une directement.
 
     **Quand :** Dépend de la configuration de la skill. Par défaut, les descriptions se chargent au début de la session et le contenu complet se charge quand utilisé. Pour les skills utilisateur uniquement (`disable-model-invocation: true`), rien ne se charge jusqu'à ce que vous les invoquiez.
 

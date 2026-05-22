@@ -243,7 +243,7 @@ Claude Code는 코드를 추론하는 모델과 파일 작업, 검색, 실행 �
   </Tab>
 
   <Tab title="Skills">
-    Skill은 Claude의 도구 키트에 있는 추가 기능입니다. 참조 자료(API 스타일 가이드처럼) 또는 `/<name>`으로 트리거하는 호출 가능한 워크플로우(배포처럼)일 수 있습니다. Claude Code는 기본적으로 작동하는 `/simplify`, `/batch`, `/debug`와 같은 [번들 skill](/ko/commands)과 함께 제공됩니다. 자신의 것을 만들 수도 있습니다. Claude는 적절할 때 skill을 사용하거나 직접 호출할 수 있습니다.
+    Skill은 Claude의 도구 키트에 있는 추가 기능입니다. 참조 자료(API 스타일 가이드처럼) 또는 `/<name>`으로 트리거하는 호출 가능한 워크플로우(배포처럼)일 수 있습니다. Claude Code는 기본적으로 작동하는 `/code-review`, `/batch`, `/debug`와 같은 [번들 skill](/ko/commands)과 함께 제공됩니다. 자신의 것을 만들 수도 있습니다. Claude는 적절할 때 skill을 사용하거나 직접 호출할 수 있습니다.
 
     **시기:** Skill의 구성에 따라 다릅니다. 기본적으로 설명은 세션 시작 시 로드되고 전체 콘텐츠는 사용 시 로드됩니다. 사용자 전용 skill(`disable-model-invocation: true`)의 경우, 호출할 때까지 아무것도 로드되지 않습니다.
 

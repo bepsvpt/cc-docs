@@ -123,7 +123,7 @@ Claude Code 支持两种集中配置方法。服务器管理的设置从 Anthrop
 服务器管理的设置有以下限制：
 
 * 设置统一应用于组织中的所有用户。尚不支持按组配置。
-* [MCP 服务器配置](/zh-CN/mcp#managed-mcp-configuration)无法通过服务器管理的设置分发。
+* [`managed-mcp.json`](/zh-CN/managed-mcp) 文件无法通过服务器管理的设置分发。改为在那里传递 `allowedMcpServers` 和 `deniedMcpServers` 策略键。
 * 限制于操作系统级别策略源的设置，如 `policyHelper` 和 `wslInheritsWindowsSettings`，不被遵守。改为通过 MDM 或系统 `managed-settings.json` 文件部署它们。
 
 ## 设置传递

@@ -190,5 +190,6 @@ Setelah Claude Code berjalan di dev container Anda, halaman di bawah mencakup si
 * [Persyaratan akses jaringan](/id/network-config#network-access-requirements): daftar domain lengkap untuk proxy dan firewall
 * [Layanan telemetri dan opt-out](/id/data-usage#telemetry-services): apa yang dikirim Claude Code secara default dan variabel lingkungan yang menonaktifkannya
 * [Jelajahi direktori `.claude`](/id/claude-directory): apa yang disimpan pemasangan volume, termasuk kredensial, pengaturan, dan riwayat sesi
+* [Lingkungan sandbox](/id/sandbox-environments): bandingkan dev container dengan sandbox Bash bawaan, container khusus, dan VM
 * [Model keamanan](/id/security): bagaimana sistem izin Claude Code, sandboxing, dan perlindungan injeksi prompt cocok bersama
 * [Mode izin](/id/permission-modes): rentang lengkap dari mode rencana ke mode otomatis ke bypass, dan kapan menggunakan masing-masing

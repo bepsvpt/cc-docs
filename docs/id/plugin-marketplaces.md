@@ -161,7 +161,7 @@ Setiap entri plugin memerlukan minimal `name` dan `source` (di mana mengambilnya
 | `plugins` | array  | Daftar plugin yang tersedia                                                                                                                                              | Lihat di bawah |
 
 <Note>
-  **Nama yang dicadangkan**: Nama marketplace berikut dicadangkan untuk penggunaan resmi Anthropic dan tidak dapat digunakan oleh marketplace pihak ketiga: `claude-code-marketplace`, `claude-code-plugins`, `claude-plugins-official`, `anthropic-marketplace`, `anthropic-plugins`, `agent-skills`, `anthropic-agent-skills`, `knowledge-work-plugins`, `life-sciences`. Nama yang meniru marketplace resmi, seperti `official-claude-plugins` atau `anthropic-tools-v2`, juga diblokir.
+  **Nama yang dicadangkan**: Nama marketplace berikut dicadangkan untuk penggunaan resmi Anthropic dan tidak dapat digunakan oleh marketplace pihak ketiga: `claude-code-marketplace`, `claude-code-plugins`, `claude-plugins-official`, `anthropic-marketplace`, `anthropic-plugins`, `agent-skills`, `anthropic-agent-skills`, `knowledge-work-plugins`, `life-sciences`, `claude-for-legal`, `claude-for-financial-services`, `financial-services-plugins`. Nama yang meniru marketplace resmi, seperti `official-claude-plugins` atau `anthropic-tools-v2`, juga diblokir.
 </Note>
 
 ### Field pemilik

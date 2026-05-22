@@ -243,7 +243,7 @@ Ogni funzionalità si carica in diversi punti della vostra sessione. Le schede s
   </Tab>
 
   <Tab title="Skills">
-    Le skills sono capacità extra nel toolkit di Claude. Possono essere materiale di riferimento (come una guida di stile API) o flussi di lavoro invocabili che attivate con `/<name>` (come `/deploy`). Claude Code include [skills raggruppate](/it/commands) come `/simplify`, `/batch` e `/debug` che funzionano subito. Potete anche crearne di vostre. Claude utilizza le skills quando appropriato, oppure potete invocarne una direttamente.
+    Le skills sono capacità extra nel toolkit di Claude. Possono essere materiale di riferimento (come una guida di stile API) o flussi di lavoro invocabili che attivate con `/<name>` (come `/deploy`). Claude Code include [skills raggruppate](/it/commands) come `/code-review`, `/batch` e `/debug` che funzionano subito. Potete anche crearne di vostre. Claude utilizza le skills quando appropriato, oppure potete invocarne una direttamente.
 
     **Quando:** Dipende dalla configurazione della skill. Per impostazione predefinita, le descrizioni si caricano all'inizio della sessione e il contenuto completo si carica quando utilizzate. Per le skills solo utente (`disable-model-invocation: true`), niente si carica fino a quando non le invocate.
 

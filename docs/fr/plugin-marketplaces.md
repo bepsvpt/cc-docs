@@ -161,7 +161,7 @@ Chaque entrée de plugin a besoin au minimum d'un `name` et d'une `source` (où 
 | `plugins` | array  | Liste des plugins disponibles                                                                                                                                                                                   | Voir ci-dessous |
 
 <Note>
-  **Noms réservés** : Les noms de place de marché suivants sont réservés à l'usage officiel d'Anthropic et ne peuvent pas être utilisés par les places de marché tierces : `claude-code-marketplace`, `claude-code-plugins`, `claude-plugins-official`, `anthropic-marketplace`, `anthropic-plugins`, `agent-skills`, `anthropic-agent-skills`, `knowledge-work-plugins`, `life-sciences`. Les noms qui usurpent l'identité de places de marché officielles, comme `official-claude-plugins` ou `anthropic-tools-v2`, sont également bloqués.
+  **Noms réservés** : Les noms de place de marché suivants sont réservés à l'usage officiel d'Anthropic et ne peuvent pas être utilisés par les places de marché tierces : `claude-code-marketplace`, `claude-code-plugins`, `claude-plugins-official`, `anthropic-marketplace`, `anthropic-plugins`, `agent-skills`, `anthropic-agent-skills`, `knowledge-work-plugins`, `life-sciences`, `claude-for-legal`, `claude-for-financial-services`, `financial-services-plugins`. Les noms qui usurpent l'identité de places de marché officielles, comme `official-claude-plugins` ou `anthropic-tools-v2`, sont également bloqués.
 </Note>
 
 ### Champs du propriétaire

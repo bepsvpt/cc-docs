@@ -190,5 +190,6 @@ Sobald Claude Code in Ihrem Entwicklungscontainer ausgeführt wird, behandeln di
 * [Netzwerkzugriffsanforderungen](/de/network-config#network-access-requirements): Die vollständige Domain-Allowlist für Proxys und Firewalls
 * [Telemetrie-Dienste und Opt-out](/de/data-usage#telemetry-services): Was Claude Code standardmäßig sendet und die Umgebungsvariablen, die es deaktivieren
 * [Erkunden Sie das `.claude`-Verzeichnis](/de/claude-directory): Was die Volume-Einbindung enthält, einschließlich Anmeldedaten, Einstellungen und Sitzungsverlauf
+* [Sandbox-Umgebungen](/de/sandbox-environments): Vergleichen Sie Entwicklungscontainer mit der integrierten Bash-Sandbox, benutzerdefinierten Containern und VMs
 * [Sicherheitsmodell](/de/security): Wie Claude Codes Berechtigungssystem, Sandboxing und Prompt-Injection-Schutz zusammenpassen
-* [Berechtigungsmodi](/de/permission-modes): Die vollständige Spanne von Plan-Modus bis Auto-Modus bis Bypass, und wann man jeden verwendet
+* [Berechtigungsmodi](/de/permission-modes): Die vollständige Spanne von Plan Mode bis Auto Mode bis Bypass, und wann man jeden verwendet

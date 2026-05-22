@@ -149,9 +149,9 @@ Azioni disponibili nel contesto `Confirmation`:
 
 Azioni disponibili nel contesto `Confirmation` per i dialoghi di permesso:
 
-| Azione                   | Predefinito | Descrizione                                            |
-| :----------------------- | :---------- | :----------------------------------------------------- |
-| `permission:toggleDebug` | Ctrl+D      | Attiva/disattiva le informazioni di debug del permesso |
+| Azione                   | Predefinito     | Descrizione                                                                                                                                                  |
+| :----------------------- | :-------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `permission:toggleDebug` | (non associato) | Attiva/disattiva le informazioni di debug del permesso. Il valore predefinito precedente di Ctrl+D è stato rimosso nella v2.1.146 perché oscurava `app:exit` |
 
 ### Azioni di trascrizione
 
